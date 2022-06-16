@@ -1,20 +1,105 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider as PaperProvider, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { theme } from "./src/theme/apptheme";
+import { Styles } from "./src/styles/styles";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import Icon from "react-native-vector-icons/FontAwesome";
+import CollapsibleView from "@eliav2/react-native-collapsible-view";
+import { useState } from "react";
+import { View } from "react-native";
+import { MenuItems } from "./src/json/MenuItems";
+import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
+import ServicesScreen from "./src/screens/Master/ServicesScreen";
+import UnitOfSalesScreen from "./src/screens/Master/UnitOfSalesScreen";
 
+
+const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+const navigationRef = createNavigationContainerRef();
 export default function App() {
+  let activeIndex = 0;
+  const [expanded, setExpanded] = useState(false);
+
+  const DrawerContent = (props) => {  
+    return (
+      <DrawerContentScrollView {...props}>
+        {MenuItems.map((k, i) => {
+          return k.type === "item" ? (
+            <DrawerItem
+              key={i}
+              focused={activeIndex === parseInt(i) ? true : false}
+              style={[Styles.borderBottom1]}
+              label={({ focused }) => {
+                return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{k.title}</Text>;
+              }}
+              icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
+              onPress={(e) => {
+                if (k.navigation !== undefined) {
+                  activeIndex = parseInt(i);
+                  props.navigation.navigate(k.navigation);
+                }
+                setExpanded(false);
+              }}
+            />
+          ) : (
+            <CollapsibleView
+              key={i}
+              isRTL={true}
+              arrowStyling={{ size: 18, svgProps: { transform: [{ rotate: "-90deg" }] } }}
+              collapsibleContainerStyle={{ width: "100%" }}
+              initExpanded={expanded}
+              style={[Styles.borderBottom1, Styles.border0, Styles.flexAlignStart, Styles.padding0, Styles.margin0]}
+              title={
+                <View style={[Styles.padding8, Styles.paddingBottom12, Styles.flex1, Styles.flexRow]}>
+                  <Icon name={k.icon} color={theme.colors.textSecondary} size={24} />
+                  <Text style={[Styles.textColor, Styles.fontSize16, { paddingLeft: 34 }]}>{k.title}</Text>
+                </View>
+              }
+            >
+              {k.items.map((j, l) => {
+                return (
+                  <DrawerItem
+                    key={l}
+                    style={{ backgroundColor: theme.colors.backgroundSecondary, marginVertical: 0, paddingHorizontal: 0, width: "100%", marginLeft: 0, borderRadius: 0, borderBottomColor: theme.colors.textLightSecondary, borderBottomWidth: 1 }}
+                    focused={activeIndex === parseInt(i.toString() + l.toString()) ? true : false}
+                    label={({ focused }) => <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{j.title}</Text>}
+                    onPress={(e) => {
+                      if (j.navigation !== undefined) {
+                        activeIndex = parseInt(i.toString() + l.toString());
+                        props.navigation.navigate(j.navigation);
+                      }
+                    }}
+                  />
+                );
+              })}
+            </CollapsibleView>
+          );
+        })}
+      </DrawerContentScrollView>
+    );
+  };
+
+  const DrawerNavigator = () => {
+    return (
+      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ActivityRolesScreen">
+        <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
+        <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
+        <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
+      </Drawer.Navigator>
+    );
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={[Styles.flex1]}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer ref={navigationRef}>
+          <Stack.Navigator>
+            <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
