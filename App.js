@@ -5,24 +5,22 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
 import { Styles } from "./src/styles/styles";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
-import { useState } from "react";
 import { View } from "react-native";
 import { MenuItems } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Master/UnitOfSalesScreen";
-
+import AddActivityRolesScreen from "./src/screens/Master/AddItems/AddActivityRolesScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const navigationRef = createNavigationContainerRef();
 export default function App() {
   let activeIndex = 0;
-  const [expanded, setExpanded] = useState(false);
 
-  const DrawerContent = (props) => {  
+  const DrawerContent = (props) => {
     return (
       <DrawerContentScrollView {...props}>
         {MenuItems.map((k, i) => {
@@ -49,7 +47,7 @@ export default function App() {
               isRTL={true}
               arrowStyling={{ size: 18, svgProps: { transform: [{ rotate: "-90deg" }] } }}
               collapsibleContainerStyle={{ width: "100%" }}
-              initExpanded={expanded}
+              initExpanded={i == 0 ? true : false}
               style={[Styles.borderBottom1, Styles.border0, Styles.flexAlignStart, Styles.padding0, Styles.margin0]}
               title={
                 <View style={[Styles.padding8, Styles.paddingBottom12, Styles.flex1, Styles.flexRow]}>
@@ -62,9 +60,11 @@ export default function App() {
                 return (
                   <DrawerItem
                     key={l}
-                    style={{ backgroundColor: theme.colors.backgroundSecondary, marginVertical: 0, paddingHorizontal: 0, width: "100%", marginLeft: 0, borderRadius: 0, borderBottomColor: theme.colors.textLightSecondary, borderBottomWidth: 1 }}
+                    style={{ marginVertical: 0, paddingHorizontal: 0, width: "100%", marginLeft: 0, borderRadius: 0, borderBottomColor: theme.colors.textLightSecondary, borderBottomWidth: 1 }}
                     focused={activeIndex === parseInt(i.toString() + l.toString()) ? true : false}
-                    label={({ focused }) => <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{j.title}</Text>}
+                    label={({ focused }) => <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.textLight : theme.colors.text }]}>{j.title}</Text>}
+                    activeBackgroundColor={theme.colors.primary}
+                    inactiveBackgroundColor={theme.colors.backgroundSecondary}
                     onPress={(e) => {
                       if (j.navigation !== undefined) {
                         activeIndex = parseInt(i.toString() + l.toString());
@@ -97,6 +97,17 @@ export default function App() {
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator>
             <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="AddActivityRolesScreen"
+              component={AddActivityRolesScreen}
+              options={{
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: {
+                  color: theme.colors.textLight,
+                },
+                headerTintColor: theme.colors.textLight,
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

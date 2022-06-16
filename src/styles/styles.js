@@ -663,6 +663,12 @@ export const Styles = StyleSheet.create({
   width64: {
     width: 64,
   },
+  width72: {
+    width: 72,
+  },
+  width80: {
+    width: 80,
+  },
   width50per: {
     width: "50%",
   },
@@ -687,6 +693,12 @@ export const Styles = StyleSheet.create({
   },
   height64: {
     height: 64,
+  },
+  height72: {
+    height: 72,
+  },
+  height80: {
+    height: 80,
   },
   height50per: {
     height: "50%",
