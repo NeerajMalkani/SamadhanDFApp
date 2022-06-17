@@ -23,13 +23,37 @@ class Provider {
     });
   }
   update(resource, params, id) {
-    return axios.put(`${BASE_URL}/${resource}/${id}`, params);
+    return axios.put(`${BASE_URL}/${resource}/${id}`, params, {
+      headers: {
+        "Content-Type": "application/json",
+        XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
+      },
+    });
   }
   delete(resource, id) {
-    return axios.delete(`${BASE_URL}/${resource}/${id}`);
+    return axios.delete(`${BASE_URL}/${resource}/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
+      },
+    });
   }
   deleteAll(resource) {
-    return axios.delete(`${BASE_URL}/${resource}`);
+    return axios.delete(`${BASE_URL}/${resource}`, {
+      headers: {
+        "Content-Type": "application/json",
+        XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
+      },
+    });
+  }
+  deleteAllParams(resource, params) {
+    return axios.delete(`${BASE_URL}/${resource}`, {
+      headers: {
+        "Content-Type": "application/json",
+        XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
+      },
+      data: params
+    });
   }
 }
 export default new Provider();

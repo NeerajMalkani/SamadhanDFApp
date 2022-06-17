@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, View, LogBox } from "react-native";
-import { FAB, List } from "react-native-paper";
+import { FAB, List, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../api/Provider";
 import Header from "../../components/Header";
@@ -15,22 +15,38 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 const ActivityRolesScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const FetchData = () => {
+  const FetchData = (from) => {
+    if (from === "add" || from === "update") {
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + "  successfully");
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
     Provider.getAll("master/getactivityroles")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            const lisData = [...response.data.data];
+            lisData.map((k, i) => {
+              k.key = (parseInt(i) + 1);
+            });
             listData[1](response.data.data);
           }
         } else {
-          //Show snackbar
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
-        //Show snackbar
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
       });
   };
 
@@ -46,29 +62,46 @@ const ActivityRolesScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="pencil" onPress={() => {}} />}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddActivityRolesScreen", { fetchData: FetchData });
+    navigation.navigate("AddActivityRolesScreen", { type: "add", fetchData: FetchData });
+  };
+
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddActivityRolesScreen", { type: "edit", fetchData: FetchData, data: {
+      id: data.item.id,
+      activityRoleName: data.item.activityRoleName,
+      display: data.item.display
+    } });
   };
 
   const DeleteCallback = (data, rowMap) => {
-    // const arrList = [...listData[0]];
-    // const prevIndex = listData[0].findIndex((item) => item.key === data.item.key);
-    // if (rowMap[data.item.key]) {
-    //   rowMap[data.item.key].closeRow();
-    // }
-    // setTimeout(() => {
-    //   setSnackbarText(data.item.text + " has been deleted successfully");
-    //   setSnackbarColor(theme.colors.snackbar);
-    //   setVisible(true);
-    //   arrList.splice(prevIndex, 1);
-    //   RearrangeList(arrList);
-    // }, 250);
+    rowMap[data.item.key].closeRow();
+    Provider.deleteAllParams("master/deleteactivityroles", { ID: data.item.id })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          setSnackbarText("Item deleted successfully");
+          setSnackbarColor(theme.colors.success);
+          setSnackbarVisible(true);
+          FetchData();
+        } else {
+          setSnackbarText("Something went wrong");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
   };
 
   return (
@@ -80,18 +113,15 @@ const ActivityRolesScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <SwipeListView
-            data={listData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback])}
-          />
+          <SwipeListView data={listData[0]} disableRightSwipe={true} rightOpenValue={-144} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])} />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
       <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

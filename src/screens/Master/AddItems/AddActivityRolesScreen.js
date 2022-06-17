@@ -7,8 +7,8 @@ import { theme } from "../../../theme/apptheme";
 
 const AddActivityRolesScreen = ({ route, navigation }) => {
   const [activityNameError, setActivityNameError] = React.useState(false);
-  const [activityName, setActivityName] = React.useState("");
-  const [checked, setChecked] = React.useState(false);
+  const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const onActivityNameChanged = (text) => {
     if (text.length === 0) {
@@ -23,16 +23,30 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
     Provider.create("master/insertactivityroles", { ActivityRoleName: activityName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData();
+          route.params.fetchData("add");
           navigation.goBack();
         } else {
           //Show snackbar
         }
-        //setIsLoading(false);
       })
       .catch((e) => {
         console.log(e);
-        //setIsLoading(false);
+        //Show snackbar
+      });
+  };
+
+  const UpdateActivityName = () => {
+    Provider.create("master/updateactivityroles", { ID: route.params.data.id, ActivityRoleName: activityName, Display: checked })
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("update");
+          navigation.goBack();
+        } else {
+          //Show snackbar
+        }
+      })
+      .catch((e) => {
+        console.log(e);
         //Show snackbar
       });
   };
@@ -44,7 +58,12 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      InsertActivityName();
+      if(route.params.type === "edit"){
+        UpdateActivityName();
+      } else{
+        InsertActivityName();
+      }
+      
     } else {
       setVisible(true);
     }
@@ -53,7 +72,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.padding16, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <TextInput mode="flat" label="Activity Name" onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
+        <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
         <View style={{ paddingTop: 24, width: 160 }}>
           <Checkbox.Item
             label="Display"
