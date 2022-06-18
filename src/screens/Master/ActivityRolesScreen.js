@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
 import { FAB, List, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../api/Provider";
@@ -15,6 +15,7 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 const ActivityRolesScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
@@ -36,17 +37,20 @@ const ActivityRolesScreen = ({ navigation }) => {
             listData[1](response.data.data);
           }
         } else {
+          listData[1]([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
         }
         setIsLoading(false);
+        setRefreshing(false);
       })
       .catch((e) => {
         setIsLoading(false);
         setSnackbarText(e.message);
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
+        setRefreshing(false);
       });
   };
 
@@ -113,7 +117,7 @@ const ActivityRolesScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <SwipeListView data={listData[0]} disableRightSwipe={true} rightOpenValue={-144} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])} />
+          <SwipeListView refreshControl={ <RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => {FetchData();}} />} data={listData[0]} disableRightSwipe={true} rightOpenValue={-144} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])} />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />

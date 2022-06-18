@@ -13,6 +13,10 @@ import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Master/UnitOfSalesScreen";
 import AddActivityRolesScreen from "./src/screens/Master/AddItems/AddActivityRolesScreen";
+import AddServicesScreen from "./src/screens/Master/AddItems/AddServicesScreen";
+import AddUnitOfSalesScreen from "./src/screens/Master/AddItems/AddUnitOfSalesScreen";
+import CategoryScreen from "./src/screens/Master/CategoryScreen";
+import AddCategoryScreen from "./src/screens/Master/AddItems/AddCategoryScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -87,6 +91,7 @@ export default function App() {
         <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
         <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
         <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
+        <Drawer.Screen options={{ headerShown: false }} name="CategoryScreen" component={CategoryScreen} />
       </Drawer.Navigator>
     );
   };
@@ -101,6 +106,43 @@ export default function App() {
               name="AddActivityRolesScreen"
               component={AddActivityRolesScreen}
               options={{
+                headerTitle: "Add Activity Roles",
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: {
+                  color: theme.colors.textLight,
+                },
+                headerTintColor: theme.colors.textLight,
+              }}
+            />
+            <Stack.Screen
+              name="AddServicesScreen"
+              component={AddServicesScreen}
+              options={{
+                headerTitle: "Add Services",
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: {
+                  color: theme.colors.textLight,
+                },
+                headerTintColor: theme.colors.textLight,
+              }}
+            />
+            <Stack.Screen
+              name="AddUnitOfSalesScreen"
+              component={AddUnitOfSalesScreen}
+              options={{
+                headerTitle: "Add Unit of Sales",
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: {
+                  color: theme.colors.textLight,
+                },
+                headerTintColor: theme.colors.textLight,
+              }}
+            />
+            <Stack.Screen
+              name="AddCategoryScreen"
+              component={AddCategoryScreen}
+              options={{
+                headerTitle: "Add Category",
                 headerStyle: [Styles.primaryBgColor, Styles.height64],
                 headerTitleStyle: {
                   color: theme.colors.textLight,

@@ -12,7 +12,7 @@ import { theme } from "../../theme/apptheme";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const UnitOfSalesScreen = ({ navigation }) => {
+const CategoryScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -26,7 +26,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getunitofsales")
+    Provider.getAll("master/getcategory")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -66,20 +66,21 @@ const UnitOfSalesScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddUnitOfSalesScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddCategoryScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddUnitOfSalesScreen", { type: "edit", fetchData: FetchData, data: {
       id: data.item.id,
-      unitName: data.item.unitName,
+      categoryName: data.item.categoryName,
       display: data.item.display
     } });
   };
@@ -109,7 +110,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Unit Of Sales" />
+      <Header navigation={navigation} title="Category" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -128,4 +129,4 @@ const UnitOfSalesScreen = ({ navigation }) => {
   );
 };
 
-export default UnitOfSalesScreen;
+export default CategoryScreen;
