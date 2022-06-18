@@ -73,7 +73,7 @@ const CategoryScreen = ({ navigation }) => {
           title={data.item.categoryName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="family-tree" />}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}

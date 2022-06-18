@@ -32,7 +32,7 @@ const ActivityRolesScreen = ({ navigation }) => {
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1);
+              k.key = parseInt(i) + 1;
             });
             listData[1](response.data.data);
           }
@@ -77,18 +77,21 @@ const ActivityRolesScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddActivityRolesScreen", { type: "edit", fetchData: FetchData, data: {
-      id: data.item.id,
-      activityRoleName: data.item.activityRoleName,
-      display: data.item.display
-    } });
+    navigation.navigate("AddActivityRolesScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.id,
+        activityRoleName: data.item.activityRoleName,
+        display: data.item.display,
+      },
+    });
   };
 
   const DeleteCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
     Provider.deleteAllParams("master/deleteactivityroles", { ID: data.item.id })
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           setSnackbarText("Item deleted successfully");
           setSnackbarColor(theme.colors.success);
@@ -117,7 +120,22 @@ const ActivityRolesScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <SwipeListView refreshControl={ <RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => {FetchData();}} />} data={listData[0]} disableRightSwipe={true} rightOpenValue={-144} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])} />
+          <SwipeListView
+            refreshControl={
+              <RefreshControl
+                colors={[theme.colors.primary]}
+                refreshing={refreshing}
+                onRefresh={() => {
+                  FetchData();
+                }}
+              />
+            }
+            data={listData[0]}
+            disableRightSwipe={true}
+            rightOpenValue={-144}
+            renderItem={(data) => RenderItems(data)}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])}
+          />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />

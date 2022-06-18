@@ -73,7 +73,6 @@ export default function App() {
                     activeBackgroundColor={theme.colors.primary}
                     inactiveBackgroundColor={theme.colors.backgroundSecondary}
                     onPress={(e) => {
-                      console.log(j.navigation);
                       if (j.navigation !== undefined) {
                         activeIndex = parseInt(i.toString() + l.toString());
                         props.navigation.navigate(j.navigation);

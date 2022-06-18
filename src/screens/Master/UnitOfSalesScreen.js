@@ -65,7 +65,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
           title={data.item.unitName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="scale-unbalanced" />}
         />
       </View>
     );
@@ -90,7 +90,6 @@ const UnitOfSalesScreen = ({ navigation }) => {
 
   const DeleteCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    console.log(data.item.id);
     Provider.deleteAllParams("master/deleteunitofsales", { ID: data.item.id })
       .then((response) => {
         if (response.data.code === 200) {

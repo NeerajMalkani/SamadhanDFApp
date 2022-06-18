@@ -14,7 +14,6 @@ export const ListHeader = ({ headerText }) => {
   );
 };
 export const RenderItems = (data) => {
-  console.log(data);
   return (
     <View style={[Styles.flexRow, Styles.height64, Styles.backgroundColor, Styles.borderBottom1, Styles.flexAlignCenter, Styles.paddingStart16]}>
       <Text style={[Styles.textCenter, { width: 64 }]}>{data.item.key}</Text>

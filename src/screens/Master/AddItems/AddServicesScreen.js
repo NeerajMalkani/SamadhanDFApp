@@ -7,7 +7,6 @@ import { theme } from "../../../theme/apptheme";
 
 const AddServicesScreen = ({ route, navigation }) => {
   const [servicesError, setServicesError] = React.useState(false);
-  console.log(route.params.data);
   const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
@@ -21,10 +20,8 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const InsertServices = () => {
-    console.log(services);
     Provider.create("master/insertservices", { ServiceName: services, Display: checked })
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -61,12 +58,11 @@ const AddServicesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      if(route.params.type === "edit"){
+      if (route.params.type === "edit") {
         UpdateServices();
-      } else{
+      } else {
         InsertServices();
       }
-      
     } else {
       setVisible(true);
     }

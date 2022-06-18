@@ -34,7 +34,6 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
     Provider.create("master/insertunitofsales", { UnitName: name + " / " + conversion, Display: checked })
       .then((response) => {
         console.log(name);
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
