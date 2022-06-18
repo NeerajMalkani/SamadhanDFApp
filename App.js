@@ -1,4 +1,4 @@
-import { Provider as PaperProvider, Text } from "react-native-paper";
+import { Provider as PaperProvider, Snackbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -17,12 +17,15 @@ import AddServicesScreen from "./src/screens/Master/AddItems/AddServicesScreen";
 import AddUnitOfSalesScreen from "./src/screens/Master/AddItems/AddUnitOfSalesScreen";
 import CategoryScreen from "./src/screens/Master/CategoryScreen";
 import AddCategoryScreen from "./src/screens/Master/AddItems/AddCategoryScreen";
+import React from "react";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const navigationRef = createNavigationContainerRef();
 export default function App() {
   let activeIndex = 0;
+  const [visible, setVisible] = React.useState(false);
+  const onDismissSnackBar = () => setVisible(false);
 
   const DrawerContent = (props) => {
     return (
@@ -70,9 +73,12 @@ export default function App() {
                     activeBackgroundColor={theme.colors.primary}
                     inactiveBackgroundColor={theme.colors.backgroundSecondary}
                     onPress={(e) => {
+                      console.log(j.navigation);
                       if (j.navigation !== undefined) {
                         activeIndex = parseInt(i.toString() + l.toString());
                         props.navigation.navigate(j.navigation);
+                      } else {
+                        setVisible(true);
                       }
                     }}
                   />
@@ -152,6 +158,9 @@ export default function App() {
             />
           </Stack.Navigator>
         </NavigationContainer>
+        <Snackbar visible={visible} onDismiss={onDismissSnackBar}>
+          Coming soon
+        </Snackbar>
       </PaperProvider>
     </SafeAreaView>
   );

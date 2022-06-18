@@ -24,7 +24,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const onConversionChanged = (text) => {
     setConversion(text);
     if (text.length === 0) {
-        setCError(true);
+      setCError(true);
     } else {
       setCError(false);
     }
@@ -49,7 +49,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("master/updateservices", { ID: route.params.data.id, UnitName: name + " / " + conversion, Display: checked })
+    Provider.create("master/updateunitofsales", { ID: route.params.data.id, UnitName: name + " / " + conversion, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -71,12 +71,11 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      if(route.params.type === "edit"){
+      if (route.params.type === "edit") {
         UpdateData();
-      } else{
+      } else {
         InsertData();
       }
-      
     } else {
       setVisible(true);
     }

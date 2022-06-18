@@ -32,7 +32,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1);
+              k.key = parseInt(i) + 1;
             });
             listData[1](response.data.data);
           }
@@ -77,11 +77,15 @@ const UnitOfSalesScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddUnitOfSalesScreen", { type: "edit", fetchData: FetchData, data: {
-      id: data.item.id,
-      unitName: data.item.unitName,
-      display: data.item.display
-    } });
+    navigation.navigate("AddUnitOfSalesScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.id,
+        unitName: data.item.unitName,
+        display: data.item.display,
+      },
+    });
   };
 
   const DeleteCallback = (data, rowMap) => {
@@ -114,9 +118,23 @@ const UnitOfSalesScreen = ({ navigation }) => {
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : 
-      listData[0].length > 0 ? (
-          <SwipeListView refreshControl={ <RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => {FetchData();}} />} data={listData[0]} disableRightSwipe={true} rightOpenValue={-144} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])} />
+      ) : listData[0].length > 0 ? (
+        <SwipeListView
+          refreshControl={
+            <RefreshControl
+              colors={[theme.colors.primary]}
+              refreshing={refreshing}
+              onRefresh={() => {
+                FetchData();
+              }}
+            />
+          }
+          data={listData[0]}
+          disableRightSwipe={true}
+          rightOpenValue={-144}
+          renderItem={(data) => RenderItems(data)}
+          renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])}
+        />
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}

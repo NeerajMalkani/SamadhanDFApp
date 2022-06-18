@@ -6,19 +6,32 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 
-export default Dropdown = ({ data, label, onSelected, isError }) => {
-  const [selectedMainItem, setSelectedMainItem] = useState("");
+export default Dropdown = ({ data, label, onSelected, isError, selectedItem }) => {
+  const [selectedMainItem, setSelectedMainItem] = useState(selectedItem ? selectedItem : "");
   const [isFocused, setFocused] = useState(false);
   return (
     <SelectDropdown
       data={data}
+      defaultValueByIndex={data.indexOf(selectedItem)}
       dropdownOverlayColor="transparent"
       defaultButtonText={label}
-      buttonStyle={{ width: "100%", height: 56, borderBottomWidth: 1, backgroundColor: "transparent", borderBottomColor: isError ? theme.colors.error : (isFocused ? theme.colors.primary : theme.colors.textfield) }}
+      buttonStyle={{
+        width: "100%",
+        height: 56,
+        borderBottomWidth: 1,
+        backgroundColor: "transparent",
+        borderBottomColor: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textfield,
+      }}
       renderCustomizedButtonChild={(selectedItem) => {
         return (
           <View style={[Styles.flex1, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal8, { justifyContent: "space-between" }]}>
-            <Text style={selectedItem ? { color: isError ? theme.colors.error : (isFocused ? theme.colors.primary : theme.colors.text), fontSize: 16 } : { color: isError ? theme.colors.error : (isFocused ? theme.colors.primary : theme.colors.textSecondary), fontSize: 16 }}>
+            <Text
+              style={
+                selectedItem
+                  ? { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.text, fontSize: 16 }
+                  : { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary, fontSize: 16 }
+              }
+            >
               {selectedItem ? selectedItem : label}
             </Text>
           </View>
@@ -27,7 +40,7 @@ export default Dropdown = ({ data, label, onSelected, isError }) => {
       dropdownStyle={{ marginTop: -38 }}
       rowStyle={{ borderBottomWidth: 1, borderBottomColor: theme.colors.textLightSecondary, backgroundColor: theme.colors.textLight }}
       renderDropdownIcon={(isOpened) => {
-        return <FontAwesome name={isOpened ? "caret-up" : "caret-down"} color={isError ? theme.colors.error : (isFocused ? theme.colors.primary : theme.colors.textSecondary)} size={18} />;
+        return <FontAwesome name={isOpened ? "caret-up" : "caret-down"} color={isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary} size={18} />;
       }}
       onSelect={(selectedItem, index) => {
         setSelectedMainItem(selectedItem);
