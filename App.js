@@ -108,8 +108,8 @@ export default function App() {
       const value = await AsyncStorage.getItem("isLogin");
       console.log(value);
       if (value !== null && value === "true") {
-        navigationRef.navigate("Home");
-        //navigationRef.dispatch(StackActions.replace("Home", "Login"));
+        //navigationRef.navigate("Home");
+        navigationRef.dispatch(StackActions.replace("Home", "Login"));
       }
     } catch (error) {
       // Error retrieving data
