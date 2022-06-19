@@ -244,47 +244,49 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.padding16, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} />
-        <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} />
-        <TextInput mode="flat" label="Category Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-        <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
-        <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
-        <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Unit of Sales</Subheading>
-        <View style={[Styles.flexRow, { flexWrap: "wrap" }]}>
-          {unitOfSalesData.map((k, i) => {
-            return (
-              <Checkbox.Item
-                key={i}
-                label={k.unitName}
-                color={theme.colors.primary}
-                status={k.isChecked ? "checked" : "unchecked"}
-                onPress={() => {
-                  let temp = unitOfSalesData.map((u) => {
-                    if (k.id === u.id) {
-                      return { ...u, isChecked: !u.isChecked };
-                    }
-                    return u;
-                  });
-                  setUnitOfSalesData(temp);
-                }}
-              />
-            );
-          })}
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding16]}>
+          <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} />
+          <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} />
+          <TextInput mode="flat" label="Category Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
+          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
+          <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Unit of Sales</Subheading>
+          <View style={[Styles.flexRow, { flexWrap: "wrap" }]}>
+            {unitOfSalesData.map((k, i) => {
+              return (
+                <Checkbox.Item
+                  key={i}
+                  label={k.unitName}
+                  color={theme.colors.primary}
+                  status={k.isChecked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    let temp = unitOfSalesData.map((u) => {
+                      if (k.id === u.id) {
+                        return { ...u, isChecked: !u.isChecked };
+                      }
+                      return u;
+                    });
+                    setUnitOfSalesData(temp);
+                  }}
+                />
+              );
+            })}
+          </View>
+          <View style={{ paddingTop: 24, width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              color={theme.colors.primary}
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          </View>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
+            SAVE
+          </Button>
         </View>
-        <View style={{ paddingTop: 24, width: 160 }}>
-          <Checkbox.Item
-            label="Display"
-            color={theme.colors.primary}
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
-        </View>
-        <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
-          SAVE
-        </Button>
       </ScrollView>
     </View>
   );

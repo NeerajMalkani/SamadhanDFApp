@@ -58,12 +58,11 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      if(route.params.type === "edit"){
+      if (route.params.type === "edit") {
         UpdateActivityName();
-      } else{
+      } else {
         InsertActivityName();
       }
-      
     } else {
       setVisible(true);
     }
@@ -71,21 +70,23 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.padding16, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
-        <View style={{ paddingTop: 24, width: 160 }}>
-          <Checkbox.Item
-            label="Display"
-            color={theme.colors.primary}
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding16]}>
+          <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
+          <View style={{ paddingTop: 24, width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              color={theme.colors.primary}
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          </View>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateActivityName}>
+            SAVE
+          </Button>
         </View>
-        <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateActivityName}>
-          SAVE
-        </Button>
       </ScrollView>
     </View>
   );

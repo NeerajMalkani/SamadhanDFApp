@@ -1,12 +1,20 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-import { faBell } from "@fortawesome/free-solid-svg-icons/faBell";
+import { faSignOut } from "@fortawesome/free-solid-svg-icons/faSignOut";
 import { theme } from "../theme/apptheme";
 import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
+import { StackActions } from "@react-navigation/native";
 
 const Header = ({ navigation, title }) => {
+  _storeData = async () => {
+    try {
+      await AsyncStorage.removeItem("isLogin");
+    } catch (error) {
+      // Error saving data
+    }
+  };
   return (
     <View style={[Styles.height64, Styles.paddingHorizontal16, Styles.flexAlignCenter, Styles.primaryBgColor, Styles.flexRow, { justifyContent: "space-between" }]}>
       <TouchableNativeFeedback>
@@ -16,8 +24,14 @@ const Header = ({ navigation, title }) => {
       </TouchableNativeFeedback>
       <Title style={[Styles.textColorWhite, Styles.flexGrow, Styles.paddingStart12]}>{title}</Title>
       <TouchableNativeFeedback>
-        <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => {}}>
-          <FontAwesomeIcon icon={faBell} size={24} color={theme.colors.textLight} />
+        <View
+          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+          onTouchStart={() => {
+            _storeData();
+            navigation.dispatch(StackActions.replace("Login", "Home"));
+          }}
+        >
+          <FontAwesomeIcon icon={faSignOut} size={24} color={theme.colors.textLight} />
         </View>
       </TouchableNativeFeedback>
     </View>

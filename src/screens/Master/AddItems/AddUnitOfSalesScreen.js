@@ -82,22 +82,24 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.padding16, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <TextInput mode="flat" label="Unit Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-        <TextInput mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
-        <View style={{ paddingTop: 24, width: 160 }}>
-          <Checkbox.Item
-            label="Display"
-            color={theme.colors.primary}
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding16]}>
+          <TextInput mode="flat" label="Unit Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
+          <View style={{ paddingTop: 24, width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              color={theme.colors.primary}
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          </View>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
+            SAVE
+          </Button>
         </View>
-        <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
-          SAVE
-        </Button>
       </ScrollView>
     </View>
   );

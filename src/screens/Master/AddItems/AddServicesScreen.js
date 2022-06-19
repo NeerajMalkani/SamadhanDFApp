@@ -70,21 +70,23 @@ const AddServicesScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.padding16, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
-        <View style={{ paddingTop: 24, width: 160 }}>
-          <Checkbox.Item
-            label="Display"
-            color={theme.colors.primary}
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding16]}>
+          <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
+          <View style={{ paddingTop: 24, width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              color={theme.colors.primary}
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          </View>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateServices}>
+            SAVE
+          </Button>
         </View>
-        <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateServices}>
-          SAVE
-        </Button>
       </ScrollView>
     </View>
   );

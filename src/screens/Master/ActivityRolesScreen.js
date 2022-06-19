@@ -32,7 +32,7 @@ const ActivityRolesScreen = ({ navigation }) => {
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
-              k.key = parseInt(i) + 1;
+              k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
           }
@@ -121,6 +121,10 @@ const ActivityRolesScreen = ({ navigation }) => {
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <SwipeListView
+            previewDuration={1000}
+            previewOpenValue={-144}
+            previewRowKey="1"
+            previewOpenDelay={1000}
             refreshControl={
               <RefreshControl
                 colors={[theme.colors.primary]}
@@ -131,6 +135,7 @@ const ActivityRolesScreen = ({ navigation }) => {
               />
             }
             data={listData[0]}
+            useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-144}
             renderItem={(data) => RenderItems(data)}

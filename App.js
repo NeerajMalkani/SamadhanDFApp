@@ -1,6 +1,6 @@
 import { Provider as PaperProvider, Snackbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
+import { NavigationContainer, createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
 import { Styles } from "./src/styles/styles";
@@ -18,6 +18,8 @@ import AddUnitOfSalesScreen from "./src/screens/Master/AddItems/AddUnitOfSalesSc
 import CategoryScreen from "./src/screens/Master/CategoryScreen";
 import AddCategoryScreen from "./src/screens/Master/AddItems/AddCategoryScreen";
 import React from "react";
+import LoginScreen from "./src/screens/LoginScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -101,11 +103,27 @@ export default function App() {
     );
   };
 
+  const _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("isLogin");
+      console.log(value);
+      if (value !== null && value === "true") {
+        navigationRef.navigate("Home");
+        //navigationRef.dispatch(StackActions.replace("Home", "Login"));
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
+  _retrieveData();
+
   return (
     <SafeAreaView style={[Styles.flex1]}>
       <PaperProvider theme={theme}>
         <NavigationContainer ref={navigationRef}>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
             <Stack.Screen
               name="AddActivityRolesScreen"
