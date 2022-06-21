@@ -62,6 +62,10 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const NewUser = () => {
+    navigation.navigate("NewUser");
+  }
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
       <Card style={{ marginTop: 120, padding: 24 }}>
@@ -71,6 +75,9 @@ const LoginScreen = ({ navigation }) => {
           <TextInput mode="flat" secureTextEntry={true} label="Password " value={password} onChangeText={onPasswordChanged} style={{ backgroundColor: "white" }} error={passwordError} />
           <Button mode="contained" style={{ marginTop: 24 }} onPress={() => ValidateLogin()}>
             Login
+          </Button>
+          <Button mode="contained" style={{ marginTop: 24 }} onPress={() => NewUser()}>
+            New User
           </Button>
         </Card.Content>
       </Card>

@@ -20,11 +20,29 @@ import AddCategoryScreen from "./src/screens/Master/AddItems/AddCategoryScreen";
 import React from "react";
 import LoginScreen from "./src/screens/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import PhoneSignIn from "./src/screens/NewUserScreen";
+import firebase from 'firebase/compat';
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const navigationRef = createNavigationContainerRef();
 export default function App() {
+
+  try {
+    firebase.initializeApp({
+      apiKey: "AIzaSyBXsAG51gdHSQHbxIkckxeG5c1WYCGTUUU",
+      authDomain: "samadhan-diamond-frames.firebaseapp.com",
+      projectId: "samadhan-diamond-frames",
+      storageBucket: "samadhan-diamond-frames.appspot.com",
+      messagingSenderId: "269513046317",
+      appId: "1:269513046317:web:bde51b6242a4eb3bcd3ba4",
+    });
+  } catch (err) {
+    // ignore app already initialized error in snack
+  }
+  
+
   let activeIndex = 0;
   const [visible, setVisible] = React.useState(false);
   const onDismissSnackBar = () => setVisible(false);
@@ -124,6 +142,7 @@ export default function App() {
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator initialRouteName="Login">
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="NewUser" component={PhoneSignIn} options={{ headerShown: false }} />
             <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
             <Stack.Screen
               name="AddActivityRolesScreen"
