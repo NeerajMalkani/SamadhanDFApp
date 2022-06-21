@@ -63,8 +63,8 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const NewUser = () => {
-    navigation.navigate("NewUser");
-  }
+    navigation.navigate("Signup");
+  };
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
