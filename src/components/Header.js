@@ -6,12 +6,15 @@ import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
 import { StackActions } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header = ({ navigation, title }) => {
   _storeData = async () => {
     try {
-      await AsyncStorage.removeItem("isLogin");
+      await AsyncStorage.setItem("isLogin", "false");
+      navigation.dispatch(StackActions.replace("Login", "Home"));
     } catch (error) {
+      console.log(error);
       // Error saving data
     }
   };
@@ -28,7 +31,6 @@ const Header = ({ navigation, title }) => {
           style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
           onTouchStart={() => {
             _storeData();
-            navigation.dispatch(StackActions.replace("Login", "Home"));
           }}
         >
           <FontAwesomeIcon icon={faSignOut} size={24} color={theme.colors.textLight} />

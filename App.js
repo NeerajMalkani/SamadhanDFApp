@@ -21,10 +21,20 @@ import React from "react";
 import LoginScreen from "./src/screens/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
+import * as Notifications from "expo-notifications";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const navigationRef = createNavigationContainerRef();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function App() {
   let activeIndex = 0;
   const [visible, setVisible] = React.useState(false);
