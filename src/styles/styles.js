@@ -268,6 +268,12 @@ export const Styles = StyleSheet.create({
   padding16: {
     padding: 16,
   },
+  padding24: {
+    padding: 24,
+  },
+  padding32: {
+    padding: 32,
+  },
 
   paddingTop0: {
     paddingTop: 0,
@@ -347,6 +353,32 @@ export const Styles = StyleSheet.create({
     paddingEnd: 16,
   },
 
+  paddingTop24: {
+    paddingTop: 24,
+  },
+  paddingBottom24: {
+    paddingBottom: 24,
+  },
+  paddingStart24: {
+    paddingStart: 24,
+  },
+  paddingEnd24: {
+    paddingEnd: 24,
+  },
+
+  paddingTop32: {
+    paddingTop: 32,
+  },
+  paddingBottom32: {
+    paddingBottom: 32,
+  },
+  paddingStart32: {
+    paddingStart: 32,
+  },
+  paddingEnd32: {
+    paddingEnd: 32,
+  },
+
   paddingVertical0: {
     paddingVertical: 0,
   },
@@ -364,6 +396,12 @@ export const Styles = StyleSheet.create({
   },
   paddingVertical16: {
     paddingVertical: 16,
+  },
+  paddingVertical24: {
+    paddingVertical: 24,
+  },
+  paddingVertical32: {
+    paddingVertical: 32,
   },
 
   paddingHorizontal0: {
@@ -383,6 +421,12 @@ export const Styles = StyleSheet.create({
   },
   paddingHorizontal16: {
     paddingHorizontal: 16,
+  },
+  paddingHorizontal24: {
+    paddingHorizontal: 24,
+  },
+  paddingHorizontal32: {
+    paddingHorizontal: 32,
   },
   /* #endregion */
 
@@ -484,6 +528,32 @@ export const Styles = StyleSheet.create({
     marginEnd: 16,
   },
 
+  marginTop24: {
+    marginTop: 24,
+  },
+  marginBottom24: {
+    marginBottom: 24,
+  },
+  marginStart24: {
+    marginStart: 24,
+  },
+  marginEnd24: {
+    marginEnd: 24,
+  },
+
+  marginTop32: {
+    marginTop: 32,
+  },
+  marginBottom32: {
+    marginBottom: 32,
+  },
+  marginStart32: {
+    marginStart: 32,
+  },
+  marginEnd32: {
+    marginEnd: 32,
+  },
+
   marginVertical0: {
     marginVertical: 0,
   },
@@ -501,6 +571,12 @@ export const Styles = StyleSheet.create({
   },
   marginVertical16: {
     marginVertical: 16,
+  },
+  marginVertical24: {
+    marginVertical: 24,
+  },
+  marginVertical32: {
+    marginVertical: 32,
   },
 
   marginHorizontal0: {
@@ -520,6 +596,12 @@ export const Styles = StyleSheet.create({
   },
   marginHorizontal16: {
     marginHorizontal: 16,
+  },
+  marginHorizontal24: {
+    marginHorizontal: 24,
+  },
+  marginHorizontal32: {
+    marginHorizontal: 32,
   },
   /* #endregion */
 
@@ -669,6 +751,12 @@ export const Styles = StyleSheet.create({
   width80: {
     width: 80,
   },
+  width96: {
+    width: 96,
+  },
+  width104: {
+    width: 104,
+  },
   width50per: {
     width: "50%",
   },
@@ -699,6 +787,12 @@ export const Styles = StyleSheet.create({
   },
   height80: {
     height: 80,
+  },
+  height96: {
+    height: 96,
+  },
+  height104: {
+    height: 104,
   },
   height50per: {
     height: "50%",

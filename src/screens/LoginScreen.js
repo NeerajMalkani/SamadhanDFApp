@@ -1,60 +1,53 @@
-import { View, Image } from "react-native";
-import { Button, Card, Snackbar, TextInput } from "react-native-paper";
+import { View, Image, ScrollView } from "react-native";
+import { Button, Snackbar, TextInput, Title, HelperText, Text } from "react-native-paper";
 import { Styles } from "../styles/styles";
 import React from "react";
 import { theme } from "../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions } from "@react-navigation/native";
+import { communication } from "../utils/communication";
 
 const LoginScreen = ({ navigation }) => {
-  const [visible, setVisible] = React.useState(false);
-  const [error, setError] = React.useState(false);
-  const [name, setName] = React.useState("");
-
-  const [passwordError, setPasswordError] = React.useState(false);
+  const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
+  const [isUsernameInvalid, setIsUsernameInvalid] = React.useState(false);
+  const [username, setUsername] = React.useState("");
+  const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
+  const [loginType, setLoginType] = React.useState(false);
 
-  const onDismissSnackBar = () => setVisible(false);
-
-  const onNameChanged = (text) => {
-    setName(text);
-    if (text.length === 0) {
-      setError(true);
-    } else {
-      setError(false);
+  const onUsernameChanged = (text) => {
+    setUsername(text);
+    if (text.length > 0) {
+      setIsUsernameInvalid(false);
     }
   };
 
   const onPasswordChanged = (text) => {
     setPassword(text);
-    if (text.length === 0) {
-      setPasswordError(true);
-    } else {
-      setPasswordError(false);
+    if (text.length > 0) {
+      setIsPasswordInvalid(false);
     }
   };
 
   _storeData = async () => {
     try {
       await AsyncStorage.setItem("isLogin", "true");
-    } catch (error) {
-      // Error saving data
-    }
+    } catch (error) {}
   };
 
   const ValidateLogin = () => {
     let isValid = true;
-    if (name.length === 0) {
+    if (username.length === 0) {
       isValid = false;
-      setError(true);
+      setIsUsernameInvalid(true);
     }
     if (password.length === 0) {
       isValid = false;
-      setPasswordError(true);
+      setIsPasswordInvalid(true);
     }
     if (isValid) {
-      if (name !== "admin" && password !== "admin@DF") {
-        setVisible(true);
+      if (username !== "admin" && password !== "admin@DF") {
+        setIsSnackbarVisible(true);
       } else {
         _storeData();
         navigation.dispatch(StackActions.replace("Home", "Login"));
@@ -67,21 +60,38 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
-      <Card style={{ marginTop: 120, padding: 24 }}>
-        <Card.Content>
-          <Image source={require("../../assets/icon.png")} style={{ width: 96, height: 96, alignSelf: "center" }} />
-          <TextInput mode="flat" label="Username " value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-          <TextInput mode="flat" secureTextEntry={true} label="Password " value={password} onChangeText={onPasswordChanged} style={{ backgroundColor: "white" }} error={passwordError} />
-          <Button mode="contained" style={{ marginTop: 24 }} onPress={() => ValidateLogin()}>
+    <View style={[Styles.flex1, Styles.backgroundColor]}>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding32, { paddingTop: 80 }]}>
+          <Image source={require("../../assets/icon.png")} style={[Styles.width104, Styles.height104, Styles.flexAlignSelfCenter]} />
+          <Title style={[Styles.padding24, Styles.paddingBottom0, Styles.textCenter]}>{!loginType ? "Login as a User" : "Login as an Admin"}</Title>
+          <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => setLoginType(!loginType)}>
+            Switch to {loginType ? "User" : "Admin"} login
+          </Button>
+          <TextInput mode="flat" dense label={loginType ? "Username" : "Mobile number"} autoComplete={loginType ? "username" : "tel"} keyboardType={loginType ? "default" : "phone-pad"} value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
+          <HelperText type="error" visible={isUsernameInvalid}>
+            {communication.InvalidEmail}
+          </HelperText>
+          <TextInput mode="flat" dense secureTextEntry={true} label="Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
+          <HelperText type="error" visible={isPasswordInvalid}>
+            {communication.InvalidPassowrd}
+          </HelperText>
+          <Button mode="text" uppercase={false} style={[Styles.flexAlignEnd, { marginTop: -12 }]} onPress={() => {}}>
+            Forgot Password?
+          </Button>
+          <Button mode="contained" style={[Styles.marginTop16]} onPress={() => ValidateLogin()}>
             Login
           </Button>
-          <Button mode="contained" style={{ marginTop: 24 }} onPress={() => NewUser()}>
+          <View style={[Styles.marginTop32, Styles.marginHorizontal24, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.borderBottom1]}></View>
+          <View style={[Styles.flexAlignSelfCenter, Styles.flexAlignCenter, Styles.width32, Styles.backgroundColor, { marginTop: -10 }]}>
+            <Text>OR</Text>
+          </View>
+          <Button mode="outlined" style={[Styles.marginTop24]} onPress={() => NewUser()}>
             New User
           </Button>
-        </Card.Content>
-      </Card>
-      <Snackbar visible={visible} onDismiss={onDismissSnackBar} style={{ backgroundColor: theme.colors.error }}>
+        </View>
+      </ScrollView>
+      <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         Username or password incorrect
       </Snackbar>
     </View>
