@@ -49,6 +49,7 @@ const LoginScreen = ({ navigation }) => {
       if (username !== "admin" && password !== "admin@DF") {
         setIsSnackbarVisible(true);
       } else {
+        //do login, call api
         _storeData();
         navigation.dispatch(StackActions.replace("Home", "Login"));
       }
@@ -68,9 +69,18 @@ const LoginScreen = ({ navigation }) => {
           <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => setLoginType(!loginType)}>
             Switch to {loginType ? "User" : "Admin"} login
           </Button>
-          <TextInput mode="flat" dense label={loginType ? "Username" : "Mobile number"} autoComplete={loginType ? "username" : "tel"} keyboardType={loginType ? "default" : "phone-pad"} value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
+          <TextInput
+            mode="flat"
+            dense
+            label={loginType ? "Username" : "Mobile number"}
+            autoComplete={loginType ? "username" : "tel"}
+            keyboardType={loginType ? "default" : "phone-pad"}
+            value={username}
+            onChangeText={onUsernameChanged}
+            error={isUsernameInvalid}
+          />
           <HelperText type="error" visible={isUsernameInvalid}>
-            {communication.InvalidEmail}
+            {communication.InvalidUsername}
           </HelperText>
           <TextInput mode="flat" dense secureTextEntry={true} label="Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>
@@ -82,13 +92,17 @@ const LoginScreen = ({ navigation }) => {
           <Button mode="contained" style={[Styles.marginTop16]} onPress={() => ValidateLogin()}>
             Login
           </Button>
-          <View style={[Styles.marginTop32, Styles.marginHorizontal24, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.borderBottom1]}></View>
-          <View style={[Styles.flexAlignSelfCenter, Styles.flexAlignCenter, Styles.width32, Styles.backgroundColor, { marginTop: -10 }]}>
-            <Text>OR</Text>
-          </View>
-          <Button mode="outlined" style={[Styles.marginTop24]} onPress={() => NewUser()}>
-            New User
-          </Button>
+          {!loginType ? (
+            <View>
+              <View style={[Styles.marginTop32, Styles.marginHorizontal24, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.borderBottom1]}></View>
+              <View style={[Styles.flexAlignSelfCenter, Styles.flexAlignCenter, Styles.width32, Styles.backgroundColor, { marginTop: -10 }]}>
+                <Text>OR</Text>
+              </View>
+              <Button mode="outlined" style={[Styles.marginTop24]} onPress={() => NewUser()}>
+                New User
+              </Button>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>

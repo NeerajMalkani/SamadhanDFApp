@@ -1,4 +1,4 @@
-import { Provider as PaperProvider, Snackbar, Text } from "react-native-paper";
+import { Provider as PaperProvider, Snackbar, Text, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer, createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -119,12 +119,9 @@ export default function App() {
       const value = await AsyncStorage.getItem("isLogin");
       console.log(value);
       if (value !== null && value === "true") {
-        //navigationRef.navigate("Home");
         navigationRef.dispatch(StackActions.replace("Home", "Login"));
       }
-    } catch (error) {
-      // Error retrieving data
-    }
+    } catch (error) {}
   };
 
   _retrieveData();
@@ -135,7 +132,15 @@ export default function App() {
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator initialRouteName="Login">
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+            <Stack.Screen
+              name="Signup"
+              component={SignupScreen}
+              options={{
+                headerTitle: "",
+                headerTintColor: theme.colors.primary,
+                headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} />,
+              }}
+            />
             <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
             <Stack.Screen
               name="AddActivityRolesScreen"
