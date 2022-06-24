@@ -11,6 +11,14 @@ class Provider {
       },
     });
   }
+  getAllParams(resource, params) {
+    return axios.get(`${BASE_URL}/${resource}`, {body: params}, {
+      headers: {
+        "Content-Type": "application/json",
+        XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
+      },
+    });
+  }
   get(resource, id) {
     return axios.get < `${BASE_URL}/${resource}/${id}`;
   }
@@ -52,7 +60,7 @@ class Provider {
         "Content-Type": "application/json",
         XApiKey: "pgH7QzFHJx4w46fI~5Uzi4RvtTwlEXp",
       },
-      data: params
+      data: params,
     });
   }
 }

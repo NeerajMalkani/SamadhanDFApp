@@ -1,21 +1,13 @@
-import { Headline, TextInput, HelperText, Button, Snackbar } from "react-native-paper";
-import { ScrollView, View } from "react-native";
-import { Styles } from "../styles/styles";
 import React from "react";
-import { communication } from "../utils/communication";
+import { ScrollView, View } from "react-native";
+import { Button, Headline, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
-import Provider from "../api/Provider";
-import { StackActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { communication } from "../utils/communication";
 
-const SignupScreen = ({ navigation }) => {
+const ForgotPassword = () => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
-
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-
-  const [isFullNameInvalid, setIsFullNameInvalid] = React.useState(false);
-  const [fullName, setFullName] = React.useState("");
 
   const [isMobileNumberInvalid, setIsMobileNumberInvalid] = React.useState(false);
   const [mobileNumber, setMobileNumber] = React.useState("");
@@ -33,14 +25,6 @@ const SignupScreen = ({ navigation }) => {
 
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
-
-  const onFullNameChanged = (text) => {
-    setFullName(text);
-    setIsSnackbarVisible(false);
-    if (text.length > 0) {
-      setIsFullNameInvalid(false);
-    }
-  };
 
   const onMobileNumberChanged = (text) => {
     setMobileNumber(text);
@@ -115,53 +99,8 @@ const SignupScreen = ({ navigation }) => {
     }
   };
 
-  const StoreUserData = async (user) => {
-    try {
-      await AsyncStorage.setItem("isLogin", "true");
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.dispatch(StackActions.replace("Home", "Signup"));
-    } catch (error) {
-    }
-  };
-
-  const InsertNewUser = () => {
-    setIsButtonLoading(true);
-    const params = {
-      FullName: fullName,
-      Password: password,
-      RoleID: 2,
-      OTP: parseInt(otp1 + otp2 + otp3 + otp4),
-      IsVerified: true,
-      PhoneNumber: mobileNumber,
-      Status: 1,
-    };
-    Provider.create("registration/insertuser", params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          const user = {
-            UserID: response.data.data[0].userID,
-            FullName: response.data.data[0].fullName,
-          };
-          StoreUserData(user);
-        } else {
-          setSnackbarText(communication.NoData);
-          setIsSnackbarVisible(true);
-        }
-        setIsButtonLoading(false);
-      })
-      .catch((e) => {
-        setSnackbarText(e.message);
-        setIsSnackbarVisible(true);
-        setIsButtonLoading(false);
-      });
-  };
-
-  const ValidateSignup = () => {
+  const ValidateForgotPassword = () => {
     let isValid = true;
-    if (fullName.length === 0) {
-      isValid = false;
-      setIsFullNameInvalid(true);
-    }
     if (mobileNumber.length === 0) {
       isValid = false;
       setIsMobileNumberInvalid(true);
@@ -184,7 +123,7 @@ const SignupScreen = ({ navigation }) => {
         setSnackbarText(communication.InvalidPasswordsMatch);
         setIsSnackbarVisible(true);
       } else {
-        InsertNewUser();
+        //do forgot password, call api
       }
     }
   };
@@ -193,11 +132,7 @@ const SignupScreen = ({ navigation }) => {
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, Styles.paddingTop0]}>
-          <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Create New Account</Headline>
-          <TextInput mode="flat" dense label="Full Name" autoComplete="name" value={fullName} onChangeText={onFullNameChanged} error={isFullNameInvalid} />
-          <HelperText type="error" visible={isFullNameInvalid}>
-            {communication.InvalidUsername}
-          </HelperText>
+          <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Forgot Password</Headline>
           <TextInput mode="flat" dense label="Mobile number" autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
           <HelperText type="error" visible={isMobileNumberInvalid}>
             {communication.InvalidMobileNumber}
@@ -214,7 +149,7 @@ const SignupScreen = ({ navigation }) => {
           <HelperText type="error" visible={isOTPInvalid}>
             {communication.InvalidOTP}
           </HelperText>
-          <TextInput mode="flat" dense secureTextEntry={true} label="Enter Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
+          <TextInput mode="flat" dense secureTextEntry={true} label="New Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
           </HelperText>
@@ -222,7 +157,7 @@ const SignupScreen = ({ navigation }) => {
           <HelperText type="error" visible={isConfirmPasswordInvalid}>
             {communication.InvalidConfirmPassowrd}
           </HelperText>
-          <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateSignup()}>
+          <Button mode="contained" style={[Styles.marginTop24]} onPress={() => ValidateForgotPassword()}>
             Submit
           </Button>
         </View>
@@ -234,4 +169,4 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
-export default SignupScreen;
+export default ForgotPassword;

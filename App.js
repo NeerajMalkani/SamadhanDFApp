@@ -22,6 +22,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
 import * as Notifications from "expo-notifications";
+import ForgotPassword from "./src/screens/ForgotPassword";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -117,7 +118,6 @@ export default function App() {
   const _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("isLogin");
-      console.log(value);
       if (value !== null && value === "true") {
         navigationRef.dispatch(StackActions.replace("Home", "Login"));
       }
@@ -135,6 +135,15 @@ export default function App() {
             <Stack.Screen
               name="Signup"
               component={SignupScreen}
+              options={{
+                headerTitle: "",
+                headerTintColor: theme.colors.primary,
+                headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} />,
+              }}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPassword}
               options={{
                 headerTitle: "",
                 headerTintColor: theme.colors.primary,

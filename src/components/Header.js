@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons/faSignOut";
+import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { theme } from "../theme/apptheme";
 import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
@@ -33,7 +33,7 @@ const Header = ({ navigation, title }) => {
             _storeData();
           }}
         >
-          <FontAwesomeIcon icon={faSignOut} size={24} color={theme.colors.textLight} />
+          <FontAwesomeIcon icon={faPowerOff} size={24} color={theme.colors.textLight} />
         </View>
       </TouchableNativeFeedback>
     </View>

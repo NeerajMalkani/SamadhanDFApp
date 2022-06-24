@@ -6,10 +6,13 @@ import { theme } from "../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions } from "@react-navigation/native";
 import { communication } from "../utils/communication";
+import Provider from "../api/Provider";
 
 const LoginScreen = ({ navigation }) => {
+  const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [isUsernameInvalid, setIsUsernameInvalid] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
@@ -17,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
 
   const onUsernameChanged = (text) => {
     setUsername(text);
+    setIsSnackbarVisible(false);
     if (text.length > 0) {
       setIsUsernameInvalid(false);
     }
@@ -24,15 +28,46 @@ const LoginScreen = ({ navigation }) => {
 
   const onPasswordChanged = (text) => {
     setPassword(text);
+    setIsSnackbarVisible(false);
     if (text.length > 0) {
       setIsPasswordInvalid(false);
     }
   };
 
-  _storeData = async () => {
+  StoreUserData = async (user) => {
     try {
       await AsyncStorage.setItem("isLogin", "true");
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+      navigation.dispatch(StackActions.replace("Home", "Login"));
     } catch (error) {}
+  };
+
+  const CheckLogin = () => {
+    setIsButtonLoading(true);
+    const params = {
+      PhoneNumber: parseFloat(username),
+      Password: password,
+    };
+    Provider.getAll(`registration/login?${new URLSearchParams(params)}`)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          const user = {
+            UserID: response.data.data[0].userID,
+            FullName: response.data.data[0].fullName,
+          };
+          StoreUserData(user);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
   };
 
   const ValidateLogin = () => {
@@ -46,18 +81,16 @@ const LoginScreen = ({ navigation }) => {
       setIsPasswordInvalid(true);
     }
     if (isValid) {
-      if (username !== "admin" && password !== "admin@DF") {
-        setIsSnackbarVisible(true);
-      } else {
-        //do login, call api
-        _storeData();
-        navigation.dispatch(StackActions.replace("Home", "Login"));
-      }
+      CheckLogin();
     }
   };
 
   const NewUser = () => {
     navigation.navigate("Signup");
+  };
+
+  const ForgotPassword = () => {
+    navigation.navigate("ForgotPassword");
   };
 
   return (
@@ -69,16 +102,7 @@ const LoginScreen = ({ navigation }) => {
           <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => setLoginType(!loginType)}>
             Switch to {loginType ? "User" : "Admin"} login
           </Button>
-          <TextInput
-            mode="flat"
-            dense
-            label={loginType ? "Username" : "Mobile number"}
-            autoComplete={loginType ? "username" : "tel"}
-            keyboardType={loginType ? "default" : "phone-pad"}
-            value={username}
-            onChangeText={onUsernameChanged}
-            error={isUsernameInvalid}
-          />
+          <TextInput mode="flat" dense label={loginType ? "Username" : "Mobile number"} autoComplete={loginType ? "username" : "tel"} keyboardType={loginType ? "default" : "phone-pad"} value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
           <HelperText type="error" visible={isUsernameInvalid}>
             {communication.InvalidUsername}
           </HelperText>
@@ -86,10 +110,10 @@ const LoginScreen = ({ navigation }) => {
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
           </HelperText>
-          <Button mode="text" uppercase={false} style={[Styles.flexAlignEnd, { marginTop: -12 }]} onPress={() => {}}>
+          <Button mode="text" uppercase={false} style={[Styles.flexAlignEnd, { marginTop: -12 }]} onPress={() => ForgotPassword()}>
             Forgot Password?
           </Button>
-          <Button mode="contained" style={[Styles.marginTop16]} onPress={() => ValidateLogin()}>
+          <Button mode="contained" style={[Styles.marginTop16]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateLogin()}>
             Login
           </Button>
           {!loginType ? (
@@ -106,7 +130,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </ScrollView>
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
-        Username or password incorrect
+        {snackbarText}
       </Snackbar>
     </View>
   );

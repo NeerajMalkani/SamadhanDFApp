@@ -9,10 +9,20 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../components/NoItems";
 import { Styles } from "../../styles/styles";
 import { theme } from "../../theme/apptheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ActivityRolesScreen = ({ navigation }) => {
+  const _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("user");
+      console.log(value);
+    } catch (error) {}
+  };
+
+  _retrieveData();
+
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
