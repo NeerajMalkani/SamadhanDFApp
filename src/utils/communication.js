@@ -1,5 +1,6 @@
 export const communication = {
   InvalidUsername: "Enter a valid username",
+  InvalidFullname: "Enter a valid fullname",
   InvalidPassowrd: "Enter a valid password",
   InvalidConfirmPassowrd: "Enter a valid confirm password",
   InvalidMobileNumber: "Enter a valid mobile number",

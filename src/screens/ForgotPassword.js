@@ -1,13 +1,17 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Headline, HelperText, Snackbar, TextInput } from "react-native-paper";
+import Provider from "../api/Provider";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 import { communication } from "../utils/communication";
+import { ValidateMobile } from "../utils/validations";
 
-const ForgotPassword = () => {
+const ForgotPassword = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const [isMobileNumberInvalid, setIsMobileNumberInvalid] = React.useState(false);
   const [mobileNumber, setMobileNumber] = React.useState("");
@@ -99,9 +103,33 @@ const ForgotPassword = () => {
     }
   };
 
+  const UpdateUser = () => {
+    setIsButtonLoading(true);
+    const params = {
+      PhoneNumber: mobileNumber,
+      Password: password,
+    };
+    Provider.create("registration/updateuser", params)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          navigation.goBack();
+        } else {
+          setSnackbarText(communication.NoData);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
   const ValidateForgotPassword = () => {
     let isValid = true;
-    if (mobileNumber.length === 0) {
+    if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber)) {
       isValid = false;
       setIsMobileNumberInvalid(true);
     }
@@ -109,11 +137,11 @@ const ForgotPassword = () => {
       isValid = false;
       setIsOTPInvalid(true);
     }
-    if (password.length === 0) {
+    if (password.length < 3) {
       isValid = false;
       setIsPasswordInvalid(true);
     }
-    if (confirmPassword.length === 0) {
+    if (confirmPassword.length < 3) {
       isValid = false;
       setIsConfirmPasswordInvalid(true);
     }
@@ -123,7 +151,7 @@ const ForgotPassword = () => {
         setSnackbarText(communication.InvalidPasswordsMatch);
         setIsSnackbarVisible(true);
       } else {
-        //do forgot password, call api
+        UpdateUser();
       }
     }
   };
@@ -157,7 +185,7 @@ const ForgotPassword = () => {
           <HelperText type="error" visible={isConfirmPasswordInvalid}>
             {communication.InvalidConfirmPassowrd}
           </HelperText>
-          <Button mode="contained" style={[Styles.marginTop24]} onPress={() => ValidateForgotPassword()}>
+          <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateForgotPassword()}>
             Submit
           </Button>
         </View>

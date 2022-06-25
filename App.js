@@ -1,4 +1,4 @@
-import { Provider as PaperProvider, Snackbar, Text, Button } from "react-native-paper";
+import { Provider as PaperProvider, Snackbar, Text, BottomNavigation } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer, createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -23,6 +23,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
 import * as Notifications from "expo-notifications";
 import ForgotPassword from "./src/screens/ForgotPassword";
+import DashboardScreen from "./src/screens/DashboardScreen";
+import react from "react";
+import HomeScreen from "./src/screens/HomeScreen";
+import ProfileScreen from "./src/screens/UserProfile";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -35,9 +39,8 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
   }),
 });
-
+let activeIndex = 0;
 export default function App() {
-  let activeIndex = 0;
   const [visible, setVisible] = React.useState(false);
   const onDismissSnackBar = () => setVisible(false);
 
@@ -115,11 +118,27 @@ export default function App() {
     );
   };
 
+  const BottomTabs = () => {
+    const [index, setIndex] = react.useState(0);
+    const [routes] = React.useState([
+      { key: "home", title: "Home", icon: "home" },
+      { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
+      { key: "profile", title: "Profile", icon: "account" },
+    ]);
+    const renderScene = BottomNavigation.SceneMap({
+      home: HomeScreen,
+      dashboard: DrawerNavigator,
+      profile: ProfileScreen
+  
+    });
+    return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} />;
+  };
+
   const _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("isLogin");
       if (value !== null && value === "true") {
-        navigationRef.dispatch(StackActions.replace("Home", "Login"));
+        navigationRef.dispatch(StackActions.replace("HomeStack", "Login"));
       }
     } catch (error) {}
   };
@@ -150,7 +169,17 @@ export default function App() {
                 headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} />,
               }}
             />
-            <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
+            {/* <Stack.Screen name="Dashboard" component={DashboardScreen} options={{
+                headerTitle: "Dashboard",
+                headerLeft:()=>{},
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: {
+                  color: theme.colors.textLight,
+                },
+                headerTintColor: theme.colors.textLight,
+              }} />
+            <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} /> */}
             <Stack.Screen
               name="AddActivityRolesScreen"
               component={AddActivityRolesScreen}

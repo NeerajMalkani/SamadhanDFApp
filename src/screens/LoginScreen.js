@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions } from "@react-navigation/native";
 import { communication } from "../utils/communication";
 import Provider from "../api/Provider";
+import { ValidateMobile } from "../utils/validations";
 
 const LoginScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -38,16 +39,21 @@ const LoginScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem("isLogin", "true");
       await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.dispatch(StackActions.replace("Home", "Login"));
+      navigation.dispatch(StackActions.replace("HomeStack", "Login"));
     } catch (error) {}
   };
 
   const CheckLogin = () => {
     setIsButtonLoading(true);
-    const params = {
-      PhoneNumber: parseFloat(username),
+    let params = {
       Password: password,
+      RoleID: loginType ? 1 : 2,
     };
+    if (loginType) {
+      params.Username = username;
+    } else {
+      params.PhoneNumber = parseFloat(username);
+    }
     Provider.getAll(`registration/login?${new URLSearchParams(params)}`)
       .then((response) => {
         console.log(response.data);
@@ -72,11 +78,11 @@ const LoginScreen = ({ navigation }) => {
 
   const ValidateLogin = () => {
     let isValid = true;
-    if (username.length === 0) {
+    if (username.length === 0 || (!loginType && !ValidateMobile(username))) {
       isValid = false;
       setIsUsernameInvalid(true);
     }
-    if (password.length === 0) {
+    if (password.length < 3) {
       isValid = false;
       setIsPasswordInvalid(true);
     }
@@ -86,10 +92,18 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const NewUser = () => {
+    setUsername("");
+    setPassword("");
+    setIsUsernameInvalid(false);
+    setIsPasswordInvalid(false);
     navigation.navigate("Signup");
   };
 
   const ForgotPassword = () => {
+    setUsername("");
+    setPassword("");
+    setIsUsernameInvalid(false);
+    setIsPasswordInvalid(false);
     navigation.navigate("ForgotPassword");
   };
 
@@ -102,9 +116,18 @@ const LoginScreen = ({ navigation }) => {
           <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => setLoginType(!loginType)}>
             Switch to {loginType ? "User" : "Admin"} login
           </Button>
-          <TextInput mode="flat" dense label={loginType ? "Username" : "Mobile number"} autoComplete={loginType ? "username" : "tel"} keyboardType={loginType ? "default" : "phone-pad"} value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
+          <TextInput
+            mode="flat"
+            dense
+            label={loginType ? "Username" : "Mobile number"}
+            autoComplete={loginType ? "username" : "tel"}
+            keyboardType={loginType ? "default" : "phone-pad"}
+            value={username}
+            onChangeText={onUsernameChanged}
+            error={isUsernameInvalid}
+          />
           <HelperText type="error" visible={isUsernameInvalid}>
-            {communication.InvalidUsername}
+            {loginType ? communication.InvalidUsername : communication.InvalidMobileNumber}
           </HelperText>
           <TextInput mode="flat" dense secureTextEntry={true} label="Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>

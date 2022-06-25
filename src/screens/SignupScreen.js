@@ -7,6 +7,7 @@ import { theme } from "../theme/apptheme";
 import Provider from "../api/Provider";
 import { StackActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ValidateFullName, ValidateMobile } from "../utils/validations";
 
 const SignupScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -119,7 +120,7 @@ const SignupScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem("isLogin", "true");
       await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.dispatch(StackActions.replace("Home", "Signup"));
+      navigation.dispatch(StackActions.replace("HomeStack", "Signup"));
     } catch (error) {
     }
   };
@@ -158,11 +159,11 @@ const SignupScreen = ({ navigation }) => {
 
   const ValidateSignup = () => {
     let isValid = true;
-    if (fullName.length === 0) {
+    if (fullName.length === 0 || !ValidateFullName(fullName)) {
       isValid = false;
       setIsFullNameInvalid(true);
     }
-    if (mobileNumber.length === 0) {
+    if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber)) {
       isValid = false;
       setIsMobileNumberInvalid(true);
     }
@@ -170,11 +171,11 @@ const SignupScreen = ({ navigation }) => {
       isValid = false;
       setIsOTPInvalid(true);
     }
-    if (password.length === 0) {
+    if (password.length < 3) {
       isValid = false;
       setIsPasswordInvalid(true);
     }
-    if (confirmPassword.length === 0) {
+    if (confirmPassword.length < 3) {
       isValid = false;
       setIsConfirmPasswordInvalid(true);
     }
@@ -196,7 +197,7 @@ const SignupScreen = ({ navigation }) => {
           <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Create New Account</Headline>
           <TextInput mode="flat" dense label="Full Name" autoComplete="name" value={fullName} onChangeText={onFullNameChanged} error={isFullNameInvalid} />
           <HelperText type="error" visible={isFullNameInvalid}>
-            {communication.InvalidUsername}
+            {communication.InvalidFullname}
           </HelperText>
           <TextInput mode="flat" dense label="Mobile number" autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
           <HelperText type="error" visible={isMobileNumberInvalid}>
