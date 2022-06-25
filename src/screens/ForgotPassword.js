@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Keyboard } from "react-native";
 import { Button, Headline, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../api/Provider";
 import { Styles } from "../styles/styles";
@@ -108,14 +108,14 @@ const ForgotPassword = ({ navigation }) => {
     const params = {
       PhoneNumber: mobileNumber,
       Password: password,
+      OTP: parseInt(otp1 + otp2 + otp3 + otp4),
     };
-    Provider.create("registration/updateuser", params)
+    Provider.create("registration/updateuserpassword", params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           navigation.goBack();
         } else {
-          setSnackbarText(communication.NoData);
+          setSnackbarText(communication.InvalidMobileNotExists);
           setIsSnackbarVisible(true);
         }
         setIsButtonLoading(false);
@@ -128,6 +128,7 @@ const ForgotPassword = ({ navigation }) => {
   };
 
   const ValidateForgotPassword = () => {
+    Keyboard.dismiss();
     let isValid = true;
     if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber)) {
       isValid = false;

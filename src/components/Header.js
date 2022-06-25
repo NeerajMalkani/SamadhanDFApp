@@ -5,14 +5,21 @@ import { theme } from "../theme/apptheme";
 import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
-import { StackActions } from "@react-navigation/native";
+import { DrawerActions, StackActions } from "@react-navigation/native";
+import { NavigationActions } from "react-navigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header = ({ navigation, title }) => {
   _storeData = async () => {
     try {
       await AsyncStorage.setItem("isLogin", "false");
-      navigation.dispatch(StackActions.replace("Login", "Home"));
+      navigation.dispatch(StackActions.replace("Login"));
+      // navigation.navigate("Login");
+      // const resetAction = NavigationActions.reset({
+      //   index: 0,
+      //   actions: [NavigationActions.navigate({ routeName: "Login" })],
+      // });
+      // navigation.dispatch(resetAction);
     } catch (error) {
       console.log(error);
       // Error saving data
@@ -21,7 +28,12 @@ const Header = ({ navigation, title }) => {
   return (
     <View style={[Styles.height64, Styles.paddingHorizontal16, Styles.flexAlignCenter, Styles.primaryBgColor, Styles.flexRow, { justifyContent: "space-between" }]}>
       <TouchableNativeFeedback>
-        <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.toggleDrawer()}>
+        <View
+          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+          onTouchStart={() => {
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          }}
+        >
           <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
         </View>
       </TouchableNativeFeedback>

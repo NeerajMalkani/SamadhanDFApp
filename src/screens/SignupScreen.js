@@ -1,5 +1,5 @@
 import { Headline, TextInput, HelperText, Button, Snackbar } from "react-native-paper";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Keyboard } from "react-native";
 import { Styles } from "../styles/styles";
 import React from "react";
 import { communication } from "../utils/communication";
@@ -121,8 +121,7 @@ const SignupScreen = ({ navigation }) => {
       await AsyncStorage.setItem("isLogin", "true");
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack", "Signup"));
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const InsertNewUser = () => {
@@ -142,6 +141,7 @@ const SignupScreen = ({ navigation }) => {
           const user = {
             UserID: response.data.data[0].userID,
             FullName: response.data.data[0].fullName,
+            RoleID: response.data.data[0].roleID,
           };
           StoreUserData(user);
         } else {
@@ -158,6 +158,7 @@ const SignupScreen = ({ navigation }) => {
   };
 
   const ValidateSignup = () => {
+    Keyboard.dismiss();
     let isValid = true;
     if (fullName.length === 0 || !ValidateFullName(fullName)) {
       isValid = false;

@@ -1,9 +1,10 @@
-export const MenuItems = [
+export const MenuItemsAdmin = [
   {
     title: "Master",
     icon: "diamond-stone",
     type: "accordian",
     index: 1,
+    roleID: 1,
     items: [
       {
         title: "Activity",
@@ -72,6 +73,7 @@ export const MenuItems = [
     icon: "account-group-outline",
     type: "accordian",
     index: 2,
+    roleID: 1,
     items: [
       {
         title: "Pending",
@@ -82,13 +84,13 @@ export const MenuItems = [
       {
         title: "Approved",
         type: "accordian",
-        index: 20,
+        index: 21,
         //navigation: "ApprovedScreen",
       },
       {
         title: "Declined",
         type: "accordian",
-        index: 20,
+        index: 22,
         //navigation: "DeclinedScreen",
       },
     ],
@@ -98,6 +100,7 @@ export const MenuItems = [
     icon: "tag-outline",
     type: "accordian",
     index: 3,
+    roleID: 1,
     items: [
       {
         title: "Work Floor",
@@ -136,6 +139,7 @@ export const MenuItems = [
     icon: "format-list-bulleted",
     type: "accordian",
     index: 4,
+    roleID: 1,
     items: [
       {
         title: "General Enquiry",
@@ -148,6 +152,30 @@ export const MenuItems = [
         type: "accordian",
         index: 41,
         //navigation: "BOQEnquiryScreen",
+      },
+    ],
+  },
+];
+
+export const MenuItemsGeneralUser = [
+  {
+    title: "Brands & Prodcuts",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 1,
+    roleID: 2,
+    items: [
+      {
+        title: "Image Gallery",
+        type: "accordian",
+        index: 10,
+        navigation: "ImageGalleryScreen",
+      },
+      {
+        title: "Your Estimations",
+        type: "accordian",
+        index: 11,
+        navigation: "YourEstimationsScreen",
       },
     ],
   },

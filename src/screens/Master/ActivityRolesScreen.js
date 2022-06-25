@@ -9,20 +9,10 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../components/NoItems";
 import { Styles } from "../../styles/styles";
 import { theme } from "../../theme/apptheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ActivityRolesScreen = ({ navigation }) => {
-  const _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("user");
-      console.log(value);
-    } catch (error) {}
-  };
-
-  _retrieveData();
-
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -71,12 +61,7 @@ const ActivityRolesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item
-          title={data.item.activityRoleName}
-          titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
-        />
+        <List.Item title={data.item.activityRoleName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
       </View>
     );
   };

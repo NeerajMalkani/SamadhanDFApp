@@ -1,4 +1,4 @@
-import { View, Image, ScrollView } from "react-native";
+import { View, Image, ScrollView, Keyboard } from "react-native";
 import { Button, Snackbar, TextInput, Title, HelperText, Text } from "react-native-paper";
 import { Styles } from "../styles/styles";
 import React from "react";
@@ -39,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem("isLogin", "true");
       await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.dispatch(StackActions.replace("HomeStack", "Login"));
+      navigation.dispatch(StackActions.replace("HomeStack"));
     } catch (error) {}
   };
 
@@ -56,11 +56,11 @@ const LoginScreen = ({ navigation }) => {
     }
     Provider.getAll(`registration/login?${new URLSearchParams(params)}`)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           const user = {
             UserID: response.data.data[0].userID,
             FullName: response.data.data[0].fullName,
+            RoleID: response.data.data[0].roleID,
           };
           StoreUserData(user);
         } else {
@@ -77,6 +77,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const ValidateLogin = () => {
+    Keyboard.dismiss();
     let isValid = true;
     if (username.length === 0 || (!loginType && !ValidateMobile(username))) {
       isValid = false;
@@ -107,25 +108,24 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("ForgotPassword");
   };
 
+  const ChangeRoleType = () => {
+    setUsername("");
+    setPassword("");
+    setIsUsernameInvalid(false);
+    setIsPasswordInvalid(false);
+    setLoginType(!loginType);
+  };
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, { paddingTop: 80 }]}>
           <Image source={require("../../assets/icon.png")} style={[Styles.width104, Styles.height104, Styles.flexAlignSelfCenter]} />
           <Title style={[Styles.padding24, Styles.paddingBottom0, Styles.textCenter]}>{!loginType ? "Login as a User" : "Login as an Admin"}</Title>
-          <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => setLoginType(!loginType)}>
+          <Button mode="text" uppercase={false} style={[Styles.flexAlignCenter, Styles.paddingBottom16]} onPress={() => ChangeRoleType()}>
             Switch to {loginType ? "User" : "Admin"} login
           </Button>
-          <TextInput
-            mode="flat"
-            dense
-            label={loginType ? "Username" : "Mobile number"}
-            autoComplete={loginType ? "username" : "tel"}
-            keyboardType={loginType ? "default" : "phone-pad"}
-            value={username}
-            onChangeText={onUsernameChanged}
-            error={isUsernameInvalid}
-          />
+          <TextInput mode="flat" dense label={loginType ? "Username" : "Mobile number"} autoComplete={loginType ? "username" : "tel"} keyboardType={loginType ? "default" : "phone-pad"} value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
           <HelperText type="error" visible={isUsernameInvalid}>
             {loginType ? communication.InvalidUsername : communication.InvalidMobileNumber}
           </HelperText>

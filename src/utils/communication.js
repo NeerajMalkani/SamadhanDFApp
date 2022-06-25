@@ -7,6 +7,7 @@ export const communication = {
   InvalidOTP: "Enter a valid OTP",
   InvalidMobileBeforeOTP: "Enter mobile number to get the OTP",
   InvalidPasswordsMatch: "Passwords do not match",
+  InvalidMobileNotExists: "Your mobile number does not exist in our database",
 
   InvalidUserNotExists: "The credentials provided are incorrect. Try again",
 
