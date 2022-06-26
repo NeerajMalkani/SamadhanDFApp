@@ -62,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
             FullName: response.data.data[0].fullName,
             RoleID: response.data.data[0].roleID,
           };
-          StoreUserData(user);
+          StoreUserData(user, navigation);
         } else {
           setSnackbarText(communication.InvalidUserNotExists);
           setIsSnackbarVisible(true);

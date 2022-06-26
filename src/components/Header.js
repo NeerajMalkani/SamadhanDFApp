@@ -6,23 +6,15 @@ import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
 import { DrawerActions, StackActions } from "@react-navigation/native";
-import { NavigationActions } from "react-navigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header = ({ navigation, title }) => {
-  _storeData = async () => {
+  const LogoutUser = async () => {
     try {
       await AsyncStorage.setItem("isLogin", "false");
       navigation.dispatch(StackActions.replace("Login"));
-      // navigation.navigate("Login");
-      // const resetAction = NavigationActions.reset({
-      //   index: 0,
-      //   actions: [NavigationActions.navigate({ routeName: "Login" })],
-      // });
-      // navigation.dispatch(resetAction);
     } catch (error) {
       console.log(error);
-      // Error saving data
     }
   };
   return (
@@ -42,7 +34,7 @@ const Header = ({ navigation, title }) => {
         <View
           style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
           onTouchStart={() => {
-            _storeData();
+            LogoutUser();
           }}
         >
           <FontAwesomeIcon icon={faPowerOff} size={24} color={theme.colors.textLight} />

@@ -23,14 +23,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
 import ForgotPassword from "./src/screens/ForgotPassword";
 import react from "react";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/UserProfile";
 import ImageGalleryScreen from "./src/screens/BrandAndProducts/ImageGalleryScreen";
 import YourEstimationsScreen from "./src/screens/BrandAndProducts/YourEstimationsScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const navigationRef = createNavigationContainerRef();
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -56,11 +55,9 @@ export default function App() {
       if (value) {
         switch (JSON.parse(value).RoleID) {
           case 1:
-            console.log("1");
             menuItems = [...MenuItemsAdmin];
             break;
           case 2:
-            console.log("2");
             menuItems = [...MenuItemsGeneralUser];
             break;
         }
