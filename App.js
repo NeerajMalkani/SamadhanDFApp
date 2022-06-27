@@ -1,13 +1,13 @@
 import { Provider as PaperProvider, Snackbar, Text, BottomNavigation } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
 import { Styles } from "./src/styles/styles";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
-import { View } from "react-native";
+import { LogBox, View } from "react-native";
 import { MenuItemsAdmin, MenuItemsGeneralUser } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Master/ServicesScreen";
@@ -23,46 +23,61 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
 import ForgotPassword from "./src/screens/ForgotPassword";
 import react from "react";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/UserProfile";
 import ImageGalleryScreen from "./src/screens/BrandAndProducts/ImageGalleryScreen";
 import YourEstimationsScreen from "./src/screens/BrandAndProducts/YourEstimationsScreen";
+import { useStateIfMounted } from "use-state-if-mounted";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const navigationRef = createNavigationContainerRef();
+
+LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component"]);
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
   const [roleID, setRoleID] = React.useState(0);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useStateIfMounted(0);
+
   let menuItems = [];
 
   const onDismissSnackBar = () => setVisible(false);
 
-  const CheckUserLogin = async () => {
+  useEffect(() => {
+    let isMounted = true;
+    AsyncStorage.getItem("isLogin").then((value) => {
+      if (isMounted) {
+        if (value !== null && value === "true") {
+          setIsLoggedIn(1);
+        } else {
+          setIsLoggedIn(2);
+        }
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [isLoggedIn]);
+
+  const GetRoleID = async () => {
     try {
-      const value = await AsyncStorage.getItem("isLogin");
-      if (value !== null && value === "true") {
-        setIsLoggedIn(true);
+      const value = await AsyncStorage.getItem("user");
+      if (value) {
+        switch (JSON.parse(value).RoleID) {
+          case 1:
+            menuItems = [...MenuItemsAdmin];
+            break;
+          case 2:
+            menuItems = [...MenuItemsGeneralUser];
+            break;
+        }
+        setRoleID(JSON.parse(value).RoleID);
       }
     } catch (error) {}
   };
-  CheckUserLogin();
-
-  AsyncStorage.getItem("user").then((value) => {
-    if (value) {
-      switch (JSON.parse(value).RoleID) {
-        case 1:
-          menuItems = [...MenuItemsAdmin];
-          break;
-        case 2:
-          menuItems = [...MenuItemsGeneralUser];
-          break;
-      }
-      setRoleID(JSON.parse(value).RoleID);
-    }
-  });
+  useEffect(() => {
+    GetRoleID();
+  }, [roleID]);
 
   let activeIndex = 0;
   const DrawerContent = (props) => {
@@ -149,7 +164,7 @@ export default function App() {
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        GetRoleID();
+        //GetRoleID();
       });
       return unsubscribe;
     }, [navigation]);
@@ -167,36 +182,40 @@ export default function App() {
     return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} />;
   };
 
+  const CreateStacks = () => {
+    if (isLoggedIn === 1) {
+      return (
+        <Stack.Navigator initialRouteName="HomeStack">
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
+          <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+        </Stack.Navigator>
+      );
+    } else if (isLoggedIn === 2) {
+      return (
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
+          <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+        </Stack.Navigator>
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={[Styles.flex1]}>
       <PaperProvider theme={theme}>
-        {roleID === 0 ? null : (
-          <NavigationContainer ref={navigationRef}>
-            {isLoggedIn ? (
-              <Stack.Navigator initialRouteName="HomeStack">
-                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
-                <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              </Stack.Navigator>
-            ) : (
-              <Stack.Navigator initialRouteName="Login">
-                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
-                <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-                <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              </Stack.Navigator>
-            )}
-          </NavigationContainer>
-        )}
+        {roleID === -1 ? null : <NavigationContainer ref={navigationRef}>{CreateStacks()}</NavigationContainer>}
         <Snackbar visible={visible} onDismiss={onDismissSnackBar}>
           Coming soon
         </Snackbar>

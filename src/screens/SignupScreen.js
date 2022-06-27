@@ -132,6 +132,7 @@ const SignupScreen = ({ navigation }) => {
       RoleID: 2,
       OTP: parseInt(otp1 + otp2 + otp3 + otp4),
       IsVerified: true,
+      IsActive: true,
       PhoneNumber: mobileNumber,
       Status: 1,
     };
@@ -142,6 +143,7 @@ const SignupScreen = ({ navigation }) => {
             UserID: response.data.data[0].userID,
             FullName: response.data.data[0].fullName,
             RoleID: response.data.data[0].roleID,
+            RoleName: response.data.data[0].roleID == 1 ? "Admin" : "General User", //TBC
           };
           StoreUserData(user);
         } else {

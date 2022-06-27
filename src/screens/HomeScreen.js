@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { ActivityIndicator, Avatar, Button, Card, Headline, Subheading, Text, Title } from "react-native-paper";
+import { ActivityIndicator, Avatar, Button, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { Styles } from "../styles/styles";
@@ -9,33 +9,37 @@ import { theme } from "../theme/apptheme";
 import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
+import { communication } from "../utils/communication";
 
 export const navigationRef = createNavigationContainerRef();
 
 const HomeScreen = () => {
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [userName, setUserName] = React.useState("");
-  const [roleID, setRoleID] = React.useState("");
+  const [userRoleName, setUserRoleName] = React.useState("");
   const [userCountData, setUserCountData] = React.useState([]);
   const [totalUsers, setTotalUsers] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [roleName, setRoleName] = React.useState("");
+  const [userId, setUserID] = React.useState(0);
+  const [switchRoleNames, setSwitchRoleNames] = React.useState(false);
+  const [errorRole, setErrorRole] = React.useState(false);
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
   const GetUserDetails = async () => {
     try {
       const value = await AsyncStorage.getItem("user");
       if (value) {
-        switch (JSON.parse(value).RoleID) {
-          case 1:
-            setRoleID("Admin");
-            break;
-          case 2:
-            setRoleID("General User");
-            break;
-        }
-        setUserName(JSON.parse(value).FullName);
+        const parsedUser = JSON.parse(value);
+        setUserRoleName(parsedUser.RoleName);
+        setUserName(parsedUser.FullName);
+        setUserID(parsedUser.UserID);
       }
     } catch (error) {}
   };
-  GetUserDetails();
+
   const LogoutUser = async () => {
     try {
       await AsyncStorage.setItem("isLogin", "false");
@@ -44,24 +48,22 @@ const HomeScreen = () => {
       console.log(error);
     }
   };
+
   const GetUserCount = () => {
     Provider.getAll("registration/getusers")
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          if (response.data.data[0].generalUsers === null) {
-            response.data.data[0].generalUsers = 0;
-          }
-          if (response.data.data[0].dealers === null) {
-            response.data.data[0].dealers = 0;
-          }
-          if (response.data.data[0].contractors === null) {
-            response.data.data[0].contractors = 0;
-          }
-          if (response.data.data[0].architects === null) {
-            response.data.data[0].architects = 0;
-          }
-          setTotalUsers(response.data.data[0].generalUsers + response.data.data[0].dealers + response.data.data[0].contractors + response.data.data[0].architects);
+          let totalUserCount = 0;
+          response.data.data.map((k) => {
+            totalUserCount += parseInt(k.roleCount);
+          });
+          setTotalUsers(totalUserCount);
           setUserCountData(response.data.data);
+          let switchRolesData = [];
+          response.data.data.map((data) => {
+            data.roleName !== "General User" ? switchRolesData.push(data.roleName) : null;
+          });
+          setSwitchRoleNames(switchRolesData);
         }
         setIsLoading(false);
       })
@@ -69,11 +71,54 @@ const HomeScreen = () => {
         setIsLoading(false);
       });
   };
+
   React.useEffect(() => {
+    GetUserDetails();
     GetUserCount();
   }, []);
+
+  const showDialog = () => setIsDialogVisible(true);
+
+  const hideDialog = () => setIsDialogVisible(false);
+
   const onRoleSelected = (role) => {
+    setErrorRole(false);
     setRoleName(role);
+  };
+
+  const ValidateSwitchRole = () => {
+    if (roleName.length === 0) {
+      setErrorRole(true);
+    } else {
+      showDialog();
+    }
+  };
+
+  const UpdateUserRole = () => {
+    hideDialog();
+    setIsButtonLoading(true);
+    const params = {
+      UserID: userId,
+      RoleID: userCountData.filter((el) => {
+        return el.roleName === roleName;
+      })[0].roleID,
+    };
+    Provider.create("registration/updateuserrole", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setUserRoleName(roleName);
+          GetUserCount();
+        } else {
+          setSnackbarText(communication.NoData);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
   };
 
   return (
@@ -82,7 +127,7 @@ const HomeScreen = () => {
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
           <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userName}</Title>
-          <Text style={[Styles.textTertiaryColor, { marginTop: -4 }]}>{roleID}</Text>
+          <Text style={[Styles.textTertiaryColor, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
         <TouchableNativeFeedback>
           <View
@@ -101,51 +146,44 @@ const HomeScreen = () => {
         </View>
       ) : (
         <ScrollView>
-          {roleID === "General User" ? (
+          {userRoleName === "General User" ? (
             <View>
               <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
               <View style={[Styles.paddingHorizontal16]}>
-                <Dropdown label="SELECT" data={["Dealer", "Contractor", "Architect"]} onSelected={onRoleSelected} selectedItem={roleName} />
-                <Button mode="contained" style={[Styles.marginTop12]}>
+                <Dropdown label="SELECT" data={switchRoleNames} onSelected={onRoleSelected} isError={errorRole} selectedItem={roleName} />
+                <Button mode="contained" style={[Styles.marginTop12]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSwitchRole}>
                   Switch
                 </Button>
               </View>
+              <Portal>
+                <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                  <Dialog.Title>Confirmation</Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph>Do you really want to switch your role to {roleName}? If OK, then your active role will get automatically changed</Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+                    <Button onPress={UpdateUserRole}>Ok</Button>
+                    <Button onPress={hideDialog}>Cancel</Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
             </View>
           ) : null}
           <Title style={[Styles.padding16, Styles.paddingBottom0]}>Total Users ({totalUsers})</Title>
           <View style={[Styles.flexRow, Styles.padding8, Styles.flexAlignStart, Styles.flexWrap]}>
-            <View style={[Styles.width50per, Styles.padding4]}>
-              <Card>
-                <Card.Content>
-                  <Subheading>Dealers</Subheading>
-                  <Headline>{userCountData[0].dealers}</Headline>
-                </Card.Content>
-              </Card>
-            </View>
-            <View style={[Styles.width50per, Styles.padding4]}>
-              <Card>
-                <Card.Content>
-                  <Subheading>Contractors</Subheading>
-                  <Headline>{userCountData[0].contractors}</Headline>
-                </Card.Content>
-              </Card>
-            </View>
-            <View style={[Styles.width50per, Styles.padding4]}>
-              <Card>
-                <Card.Content>
-                  <Subheading>General Users</Subheading>
-                  <Headline>{userCountData[0].generalUsers}</Headline>
-                </Card.Content>
-              </Card>
-            </View>
-            <View style={[Styles.width50per, Styles.padding4]}>
-              <Card>
-                <Card.Content>
-                  <Subheading>Architects</Subheading>
-                  <Headline>{userCountData[0].architects}</Headline>
-                </Card.Content>
-              </Card>
-            </View>
+            {userCountData.map((k, i) => {
+              //
+              return (
+                <View key={i} style={[Styles.width50per, Styles.padding4]}>
+                  <Card>
+                    <Card.Content>
+                      <Subheading>{k.roleName}s</Subheading>
+                      <Headline>{k.roleCount}</Headline>
+                    </Card.Content>
+                  </Card>
+                </View>
+              );
+            })}
           </View>
           <Title style={[Styles.paddingHorizontal16]}>Image Gallery</Title>
           <View style={[Styles.padding16, { height: 240 }]}>
@@ -153,6 +191,9 @@ const HomeScreen = () => {
           </View>
         </ScrollView>
       )}
+      <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

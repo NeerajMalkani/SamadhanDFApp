@@ -61,6 +61,7 @@ const LoginScreen = ({ navigation }) => {
             UserID: response.data.data[0].userID,
             FullName: response.data.data[0].fullName,
             RoleID: response.data.data[0].roleID,
+            RoleName: response.data.data[0].roleName,
           };
           StoreUserData(user, navigation);
         } else {
