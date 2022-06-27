@@ -23,13 +23,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignupScreen from "./src/screens/SignupScreen";
 import ForgotPassword from "./src/screens/ForgotPassword";
 import react from "react";
-import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
+import HomeScreen from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/UserProfile";
 import ImageGalleryScreen from "./src/screens/BrandAndProducts/ImageGalleryScreen";
 import YourEstimationsScreen from "./src/screens/BrandAndProducts/YourEstimationsScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+const navigationRef = createNavigationContainerRef();
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -49,25 +50,19 @@ export default function App() {
   };
   CheckUserLogin();
 
-  const GetRoleID = async () => {
-    try {
-      const value = await AsyncStorage.getItem("user");
-      if (value) {
-        switch (JSON.parse(value).RoleID) {
-          case 1:
-            menuItems = [...MenuItemsAdmin];
-            break;
-          case 2:
-            menuItems = [...MenuItemsGeneralUser];
-            break;
-        }
-        setRoleID(JSON.parse(value).RoleID);
+  AsyncStorage.getItem("user").then((value) => {
+    if (value) {
+      switch (JSON.parse(value).RoleID) {
+        case 1:
+          menuItems = [...MenuItemsAdmin];
+          break;
+        case 2:
+          menuItems = [...MenuItemsGeneralUser];
+          break;
       }
-    } catch (error) {}
-  };
-  useEffect(() => {
-    GetRoleID();
-  }, [roleID]);
+      setRoleID(JSON.parse(value).RoleID);
+    }
+  });
 
   let activeIndex = 0;
   const DrawerContent = (props) => {
