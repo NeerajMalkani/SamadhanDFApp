@@ -6,7 +6,7 @@ const ImageGalleryScreen = ({ navigation }) => {
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Image Gallery" />
-      <Text>IG</Text>
+      <Text>Coming Soon</Text>
     </View>
   );
 };
