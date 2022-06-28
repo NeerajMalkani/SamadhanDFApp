@@ -1,26 +1,37 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Checkbox, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import Provider from "../../../../api/Provider";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 
-const AddActivityRolesScreen = ({ route, navigation }) => {
-  const [activityNameError, setActivityNameError] = React.useState(false);
-  const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+const AddUnitOfSalesScreen = ({ route, navigation }) => {
+  const [error, setError] = React.useState(false);
+  const [errorC, setCError] = React.useState(false);
+  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
+  const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
-  const onActivityNameChanged = (text) => {
+  const onNameChanged = (text) => {
+    setName(text);
     if (text.length === 0) {
-      setActivityNameError(true);
+      setError(true);
     } else {
-      setActivityName(text);
-      setActivityNameError(false);
+      setError(false);
     }
   };
 
-  const InsertActivityName = () => {
-    Provider.create("master/insertactivityroles", { ActivityRoleName: activityName, Display: checked })
+  const onConversionChanged = (text) => {
+    setConversion(text);
+    if (text.length === 0) {
+      setCError(true);
+    } else {
+      setCError(false);
+    }
+  };
+
+  const InsertData = () => {
+    Provider.create("master/insertunitofsales", { UnitName: name + " / " + conversion, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -35,8 +46,8 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateActivityName = () => {
-    Provider.create("master/updateactivityroles", { ID: route.params.data.id, ActivityRoleName: activityName, Display: checked })
+  const UpdateData = () => {
+    Provider.create("master/updateunitofsales", { ID: route.params.data.id, UnitName: name + " / " + conversion, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -51,17 +62,17 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateActivityName = () => {
+  const ValidateData = () => {
     let isValid = true;
-    if (activityName.length === 0) {
-      setActivityNameError(true);
+    if (name.length === 0) {
+      setError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateActivityName();
+        UpdateData();
       } else {
-        InsertActivityName();
+        InsertData();
       }
     } else {
       setVisible(true);
@@ -72,7 +83,8 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
+          <TextInput mode="flat" label="Unit Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -83,7 +95,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateActivityName}>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
             SAVE
           </Button>
         </View>
@@ -92,4 +104,4 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddActivityRolesScreen;
+export default AddUnitOfSalesScreen;
