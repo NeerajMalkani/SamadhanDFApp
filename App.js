@@ -8,7 +8,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@rea
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
 import { LogBox, View } from "react-native";
-import { MenuItemsAdmin, MenuItemsGeneralUser } from "./src/json/MenuItems";
+import { MenuItemsAdmin, MenuItemsDealer, MenuItemsGeneralUser } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Master/UnitOfSalesScreen";
@@ -69,6 +69,9 @@ export default function App() {
             break;
           case 2:
             menuItems = [...MenuItemsGeneralUser];
+            break;
+          case 4:
+            menuItems = [...MenuItemsDealer];
             break;
         }
         setRoleID(JSON.parse(value).RoleID);
@@ -164,7 +167,7 @@ export default function App() {
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        //GetRoleID();
+        GetRoleID();
       });
       return unsubscribe;
     }, [navigation]);

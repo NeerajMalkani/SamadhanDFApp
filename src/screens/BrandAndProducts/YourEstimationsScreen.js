@@ -6,7 +6,7 @@ const YourEstimationsScreen = ({ navigation }) => {
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Your Estimations" />
-      <Text>YE</Text>
+      <Text>Coming Soon</Text>
     </View>
   );
 };

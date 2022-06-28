@@ -180,3 +180,144 @@ export const MenuItemsGeneralUser = [
     ],
   },
 ];
+
+export const MenuItemsDealer = [
+  {
+    title: "Company Profile",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 1,
+    roleID: 4,
+    items: [
+      {
+        title: "Basic Details",
+        type: "accordian",
+        index: 10,
+        navigation: "BasicDetailsScreen",
+      },
+      {
+        title: "My Services",
+        type: "accordian",
+        index: 11,
+        navigation: "MyServicesScreen",
+      },
+      {
+        title: "Presentation",
+        type: "accordian",
+        index: 12,
+        navigation: "BuyerCategoryScreen",
+      },
+      {
+        title: "My Services",
+        type: "accordian",
+        index: 13,
+        navigation: "MyServicesScreen",
+      },
+    ],
+  },
+  {
+    title: "Brand & Product",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 2,
+    roleID: 4,
+    items: [
+      {
+        title: "Brand Master",
+        type: "accordian",
+        index: 20,
+        navigation: "BrandMasterScreen",
+      },
+      {
+        title: "Barnd",
+        type: "accordian",
+        index: 21,
+        navigation: "BarndScreen",
+      },
+      {
+        title: "Product",
+        type: "accordian",
+        index: 22,
+        navigation: "ProductScreen",
+      },
+    ],
+  },
+  {
+    title: "Employee",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 3,
+    roleID: 4,
+    items: [
+      {
+        title: "Employee New / List",
+        type: "accordian",
+        index: 30,
+        navigation: "AddEmployeeScreen",
+      },
+      {
+        title: "Employee Report",
+        type: "accordian",
+        index: 31,
+        navigation: "EmployeeReportScreen",
+      },
+    ],
+  },
+  {
+    title: "Organization",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 4,
+    roleID: 4,
+    items: [
+      {
+        title: "Add Department",
+        type: "accordian",
+        index: 40,
+        navigation: "AddDepartmentScreen",
+      },
+      {
+        title: "Add Branch",
+        type: "accordian",
+        index: 41,
+        navigation: "AddBranchScreen",
+      },
+      {
+        title: "Add Designation",
+        type: "accordian",
+        index: 42,
+        navigation: "AddDesignationScreen",
+      },
+    ],
+  },
+  {
+    title: "Client",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 5,
+    roleID: 4,
+    items: [
+      {
+        title: "Client List",
+        type: "accordian",
+        index: 50,
+        navigation: "ClientListScreen",
+      },
+    ],
+  },
+  {
+    title: "Purchase",
+    icon: "gift-outline",
+    type: "accordian",
+    index: 6,
+    roleID: 4,
+    items: [
+      {
+        title: "Create Purchase Order",
+        type: "accordian",
+        index: 60,
+        navigation: "CreatePurchaseOrderScreen",
+      },
+    ],
+  },
+];
