@@ -13,8 +13,9 @@ export default Dropdown = ({ data, label, onSelected, isError, selectedItem }) =
     <SelectDropdown
       data={data}
       defaultValueByIndex={data.indexOf(selectedItem)}
-      dropdownOverlayColor="transparent"
+      dropdownOverlayColor="rgba(0,0,0,0.2)"
       defaultButtonText={label}
+      disabled={data.length === 0 ? true : false}
       buttonStyle={{
         width: "100%",
         height: 56,
@@ -37,7 +38,7 @@ export default Dropdown = ({ data, label, onSelected, isError, selectedItem }) =
           </View>
         );
       }}
-      dropdownStyle={{ marginTop: -38 }}
+      dropdownStyle={{ marginTop: -38, elevation: 23 }}
       rowStyle={{ borderBottomWidth: 1, borderBottomColor: theme.colors.textLightSecondary, backgroundColor: theme.colors.textLight }}
       renderDropdownIcon={(isOpened) => {
         return <FontAwesome name={isOpened ? "caret-up" : "caret-down"} color={isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary} size={18} />;

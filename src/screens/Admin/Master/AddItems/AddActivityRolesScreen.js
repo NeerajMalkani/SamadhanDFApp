@@ -1,22 +1,22 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, TextInput } from "react-native-paper";
+import { Button, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { communication } from "../../../../utils/communication";
 
 const AddActivityRolesScreen = ({ route, navigation }) => {
   const [activityNameError, setActivityNameError] = React.useState(false);
   const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+
   const onActivityNameChanged = (text) => {
-    if (text.length === 0) {
-      setActivityNameError(true);
-    } else {
-      setActivityName(text);
-      setActivityNameError(false);
-    }
+    setActivityName(text);
+    setActivityNameError(false);
   };
 
   const InsertActivityName = () => {
@@ -26,12 +26,14 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
           route.params.fetchData("add");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -42,12 +44,14 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
           route.params.fetchData("update");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -63,8 +67,6 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       } else {
         InsertActivityName();
       }
-    } else {
-      setVisible(true);
     }
   };
 
@@ -73,6 +75,9 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
+          <HelperText type="error" visible={activityNameError}>
+            {communication.InvalidActivityName}
+          </HelperText>
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -88,6 +93,9 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </ScrollView>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

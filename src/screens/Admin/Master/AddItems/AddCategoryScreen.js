@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, Subheading, Text, TextInput } from "react-native-paper";
+import { Button, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { communication } from "../../../../utils/communication";
 
 const AddCategoryScreen = ({ route, navigation }) => {
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -32,8 +33,11 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getactivityroles")
+    Provider.getAll("master/getmainactivities")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -167,12 +171,14 @@ const AddCategoryScreen = ({ route, navigation }) => {
           route.params.fetchData("add");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -202,12 +208,14 @@ const AddCategoryScreen = ({ route, navigation }) => {
           route.params.fetchData("update");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -231,14 +239,27 @@ const AddCategoryScreen = ({ route, navigation }) => {
       setSNError(true);
       isValid = false;
     }
+    if (hsn.length === 0) {
+      setHSNError(true);
+      isValid = false;
+    }
+    if (gst.length === 0) {
+      setGSTError(true);
+      isValid = false;
+    }
+    const objUnitOfSales = unitOfSalesData.find((el) => {
+      return el.isChecked;
+    });
+    if(!objUnitOfSales){
+      setUNError(true);
+      isValid = false;
+    }
     if (isValid) {
       if (route.params.type === "edit") {
         UpdateData();
       } else {
         InsertData();
       }
-    } else {
-      //setVisible(true);
     }
   };
 
@@ -247,10 +268,25 @@ const AddCategoryScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} />
+          <HelperText type="error" visible={errorAN}>
+            {communication.InvalidActivityName}
+          </HelperText>
           <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} />
+          <HelperText type="error" visible={errorSN}>
+            {communication.InvalidServiceName}
+          </HelperText>
           <TextInput mode="flat" label="Category Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <HelperText type="error" visible={error}>
+            {communication.InvalidCategoryName}
+          </HelperText>
           <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
+          <HelperText type="error" visible={hsnError}>
+            {communication.InvalidHSNSAC}
+          </HelperText>
           <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
+          <HelperText type="error" visible={gstError}>
+            {communication.InvalidGSTRate}
+          </HelperText>
           <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Unit of Sales</Subheading>
           <View style={[Styles.flexRow, { flexWrap: "wrap" }]}>
             {unitOfSalesData.map((k, i) => {
@@ -261,6 +297,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
                   color={theme.colors.primary}
                   status={k.isChecked ? "checked" : "unchecked"}
                   onPress={() => {
+                    setUNError(false);
                     let temp = unitOfSalesData.map((u) => {
                       if (k.id === u.id) {
                         return { ...u, isChecked: !u.isChecked };
@@ -272,6 +309,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
                 />
               );
             })}
+            <HelperText type="error" visible={errorUN}>
+              {communication.InvalidUnitName}
+            </HelperText>
           </View>
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
@@ -288,6 +328,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </ScrollView>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

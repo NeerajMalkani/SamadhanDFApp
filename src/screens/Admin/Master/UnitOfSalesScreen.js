@@ -87,29 +87,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
       },
     });
   };
-
-  const DeleteCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    Provider.deleteAllParams("master/deleteunitofsales", { ID: data.item.id })
-      .then((response) => {
-        if (response.data.code === 200) {
-          setSnackbarText("Item deleted successfully");
-          setSnackbarColor(theme.colors.success);
-          setSnackbarVisible(true);
-          FetchData();
-        } else {
-          setSnackbarText("Something went wrong");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      });
-  };
-
+  
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Unit Of Sales" />
@@ -120,7 +98,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
       ) : listData[0].length > 0 ? (
         <SwipeListView
           previewDuration={1000}
-          previewOpenValue={-144}
+          previewOpenValue={-72}
           previewRowKey="1"
           previewOpenDelay={1000}
           refreshControl={
@@ -134,9 +112,9 @@ const UnitOfSalesScreen = ({ navigation }) => {
           }
           data={listData[0]}
           disableRightSwipe={true}
-          rightOpenValue={-144}
+          rightOpenValue={-72}
           renderItem={(data) => RenderItems(data)}
-          renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [DeleteCallback, EditCallback])}
+          renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
         />
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />

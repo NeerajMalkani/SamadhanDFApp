@@ -1,22 +1,22 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, TextInput } from "react-native-paper";
+import { Button, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { communication } from "../../../../utils/communication";
 
 const AddServicesScreen = ({ route, navigation }) => {
   const [servicesError, setServicesError] = React.useState(false);
   const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+
   const onServicesChanged = (text) => {
     setServices(text);
-    if (text.length === 0) {
-      setServicesError(true);
-    } else {
-      setServicesError(false);
-    }
+    setServicesError(false);
   };
 
   const InsertServices = () => {
@@ -26,12 +26,14 @@ const AddServicesScreen = ({ route, navigation }) => {
           route.params.fetchData("add");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -42,12 +44,14 @@ const AddServicesScreen = ({ route, navigation }) => {
           route.params.fetchData("update");
           navigation.goBack();
         } else {
-          //Show snackbar
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
         }
       })
       .catch((e) => {
         console.log(e);
-        //Show snackbar
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
       });
   };
 
@@ -63,8 +67,6 @@ const AddServicesScreen = ({ route, navigation }) => {
       } else {
         InsertServices();
       }
-    } else {
-      setVisible(true);
     }
   };
 
@@ -73,6 +75,9 @@ const AddServicesScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
+          <HelperText type="error" visible={servicesError}>
+            {communication.InvalidServiceName}
+          </HelperText>
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -88,6 +93,9 @@ const AddServicesScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </ScrollView>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

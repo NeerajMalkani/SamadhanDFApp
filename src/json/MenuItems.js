@@ -31,10 +31,10 @@ export const MenuItemsAdmin = [
         navigation: "CategoryScreen",
       },
       {
-        title: "Products",
+        title: "Product",
         type: "accordian",
         index: 14,
-        //navigation: "ProductsScreen",
+        navigation: "ProductScreen",
       },
       {
         title: "Service Product",
