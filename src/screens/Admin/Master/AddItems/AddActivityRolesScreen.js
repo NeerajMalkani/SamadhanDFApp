@@ -1,26 +1,26 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Checkbox, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import Provider from "../../../../api/Provider";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 
-const AddServicesScreen = ({ route, navigation }) => {
-  const [servicesError, setServicesError] = React.useState(false);
-  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+const AddActivityRolesScreen = ({ route, navigation }) => {
+  const [activityNameError, setActivityNameError] = React.useState(false);
+  const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
-  const onServicesChanged = (text) => {
-    setServices(text);
+  const onActivityNameChanged = (text) => {
     if (text.length === 0) {
-      setServicesError(true);
+      setActivityNameError(true);
     } else {
-      setServicesError(false);
+      setActivityName(text);
+      setActivityNameError(false);
     }
   };
 
-  const InsertServices = () => {
-    Provider.create("master/insertservices", { ServiceName: services, Display: checked })
+  const InsertActivityName = () => {
+    Provider.create("master/insertactivityroles", { ActivityRoleName: activityName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -35,8 +35,8 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateServices = () => {
-    Provider.create("master/updateservices", { ID: route.params.data.id, ServiceName: services, Display: checked })
+  const UpdateActivityName = () => {
+    Provider.create("master/updateactivityroles", { ID: route.params.data.id, ActivityRoleName: activityName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -51,17 +51,17 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateServices = () => {
+  const ValidateActivityName = () => {
     let isValid = true;
-    if (services.length === 0) {
-      setServicesError(true);
+    if (activityName.length === 0) {
+      setActivityNameError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateServices();
+        UpdateActivityName();
       } else {
-        InsertServices();
+        InsertActivityName();
       }
     } else {
       setVisible(true);
@@ -72,7 +72,7 @@ const AddServicesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
+          <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -83,7 +83,7 @@ const AddServicesScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateServices}>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateActivityName}>
             SAVE
           </Button>
         </View>
@@ -92,4 +92,4 @@ const AddServicesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddServicesScreen;
+export default AddActivityRolesScreen;

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Checkbox, Subheading, Text, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import Dropdown from "../../../components/Dropdown";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import Provider from "../../../../api/Provider";
+import Dropdown from "../../../../components/Dropdown";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 
 const AddCategoryScreen = ({ route, navigation }) => {
   const [activityFullData, setActivityFullData] = React.useState([]);

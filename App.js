@@ -8,15 +8,17 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@rea
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
 import { LogBox, View } from "react-native";
-import { MenuItemsAdmin, MenuItemsDealer, MenuItemsGeneralUser } from "./src/json/MenuItems";
-import ActivityRolesScreen from "./src/screens/Master/ActivityRolesScreen";
-import ServicesScreen from "./src/screens/Master/ServicesScreen";
-import UnitOfSalesScreen from "./src/screens/Master/UnitOfSalesScreen";
-import AddActivityRolesScreen from "./src/screens/Master/AddItems/AddActivityRolesScreen";
-import AddServicesScreen from "./src/screens/Master/AddItems/AddServicesScreen";
-import AddUnitOfSalesScreen from "./src/screens/Master/AddItems/AddUnitOfSalesScreen";
-import CategoryScreen from "./src/screens/Master/CategoryScreen";
-import AddCategoryScreen from "./src/screens/Master/AddItems/AddCategoryScreen";
+import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser } from "./src/json/MenuItems";
+import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
+import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
+import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
+import AddActivityRolesScreen from "./src/screens/Admin/Master/AddItems/AddActivityRolesScreen";
+import AddServicesScreen from "./src/screens/Admin/Master/AddItems/AddServicesScreen";
+import AddUnitOfSalesScreen from "./src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen";
+import CategoryScreen from "./src/screens/Admin/Master/CategoryScreen";
+import AddCategoryScreen from "./src/screens/Admin/Master/AddItems/AddCategoryScreen";
+import ImageGalleryScreen from "./src/screens/GeneralUser/BrandAndProducts/ImageGalleryScreen";
+import YourEstimationsScreen from "./src/screens/GeneralUser/BrandAndProducts/YourEstimationsScreen";
 import React, { useEffect } from "react";
 import LoginScreen from "./src/screens/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,9 +27,11 @@ import ForgotPassword from "./src/screens/ForgotPassword";
 import react from "react";
 import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/UserProfile";
-import ImageGalleryScreen from "./src/screens/BrandAndProducts/ImageGalleryScreen";
-import YourEstimationsScreen from "./src/screens/BrandAndProducts/YourEstimationsScreen";
 import { useStateIfMounted } from "use-state-if-mounted";
+import BasicDetailsDealerScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
+import MyServicesDealerScreen from "./src/screens/Dealer/CompanyProfile/MyServicesScreen";
+import BasicDetailsContractorScreen from "./src/screens/Contractor/CompanyProfile/BasicDetailsScreen";
+import MyServicesContractorScreen from "./src/screens/Contractor/CompanyProfile/MyServicesScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -36,7 +40,7 @@ LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
-  const [roleID, setRoleID] = React.useState(0);
+  const roleID = React.useState(0);
   const [isLoggedIn, setIsLoggedIn] = useStateIfMounted(0);
 
   let menuItems = [];
@@ -70,24 +74,27 @@ export default function App() {
           case 2:
             menuItems = [...MenuItemsGeneralUser];
             break;
+          case 3:
+            menuItems = [...MenuItemsContractor];
+            break;
           case 4:
             menuItems = [...MenuItemsDealer];
             break;
         }
-        setRoleID(JSON.parse(value).RoleID);
+        roleID[1](JSON.parse(value).RoleID);
       }
     } catch (error) {}
   };
   useEffect(() => {
     GetRoleID();
-  }, [roleID]);
+  }, [roleID[0]]);
 
   let activeIndex = 0;
   const DrawerContent = (props) => {
     return (
       <DrawerContentScrollView {...props}>
         {menuItems.map((k, i) => {
-          return k.roleID === roleID ? (
+          return k.roleID === roleID[0] ? (
             k.type === "item" ? (
               <DrawerItem
                 key={i}
@@ -134,7 +141,7 @@ export default function App() {
                           activeIndex = parseInt(i.toString() + l.toString());
                           props.navigation.navigate(j.navigation);
                         } else {
-                          setVisible(true);
+                          //setVisible(true);
                         }
                       }}
                     />
@@ -149,19 +156,38 @@ export default function App() {
   };
 
   const DrawerNavigator = () => {
-    return roleID == 1 ? (
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ActivityRolesScreen">
-        <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
-        <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
-        <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
-        <Drawer.Screen options={{ headerShown: false }} name="CategoryScreen" component={CategoryScreen} />
-      </Drawer.Navigator>
-    ) : (
-      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ImageGalleryScreen">
-        <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
-        <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
-      </Drawer.Navigator>
-    );
+    switch (roleID[0]) {
+      case 1:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ActivityRolesScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="CategoryScreen" component={CategoryScreen} />
+          </Drawer.Navigator>
+        );
+      case 2:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ImageGalleryScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
+          </Drawer.Navigator>
+        );
+      case 4:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="BasicDetailsDealerScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
+          </Drawer.Navigator>
+        );
+      case 3:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="BasicDetailsContractorScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsContractorScreen" component={BasicDetailsContractorScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="MyServicesContractorScreen" component={MyServicesContractorScreen} />
+          </Drawer.Navigator>
+        );
+    }
   };
 
   const BottomTabs = ({ navigation }) => {
@@ -177,11 +203,21 @@ export default function App() {
       { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
       { key: "profile", title: "Profile", icon: "account" },
     ]);
-    const renderScene = BottomNavigation.SceneMap({
-      home: HomeScreen,
-      dashboard: DrawerNavigator,
-      profile: ProfileScreen,
-    });
+    // const renderScene = BottomNavigation.SceneMap({
+    //   home: HomeScreen,
+    //   dashboard: DrawerNavigator,
+    //   profile: ProfileScreen,
+    // });
+    const renderScene = ({ route, jumpTo }) => {
+      switch (route.key) {
+        case "home":
+          return <HomeScreen roleID={GetRoleID} />;
+        case "dashboard":
+          return <DrawerNavigator />;
+        case "profile":
+          return <ProfileScreen />;
+      }
+    };
     return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} />;
   };
 
@@ -218,7 +254,7 @@ export default function App() {
   return (
     <SafeAreaView style={[Styles.flex1]}>
       <PaperProvider theme={theme}>
-        {roleID === -1 ? null : <NavigationContainer ref={navigationRef}>{CreateStacks()}</NavigationContainer>}
+        {roleID[0] === -1 ? null : <NavigationContainer ref={navigationRef}>{CreateStacks()}</NavigationContainer>}
         <Snackbar visible={visible} onDismiss={onDismissSnackBar}>
           Coming soon
         </Snackbar>

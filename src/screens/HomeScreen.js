@@ -13,11 +13,12 @@ import { communication } from "../utils/communication";
 
 export const navigationRef = createNavigationContainerRef();
 
-const HomeScreen = () => {
+const HomeScreen = ({ roleID }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [userName, setUserName] = React.useState("");
+  const [userFullName, setUserFullName] = React.useState("");
   const [userRoleName, setUserRoleName] = React.useState("");
   const [userCountData, setUserCountData] = React.useState([]);
   const [totalUsers, setTotalUsers] = React.useState(0);
@@ -33,6 +34,7 @@ const HomeScreen = () => {
       const value = await AsyncStorage.getItem("user");
       if (value) {
         const parsedUser = JSON.parse(value);
+        setUserFullName(parsedUser.FullName);
         setUserRoleName(parsedUser.RoleName);
         setUserName(parsedUser.FullName);
         setUserID(parsedUser.UserID);
@@ -94,6 +96,13 @@ const HomeScreen = () => {
     }
   };
 
+  const StoreUserData = async (user) => {
+    try {
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+      roleID();
+    } catch (error) {}
+  };
+
   const UpdateUserRole = () => {
     hideDialog();
     setIsButtonLoading(true);
@@ -108,6 +117,15 @@ const HomeScreen = () => {
         if (response.data && response.data.code === 200) {
           setUserRoleName(roleName);
           GetUserCount();
+          const user = {
+            UserID: userId,
+            FullName: userFullName,
+            RoleID: userCountData.filter((el) => {
+              return el.roleName === roleName;
+            })[0].roleID,
+            RoleName: roleName, //TBC
+          };
+          StoreUserData(user);
         } else {
           setSnackbarText(communication.NoData);
           setIsSnackbarVisible(true);
@@ -185,9 +203,19 @@ const HomeScreen = () => {
               );
             })}
           </View>
-          <Title style={[Styles.paddingHorizontal16]}>Image Gallery</Title>
+          <Title style={[Styles.paddingHorizontal16]}>Sliding Gallery</Title>
           <View style={[Styles.padding16, { height: 240 }]}>
-            <ImageSlider data={[{ img: "https://www.homepictures.in/wp-content/uploads/2019/10/False-Ceiling-Gypsum-Designs-For-Hall-and-Bedrooms-1.jpg" }, { img: "https://macj-abuyerschoice.com/wp-content/uploads/2019/10/Blog-Images.jpg" }, { img: "https://static.wixstatic.com/media/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg/v1/fill/w_600,h_358,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg" }]} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }} autoPlay={true} closeIconColor="#fff" />
+            <ImageSlider
+              data={[
+                { img: "https://www.homepictures.in/wp-content/uploads/2019/10/False-Ceiling-Gypsum-Designs-For-Hall-and-Bedrooms-1.jpg" },
+                { img: "https://macj-abuyerschoice.com/wp-content/uploads/2019/10/Blog-Images.jpg" },
+                { img: "https://static.wixstatic.com/media/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg/v1/fill/w_600,h_358,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg" },
+              ]}
+              timer={10000}
+              activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
+              autoPlay={true}
+              closeIconColor="#fff"
+            />
           </View>
         </ScrollView>
       )}

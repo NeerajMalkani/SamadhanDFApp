@@ -1,37 +1,26 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Checkbox, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import Provider from "../../../../api/Provider";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 
-const AddUnitOfSalesScreen = ({ route, navigation }) => {
-  const [error, setError] = React.useState(false);
-  const [errorC, setCError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
-  const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
+const AddServicesScreen = ({ route, navigation }) => {
+  const [servicesError, setServicesError] = React.useState(false);
+  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
-  const onNameChanged = (text) => {
-    setName(text);
+  const onServicesChanged = (text) => {
+    setServices(text);
     if (text.length === 0) {
-      setError(true);
+      setServicesError(true);
     } else {
-      setError(false);
+      setServicesError(false);
     }
   };
 
-  const onConversionChanged = (text) => {
-    setConversion(text);
-    if (text.length === 0) {
-      setCError(true);
-    } else {
-      setCError(false);
-    }
-  };
-
-  const InsertData = () => {
-    Provider.create("master/insertunitofsales", { UnitName: name + " / " + conversion, Display: checked })
+  const InsertServices = () => {
+    Provider.create("master/insertservices", { ServiceName: services, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -46,8 +35,8 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateData = () => {
-    Provider.create("master/updateunitofsales", { ID: route.params.data.id, UnitName: name + " / " + conversion, Display: checked })
+  const UpdateServices = () => {
+    Provider.create("master/updateservices", { ID: route.params.data.id, ServiceName: services, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -62,17 +51,17 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateData = () => {
+  const ValidateServices = () => {
     let isValid = true;
-    if (name.length === 0) {
-      setError(true);
+    if (services.length === 0) {
+      setServicesError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateData();
+        UpdateServices();
       } else {
-        InsertData();
+        InsertServices();
       }
     } else {
       setVisible(true);
@@ -83,8 +72,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Unit Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-          <TextInput mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
+          <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
           <View style={{ paddingTop: 24, width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -95,7 +83,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
+          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateServices}>
             SAVE
           </Button>
         </View>
@@ -104,4 +92,4 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddUnitOfSalesScreen;
+export default AddServicesScreen;
