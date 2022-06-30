@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Checkbox, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -11,12 +11,14 @@ const AddProductScreen = ({ route, navigation }) => {
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [errorAN, setANError] = React.useState(false);
+  const activityDDRef = useRef({});
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesLabel, setServicesLabel] = React.useState("Select Activity Name");
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [errorSN, setSNError] = React.useState(false);
+  const servicesDDRef = useRef({});
 
   const [categoriesFullData, setCategoriesFullData] = React.useState([]);
   const [categoriesLabel, setCategoriesLabel] = React.useState("Select Service Name");
@@ -97,6 +99,10 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const onActivityNameSelected = (selectedItem) => {
     setActivityName(selectedItem);
+    servicesDDRef.current.reset();
+    setServiceName("");
+    setCategoriesFullData([]);
+    setCategoriesData([]);
     setANError(false);
     setServicesLabel("Service Name");
     FetchServicesFromActivity(selectedItem);
@@ -111,36 +117,30 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
+    setHSN("");
+    setGST("");
     setCNError(false);
   };
 
   const onHSNChanged = (text) => {
     setHSN(text);
-    if (text.length === 0) {
-      setHSNError(true);
-    } else {
-      setHSNError(false);
-    }
+    setHSNError(false);
   };
 
   const onGSTChanged = (text) => {
     setGST(text);
-    if (text.length === 0) {
-      setGSTError(true);
-    } else {
-      setGSTError(false);
-    }
+    setGSTError(false);
   };
 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16, Styles.paddingTop0]}>
-          <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} />
-          <Dropdown label={servicesLabel} data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} />
+          <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} reference={activityDDRef} />
+          <Dropdown label={servicesLabel} data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef}/>
           <Dropdown label={categoriesLabel} data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} />
           <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
-          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]}/>
+          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
         </View>
       </ScrollView>
     </View>
