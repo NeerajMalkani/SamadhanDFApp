@@ -68,9 +68,12 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const FetchServicesFromActivity = (selectedItem) => {
     let params = {
-      ID: route.params.type === "edit" ? route.params.data.activityID : activityFullData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
+      ID:
+        route.params.type === "edit"
+          ? route.params.data.activityID
+          : activityFullData.find((el) => {
+              return el.activityRoleName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -90,9 +93,12 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const FetchCategoriesFromServices = (selectedItem) => {
     let params = {
-      ID: route.params.type === "edit" ? route.params.data.serviceID : servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id,
+      ID:
+        route.params.type === "edit"
+          ? route.params.data.serviceID
+          : servicesFullData.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -112,9 +118,12 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const FetchUnitsFromCategory = (selectedItem) => {
     let params = {
-      ID: route.params.type === "edit" ? route.params.data.categoryID : categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id,
+      ID:
+        route.params.type === "edit"
+          ? route.params.data.categoryID
+          : categoriesFullData.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getunitbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -134,7 +143,7 @@ const AddProductScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     FetchActvityRoles();
-    if(route.params.type === "edit"){
+    if (route.params.type === "edit") {
       FetchServicesFromActivity();
       FetchCategoriesFromServices();
       FetchUnitsFromCategory();
@@ -143,6 +152,11 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const onActivityNameSelected = (selectedItem) => {
     setActivityName(selectedItem);
+    if (route.params.type === "edit") {
+      route.params.data.activityID = activityFullData.find((el) => {
+        return el.activityRoleName === selectedItem;
+      }).id;
+    }
     servicesDDRef.current.reset();
     setServiceName("");
     setCategoriesFullData([]);
@@ -158,6 +172,11 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
+    if (route.params.type === "edit") {
+      route.params.data.serviceID = servicesFullData.find((el) => {
+        return el.serviceName === selectedItem;
+      }).id;
+    }
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setUnitsData([]);
@@ -172,6 +191,11 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
+    if (route.params.type === "edit") {
+      route.params.data.categoryID = categoriesFullData.find((el) => {
+        return el.categoryName === selectedItem;
+      }).id;
+    }
     unitDDRef.current.reset();
     setHSN(
       categoriesFullData.find((el) => {

@@ -78,7 +78,7 @@ const ProductScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    console.log();
+    console.log(unitName);
     navigation.navigate("AddProductScreen", {
       type: "edit",
       fetchData: FetchData,
