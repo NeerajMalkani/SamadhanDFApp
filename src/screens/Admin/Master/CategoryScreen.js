@@ -86,7 +86,7 @@ const CategoryScreen = ({ navigation }) => {
                 setSelectedCategoryName(data.item.categoryName);
                 setServiceName(data.item.serviceName);
                 setHsnsacCode(data.item.hsnsacCode);
-                setGstRate(data.item.gstRate);
+                setGstRate(data.item.gstRate.toFixed(2) + "%");
                 setUnitID(data.item.unitID);
               }}
             />
@@ -116,7 +116,7 @@ const CategoryScreen = ({ navigation }) => {
         unitID: data.item.unitID,
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate,
+        gstRate: data.item.gstRate.toFixed(2),
         display: data.item.display,
       },
     });

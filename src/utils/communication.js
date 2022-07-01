@@ -21,6 +21,7 @@ export const communication = {
   InvalidHSNSAC: "Enter a valid HSN / SAC",
   InvalidGSTRate: "Enter a valid GST Rate",
 
+  InvalidProductName: "Enter a valid Product Name",
 
   InsertError: "Unable to insert item. Please try again",
   UpdateError: "Unable to update item. Please try again",

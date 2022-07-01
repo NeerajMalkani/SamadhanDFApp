@@ -121,29 +121,17 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   const onNameChanged = (text) => {
     setName(text);
-    if (text.length === 0) {
-      setError(true);
-    } else {
-      setError(false);
-    }
+    setError(false);
   };
 
   const onHSNChanged = (text) => {
     setHSN(text);
-    if (text.length === 0) {
-      setHSNError(true);
-    } else {
-      setHSNError(false);
-    }
+    setHSNError(false);
   };
 
   const onGSTChanged = (text) => {
     setGST(text);
-    if (text.length === 0) {
-      setGSTError(true);
-    } else {
-      setGSTError(false);
-    }
+    setGSTError(false);
   };
 
   const InsertData = () => {
@@ -250,7 +238,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
     const objUnitOfSales = unitOfSalesData.find((el) => {
       return el.isChecked;
     });
-    if(!objUnitOfSales){
+    if (!objUnitOfSales) {
       setUNError(true);
       isValid = false;
     }
