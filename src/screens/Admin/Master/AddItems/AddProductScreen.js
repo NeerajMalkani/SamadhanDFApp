@@ -90,7 +90,13 @@ const AddProductScreen = ({ route, navigation }) => {
 
   const FetchCategoriesFromServices = (selectedItem) => {
     let params = {
-      ID:
+      ActivityID:
+        route.params.type === "edit"
+          ? route.params.data.activityID
+          : activityFullData.find((el) => {
+              return el.activityRoleName === acivityName;
+            }).id,
+      ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {

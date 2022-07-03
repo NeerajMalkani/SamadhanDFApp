@@ -28,7 +28,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const [productsFullData, setProductsFullData] = React.useState([]);
   const [productsData, setProductsData] = React.useState([]);
-  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
+  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName : "");
   const [errorPN, setPNError] = React.useState(false);
   const productsDDRef = useRef({});
 
@@ -122,6 +122,9 @@ const AddServiceProductScreen = ({ route, navigation }) => {
             setRUWM("");
             setUnitSelected("");
             setConversionUnitSelected("");
+            setAUOS("");
+            setShortSpec("");
+            setSpec("");
             FetchServicesFromActivity("Contractor", response.data.data);
           }
         }
@@ -131,7 +134,13 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const FetchCategoriesFromServices = (selectedItem) => {
     let params = {
-      ID:
+      ActivityID:
+        route.params.type === "edit"
+          ? route.params.data.activityID
+          : activityFullData.find((el) => {
+              return el.activityRoleName === acivityName;
+            }).id,
+      ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
@@ -156,7 +165,19 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const FetchProductsFromCategory = (selectedItem) => {
     let params = {
-      ID:
+      ActivityID:
+        route.params.type === "edit"
+          ? route.params.data.activityID
+          : activityFullData.find((el) => {
+              return el.activityRoleName === acivityName;
+            }).id,
+      ServiceID:
+        route.params.type === "edit"
+          ? route.params.data.serviceID
+          : servicesFullData.find((el) => {
+              return el.serviceName === serviceName;
+            }).id,
+      CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : categoriesFullData.find((el) => {
@@ -230,6 +251,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setProductsName("");
     setUnitSelected("");
     setConversionUnitSelected("");
+    setAUOS("");
     setSNError(false);
     FetchCategoriesFromServices(selectedItem);
   };
@@ -261,6 +283,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setProductsName("");
     setUnitSelected("");
     setConversionUnitSelected("");
+    setAUOS("");
     FetchProductsFromCategory(selectedItem);
   };
 
@@ -276,6 +299,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setUnitName("");
     setUnitSelected("");
     setConversionUnitSelected("");
+    setAUOS("");
     FetchUnitsFromProductID(selectedItem);
   };
 
@@ -326,71 +350,37 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setErrorS(false);
   };
 
-  const InsertData = () => {
-    // Provider.create("master/insertproduct", {
-    //   ProductName: name,
-    //   ActivityID: activityFullData.find((el) => {
-    //     return el.activityRoleName === acivityName;
-    //   }).id,
-    //   ServiceID: servicesFullData.find((el) => {
-    //     return el.serviceName === serviceName;
-    //   }).id,
-    //   CategoryID: categoriesFullData.find((el) => {
-    //     return el.categoryName && el.categoryName === categoriesName;
-    //   }).id,
-    //   UnitOfSalesID: unitFullData.find((el) => {
-    //     return el.unitName && el.unitName === unitName;
-    //   }).id,
-    //   Display: checked,
-    // })
-    //   .then((response) => {
-    //     if (response.data && response.data.code === 200) {
-    //       route.params.fetchData("add");
-    //       navigation.goBack();
-    //     } else {
-    //       setSnackbarText(communication.InsertError);
-    //       setSnackbarVisible(true);
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     setSnackbarText(communication.NetworkError);
-    //     setSnackbarVisible(true);
-    //   });
-  };
-
   const UpdateData = () => {
-    // Provider.create("master/updateproduct", {
-    //   ProductID: route.params.data.id,
-    //   ProductName: name,
-    //   ActivityID: activityFullData.find((el) => {
-    //     return el.activityRoleName === acivityName;
-    //   }).id,
-    //   ServiceID: servicesFullData.find((el) => {
-    //     return el.serviceName === serviceName;
-    //   }).id,
-    //   CategoryID: categoriesFullData.find((el) => {
-    //     return el.categoryName && el.categoryName === categoriesName;
-    //   }).id,
-    //   UnitOfSalesID: unitFullData.find((el) => {
-    //     return el.unitName && el.unitName === unitName;
-    //   }).id,
-    //   Display: checked,
-    // })
-    //   .then((response) => {
-    //     if (response.data && response.data.code === 200) {
-    //       route.params.fetchData("update");
-    //       navigation.goBack();
-    //     } else {
-    //       setSnackbarText(communication.UpdateError);
-    //       setSnackbarVisible(true);
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     setSnackbarText(communication.NetworkError);
-    //     setSnackbarVisible(true);
-    //   });
+    console.log(
+      productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID
+    );
+    Provider.create("master/updateproduct", {
+      ProductID: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID,
+      RateWithMaterials: rum,
+      RateWithoutMaterials: ruwm,
+      AlternateUnitOfSales: auos,
+      ShortSpecification: shortSpec,
+      Specification: spec,
+      ServiceDisplay: checked,
+    })
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("add");
+          navigation.goBack();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
   };
 
   const ValidateData = () => {
@@ -449,17 +439,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       isValid = false;
     }
 
-    // if (auos.length === 0) {
-    //   setErrorAUOS(true);
-    //   isValid = false;
-    // }
-
     if (isValid) {
-      if (route.params.type === "edit") {
-        UpdateData();
-      } else {
-        InsertData();
-      }
+      UpdateData();
     }
   };
 

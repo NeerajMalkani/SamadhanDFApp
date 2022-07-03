@@ -28,7 +28,6 @@ const ServiceProductScreen = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
   const [activityRoleName, setActivityRoleName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  const [productName, setProductName] = React.useState("");
   const [hsnsacCode, setHsnsacCode] = React.useState("");
   const [gstRate, setGstRate] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
@@ -39,7 +38,7 @@ const ServiceProductScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getserviceProducts")
+    Provider.getAll("master/getserviceproducts")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -106,13 +105,12 @@ const ServiceProductScreen = ({ navigation }) => {
         serviceID: data.item.serviceID,
         unitName: data.item.unitName,
         unitOfSalesID: data.item.unitOfSalesID,
-        serviceProductName: data.item.serviceProductName,
         categoryName: data.item.categoryName,
         productName: data.item.productName,
         categoryID: data.item.categoryID,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate.toFixed(2),
-        display: data.item.display,
+        display: data.item.serviceDisplay,
       },
     });
   };
@@ -121,7 +119,7 @@ const ServiceProductScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.serviceProductName}
+          title={data.item.productName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="toolbox" />}
@@ -133,13 +131,12 @@ const ServiceProductScreen = ({ navigation }) => {
               name="eye"
               onPress={() => {
                 ShowDialog();
-                setSelectedServiceProductName(data.item.serviceProductName);
+                setSelectedServiceProductName(data.item.productName);
                 setActivityRoleName(data.item.activityRoleName);
                 setCategoryName(data.item.categoryName);
                 setServiceName(data.item.serviceName);
                 setHsnsacCode(data.item.hsnsacCode);
                 setGstRate(data.item.gstRate.toFixed(2) + "%");
-                setProductName(data.item.productName);
                 setUnitName(data.item.unitName);
               }}
             />
@@ -196,7 +193,6 @@ const ServiceProductScreen = ({ navigation }) => {
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
-            <List.Item title="Product Name" description={productName} />
             <List.Item title="Unit name" description={unitName} />
           </Dialog.Content>
           <Dialog.Actions>
