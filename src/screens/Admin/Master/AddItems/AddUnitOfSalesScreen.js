@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
@@ -15,6 +15,8 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const ref_input2 = useRef();
 
   const onNameChanged = (text) => {
     setName(text);
@@ -83,31 +85,37 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Unit Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="flat" label="Unit Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
+          <TextInput ref={ref_input2} mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
           <HelperText type="error" visible={errorC}>
             {communication.InvalidUnitConversionUnit}
           </HelperText>
-          <View style={{ paddingTop: 24, width: 160 }}>
+          <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
               color={theme.colors.primary}
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
-            SAVE
-          </Button>
         </View>
       </ScrollView>
+      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <Card.Content>
+          <Button mode="contained" onPress={ValidateData}>
+            SAVE
+          </Button>
+        </Card.Content>
+      </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>

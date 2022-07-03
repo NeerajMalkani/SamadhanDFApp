@@ -6,7 +6,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 
-export default Dropdown = ({ data, label, onSelected, isError, selectedItem, reference }) => {
+export default Dropdown = ({ data, label, onSelected, isError, selectedItem, reference, forceDisable }) => {
   const [isFocused, setFocused] = useState(false);
   return (
     <SelectDropdown
@@ -15,7 +15,7 @@ export default Dropdown = ({ data, label, onSelected, isError, selectedItem, ref
       defaultValueByIndex={data.indexOf(selectedItem)}
       dropdownOverlayColor="rgba(0,0,0,0.2)"
       defaultButtonText={label}
-      disabled={data.length === 0 ? true : false}
+      disabled={forceDisable ? true : data.length === 0 ? true : false}
       buttonStyle={{
         width: "100%",
         height: 56,

@@ -6,21 +6,21 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
-const AddServicesScreen = ({ route, navigation }) => {
-  const [servicesError, setServicesError] = React.useState(false);
-  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+const AddDepartmentScreen = ({ route, navigation }) => {
+  const [departmentNameError, setDepartmentNameError] = React.useState(false);
+  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const onServicesChanged = (text) => {
-    setServices(text);
-    setServicesError(false);
+  const onDepartmentNameChanged = (text) => {
+    setDepartmentName(text);
+    setDepartmentNameError(false);
   };
 
-  const InsertServices = () => {
-    Provider.create("master/insertservices", { ServiceName: services, Display: checked })
+  const InsertDepartmentName = () => {
+    Provider.create("master/insertdepartment", { DepartmentName: departmentName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -37,8 +37,8 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateServices = () => {
-    Provider.create("master/updateservices", { ID: route.params.data.id, ServiceName: services, Display: checked })
+  const UpdateDepartmentName = () => {
+    Provider.create("master/updatedepartment", { ID: route.params.data.id, DepartmentName: departmentName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -55,17 +55,17 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateServices = () => {
+  const ValidateDepartmentName = () => {
     let isValid = true;
-    if (services.length === 0) {
-      setServicesError(true);
+    if (departmentName.length === 0) {
+      setDepartmentNameError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateServices();
+        UpdateDepartmentName();
       } else {
-        InsertServices();
+        InsertDepartmentName();
       }
     }
   };
@@ -74,16 +74,16 @@ const AddServicesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
-          <HelperText type="error" visible={servicesError}>
-            {communication.InvalidServiceName}
+          <TextInput mode="flat" label="Department Name" value={departmentName} onChangeText={onDepartmentNameChanged} style={{ backgroundColor: "white" }} error={departmentNameError} />
+          <HelperText type="error" visible={departmentNameError}>
+            {communication.InvalidDepartmentName}
           </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
-              color={theme.colors.primary}
               position="leading"
               labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+              color={theme.colors.primary}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
@@ -94,7 +94,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateServices}>
+          <Button mode="contained" onPress={ValidateDepartmentName}>
             SAVE
           </Button>
         </Card.Content>
@@ -106,4 +106,4 @@ const AddServicesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddServicesScreen;
+export default AddDepartmentScreen;

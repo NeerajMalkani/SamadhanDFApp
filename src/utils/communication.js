@@ -23,6 +23,13 @@ export const communication = {
 
   InvalidProductName: "Enter a valid Product Name",
 
+  InvalidAlternateUnitOfSales: "Enter a valid Alternate Unit Of Sales",
+  InvalidRateWithMaterials: "Enter a valid Rate / Unit (with materials)",
+  InvalidRateWithoutMaterials: "Enter a valid Rate / Unit (without materials)",
+
+  InvalidDepartmentName: "Enter a valid Department Name",
+  InvalidDesignationName: "Enter a valid Designation Name",
+
   InsertError: "Unable to insert item. Please try again",
   UpdateError: "Unable to update item. Please try again",
   DeleteError: "Unable to delete item. Please try again",

@@ -6,21 +6,21 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
-const AddServicesScreen = ({ route, navigation }) => {
-  const [servicesError, setServicesError] = React.useState(false);
-  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+const AddDesignationScreen = ({ route, navigation }) => {
+  const [designationNameError, setDesignationNameError] = React.useState(false);
+  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const onServicesChanged = (text) => {
-    setServices(text);
-    setServicesError(false);
+  const onDesignationNameChanged = (text) => {
+    setDesignationName(text);
+    setDesignationNameError(false);
   };
 
-  const InsertServices = () => {
-    Provider.create("master/insertservices", { ServiceName: services, Display: checked })
+  const InsertDesignationName = () => {
+    Provider.create("master/insertdesignation", { DesignationName: designationName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -37,8 +37,8 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateServices = () => {
-    Provider.create("master/updateservices", { ID: route.params.data.id, ServiceName: services, Display: checked })
+  const UpdateDesignationName = () => {
+    Provider.create("master/updatedesignation", { ID: route.params.data.id, DesignationName: designationName, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -55,17 +55,17 @@ const AddServicesScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateServices = () => {
+  const ValidateDesignationName = () => {
     let isValid = true;
-    if (services.length === 0) {
-      setServicesError(true);
+    if (designationName.length === 0) {
+      setDesignationNameError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateServices();
+        UpdateDesignationName();
       } else {
-        InsertServices();
+        InsertDesignationName();
       }
     }
   };
@@ -74,9 +74,9 @@ const AddServicesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Service Name" value={services} onChangeText={onServicesChanged} style={{ backgroundColor: "white" }} error={servicesError} />
-          <HelperText type="error" visible={servicesError}>
-            {communication.InvalidServiceName}
+          <TextInput mode="flat" label="Designation Name" value={designationName} onChangeText={onDesignationNameChanged} style={{ backgroundColor: "white" }} error={designationNameError} />
+          <HelperText type="error" visible={designationNameError}>
+            {communication.InvalidDesignationName}
           </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item
@@ -94,7 +94,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateServices}>
+          <Button mode="contained" onPress={ValidateDesignationName}>
             SAVE
           </Button>
         </Card.Content>
@@ -106,4 +106,4 @@ const AddServicesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddServicesScreen;
+export default AddDesignationScreen;

@@ -12,7 +12,7 @@ import { theme } from "../../../theme/apptheme";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const ProductScreen = ({ navigation }) => {
+const ServiceProductScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const [dialogVisible, setDialogVisible] = React.useState(false);
@@ -22,10 +22,11 @@ const ProductScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [selectedProductName, setSelectedProductName] = React.useState("");
+  const [selectedServiceProductName, setSelectedServiceProductName] = React.useState("");
   const [serviceName, setServiceName] = React.useState("");
   const [activityRoleName, setActivityRoleName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
+  const [productName, setProductName] = React.useState("");
   const [hsnsacCode, setHsnsacCode] = React.useState("");
   const [gstRate, setGstRate] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
@@ -36,7 +37,7 @@ const ProductScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getproducts")
+    Provider.getAll("master/getserviceProducts")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -73,25 +74,26 @@ const ProductScreen = ({ navigation }) => {
   const HideDialog = () => setDialogVisible(false);
 
   const AddCallback = () => {
-    navigation.navigate("AddProductScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddServiceProductScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
     console.log(unitName);
-    navigation.navigate("AddProductScreen", {
+    navigation.navigate("AddServiceProductScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.productID,
+        id: data.item.serviceProductID,
         activityRoleName: data.item.activityRoleName,
         activityID: data.item.activityID,
         serviceName: data.item.serviceName,
         serviceID: data.item.serviceID,
         unitName: data.item.unitName,
         unitOfSalesID: data.item.unitOfSalesID,
-        productName: data.item.productName,
+        serviceProductName: data.item.serviceProductName,
         categoryName: data.item.categoryName,
+        productName: data.item.productName,
         categoryID: data.item.categoryID,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate.toFixed(2),
@@ -104,7 +106,7 @@ const ProductScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.productName}
+          title={data.item.serviceProductName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="toolbox" />}
@@ -117,12 +119,13 @@ const ProductScreen = ({ navigation }) => {
               onPress={() => {
                 console.log(data.item);
                 ShowDialog();
-                setSelectedProductName(data.item.productName);
+                setSelectedServiceProductName(data.item.serviceProductName);
                 setActivityRoleName(data.item.activityRoleName);
                 setCategoryName(data.item.categoryName);
                 setServiceName(data.item.serviceName);
                 setHsnsacCode(data.item.hsnsacCode);
                 setGstRate(data.item.gstRate.toFixed(2) + "%");
+                setProductName(data.item.productName);
                 setUnitName(data.item.unitName);
               }}
             />
@@ -134,7 +137,7 @@ const ProductScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Product" />
+      <Header navigation={navigation} title="Service Product" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -169,13 +172,14 @@ const ProductScreen = ({ navigation }) => {
       </Snackbar>
       <Portal>
         <Dialog visible={dialogVisible} onDismiss={HideDialog}>
-          <Dialog.Title>{selectedProductName}</Dialog.Title>
+          <Dialog.Title>{selectedServiceProductName}</Dialog.Title>
           <Dialog.Content>
             <List.Item title="Activity Role Name" description={activityRoleName} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
+            <List.Item title="Product Name" description={productName} />
             <List.Item title="Unit name" description={unitName} />
           </Dialog.Content>
           <Dialog.Actions>
@@ -187,4 +191,4 @@ const ProductScreen = ({ navigation }) => {
   );
 };
 
-export default ProductScreen;
+export default ServiceProductScreen;

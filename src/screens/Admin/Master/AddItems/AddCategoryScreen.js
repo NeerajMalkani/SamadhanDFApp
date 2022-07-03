@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -35,6 +35,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const ref_input2 = useRef();
+  const ref_input3 = useRef();
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -253,7 +256,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} />
           <HelperText type="error" visible={errorAN}>
@@ -263,15 +266,15 @@ const AddCategoryScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSN}>
             {communication.InvalidServiceName}
           </HelperText>
-          <TextInput mode="flat" label="Category Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="flat" label="Category Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
+          <TextInput ref={ref_input2} mode="flat" label="HSN / SAC Code" value={hsn} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
+          <TextInput ref={ref_input3} mode="flat" label="GST Rate" value={gst} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>
@@ -282,6 +285,8 @@ const AddCategoryScreen = ({ route, navigation }) => {
                 <Checkbox.Item
                   key={i}
                   label={k.unitName}
+                  position="leading"
+                  labelStyle={{ textAlign: "left", paddingLeft: 8 }}
                   color={theme.colors.primary}
                   status={k.isChecked ? "checked" : "unchecked"}
                   onPress={() => {
@@ -301,9 +306,11 @@ const AddCategoryScreen = ({ route, navigation }) => {
               {communication.InvalidUnitName}
             </HelperText>
           </View>
-          <View style={{ paddingTop: 24, width: 160 }}>
+          <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               color={theme.colors.primary}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
@@ -311,11 +318,15 @@ const AddCategoryScreen = ({ route, navigation }) => {
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
-            SAVE
-          </Button>
         </View>
       </ScrollView>
+      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <Card.Content>
+          <Button mode="contained" onPress={ValidateData}>
+            SAVE
+          </Button>
+        </Card.Content>
+      </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>

@@ -40,13 +40,13 @@ export const MenuItemsAdmin = [
         title: "Service Product",
         type: "accordian",
         index: 15,
-        //navigation: "ServiceProductScreen",
+        navigation: "ServiceProductScreen",
       },
       {
         title: "Department",
         type: "accordian",
         index: 16,
-        //navigation: "DepartmentScreen",
+        navigation: "DepartmentScreen",
       },
       {
         title: "Location Type",
@@ -58,7 +58,7 @@ export const MenuItemsAdmin = [
         title: "Designation",
         type: "accordian",
         index: 18,
-        //navigation: "DesignationScreen",
+        navigation: "DesignationScreen",
       },
       {
         title: "E-Way Bill",

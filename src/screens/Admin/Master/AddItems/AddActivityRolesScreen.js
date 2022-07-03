@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
@@ -72,27 +72,33 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <TextInput mode="flat" label="Activity Name" value={activityName} onChangeText={onActivityNameChanged} style={{ backgroundColor: "white" }} error={activityNameError} />
           <HelperText type="error" visible={activityNameError}>
             {communication.InvalidActivityName}
           </HelperText>
-          <View style={{ paddingTop: 24, width: 160 }}>
+          <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
               color={theme.colors.primary}
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateActivityName}>
-            SAVE
-          </Button>
         </View>
       </ScrollView>
+      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <Card.Content>
+          <Button mode="contained" onPress={ValidateActivityName}>
+            SAVE
+          </Button>
+        </Card.Content>
+      </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -15,21 +15,18 @@ const AddProductScreen = ({ route, navigation }) => {
   const activityDDRef = useRef({});
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
-  const [servicesLabel, setServicesLabel] = React.useState("Select Activity Name");
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [errorSN, setSNError] = React.useState(false);
   const servicesDDRef = useRef({});
 
   const [categoriesFullData, setCategoriesFullData] = React.useState([]);
-  const [categoriesLabel, setCategoriesLabel] = React.useState("Select Service Name");
   const [categoriesData, setCategoriesData] = React.useState([]);
   const [categoriesName, setCategoriesName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
   const [errorCN, setCNError] = React.useState(false);
   const categoriesDDRef = useRef({});
 
   const [unitFullData, setUnitFullData] = React.useState([]);
-  const [unitLabel, setUnitLabel] = React.useState("Select Category Name");
   const [unitData, setUnitsData] = React.useState([]);
   const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
   const [errorUN, setUNError] = React.useState(false);
@@ -166,7 +163,6 @@ const AddProductScreen = ({ route, navigation }) => {
     setHSN("");
     setGST("");
     setUnitName("");
-    setServicesLabel("Service Name");
     FetchServicesFromActivity(selectedItem);
   };
 
@@ -185,7 +181,6 @@ const AddProductScreen = ({ route, navigation }) => {
     setGST("");
     setUnitName("");
     setSNError(false);
-    setCategoriesLabel("Category Name");
     FetchCategoriesFromServices(selectedItem);
   };
 
@@ -213,7 +208,6 @@ const AddProductScreen = ({ route, navigation }) => {
     setHSNError(false);
     setGSTError(false);
     setUnitName("");
-    setUnitLabel("Unit Name");
     FetchUnitsFromCategory(selectedItem);
   };
 
@@ -357,17 +351,17 @@ const AddProductScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-        <View style={[Styles.padding16, Styles.paddingTop0]}>
-          <Dropdown label="Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} reference={activityDDRef} />
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+        <View style={[Styles.padding16]}>
+          <Dropdown label="Select Activity Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} reference={activityDDRef} />
           <HelperText type="error" visible={errorAN}>
             {communication.InvalidActivityName}
           </HelperText>
-          <Dropdown label={servicesLabel} data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
+          <Dropdown label="Select Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
           <HelperText type="error" visible={errorSN}>
             {communication.InvalidServiceName}
           </HelperText>
-          <Dropdown label={categoriesLabel} data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
+          <Dropdown label="Select Category Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCategoryName}
           </HelperText>
@@ -383,25 +377,31 @@ const AddProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={error}>
             {communication.InvalidProductName}
           </HelperText>
-          <Dropdown label={unitLabel} data={unitData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
+          <Dropdown label="Select Unit Name" data={unitData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
-          <View style={{ paddingTop: 24, width: 160 }}>
+          <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
               color={theme.colors.primary}
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
               }}
             />
           </View>
-          <Button style={{ marginTop: 32 }} mode="contained" onPress={ValidateData}>
-            SAVE
-          </Button>
         </View>
       </ScrollView>
+      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <Card.Content>
+          <Button mode="contained" onPress={ValidateData}>
+            SAVE
+          </Button>
+        </Card.Content>
+      </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
