@@ -34,7 +34,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitData, setUnitsData] = React.useState([]);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
@@ -55,8 +55,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [errorAUOS, setErrorAUOS] = React.useState(false);
   const [auos, setAUOS] = React.useState(route.params.type === "edit" ? route.params.data.alternateUnitOfSales : "");
 
-  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitSelected.split(" / ")[0] : "");
-  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitSelected.split(" / ")[1] : "");
+  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
+  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
 
   const [errorSS, setErrorSS] = React.useState(false);
   const [shortSpec, setShortSpec] = React.useState(route.params.type === "edit" ? route.params.data.shortSpecification : "");
@@ -71,9 +71,12 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
+      ID:
+        route.params.type === "edit"
+          ? route.params.data.activityID
+          : activityData.find((el) => {
+              return el.activityRoleName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -100,31 +103,28 @@ const AddServiceProductScreen = ({ route, navigation }) => {
               return el.display && el.activityRoleName === "Contractor";
             });
             setActivityFullData(response.data.data);
+            servicesDDRef.current.reset();
             const activities = response.data.data.map((data) => data.activityRoleName);
             setActivityData(activities);
             setActivityName("Contractor");
-            if (route.params.type === "edit") {
-              route.params.data.activityID = activityFullData.find((el) => {
-                return el.activityRoleName === "Contractor";
-              }).id;
+            if (route.params.type !== "edit") {
+              setServiceName("");
+              setCategoriesFullData([]);
+              setCategoriesData([]);
+              setUnitsData([]);
+              setProductsData([]);
+              setANError(false);
+              setHSN("");
+              setGST("");
+              setUnitName("");
+              setRUM("");
+              setRUWM("");
+              setUnitSelected("");
+              setConversionUnitSelected("");
+              setAUOS("");
+              setShortSpec("");
+              setSpec("");
             }
-            servicesDDRef.current.reset();
-            setServiceName("");
-            setCategoriesFullData([]);
-            setCategoriesData([]);
-            setUnitsData([]);
-            setProductsData([]);
-            setANError(false);
-            setHSN("");
-            setGST("");
-            setUnitName("");
-            setRUM("");
-            setRUWM("");
-            setUnitSelected("");
-            setConversionUnitSelected("");
-            setAUOS("");
-            setShortSpec("");
-            setSpec("");
             FetchServicesFromActivity("Contractor", response.data.data);
           }
         }
@@ -204,7 +204,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     let params = {
       ProductID:
         route.params.type === "edit"
-          ? route.params.data.productID
+          ? route.params.data.id
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
             }).productID,
@@ -228,9 +228,9 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   useEffect(() => {
     FetchActvityRoles();
     if (route.params.type === "edit") {
-      FetchServicesFromActivity();
       FetchCategoriesFromServices();
-      FetchUnitsFromCategory();
+      FetchProductsFromCategory();
+      FetchUnitsFromProductID();
     }
   }, []);
 
@@ -351,11 +351,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    console.log(
-      productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID
-    );
+    console.log(auos);
     Provider.create("master/updateproduct", {
       ProductID: productsFullData.find((el) => {
         return el.productName === productsName;
@@ -369,7 +365,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
+          route.params.fetchData(route.params.type === "edit" ? "update" : "add");
           navigation.goBack();
         } else {
           setSnackbarText(communication.InsertError);

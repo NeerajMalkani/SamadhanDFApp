@@ -30,6 +30,7 @@
     "react-native-gesture-handler": "^2.2.1",
     "react-native-image-slider-banner": "^1.0.2",
     "react-native-paper": "^4.12.2",
+    "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-reanimated": "^2.8.0",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "^3.13.1",

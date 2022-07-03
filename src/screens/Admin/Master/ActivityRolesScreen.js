@@ -24,7 +24,7 @@ const ActivityRolesScreen = ({ navigation }) => {
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + "  successfully");
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Snackbar, Dialog, Portal, Button, Searchbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -17,7 +18,6 @@ const ServiceProductScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
-  const [dialogVisible, setDialogVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -30,11 +30,18 @@ const ServiceProductScreen = ({ navigation }) => {
   const [categoryName, setCategoryName] = React.useState("");
   const [hsnsacCode, setHsnsacCode] = React.useState("");
   const [gstRate, setGstRate] = React.useState("");
+  const [rum, setRUM] = React.useState("");
+  const [ruwm, setRUWM] = React.useState("");
+  const [auos, setAUOS] = React.useState("");
+  const [shortSpec, setShortSpec] = React.useState("");
+  const [spec, setSpec] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
+
+  const refRBSheet = useRef();
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + "  successfully");
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -84,10 +91,6 @@ const ServiceProductScreen = ({ navigation }) => {
     }
   };
 
-  const ShowDialog = () => setDialogVisible(true);
-
-  const HideDialog = () => setDialogVisible(false);
-
   const AddCallback = () => {
     navigation.navigate("AddServiceProductScreen", { type: "add", fetchData: FetchData });
   };
@@ -98,7 +101,7 @@ const ServiceProductScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.serviceProductID,
+        id: data.item.productID,
         activityRoleName: data.item.activityRoleName,
         activityID: data.item.activityID,
         serviceName: data.item.serviceName,
@@ -110,6 +113,11 @@ const ServiceProductScreen = ({ navigation }) => {
         categoryID: data.item.categoryID,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate.toFixed(2),
+        rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
+        rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
+        alternateUnitOfSales: data.item.alternateUnitOfSales.toString(),
+        shortSpecification: data.item.shortSpecification,
+        specification: data.item.specification,
         display: data.item.serviceDisplay,
       },
     });
@@ -122,7 +130,7 @@ const ServiceProductScreen = ({ navigation }) => {
           title={data.item.productName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="toolbox" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="bag-checked" />}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
@@ -130,13 +138,18 @@ const ServiceProductScreen = ({ navigation }) => {
               color={theme.colors.textSecondary}
               name="eye"
               onPress={() => {
-                ShowDialog();
+                refRBSheet.current.open();
                 setSelectedServiceProductName(data.item.productName);
                 setActivityRoleName(data.item.activityRoleName);
                 setCategoryName(data.item.categoryName);
                 setServiceName(data.item.serviceName);
                 setHsnsacCode(data.item.hsnsacCode);
                 setGstRate(data.item.gstRate.toFixed(2) + "%");
+                setRUM(data.item.rateWithMaterials.toFixed(2));
+                setRUWM(data.item.rateWithoutMaterials.toFixed(2));
+                setAUOS(data.item.alternateUnitOfSales);
+                setShortSpec(data.item.shortSpecification);
+                setSpec(data.item.specification);
                 setUnitName(data.item.unitName);
               }}
             />
@@ -184,22 +197,24 @@ const ServiceProductScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={HideDialog}>
-          <Dialog.Title>{selectedServiceProductName}</Dialog.Title>
-          <Dialog.Content>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View style={{ paddingBottom: 64 }}>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedServiceProductName}</Title>
+          <ScrollView>
             <List.Item title="Activity Role Name" description={activityRoleName} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
             <List.Item title="Unit name" description={unitName} />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={HideDialog}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+            <List.Item title="Rate / Unit (with materials)" description={rum} />
+            <List.Item title="Rate / Unit without materials)" description={ruwm} />
+            <List.Item title="Alternate Unit Of Sales" description={auos === "" ? "NA" : auos} />
+            <List.Item title="Short Specification" description={shortSpec === "" ? "NA" : shortSpec} />
+            <List.Item title="Specification" description={spec === "" ? "NA" : spec} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };

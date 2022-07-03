@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Snackbar, Dialog, Portal, Button, Searchbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -18,7 +19,6 @@ const CategoryScreen = ({ navigation }) => {
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [dialogVisible, setDialogVisible] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
@@ -30,9 +30,11 @@ const CategoryScreen = ({ navigation }) => {
   const [gstRate, setGstRate] = React.useState("");
   const [unitID, setUnitID] = React.useState("");
 
+  const refRBSheet = useRef();
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + "  successfully");
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -97,7 +99,7 @@ const CategoryScreen = ({ navigation }) => {
               color={theme.colors.textSecondary}
               name="eye"
               onPress={() => {
-                ShowDialog();
+                refRBSheet.current.open();
                 setActivityRoleName(data.item.activityRoleName);
                 setSelectedCategoryName(data.item.categoryName);
                 setServiceName(data.item.serviceName);
@@ -111,10 +113,6 @@ const CategoryScreen = ({ navigation }) => {
       </View>
     );
   };
-
-  const ShowDialog = () => setDialogVisible(true);
-
-  const HideDialog = () => setDialogVisible(false);
 
   const AddCallback = () => {
     navigation.navigate("AddCategoryScreen", { type: "add", fetchData: FetchData });
@@ -176,22 +174,18 @@ const CategoryScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={HideDialog}>
-          <Dialog.Title>{selectedCategoryName}</Dialog.Title>
-          <Dialog.Content>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedCategoryName}</Title>
+          <ScrollView>
             <List.Item title="Activity Role Name" description={activityRoleName} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
             <List.Item title="Unit name" description={unitID} />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={HideDialog}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Snackbar, Dialog, Portal, Button, Searchbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -17,7 +18,6 @@ const ProductScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
-  const [dialogVisible, setDialogVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -32,9 +32,11 @@ const ProductScreen = ({ navigation }) => {
   const [gstRate, setGstRate] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
 
+  const refRBSheet = useRef();
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + "  successfully");
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -84,10 +86,6 @@ const ProductScreen = ({ navigation }) => {
     }
   };
 
-  const ShowDialog = () => setDialogVisible(true);
-
-  const HideDialog = () => setDialogVisible(false);
-
   const AddCallback = () => {
     navigation.navigate("AddProductScreen", { type: "add", fetchData: FetchData });
   };
@@ -130,7 +128,7 @@ const ProductScreen = ({ navigation }) => {
               color={theme.colors.textSecondary}
               name="eye"
               onPress={() => {
-                ShowDialog();
+                refRBSheet.current.open();
                 setSelectedProductName(data.item.productName);
                 setActivityRoleName(data.item.activityRoleName);
                 setCategoryName(data.item.categoryName);
@@ -184,22 +182,19 @@ const ProductScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={HideDialog}>
-          <Dialog.Title>{selectedProductName}</Dialog.Title>
-          <Dialog.Content>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedProductName}</Title>
+          <ScrollView>
             <List.Item title="Activity Role Name" description={activityRoleName} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
             <List.Item title="Unit name" description={unitName} />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={HideDialog}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
