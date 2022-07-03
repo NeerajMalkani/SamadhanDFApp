@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Snackbar } from "react-native-paper";
+import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -13,8 +13,10 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ActivityRolesScreen = ({ navigation }) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
+  const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -35,6 +37,7 @@ const ActivityRolesScreen = ({ navigation }) => {
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
+            listSearchData[1](response.data.data);
           }
         } else {
           listData[1]([]);
@@ -57,6 +60,19 @@ const ActivityRolesScreen = ({ navigation }) => {
   useEffect(() => {
     FetchData();
   }, []);
+
+  const onChangeSearch = (query) => {
+    setSearchQuery(query);
+    if (query === "") {
+      listSearchData[1](listData[0]);
+    } else {
+      listSearchData[1](
+        listData[0].filter((el) => {
+          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
+        })
+      );
+    }
+  };
 
   const RenderItems = (data) => {
     return (
@@ -92,6 +108,7 @@ const ActivityRolesScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
             previewOpenValue={-72}
@@ -106,7 +123,7 @@ const ActivityRolesScreen = ({ navigation }) => {
                 }}
               />
             }
-            data={listData[0]}
+            data={listSearchData[0]}
             useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-72}

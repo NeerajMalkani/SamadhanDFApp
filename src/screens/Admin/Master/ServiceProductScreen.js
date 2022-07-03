@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Snackbar, Dialog, Portal, Button } from "react-native-paper";
+import { FAB, List, Snackbar, Dialog, Portal, Button, Searchbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -13,8 +13,10 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ServiceProductScreen = ({ navigation }) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
+  const listSearchData = React.useState([]);
   const [dialogVisible, setDialogVisible] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -46,6 +48,7 @@ const ServiceProductScreen = ({ navigation }) => {
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
+            listSearchData[1](response.data.data);
           }
         } else {
           listData[1]([]);
@@ -69,6 +72,19 @@ const ServiceProductScreen = ({ navigation }) => {
     FetchData();
   }, []);
 
+  const onChangeSearch = (query) => {
+    setSearchQuery(query);
+    if (query === "") {
+      listSearchData[1](listData[0]);
+    } else {
+      listSearchData[1](
+        listData[0].filter((el) => {
+          return el.productName.toString().toLowerCase().includes(query.toLowerCase());
+        })
+      );
+    }
+  };
+
   const ShowDialog = () => setDialogVisible(true);
 
   const HideDialog = () => setDialogVisible(false);
@@ -79,7 +95,6 @@ const ServiceProductScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    console.log(unitName);
     navigation.navigate("AddServiceProductScreen", {
       type: "edit",
       fetchData: FetchData,
@@ -117,7 +132,6 @@ const ServiceProductScreen = ({ navigation }) => {
               color={theme.colors.textSecondary}
               name="eye"
               onPress={() => {
-                console.log(data.item);
                 ShowDialog();
                 setSelectedServiceProductName(data.item.serviceProductName);
                 setActivityRoleName(data.item.activityRoleName);
@@ -143,26 +157,29 @@ const ServiceProductScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0].length > 0 ? (
-        <SwipeListView
-          previewDuration={1000}
-          previewOpenValue={-72}
-          previewRowKey="1"
-          previewOpenDelay={1000}
-          refreshControl={
-            <RefreshControl
-              colors={[theme.colors.primary]}
-              refreshing={refreshing}
-              onRefresh={() => {
-                FetchData();
-              }}
-            />
-          }
-          data={listData[0]}
-          disableRightSwipe={true}
-          rightOpenValue={-72}
-          renderItem={(data) => RenderItems(data)}
-          renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
-        />
+        <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+          <SwipeListView
+            previewDuration={1000}
+            previewOpenValue={-72}
+            previewRowKey="1"
+            previewOpenDelay={1000}
+            refreshControl={
+              <RefreshControl
+                colors={[theme.colors.primary]}
+                refreshing={refreshing}
+                onRefresh={() => {
+                  FetchData();
+                }}
+              />
+            }
+            data={listSearchData[0]}
+            disableRightSwipe={true}
+            rightOpenValue={-72}
+            renderItem={(data) => RenderItems(data)}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+          />
+        </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
