@@ -64,7 +64,7 @@ export const MenuItemsAdmin = [
         title: "E-Way Bill",
         type: "accordian",
         index: 19,
-        //navigation: "EWayBillScreen",
+        navigation: "EWayBillScreen",
       },
     ],
   },

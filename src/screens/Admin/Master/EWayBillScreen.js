@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
+import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
@@ -21,6 +22,12 @@ const EWayBillScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
+  const [selectedStateName, setSelectedStateName] = React.useState("");
+  const [selectedInStateLimit, setSelectedInStateLimit] = React.useState("");
+  const [selectedInterStateLimit, setSelectedInterStateLimit] = React.useState("");
+
+  const refRBSheet = useRef();
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -77,7 +84,26 @@ const EWayBillScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.stateName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="newspaper-variant" />} />
+        <List.Item
+          title={data.item.stateName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="newspaper-variant" />}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+              onPress={() => {
+                refRBSheet.current.open();
+                setSelectedStateName(data.item.stateName);
+                setSelectedInStateLimit(data.item.inStateLimit.toFixed(2));
+                setSelectedInterStateLimit(data.item.interStateLimit.toFixed(2));
+              }}
+            />
+          )}
+        />
       </View>
     );
   };
@@ -94,8 +120,8 @@ const EWayBillScreen = ({ navigation }) => {
       data: {
         id: data.item.id,
         stateName: data.item.stateName,
-        inStateLimit: data.item.inStateLimit,
-        interStateLimit: data.item.interStateLimit,
+        inStateLimit: data.item.inStateLimit.toString(),
+        interStateLimit: data.item.interStateLimit.toString(),
         display: data.item.display,
       },
     });
@@ -140,6 +166,15 @@ const EWayBillScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={200} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedStateName}</Title>
+          <ScrollView>
+            <List.Item title="In State Limit" description={selectedInStateLimit} />
+            <List.Item title="Inter State Limit" description={selectedInterStateLimit} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };

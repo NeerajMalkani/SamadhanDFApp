@@ -120,7 +120,7 @@ const ProductScreen = ({ navigation }) => {
           title={data.item.productName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="toolbox" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="barcode-scan" />}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}

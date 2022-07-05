@@ -40,6 +40,8 @@ import AddDesignationScreen from "./src/screens/Admin/Master/AddItems/AddDesigna
 import DesignationScreen from "./src/screens/Admin/Master/DesignationScreen";
 import ServiceProductScreen from "./src/screens/Admin/Master/ServiceProductScreen";
 import AddServiceProductScreen from "./src/screens/Admin/Master/AddItems/AddServiceProductScreen";
+import EWayBillScreen from "./src/screens/Admin/Master/EWayBillScreen";
+import AddEWayBillScreen from "./src/screens/Admin/Master/AddItems/AddEWayBillScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -176,6 +178,7 @@ export default function App() {
             <Drawer.Screen options={{ headerShown: false }} name="DepartmentScreen" component={DepartmentScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="DesignationScreen" component={DesignationScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServiceProductScreen" component={ServiceProductScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="EWayBillScreen" component={EWayBillScreen} />
           </Drawer.Navigator>
         );
       case 2:
@@ -244,6 +247,7 @@ export default function App() {
           <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
           <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
           <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddEWayBillScreen" component={AddEWayBillScreen} options={{ headerTitle: "Add E-Way Bill", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
         </Stack.Navigator>
       );
     } else if (isLoggedIn === 2) {
@@ -261,6 +265,7 @@ export default function App() {
           <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
           <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
           <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddEWayBillScreen" component={AddEWayBillScreen} options={{ headerTitle: "Add E-Way Bill", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
         </Stack.Navigator>
       );
     }
