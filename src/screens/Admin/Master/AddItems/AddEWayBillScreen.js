@@ -9,10 +9,10 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddEWayBillScreen = ({ route, navigation }) => {
-  console.log(route.params.data);
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
   const [stateName, setStateName] = React.useState(route.params.type === "edit" ? route.params.data.stateName : "");
+  const [stateSelectedID, setStateSelectedID] = React.useState("");
   const [errorSN, setSNError] = React.useState(false);
 
   const [inStateLimitError, setInStateLimitError] = React.useState(false);
@@ -36,8 +36,11 @@ const AddEWayBillScreen = ({ route, navigation }) => {
             setStatesFullData(response.data.data);
             const stateData = [];
             response.data.data.map((data, i) => {
+              if (data.stateName === stateName) {
+                setStateSelectedID(i.toString());
+              }
               stateData.push({
-                id: i,
+                id: i.toString(),
                 title: data.stateName,
               });
             });
@@ -151,14 +154,15 @@ const AddEWayBillScreen = ({ route, navigation }) => {
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnSubmit={false}
-            initialValue="1"
+            initialValue= {{ id: parseInt(stateSelectedID) }} //{stateSelectedID}//
             inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorSN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
             textInputProps={{
+              value: stateName,
               placeholder: "State",
               placeholderTextColor: errorSN ? theme.colors.error : theme.colors.textSecondary,
             }}
             onClear={() => {
-                onStateNameSelected("");    
+              onStateNameSelected("");
             }}
             onChangeText={(item) => {
               if (item) {
