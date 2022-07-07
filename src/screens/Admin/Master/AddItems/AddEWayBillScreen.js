@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
-import { Button, Card, Checkbox, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
-import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
