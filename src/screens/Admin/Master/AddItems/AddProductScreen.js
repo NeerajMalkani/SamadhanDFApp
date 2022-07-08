@@ -130,13 +130,15 @@ const AddProductScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getunitbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
             setUnitFullData(response.data.data);
-            const units = response.data.data.map((data) => data.unitName);
+            const units = response.data.data.map((data) => data.displayUnit);
+            console.log(units);
             setUnitsData(units);
           }
         }
@@ -250,7 +252,7 @@ const AddProductScreen = ({ route, navigation }) => {
         return el.categoryName && el.categoryName === categoriesName;
       }).id,
       UnitOfSalesID: unitFullData.find((el) => {
-        return el.unitName && el.unitName === unitName;
+        return el.displayUnit && el.displayUnit === unitName;
       }).id,
       Display: checked,
     })
@@ -284,7 +286,7 @@ const AddProductScreen = ({ route, navigation }) => {
         return el.categoryName && el.categoryName === categoriesName;
       }).id,
       UnitOfSalesID: unitFullData.find((el) => {
-        return el.unitName && el.unitName === unitName;
+        return el.displayUnit && el.displayUnit === unitName;
       }).id,
       Display: checked,
     })
@@ -340,7 +342,7 @@ const AddProductScreen = ({ route, navigation }) => {
       isValid = false;
     }
     const objUnitOfSales = unitFullData.find((el) => {
-      return el.unitName && el.unitName === unitName;
+      return el.displayUnit && el.displayUnit === unitName;
     });
     if (unitName.length === 0 || !objUnitOfSales) {
       setUNError(true);

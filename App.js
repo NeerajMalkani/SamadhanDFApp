@@ -99,10 +99,25 @@ export default function App() {
     GetRoleID();
   }, [roleID[0]]);
 
-  let activeIndex = 0;
+  let activeIndex = -1;
   const DrawerContent = (props) => {
     return (
       <DrawerContentScrollView {...props}>
+        <DrawerItem
+          key="Home"
+          focused={activeIndex === -1 ? true : false}
+          style={[Styles.borderBottom1]}
+          activeBackgroundColor={theme.colors.primary}
+          inactiveBackgroundColor={theme.colors.textLight}
+          label={({ focused }) => {
+            return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.textLight : theme.colors.text }]}>Dashboard</Text>;
+          }}
+          icon={({ focused }) => <Icon color={focused ? theme.colors.textLight : theme.colors.textSecondary} size={24} name="view-dashboard" />}
+          onPress={(e) => {
+            activeIndex = -1;
+            props.navigation.navigate("HomeScreen");
+          }}
+        />
         {menuItems.map((k, i) => {
           return k.roleID === roleID[0] ? (
             k.type === "item" ? (
@@ -128,7 +143,7 @@ export default function App() {
                 isRTL={true}
                 arrowStyling={{ size: 18, svgProps: { transform: [{ rotate: "-90deg" }] } }}
                 collapsibleContainerStyle={{ width: "100%" }}
-                initExpanded={i == 0 ? true : false}
+                initExpanded={false}
                 style={[Styles.borderBottom1, Styles.border0, Styles.flexAlignStart, Styles.padding0, Styles.margin0]}
                 title={
                   <View style={[Styles.padding8, Styles.paddingBottom12, Styles.flex1, Styles.flexRow]}>
@@ -167,9 +182,17 @@ export default function App() {
 
   const DrawerNavigator = () => {
     switch (roleID[0]) {
+      case 0:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
+          </Drawer.Navigator>
+        );
+        break;
       case 1:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ActivityRolesScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
@@ -183,14 +206,16 @@ export default function App() {
         );
       case 2:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ImageGalleryScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
           </Drawer.Navigator>
         );
       case 4:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="BasicDetailsDealerScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
           </Drawer.Navigator>
@@ -208,27 +233,25 @@ export default function App() {
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
+        activeIndex = -1;
         GetRoleID();
       });
       return unsubscribe;
     }, [navigation]);
     const [index, setIndex] = react.useState(0);
     const [routes] = React.useState([
-      { key: "home", title: "Home", icon: "home" },
       { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
       { key: "profile", title: "Profile", icon: "account" },
     ]);
     const renderScene = ({ route, jumpTo }) => {
       switch (route.key) {
-        case "home":
-          return <HomeScreen roleID={GetRoleID} />;
         case "dashboard":
           return <DrawerNavigator />;
         case "profile":
           return <ProfileScreen />;
       }
     };
-    return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} safeAreaInsets={{bottom: 0}}/>;
+    return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} safeAreaInsets={{ bottom: 0 }} />;
   };
 
   const CreateStacks = () => {
@@ -272,9 +295,9 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
+    <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
       <PaperProvider theme={theme}>
-        {roleID[0] === -1 ? null : <NavigationContainer ref={navigationRef} >{CreateStacks()}</NavigationContainer>}
+        {roleID[0] === -1 ? null : <NavigationContainer ref={navigationRef}>{CreateStacks()}</NavigationContainer>}
         <Snackbar visible={visible} onDismiss={onDismissSnackBar}>
           Coming soon
         </Snackbar>

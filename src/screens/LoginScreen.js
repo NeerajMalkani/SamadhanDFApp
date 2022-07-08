@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, { paddingTop: 80 }]}>
           <Image source={require("../../assets/icon.png")} style={[Styles.width104, Styles.height104, Styles.flexAlignSelfCenter]} />
-          <Title style={[Styles.padding24, Styles.paddingBottom0, Styles.textCenter]}>Login to continue</Title>
+          <Title style={[Styles.padding24, Styles.textCenter]}>Login to continue</Title>
           <TextInput mode="flat" dense label="Username" autoComplete="username" value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
           <HelperText type="error" visible={isUsernameInvalid}>
             {communication.InvalidUsername}

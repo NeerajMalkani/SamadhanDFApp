@@ -19,7 +19,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [errorSN, setSNError] = React.useState(false);
 
   const [unitOfSalesData, setUnitOfSalesData] = React.useState([]);
-  const [unitOfSalesName, setUnitOfSalesName] = React.useState(route.params.type === "edit" ? route.params.data.unitID : "");
+  const [unitOfSalesName, setUnitOfSalesName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
   const [errorUN, setUNError] = React.useState(false);
 
   const [error, setError] = React.useState(false);
@@ -86,19 +86,19 @@ const AddCategoryScreen = ({ route, navigation }) => {
               const arrunitOfSalesNameNew = [];
               unitOfSalesName.split(",").map((o) => {
                 const objTemp = response.data.data.find((el) => {
-                  return o === el.unitName;
+                  return o.trim() === el.displayUnit;
                 });
                 if (objTemp) {
                   arrunitOfSalesNameNew.push(objTemp.id);
                 }
               });
-
               allUnits = arrunitOfSalesNameNew.length > 0 ? arrunitOfSalesNameNew.join(",") : "";
             }
             const unitofsales = response.data.data.map((o) => ({
               ...o,
               isChecked: allUnits !== "" ? allUnits.split(",").indexOf(o.id.toString()) !== -1 : false,
             }));
+            
             setUnitOfSalesData(unitofsales);
           }
         }
@@ -158,6 +158,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       Display: checked,
     })
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -284,8 +285,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
               return (
                 <Checkbox.Item
                   key={i}
-                  label={k.unitName}
+                  label={k.displayUnit}
                   position="leading"
+                  style={{paddingHorizontal: 2}}
                   labelStyle={{ textAlign: "left", paddingLeft: 8 }}
                   color={theme.colors.primary}
                   status={k.isChecked ? "checked" : "unchecked"}
@@ -310,6 +312,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
             <Checkbox.Item
               label="Display"
               position="leading"
+              style={{paddingHorizontal: 2}}
               labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               color={theme.colors.primary}
               status={checked ? "checked" : "unchecked"}

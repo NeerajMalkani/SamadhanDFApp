@@ -9,8 +9,8 @@ import { communication } from "../../../../utils/communication";
 const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [error, setError] = React.useState(false);
   const [errorC, setCError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
-  const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
+  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
+  const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -29,7 +29,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    Provider.create("master/insertunitofsales", { UnitName: name + " / " + conversion, Display: checked })
+    Provider.create("master/insertunitofsales", { Unit1Name: name, Unit2Name: conversion, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -47,7 +47,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("master/updateunitofsales", { ID: route.params.data.id, UnitName: name + " / " + conversion, Display: checked })
+    Provider.create("master/updateunitofsales", { Unit1Name: name, Unit2Name: conversion, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");

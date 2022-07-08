@@ -4,16 +4,17 @@ import { ScrollView, TouchableNativeFeedback, View } from "react-native";
 import { ActivityIndicator, Avatar, Button, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
+import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
-import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
+import { createNavigationContainerRef, StackActions, DrawerActions } from "@react-navigation/native";
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
 
 export const navigationRef = createNavigationContainerRef();
 
-const HomeScreen = ({ roleID }) => {
+const HomeScreen = ({ navigation, roleID }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
@@ -142,6 +143,16 @@ const HomeScreen = ({ roleID }) => {
   return (
     <View style={[Styles.flex1]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
+      <TouchableNativeFeedback>
+        <View
+          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+          onTouchStart={() => {
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          }}
+        >
+          <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
+        </View>
+      </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
           <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userName}</Title>

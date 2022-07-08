@@ -28,7 +28,7 @@ const CategoryScreen = ({ navigation }) => {
   const [activityRoleName, setActivityRoleName] = React.useState("");
   const [hsnsacCode, setHsnsacCode] = React.useState("");
   const [gstRate, setGstRate] = React.useState("");
-  const [unitID, setUnitID] = React.useState("");
+  const [unitName, setUnitName] = React.useState("");
 
   const refRBSheet = useRef();
 
@@ -40,6 +40,7 @@ const CategoryScreen = ({ navigation }) => {
     }
     Provider.getAll("master/getcategory")
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -105,7 +106,7 @@ const CategoryScreen = ({ navigation }) => {
                 setServiceName(data.item.serviceName);
                 setHsnsacCode(data.item.hsnsacCode);
                 setGstRate(data.item.gstRate.toFixed(2) + "%");
-                setUnitID(data.item.unitID);
+                setUnitName(data.item.unitName);
               }}
             />
           )}
@@ -127,7 +128,7 @@ const CategoryScreen = ({ navigation }) => {
         id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
-        unitID: data.item.unitID,
+        unitName: data.item.unitName,
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate.toFixed(2),
@@ -182,7 +183,7 @@ const CategoryScreen = ({ navigation }) => {
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="HSN / SAC Code" description={hsnsacCode} />
             <List.Item title="GST Rate" description={gstRate} />
-            <List.Item title="Unit name" description={unitID} />
+            <List.Item title="Unit name" description={unitName} />
           </ScrollView>
         </View>
       </RBSheet>
