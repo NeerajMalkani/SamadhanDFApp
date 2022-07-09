@@ -46,7 +46,7 @@ import AddEWayBillScreen from "./src/screens/Admin/Master/AddItems/AddEWayBillSc
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component"]);
+LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component", "The action 'CLOSE_DRAWER' was not handled by any navigator."]);
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -233,7 +233,6 @@ export default function App() {
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        activeIndex = -1;
         GetRoleID();
       });
       return unsubscribe;

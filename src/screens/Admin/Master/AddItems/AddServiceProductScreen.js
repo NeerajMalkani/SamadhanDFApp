@@ -34,7 +34,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitData, setUnitsData] = React.useState([]);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
+  const [selectedUnitID, setSelectedUnitID] = React.useState(0);
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
@@ -55,8 +56,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [errorAUOS, setErrorAUOS] = React.useState(false);
   const [auos, setAUOS] = React.useState(route.params.type === "edit" ? route.params.data.alternateUnitOfSales : "");
 
-  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
-  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
+  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
+  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
 
   const [errorSS, setErrorSS] = React.useState(false);
   const [shortSpec, setShortSpec] = React.useState(route.params.type === "edit" ? route.params.data.shortSpecification : "");
@@ -73,7 +74,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const ref_input3 = useRef();
   const ref_input4 = useRef();
   const ref_input5 = useRef();
-  const ref_input6 = useRef(); 
+  const ref_input6 = useRef();
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -223,7 +224,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
               return el.display;
             });
             setUnitFullData(response.data.data);
-            const units = response.data.data[0].unitName.split(" / ");
+            const units = response.data.data[0].displayUnit.split(" / ");
             setUnitsData(units);
           }
         }
@@ -312,11 +313,15 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-    const objUnitOfSales = unitFullData.find((el) => {
-      return el.unitName && el.unitName.toString().includes(selectedItem);
-    });
-    setUnitSelected(objUnitOfSales.unitName.split(" / ")[0]);
-    setConversionUnitSelected(objUnitOfSales.unitName.split(" / ")[1]);
+    if (unitFullData[0].unit1Name === selectedItem) {
+      setUnitSelected(unitFullData[0].unit1Name);
+      setConversionUnitSelected(unitFullData[0].unit2Name);
+      setSelectedUnitID(unitFullData[0].unit1ID);
+    } else if (unitFullData[0].unit2Name === selectedItem) {
+      setUnitSelected(unitFullData[0].unit2Name);
+      setConversionUnitSelected(unitFullData[0].unit1Name);
+      setSelectedUnitID(unitFullData[0].unit2ID);
+    }
   };
 
   const onHSNChanged = (text) => {
@@ -357,11 +362,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    console.log(auos);
     Provider.create("master/updateproduct", {
       ProductID: productsFullData.find((el) => {
         return el.productName === productsName;
       }).productID,
+      SelectedUnitID: selectedUnitID,
       RateWithMaterials: rum,
       RateWithoutMaterials: ruwm,
       AlternateUnitOfSales: auos,
@@ -433,10 +438,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       setErrorRUWM(true);
       isValid = false;
     }
-    const objUnitOfSales = unitFullData.find((el) => {
-      return el.unitName && el.unitName.toString().includes(unitName);
-    });
-    if (unitName.length === 0 || !objUnitOfSales) {
+    if (unitName.length === 0) {
       setUNError(true);
       isValid = false;
     }

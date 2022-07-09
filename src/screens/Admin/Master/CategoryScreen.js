@@ -40,7 +40,6 @@ const CategoryScreen = ({ navigation }) => {
     }
     Provider.getAll("master/getcategory")
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];

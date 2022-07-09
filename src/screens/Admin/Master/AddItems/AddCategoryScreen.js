@@ -98,7 +98,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
               ...o,
               isChecked: allUnits !== "" ? allUnits.split(",").indexOf(o.id.toString()) !== -1 : false,
             }));
-            
+
             setUnitOfSalesData(unitofsales);
           }
         }
@@ -158,7 +158,6 @@ const AddCategoryScreen = ({ route, navigation }) => {
       Display: checked,
     })
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -287,7 +286,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
                   key={i}
                   label={k.displayUnit}
                   position="leading"
-                  style={{paddingHorizontal: 2}}
+                  style={{ paddingHorizontal: 2 }}
                   labelStyle={{ textAlign: "left", paddingLeft: 8 }}
                   color={theme.colors.primary}
                   status={k.isChecked ? "checked" : "unchecked"}
@@ -312,7 +311,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
             <Checkbox.Item
               label="Display"
               position="leading"
-              style={{paddingHorizontal: 2}}
+              style={{ paddingHorizontal: 2 }}
               labelStyle={{ textAlign: "left", paddingLeft: 8 }}
               color={theme.colors.primary}
               status={checked ? "checked" : "unchecked"}
