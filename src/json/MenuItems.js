@@ -52,7 +52,7 @@ export const MenuItemsAdmin = [
         title: "Location Type",
         type: "accordian",
         index: 17,
-        //navigation: "LocationTypeScreen",
+        navigation: "LocationTypeScreen",
       },
       {
         title: "Designation",
