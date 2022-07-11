@@ -1,5 +1,5 @@
+import "./src/components/ignoreWarnings"
 import { Provider as PaperProvider, Snackbar, Text, BottomNavigation } from "react-native-paper";
-// import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";

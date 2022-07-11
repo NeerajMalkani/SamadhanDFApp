@@ -119,7 +119,7 @@ const LocationTypeScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        departmentName: data.item.branchType,
+        branchType: data.item.branchType,
         activityName: data.item.activityName,
         serviceName: data.item.serviceName,
         display: data.item.display,
