@@ -28,6 +28,9 @@ export const communication = {
   InvalidRateWithoutMaterials: "Enter a valid Rate / Unit (without materials)",
 
   InvalidDepartmentName: "Enter a valid Department Name",
+
+  InvalidBranchType: "Enter a valid Branch Type",
+
   InvalidDesignationName: "Enter a valid Designation Name",
 
   InvalidStateName: "Enter a valid State",
