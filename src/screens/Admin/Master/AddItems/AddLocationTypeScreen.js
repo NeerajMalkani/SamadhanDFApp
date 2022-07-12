@@ -1,12 +1,11 @@
-import { LogBox, ScrollView, View } from "react-native";
+import { FlatList, LogBox, ScrollView, View } from "react-native";
 import { Styles } from "../../../../styles/styles";
-import { useEffect, useState } from "react";
-import Provider from "../../../../api/Provider";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useEffect, useRef, useState } from "react";
 import { theme } from "../../../../theme/apptheme";
-import SelectBox from "react-native-multi-selectbox";
-import { xorBy } from "lodash";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import Provider from "../../../../api/Provider";
+import RBSheet from "react-native-raw-bottom-sheet";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Button, Card, Checkbox, Chip, HelperText, List, Snackbar, Text, TextInput } from "react-native-paper";
 import { communication } from "../../../../utils/communication";
 
 const AddLocationTypeScreen = ({ route, navigation }) => {
@@ -26,6 +25,8 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : false);
 
+  const refRBSheet = useRef();
+
   useEffect(() => {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
@@ -39,7 +40,8 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
             response.data.data.map((k) => {
               listData.push({
                 id: k.id,
-                item: k.activityRoleName,
+                name: k.activityRoleName,
+                isChecked: false,
               });
             });
             setActivities(listData);
@@ -58,7 +60,8 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
             response.data.data.map((k) => {
               listData.push({
                 id: k.id,
-                item: k.serviceName,
+                name: k.serviceName,
+                isChecked: false,
               });
             });
             setServices(listData);
@@ -78,16 +81,18 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
     setBranchTypeError(false);
   };
 
-  const onActivityChanged = () => {
-    return (item) => {
-      setActivitySelectedValue(xorBy(activitySelectedValue, [item], "id"));
-    };
+  const onActivityChanged = (id) => {
+    let temp = activities.map((activity) => {
+      if (id === activity.id) {
+        return { ...activity, isChecked: !activity.isChecked };
+      }
+      return activity;
+    });
+    setActivities(temp);
   };
 
-  const onServiceChanged = () => {
-    return (item) => {
-      setServiceSelectedValue(xorBy(serviceSelectedValue, [item], "id"));
-    };
+  const onServiceChanged = (selectedItems) => {
+    setServiceSelectedValue(selectedItems);
   };
 
   const InsertLocationType = () => {
@@ -146,7 +151,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       }
     }
   };
-
+  const selectedValues = [];
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>
@@ -155,52 +160,49 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={branchTypeError}>
             {communication.InvalidInterStateLimit}
           </HelperText>
-          <SelectBox
-            selectIcon={<Icon name="menu-down" color={theme.colors.primary} size={24} />}
-            inputPlaceholder="Select multiple activity names"
-            hideInputFilter={true}
-            searchIconColor={theme.colors.primary}
-            toggleIconColor={theme.colors.primary}
-            containerStyle={{ paddingHorizontal: 16 }}
-            optionsLabelStyle={{ color: theme.colors.text, fontSize: 14 }}
-            optionContainerStyle={{ backgroundColor: theme.colors.textLight, borderWidth: 1, borderColor: theme.colors.border, elevation: 2, padding: 16 }}
-            multiOptionContainerStyle={{ backgroundColor: theme.colors.primary }}
-            multiOptionsLabelStyle={{ fontSize: 13 }}
-            inputFilterStyle={{ fontSize: 16 }}
-            searchInputProps={{ placeholder: "Search", placeholderTextColor: theme.colors.textLightSecondary }}
+          <View
+            style={[Styles.flexRow, Styles.width100per, Styles.height48, Styles.marginTop12, Styles.borderBottom1, Styles.flexAlignCenter, Styles.padding12, { borderBottomColor: theme.colors.disabled }]}
+            onTouchStart={() => {
+              refRBSheet.current.open();
+            }}
+          >
+            {activities.map((item, i) => {
+              return item.isChecked ? (
+                <Chip
+                  key={i}
+                  style={[Styles.flexJustifyCenter]}
+                  mode="outlined"
+                  closeIcon={() => {
+                    return <Icon name="close" />;
+                  }}
+                  onClose={() => {
+                    onActivityChanged(item.id);
+                  }}
+                  onPress={() => {
+                    onActivityChanged(item.id);
+                  }}
+                >
+                  {item.name}
+                </Chip>
+              ) : null;
+            })}
+            {/* <Text style={[Styles.textSecondaryColor, Styles.fontSize16, { transform: [{ scale: activitySelectedValue.length > 0 ? 1 : 0 }] }]}>Select Activity</Text> */}
+          </View>
+          {/* <TextInput
+            mode="flat"
             label="Select Activity"
-            labelStyle={{ paddingHorizontal: 16 }}
-            options={activities}
-            selectedValues={activitySelectedValue}
-            onMultiSelect={onActivityChanged()}
-            onTapClose={onActivityChanged()}
-            listOptionProps={{ height: 260}}
-            isMulti
-          />
+            style={{ backgroundColor: "white" }}
+            error={activitiesError}
+            onTouchStart={() => {
+              console.log("here");
+              refRBSheet.current.open();
+            }}
+          /> */}
+          {/* <SectionedMultiSelect items={activities} IconRenderer={Icon} uniqueKey="id" subKey="children" styles={{ container: { maxHeight: 360, top: 200 } }} searchPlaceholderText="Search Activities" selectText="Select Activity" showDropDowns={true} onSelectedItemsChange={onActivityChanged} selectedItems={activitySelectedValue} /> */}
           <HelperText type="error" visible={activitiesError}>
             {communication.InvalidInterStateLimit}
           </HelperText>
-          <SelectBox
-            selectIcon={<Icon name="menu-down" color={theme.colors.primary} size={24} />}
-            inputPlaceholder="Select multiple service names"
-            hideInputFilter={true}
-            searchIconColor={theme.colors.primary}
-            toggleIconColor={theme.colors.primary}
-            containerStyle={{ paddingHorizontal: 16 }}
-            optionsLabelStyle={{ color: theme.colors.text, fontSize: 14 }}
-            optionContainerStyle={{ backgroundColor: theme.colors.textLight, borderWidth: 1, borderColor: theme.colors.border, elevation: 2, padding: 16 }}
-            multiOptionContainerStyle={{ backgroundColor: theme.colors.primary }}
-            multiOptionsLabelStyle={{ fontSize: 13 }}
-            inputFilterStyle={{ fontSize: 16 }}
-            searchInputProps={{ placeholder: "Search", placeholderTextColor: theme.colors.textLightSecondary }}
-            label="Select Service"
-            labelStyle={{ paddingHorizontal: 16 }}
-            options={services}
-            selectedValues={serviceSelectedValue}
-            onMultiSelect={onServiceChanged()}
-            onTapClose={onServiceChanged()}
-            isMulti
-          />
+
           <HelperText type="error" visible={servicesError}>
             {communication.InvalidInterStateLimit}
           </HelperText>
@@ -229,6 +231,38 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={400} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View style={[Styles.flex1, Styles.marginBottom16]}>
+          <ScrollView style={[Styles.marginBottom48]}>
+            <List.Section>
+              {activities.map((item, i) => {
+                return (
+                  <List.Item
+                    key={i}
+                    title={item.name}
+                    onPress={() => {
+                      onActivityChanged(item.id);
+                    }}
+                    style={[Styles.borderBottom1, Styles.height48, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
+                    right={(props) => <List.Icon {...props} icon="check" color={theme.colors.success} style={{ opacity: item.isChecked ? 1 : 0 }} />}
+                  >
+                    <Text>{item.name}</Text>
+                  </List.Item>
+                );
+              })}
+            </List.Section>
+          </ScrollView>
+          <Button
+            mode="contained"
+            style={[Styles.width104, Styles.flexAlignSelfCenter, { position: "absolute", bottom: 0 }]}
+            onPress={() => {
+              refRBSheet.current.close();
+            }}
+          >
+            DONE
+          </Button>
+        </View>
+      </RBSheet>
     </View>
   );
 };
