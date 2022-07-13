@@ -1,5 +1,5 @@
+import "./src/components/ignoreWarnings"
 import { Provider as PaperProvider, Snackbar, Text, BottomNavigation } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
@@ -7,7 +7,7 @@ import { Styles } from "./src/styles/styles";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
-import { LogBox, View } from "react-native";
+import { LogBox, View, SafeAreaView, Platform, StatusBar } from "react-native";
 import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
@@ -40,11 +40,19 @@ import AddDesignationScreen from "./src/screens/Admin/Master/AddItems/AddDesigna
 import DesignationScreen from "./src/screens/Admin/Master/DesignationScreen";
 import ServiceProductScreen from "./src/screens/Admin/Master/ServiceProductScreen";
 import AddServiceProductScreen from "./src/screens/Admin/Master/AddItems/AddServiceProductScreen";
+import EWayBillScreen from "./src/screens/Admin/Master/EWayBillScreen";
+import AddEWayBillScreen from "./src/screens/Admin/Master/AddItems/AddEWayBillScreen";
+import LocationTypeScreen from "./src/screens/Admin/Master/LocationTypeScreen";
+import AddLocationTypeScreen from "./src/screens/Admin/Master/AddItems/AddLocationTypeScreen";
+import WorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/WorkFloorScreen";
+import AddWorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkFloorScreen";
+import WorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/WorkLocationScreen";
+import AddWorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkLocationScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component"]);
+LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component", "The action 'CLOSE_DRAWER' was not handled by any navigator."]);
 
 export default function App() {
   const [visible, setVisible] = React.useState(false);
@@ -97,10 +105,25 @@ export default function App() {
     GetRoleID();
   }, [roleID[0]]);
 
-  let activeIndex = 0;
+  let activeIndex = -1;
   const DrawerContent = (props) => {
     return (
       <DrawerContentScrollView {...props}>
+        <DrawerItem
+          key="Home"
+          focused={activeIndex === -1 ? true : false}
+          style={[Styles.borderBottom1]}
+          activeBackgroundColor={theme.colors.primary}
+          inactiveBackgroundColor={theme.colors.textLight}
+          label={({ focused }) => {
+            return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.textLight : theme.colors.text }]}>Dashboard</Text>;
+          }}
+          icon={({ focused }) => <Icon color={focused ? theme.colors.textLight : theme.colors.textSecondary} size={24} name="view-dashboard" />}
+          onPress={(e) => {
+            activeIndex = -1;
+            props.navigation.navigate("HomeScreen");
+          }}
+        />
         {menuItems.map((k, i) => {
           return k.roleID === roleID[0] ? (
             k.type === "item" ? (
@@ -126,7 +149,7 @@ export default function App() {
                 isRTL={true}
                 arrowStyling={{ size: 18, svgProps: { transform: [{ rotate: "-90deg" }] } }}
                 collapsibleContainerStyle={{ width: "100%" }}
-                initExpanded={i == 0 ? true : false}
+                initExpanded={false}
                 style={[Styles.borderBottom1, Styles.border0, Styles.flexAlignStart, Styles.padding0, Styles.margin0]}
                 title={
                   <View style={[Styles.padding8, Styles.paddingBottom12, Styles.flex1, Styles.flexRow]}>
@@ -165,29 +188,43 @@ export default function App() {
 
   const DrawerNavigator = () => {
     switch (roleID[0]) {
+      case 0:
+        return (
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
+          </Drawer.Navigator>
+        );
+        break;
       case 1:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ActivityRolesScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="CategoryScreen" component={CategoryScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ProductScreen" component={ProductScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="DepartmentScreen" component={DepartmentScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="LocationTypeScreen" component={LocationTypeScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="DesignationScreen" component={DesignationScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServiceProductScreen" component={ServiceProductScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="EWayBillScreen" component={EWayBillScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="WorkFloorScreen" component={WorkFloorScreen} />
+            <Drawer.Screen options={{ headerShown: false }} name="WorkLocationScreen" component={WorkLocationScreen} />
           </Drawer.Navigator>
         );
       case 2:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="ImageGalleryScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
           </Drawer.Navigator>
         );
       case 4:
         return (
-          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="BasicDetailsDealerScreen">
+          <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID } }} />
             <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
           </Drawer.Navigator>
@@ -211,21 +248,18 @@ export default function App() {
     }, [navigation]);
     const [index, setIndex] = react.useState(0);
     const [routes] = React.useState([
-      { key: "home", title: "Home", icon: "home" },
       { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
       { key: "profile", title: "Profile", icon: "account" },
     ]);
     const renderScene = ({ route, jumpTo }) => {
       switch (route.key) {
-        case "home":
-          return <HomeScreen roleID={GetRoleID} />;
         case "dashboard":
           return <DrawerNavigator />;
         case "profile":
           return <ProfileScreen />;
       }
     };
-    return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} />;
+    return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} barStyle={{ backgroundColor: theme.colors.background }} activeColor={theme.colors.primary} safeAreaInsets={{ bottom: 0 }} />;
   };
 
   const CreateStacks = () => {
@@ -236,14 +270,18 @@ export default function App() {
           <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
           <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerTitle: "Add Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddEWayBillScreen" component={AddEWayBillScreen} options={{ headerTitle: "Add E-Way Bill", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddLocationTypeScreen" component={AddLocationTypeScreen} options={{ headerTitle: "Add Location Type", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddWorkFloorScreen" component={AddWorkFloorScreen} options={{ headerTitle: "Add Work Floor", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddWorkLocationScreen" component={AddWorkLocationScreen} options={{ headerTitle: "Add Work Location", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
         </Stack.Navigator>
       );
     } else if (isLoggedIn === 2) {
@@ -253,21 +291,25 @@ export default function App() {
           <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
           <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerTitle: "Add Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-          <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddDepartmentScreen" component={AddDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddDesignationScreen" component={AddDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddServiceProductScreen" component={AddServiceProductScreen} options={{ headerTitle: "Add Service Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddEWayBillScreen" component={AddEWayBillScreen} options={{ headerTitle: "Add E-Way Bill", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddLocationTypeScreen" component={AddLocationTypeScreen} options={{ headerTitle: "Add Location Type", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddWorkFloorScreen" component={AddWorkFloorScreen} options={{ headerTitle: "Add Work Floor", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+          <Stack.Screen name="AddWorkLocationScreen" component={AddWorkLocationScreen} options={{ headerTitle: "Add Work Location", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
         </Stack.Navigator>
       );
     }
   };
 
   return (
-    <SafeAreaView style={[Styles.flex1]}>
+    <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
       <PaperProvider theme={theme}>
         {roleID[0] === -1 ? null : <NavigationContainer ref={navigationRef}>{CreateStacks()}</NavigationContainer>}
         <Snackbar visible={visible} onDismiss={onDismissSnackBar}>

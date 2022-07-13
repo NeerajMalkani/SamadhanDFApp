@@ -112,10 +112,15 @@ const ServiceProductScreen = ({ navigation }) => {
         productName: data.item.productName,
         categoryID: data.item.categoryID,
         hsnsacCode: data.item.hsnsacCode,
+        unit1ID: data.item.unit1ID,
+        unit2ID: data.item.unit2ID,
+        unit1Name: data.item.unit1Name,
+        unit2Name: data.item.unit2Name,
+        selectedUnitID: data.item.selectedUnitID,
         gstRate: data.item.gstRate.toFixed(2),
         rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
         rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
-        alternateUnitOfSales: data.item.alternateUnitOfSales.toString(),
+        alternateUnitOfSales: data.item.conversionRate.toString(),
         shortSpecification: data.item.shortSpecification,
         specification: data.item.specification,
         display: data.item.serviceDisplay,
@@ -147,10 +152,10 @@ const ServiceProductScreen = ({ navigation }) => {
                 setGstRate(data.item.gstRate.toFixed(2) + "%");
                 setRUM(data.item.rateWithMaterials.toFixed(2));
                 setRUWM(data.item.rateWithoutMaterials.toFixed(2));
-                setAUOS(data.item.alternateUnitOfSales);
+                setAUOS(data.item.conversionRate);
                 setShortSpec(data.item.shortSpecification);
                 setSpec(data.item.specification);
-                setUnitName(data.item.unitName);
+                setUnitName(data.item.unit2ID === data.item.selectedUnitID ? data.item.unit2Name : data.item.unit1Name);
               }}
             />
           )}

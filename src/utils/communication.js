@@ -28,7 +28,14 @@ export const communication = {
   InvalidRateWithoutMaterials: "Enter a valid Rate / Unit (without materials)",
 
   InvalidDepartmentName: "Enter a valid Department Name",
+
+  InvalidBranchType: "Enter a valid Branch Type",
+
   InvalidDesignationName: "Enter a valid Designation Name",
+
+  InvalidStateName: "Enter a valid State",
+  InvalidInStateLimit: "Enter a valid In State Limit",
+  InvalidInterStateLimit: "Enter a valid Inter State Limit",
 
   InsertError: "Unable to insert item. Please try again",
   UpdateError: "Unable to update item. Please try again",

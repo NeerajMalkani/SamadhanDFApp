@@ -34,7 +34,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitData, setUnitsData] = React.useState([]);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
+  const [selectedUnitID, setSelectedUnitID] = React.useState(0);
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
@@ -55,8 +56,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [errorAUOS, setErrorAUOS] = React.useState(false);
   const [auos, setAUOS] = React.useState(route.params.type === "edit" ? route.params.data.alternateUnitOfSales : "");
 
-  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[0] : "");
-  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unitName.split(" / ")[1] : "");
+  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
+  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
 
   const [errorSS, setErrorSS] = React.useState(false);
   const [shortSpec, setShortSpec] = React.useState(route.params.type === "edit" ? route.params.data.shortSpecification : "");
@@ -68,6 +69,12 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+
+  const ref_input2 = useRef();
+  const ref_input3 = useRef();
+  const ref_input4 = useRef();
+  const ref_input5 = useRef();
+  const ref_input6 = useRef();
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -217,7 +224,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
               return el.display;
             });
             setUnitFullData(response.data.data);
-            const units = response.data.data[0].unitName.split(" / ");
+            const units = response.data.data[0].displayUnit.split(" / ");
             setUnitsData(units);
           }
         }
@@ -306,11 +313,15 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-    const objUnitOfSales = unitFullData.find((el) => {
-      return el.unitName && el.unitName.toString().includes(selectedItem);
-    });
-    setUnitSelected(objUnitOfSales.unitName.split(" / ")[0]);
-    setConversionUnitSelected(objUnitOfSales.unitName.split(" / ")[1]);
+    if (unitFullData[0].unit1Name === selectedItem) {
+      setUnitSelected(unitFullData[0].unit1Name);
+      setConversionUnitSelected(unitFullData[0].unit2Name);
+      setSelectedUnitID(unitFullData[0].unit1ID);
+    } else if (unitFullData[0].unit2Name === selectedItem) {
+      setUnitSelected(unitFullData[0].unit2Name);
+      setConversionUnitSelected(unitFullData[0].unit1Name);
+      setSelectedUnitID(unitFullData[0].unit2ID);
+    }
   };
 
   const onHSNChanged = (text) => {
@@ -351,11 +362,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    console.log(auos);
     Provider.create("master/updateproduct", {
       ProductID: productsFullData.find((el) => {
         return el.productName === productsName;
       }).productID,
+      SelectedUnitID: selectedUnitID,
       RateWithMaterials: rum,
       RateWithoutMaterials: ruwm,
       AlternateUnitOfSales: auos,
@@ -427,10 +438,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       setErrorRUWM(true);
       isValid = false;
     }
-    const objUnitOfSales = unitFullData.find((el) => {
-      return el.unitName && el.unitName.toString().includes(unitName);
-    });
-    if (unitName.length === 0 || !objUnitOfSales) {
+    if (unitName.length === 0) {
       setUNError(true);
       isValid = false;
     }
@@ -472,27 +480,27 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput mode="flat" label="Rate / Unit (with materials)" value={rum} keyboardType="decimal-pad" onChangeText={onRUMChanged} style={{ backgroundColor: "white" }} error={errorRUM} />
+          <TextInput mode="flat" label="Rate / Unit (with materials)" value={rum} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onRUMChanged} style={{ backgroundColor: "white" }} error={errorRUM} />
           <HelperText type={errorRUM ? "error" : "info"} visible={true}>
             {rumht}
           </HelperText>
-          <TextInput mode="flat" label="Rate / Unit (without materials)" value={ruwm} keyboardType="decimal-pad" onChangeText={onRUWMChanged} style={{ backgroundColor: "white" }} error={errorRUWM} />
+          <TextInput ref={ref_input2} mode="flat" label="Rate / Unit (without materials)" value={ruwm} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onRUWMChanged} style={{ backgroundColor: "white" }} error={errorRUWM} />
           <HelperText type={errorRUWM ? "error" : "info"} visible={true}>
             {ruwmht}
           </HelperText>
           <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
             <Text style={[Styles.textCenter, { flex: unitSelected === "" ? 0 : 1 }]}>{unitSelected === "" ? "" : "1 " + unitSelected + " ="}</Text>
             <View style={[Styles.flex3]}>
-              <TextInput mode="flat" label="Alternative Unit of Sales" value={auos} keyboardType="decimal-pad" onChangeText={onAUOSChanged} style={{ backgroundColor: "white" }} error={errorAUOS} />
+              <TextInput ref={ref_input3} mode="flat" label="Alternative Unit of Sales" value={auos} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input4.current.focus()} onChangeText={onAUOSChanged} style={{ backgroundColor: "white" }} error={errorAUOS} />
               <HelperText type="error" visible={errorAUOS}>
                 {communication.InvalidAlternateUnitOfSales}
               </HelperText>
             </View>
             <Text style={[Styles.textCenter, { flex: conversionUnitSelected === "" ? 0 : 1 }]}>{conversionUnitSelected}</Text>
           </View>
-          <TextInput multiline mode="flat" label="Short Specification" value={shortSpec} onChangeText={onSSChanged} style={{ backgroundColor: "white" }} error={errorSS} />
+          <TextInput ref={ref_input4} multiline mode="flat" label="Short Specification" value={shortSpec} returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} onChangeText={onSSChanged} style={{ backgroundColor: "white" }} error={errorSS} />
           <HelperText type="error" visible={errorSS}></HelperText>
-          <TextInput multiline mode="flat" label="Specification" value={spec} onChangeText={onSChanged} style={{ backgroundColor: "white" }} error={errorS} />
+          <TextInput ref={ref_input5} multiline mode="flat" label="Specification" value={spec} returnKeyType="done" onChangeText={onSChanged} style={{ backgroundColor: "white" }} error={errorS} />
           <HelperText type="error" visible={errorS}></HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item

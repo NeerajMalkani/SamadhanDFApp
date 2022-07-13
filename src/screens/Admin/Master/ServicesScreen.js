@@ -77,7 +77,7 @@ const ServicesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.serviceName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="tools" />} />
+        <List.Item title={data.item.serviceName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="cog" />} />
       </View>
     );
   };
