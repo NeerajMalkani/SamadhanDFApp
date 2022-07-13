@@ -37,6 +37,8 @@ export const communication = {
   InvalidInStateLimit: "Enter a valid In State Limit",
   InvalidInterStateLimit: "Enter a valid Inter State Limit",
 
+  InvalidDesignTypeName: "Enter a valid Design Type Name",
+
   InsertError: "Unable to insert item. Please try again",
   UpdateError: "Unable to update item. Please try again",
   DeleteError: "Unable to delete item. Please try again",

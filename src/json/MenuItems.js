@@ -118,7 +118,7 @@ export const MenuItemsAdmin = [
         title: "Design Type",
         type: "accordian",
         index: 32,
-        //navigation: "DesignTypeScreen",
+        navigation: "DesignTypeScreen",
       },
       {
         title: "Materials Setup",
@@ -130,7 +130,7 @@ export const MenuItemsAdmin = [
         title: "Post New Design",
         type: "accordian",
         index: 34,
-        navigation: "PostNewDesignScreen",
+        //navigation: "PostNewDesignScreen",
       },
     ],
   },

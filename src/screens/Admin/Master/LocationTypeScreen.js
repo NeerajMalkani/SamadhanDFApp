@@ -88,7 +88,7 @@ const LocationTypeScreen = ({ navigation }) => {
           title={data.item.branchType}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="google-maps" />}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
