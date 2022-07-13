@@ -106,13 +106,13 @@ export const MenuItemsAdmin = [
         title: "Work Floor",
         type: "accordian",
         index: 30,
-        //navigation: "WorkFloorScreen",
+        navigation: "WorkFloorScreen",
       },
       {
         title: "Work Location",
         type: "accordian",
         index: 31,
-        //navigation: "WorkLocationScreen",
+        navigation: "WorkLocationScreen",
       },
       {
         title: "Design Type",

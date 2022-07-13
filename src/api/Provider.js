@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://43.204.210.148/api";
+const BASE_URL = "https://api.starselector.com/api";//"http://43.204.210.148/api";
 
 class Provider {
   getAll(resource) {
