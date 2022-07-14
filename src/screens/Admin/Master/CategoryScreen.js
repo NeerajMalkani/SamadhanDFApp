@@ -91,24 +91,17 @@ const CategoryScreen = ({ navigation }) => {
           title={data.item.categoryName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
+          onPress={() => {
+            refRBSheet.current.open();
+            setActivityRoleName(data.item.activityRoleName);
+            setSelectedCategoryName(data.item.categoryName);
+            setServiceName(data.item.serviceName);
+            setHsnsacCode(data.item.hsnsacCode);
+            setGstRate(data.item.gstRate.toFixed(2) + "%");
+            setUnitName(data.item.unitName);
+          }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-              onPress={() => {
-                refRBSheet.current.open();
-                setActivityRoleName(data.item.activityRoleName);
-                setSelectedCategoryName(data.item.categoryName);
-                setServiceName(data.item.serviceName);
-                setHsnsacCode(data.item.hsnsacCode);
-                setGstRate(data.item.gstRate.toFixed(2) + "%");
-                setUnitName(data.item.unitName);
-              }}
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );

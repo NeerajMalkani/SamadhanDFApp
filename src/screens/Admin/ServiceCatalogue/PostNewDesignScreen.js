@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -10,32 +10,28 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { AWSImagePath } from "../../../utils/paths";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const ServiceProductScreen = ({ navigation }) => {
+const PostNewDesignScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
-
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [selectedServiceProductName, setSelectedServiceProductName] = React.useState("");
+  const [selectedDesignTypeName, setSelectedDesignTypeName] = React.useState("");
   const [serviceName, setServiceName] = React.useState("");
-  const [activityRoleName, setActivityRoleName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  const [hsnsacCode, setHsnsacCode] = React.useState("");
-  const [gstRate, setGstRate] = React.useState("");
-  const [rum, setRUM] = React.useState("");
-  const [ruwm, setRUWM] = React.useState("");
-  const [auos, setAUOS] = React.useState("");
-  const [shortSpec, setShortSpec] = React.useState("");
-  const [spec, setSpec] = React.useState("");
-  const [unitName, setUnitName] = React.useState("");
+  const [productName, setProductName] = React.useState("");
+  const [designNumber, setDesignNumber] = React.useState("");
+  const [designImage, setDesignImage] = React.useState("");
+  const [workLocationName, setWorkLocationName] = React.useState("");
+  const [labourCost, setLabourCost] = React.useState("");
 
   const refRBSheet = useRef();
 
@@ -45,7 +41,7 @@ const ServiceProductScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getserviceproducts")
+    Provider.getAll("servicecatalogue/getpostnewdesigntypes")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -85,88 +81,69 @@ const ServiceProductScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.productName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.designTypeName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
-  };
-
-  const AddCallback = () => {
-    navigation.navigate("AddServiceProductScreen", { type: "add", fetchData: FetchData });
-  };
-
-  const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddServiceProductScreen", {
-      type: "edit",
-      fetchData: FetchData,
-      data: {
-        id: data.item.productID,
-        activityRoleName: data.item.activityRoleName,
-        activityID: data.item.activityID,
-        serviceName: data.item.serviceName,
-        serviceID: data.item.serviceID,
-        unitName: data.item.unitName,
-        unitOfSalesID: data.item.unitOfSalesID,
-        categoryName: data.item.categoryName,
-        productName: data.item.productName,
-        categoryID: data.item.categoryID,
-        hsnsacCode: data.item.hsnsacCode,
-        unit1ID: data.item.unit1ID,
-        unit2ID: data.item.unit2ID,
-        unit1Name: data.item.unit1Name,
-        unit2Name: data.item.unit2Name,
-        selectedUnitID: data.item.selectedUnitID,
-        gstRate: data.item.gstRate.toFixed(2),
-        rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
-        rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
-        alternateUnitOfSales: data.item.conversionRate.toString(),
-        shortSpecification: data.item.shortSpecification,
-        specification: data.item.specification,
-        display: data.item.serviceDisplay,
-      },
-    });
   };
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.productName}
+          title={data.item.designTypeName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="bag-checked" />}
+          left={() => <Image source={{ uri: AWSImagePath + data.item.designImage }} style={[Styles.width56, Styles.height56]} />}
           onPress={() => {
             refRBSheet.current.open();
-            setSelectedServiceProductName(data.item.productName);
-            setActivityRoleName(data.item.activityRoleName);
-            setCategoryName(data.item.categoryName);
+            setSelectedDesignTypeName(data.item.designTypeName);
             setServiceName(data.item.serviceName);
-            setHsnsacCode(data.item.hsnsacCode);
-            setGstRate(data.item.gstRate.toFixed(2) + "%");
-            setRUM(data.item.rateWithMaterials.toFixed(2));
-            setRUWM(data.item.rateWithoutMaterials.toFixed(2));
-            setAUOS(data.item.conversionRate);
-            setShortSpec(data.item.shortSpecification);
-            setSpec(data.item.specification);
-            setUnitName(data.item.unit2ID === data.item.selectedUnitID ? data.item.unit2Name : data.item.unit1Name);
+            setCategoryName(data.item.categoryName);
+            setProductName(data.item.productName);
+            setDesignNumber(data.item.designNumber);
+            setDesignImage(data.item.designImage);
+            setWorkLocationName(data.item.workLocationName);
+            setLabourCost(data.item.labourCost);
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
   };
 
+  const AddCallback = () => {
+    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData });
+  };
+
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddPostNewDesignScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.id,
+        serviceID: data.item.serviceID,
+        serviceName: data.item.serviceName,
+        categoryID: data.item.categoryID,
+        categoryName: data.item.categoryName,
+        productID: data.item.productID,
+        productName: data.item.productName,
+        designTypeID: data.item.designTypeID,
+        designTypeName: data.item.designTypeName,
+        workLocationID: data.item.workLocationID,
+        workLocationName: data.item.workLocationName,
+        designNumber: data.item.designNumber,
+        designImage: data.item.designImage,
+        labourCost: data.item.labourCost,
+        display: data.item.display,
+      },
+    });
+  };
+
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Service Product" />
+      <Header navigation={navigation} title="PostNewDesign" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -202,21 +179,18 @@ const ServiceProductScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View style={{ paddingBottom: 64 }}>
-          <Title style={[Styles.paddingHorizontal16]}>{selectedServiceProductName}</Title>
-          <ScrollView>
-            <List.Item title="Activity Role Name" description={activityRoleName} />
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
+          <ScrollView style={{ paddingBottom: 64 }}>
+            <List.Item title="Labour Cost" description={labourCost} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
-            <List.Item title="HSN / SAC Code" description={hsnsacCode} />
-            <List.Item title="GST Rate" description={gstRate} />
-            <List.Item title="Unit name" description={unitName} />
-            <List.Item title="Rate / Unit (with materials)" description={rum} />
-            <List.Item title="Rate / Unit without materials)" description={ruwm} />
-            <List.Item title="Alternate Unit Of Sales" description={auos === "" ? "NA" : auos} />
-            <List.Item title="Short Specification" description={shortSpec === "" ? "NA" : shortSpec} />
-            <List.Item title="Specification" description={spec === "" ? "NA" : spec} />
+            <List.Item title="Product Name" description={productName} />
+            <List.Item title="Work Location Name" description={workLocationName} />
+            <List.Item title="Design Number" description={designNumber} />
+            <List.Item title="Design Image" />
+            <Image source={{ uri: AWSImagePath + designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
           </ScrollView>
         </View>
       </RBSheet>
@@ -224,4 +198,4 @@ const ServiceProductScreen = ({ navigation }) => {
   );
 };
 
-export default ServiceProductScreen;
+export default PostNewDesignScreen;

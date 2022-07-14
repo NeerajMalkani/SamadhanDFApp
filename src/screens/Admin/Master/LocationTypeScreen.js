@@ -89,18 +89,18 @@ const LocationTypeScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="google-maps" />}
+          onPress={() => {
+            refRBSheet.current.open();
+            setSelectedBranchType(data.item.branchType);
+            setActivityName(data.item.activityName);
+            setServiceName(data.item.serviceName);
+          }}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
               name="eye"
-              onPress={() => {
-                refRBSheet.current.open();
-                setSelectedBranchType(data.item.branchType);
-                setActivityName(data.item.activityName);
-                setServiceName(data.item.serviceName);
-              }}
             />
           )}
         />

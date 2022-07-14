@@ -89,18 +89,18 @@ const EWayBillScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="newspaper-variant" />}
+          onPress={() => {
+            refRBSheet.current.open();
+            setSelectedStateName(data.item.stateName);
+            setSelectedInStateLimit(data.item.inStateLimit.toFixed(2));
+            setSelectedInterStateLimit(data.item.interStateLimit.toFixed(2));
+          }}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
               name="eye"
-              onPress={() => {
-                refRBSheet.current.open();
-                setSelectedStateName(data.item.stateName);
-                setSelectedInStateLimit(data.item.inStateLimit.toFixed(2));
-                setSelectedInterStateLimit(data.item.interStateLimit.toFixed(2));
-              }}
             />
           )}
         />

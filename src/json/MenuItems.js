@@ -130,7 +130,7 @@ export const MenuItemsAdmin = [
         title: "Post New Design",
         type: "accordian",
         index: 34,
-        //navigation: "PostNewDesignScreen",
+        navigation: "PostNewDesignScreen",
       },
     ],
   },

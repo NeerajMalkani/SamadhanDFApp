@@ -121,22 +121,22 @@ const ProductScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="barcode-scan" />}
+          onPress={() => {
+            refRBSheet.current.open();
+            setSelectedProductName(data.item.productName);
+            setActivityRoleName(data.item.activityRoleName);
+            setCategoryName(data.item.categoryName);
+            setServiceName(data.item.serviceName);
+            setHsnsacCode(data.item.hsnsacCode);
+            setGstRate(data.item.gstRate.toFixed(2) + "%");
+            setUnitName(data.item.unitName);
+          }}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
               name="eye"
-              onPress={() => {
-                refRBSheet.current.open();
-                setSelectedProductName(data.item.productName);
-                setActivityRoleName(data.item.activityRoleName);
-                setCategoryName(data.item.categoryName);
-                setServiceName(data.item.serviceName);
-                setHsnsacCode(data.item.hsnsacCode);
-                setGstRate(data.item.gstRate.toFixed(2) + "%");
-                setUnitName(data.item.unitName);
-              }}
             />
           )}
         />

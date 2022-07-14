@@ -90,19 +90,19 @@ const DesignTypeScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="brush" />}
+          onPress={() => {
+            refRBSheet.current.open();
+            setSelectedDesignTypeName(data.item.designTypeName);
+            setServiceName(data.item.serviceName);
+            setCategoryName(data.item.categoryName);
+            setProductName(data.item.productName);
+          }}
           right={() => (
             <Icon
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
               name="eye"
-              onPress={() => {
-                refRBSheet.current.open();
-                setSelectedDesignTypeName(data.item.designTypeName);
-                setServiceName(data.item.serviceName);
-                setCategoryName(data.item.categoryName);
-                setProductName(data.item.productName);
-              }}
             />
           )}
         />
