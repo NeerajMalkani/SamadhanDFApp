@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -8,6 +8,9 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
+import { creds } from "../../../../utils/credentials";
+import uuid from "react-native-uuid";
+import { AWSImagePath } from "../../../../utils/paths";
 
 const AddPostNewDesignScreen = ({ route, navigation }) => {
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -43,15 +46,24 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   const workLocationDDRef = useRef({});
 
   const [error, setError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.designTypeName : "");
+  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.labourCost.toString() : "");
+
+  const designNumber = React.useState("DC-" + (parseInt(route.params.data.count) + 1).toString());
+  const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const [filePath, setFilePath] = React.useState({});
-  const [uploadSuccessMessage, setUploadSuccessMessage] = React.useState("");
+  const [image, setImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = React.useState(route.params.type === "edit" ? { name: route.params.data.designImage } : null);
+  const [errorDI, setDIError] = React.useState(false);
+
+  const [isImageReplaced, setIsImageReplaced] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -91,10 +103,19 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
               setProductsName("");
               setCategoriesName("");
               setDesignTypeName("");
+              setImage(AWSImagePath + "placeholder-image.png");
+              setFilePath(null);
               setCategoriesData([]);
               setServicesData([]);
               setProductsData([]);
               setDesignTypeData([]);
+              setError(false);
+              setSNError(false);
+              setCNError(false);
+              setPNError(false);
+              setDTError(false);
+              setWLError(false);
+              setDIError(false);
             }
             FetchServicesFromActivity("Contractor", response.data.data);
             if (route.params.type === "edit") {
@@ -292,17 +313,17 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         return el.productName === selectedItem;
       }).id;
     }
-    setPNError(false);
+    setDTError(false);
   };
 
   const onWorkLocationSelected = (selectedItem) => {
     setWorkLocationName(selectedItem);
+    setWLError(false);
     if (route.params.type === "edit") {
       route.params.data.workLocationID = workLocationFullData.find((el) => {
         return el.workLocationName === selectedItem;
       }).id;
     }
-    setWLError(false);
   };
 
   const onNameChanged = (text) => {
@@ -311,88 +332,86 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   };
 
   const chooseFile = async () => {
-    // let options = {
-    //   mediaType: "photo",
-    // };
-    // launchImageLibrary(options, (response) => {
-    //   console.log("Response = ", response);
-    //   setUploadSuccessMessage("");
-    //   if (response.didCancel) {
-    //     console.log("User cancelled camera picker");
-    //     return;
-    //   } else if (response.errorCode == "camera_unavailable") {
-    //     console.log("Camera not available on device");
-    //     return;
-    //   } else if (response.errorCode == "permission") {
-    //     console.log("Permission not satisfied");
-    //     return;
-    //   } else if (response.errorCode == "others") {
-    //     console.log(response.errorMessage);
-    //     return;
-    //   }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.cancelled) {
+      setDIError(false);
+      const arrExt = result.uri.split(".");
+      const unique_id = uuid.v4();
+      setDesignImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setImage(result.uri);
       setFilePath(result);
+      if (route.params.type === "edit") {
+        setIsImageReplaced(true);
+      }
     }
-
-    //});
   };
 
   const uploadFile = () => {
-    console.log(filePath.uri);
-    if (filePath.uri) {
-      if (Object.keys(filePath).length == 0) {
-        alert("Please select image first");
-        return;
-      }
-      RNS3.put(
-        {
-          uri: filePath.uri,
-          name: "asd8sad09as-2387d098-asd97asd98",
-          type: "image/jpeg",
-        },
-        {
-          keyPrefix: "/", // Ex. myuploads/
-          bucket: "samadhanerp", // Ex. aboutreact
-          region: "ap-south-1", // Ex. ap-south-1
-          accessKey: "AKIAZGRJKC5EP34PJHE7",
-          secretKey: "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",
-          successActionStatus: 201,
-        }
-      )
-        .progress((progress) => setUploadSuccessMessage(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`))
-        .then((response) => {
-          if (response.status !== 201) alert("Failed to upload image to S3");
-          console.log(response.body);
-          setFilePath("");
-          let { bucket, etag, key, location } = response.body.postResponse;
-          setUploadSuccessMessage(
-            `Uploaded Successfully: 
-          \n1. bucket => ${bucket}
-          \n2. etag => ${etag}
-          \n3. key => ${key}
-          \n4. location => ${location}`
-          );
-        })
-        .catch((ex) => {
-          console.log(ex);
-        });
+    if (route.params.type === "edit" && !isImageReplaced) {
+      UpdateData();
     } else {
+      if (filePath.uri) {
+        if (Object.keys(filePath).length == 0) {
+          setSnackbarText(communication.NoImageSelectedError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+          return;
+        }
+        RNS3.put(
+          {
+            uri: filePath.uri,
+            name: designImage.split(AWSImagePath)[1],
+            type: "image/*",
+          },
+          {
+            keyPrefix: "",
+            bucket: creds.awsBucket,
+            region: creds.awsRegion,
+            accessKey: creds.awsAccessKey,
+            secretKey: creds.awsSecretKey,
+            successActionStatus: 201,
+          }
+        )
+          .progress((progress) => {
+            setIsButtonLoading(true);
+            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+          })
+          .then((response) => {
+            setIsButtonLoading(false);
+            if (response.status !== 201) {
+              setSnackbarVisible(true);
+              setSnackbarColor(theme.colors.error);
+              setSnackbarText(communication.FailedUploadError);
+            } else {
+              if (route.params.type === "edit") {
+                UpdateData();
+              } else {
+                InsertData();
+              }
+            }
+          })
+          .catch((ex) => {
+            console.log(ex);
+            setIsButtonLoading(false);
+            setSnackbarVisible(true);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(communication.FailedUploadError);
+          });
+      } else {
+        setSnackbarText(communication.NoImageSelectedError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      }
     }
   };
 
   const InsertData = () => {
-    console.log(productsFullData);
-    Provider.create("servicecatalogue/insertdesigntype", {
-      DesignTypeName: name,
+    Provider.create("servicecatalogue/insertpostnewdesigntype", {
       ServiceID: servicesFullData.find((el) => {
         return el.serviceName === serviceName;
       }).id,
@@ -402,6 +421,15 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       ProductID: productsFullData.find((el) => {
         return el.productName === productsName;
       }).productID,
+      DesignTypeID: designTypeFullData.find((el) => {
+        return el.designTypeName === designTypeName;
+      }).id,
+      WorkLocationID: workLocationFullData.find((el) => {
+        return el.workLocationName === workLocationName;
+      }).id,
+      DesignNumber: designNumber[0],
+      DesignImage: designImage,
+      LabourCost: name,
       Display: checked,
     })
       .then((response) => {
@@ -421,9 +449,8 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("servicecatalogue/updatedesigntype", {
+    Provider.create("servicecatalogue/updatepostnewdesigntype", {
       ID: route.params.data.id,
-      DesignTypeName: name,
       ServiceID: servicesFullData.find((el) => {
         return el.serviceName === serviceName;
       }).id,
@@ -433,6 +460,15 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       ProductID: productsFullData.find((el) => {
         return el.productName === productsName;
       }).productID,
+      DesignTypeID: designTypeFullData.find((el) => {
+        return el.designTypeName === designTypeName;
+      }).id,
+      WorkLocationID: workLocationFullData.find((el) => {
+        return el.workLocationName === workLocationName;
+      }).id,
+      DesignNumber: designNumber[0],
+      DesignImage: designImage,
+      LabourCost: name,
       Display: checked,
     })
       .then((response) => {
@@ -478,12 +514,26 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       setPNError(true);
       isValid = false;
     }
+    const objDesignType = designTypeFullData.find((el) => {
+      return el.designTypeName && el.designTypeName === designTypeName;
+    });
+    if (designTypeName.length === 0 || !objDesignType) {
+      setDTError(true);
+      isValid = false;
+    }
+    const objWorkLocation = workLocationFullData.find((el) => {
+      return el.workLocationName && el.workLocationName === workLocationName;
+    });
+    if (workLocationName.length === 0 || !objWorkLocation) {
+      setWLError(true);
+      isValid = false;
+    }
+    if (filePath === null) {
+      setDIError(true);
+      isValid = false;
+    }
     if (isValid) {
-      if (route.params.type === "edit") {
-        UpdateData();
-      } else {
-        InsertData();
-      }
+      uploadFile();
     }
   };
 
@@ -511,16 +561,20 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorWL}>
             {communication.InvalidWorkLocationName}
           </HelperText>
-          <TextInput mode="flat" label="Design Number" value="DC-011" editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="flat" label="Design Number" value={designNumber[0]} editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
           <TextInput mode="flat" label="Labour Cost" value={name} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
-            {communication.InvalidDesignTypeName}
+            {communication.InvalidLabourCost}
           </HelperText>
-          <View>
-            <Button mode="contained" onPress={chooseFile}>
-              Choose Image
+          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+            <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+            <Button mode="text" onPress={chooseFile}>
+              {filePath !== null ? "Replace" : "Choose Image"}
             </Button>
           </View>
+          <HelperText type="error" visible={errorDI}>
+            {communication.InvalidDesignImage}
+          </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -538,12 +592,12 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={uploadFile}>
+          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
             SAVE
           </Button>
         </Card.Content>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
     </View>

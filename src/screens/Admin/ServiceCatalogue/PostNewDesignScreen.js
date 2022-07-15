@@ -10,7 +10,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { AWSImagePath } from "../../../utils/paths";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -94,7 +93,7 @@ const PostNewDesignScreen = ({ navigation }) => {
           title={data.item.designTypeName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Image source={{ uri: AWSImagePath + data.item.designImage }} style={[Styles.width56, Styles.height56]} />}
+          left={() => <Image source={{ uri: data.item.designImage }} style={[Styles.width56, Styles.height56]} />}
           onPress={() => {
             refRBSheet.current.open();
             setSelectedDesignTypeName(data.item.designTypeName);
@@ -113,7 +112,7 @@ const PostNewDesignScreen = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData, data: {count: listData[0].length} });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -137,6 +136,7 @@ const PostNewDesignScreen = ({ navigation }) => {
         designImage: data.item.designImage,
         labourCost: data.item.labourCost,
         display: data.item.display,
+        count: listData[0].length
       },
     });
   };
@@ -190,7 +190,7 @@ const PostNewDesignScreen = ({ navigation }) => {
             <List.Item title="Work Location Name" description={workLocationName} />
             <List.Item title="Design Number" description={designNumber} />
             <List.Item title="Design Image" />
-            <Image source={{ uri: AWSImagePath + designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
           </ScrollView>
         </View>
       </RBSheet>

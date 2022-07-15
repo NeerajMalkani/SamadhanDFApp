@@ -47,8 +47,10 @@
     "react-native-sectioned-multi-select": "^0.9.1",
     "react-native-select-dropdown": "^2.0.3",
     "react-native-swipe-list-view": "^3.2.9",
+    "react-native-uuid": "^2.0.1",
     "react-native-web": "0.17.7",
-    "use-state-if-mounted": "^1.0.7"
+    "use-state-if-mounted": "^1.0.7",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

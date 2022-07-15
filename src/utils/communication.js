@@ -38,9 +38,13 @@ export const communication = {
   InvalidInterStateLimit: "Enter a valid Inter State Limit",
 
   InvalidWorkFloorName: "Enter a valid Work Floor",
-  InvalidWorkLocationName: "Enter a valid Design Location",
+  InvalidWorkLocationName: "Enter a valid Work Location",
   InvalidDesignTypeName: "Enter a valid Design Type Name",
+  InvalidLabourCost: "Enter a valid Labour cost",
+  InvalidDesignImage: "Enter a valid Design Image",
 
+  NoImageSelectedError: "Please pick an image to continue",
+  FailedUploadError: "Failed to upload your file",
   InsertError: "Unable to insert item. Please try again",
   UpdateError: "Unable to update item. Please try again",
   DeleteError: "Unable to delete item. Please try again",
