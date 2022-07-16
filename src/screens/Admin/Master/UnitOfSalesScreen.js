@@ -68,7 +68,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.unitName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.unit1Name.toString().toLowerCase().includes(query.toLowerCase()) || el.unit2Name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }

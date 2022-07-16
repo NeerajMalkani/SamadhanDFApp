@@ -130,7 +130,6 @@ const AddProductScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getunitbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
-        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
@@ -138,7 +137,6 @@ const AddProductScreen = ({ route, navigation }) => {
             });
             setUnitFullData(response.data.data);
             const units = response.data.data.map((data) => data.displayUnit);
-            console.log(units);
             setUnitsData(units);
           }
         }

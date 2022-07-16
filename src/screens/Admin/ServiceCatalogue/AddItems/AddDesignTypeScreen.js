@@ -208,7 +208,6 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    console.log(productsFullData);
     Provider.create("servicecatalogue/insertdesigntype", {
       DesignTypeName: name,
       ServiceID: servicesFullData.find((el) => {

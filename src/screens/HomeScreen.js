@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { ActivityIndicator, Avatar, Button, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
+import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
@@ -11,8 +11,11 @@ import { createNavigationContainerRef, StackActions, DrawerActions } from "@reac
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
+import ImageViewer from "react-native-image-zoom-viewer";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 export const navigationRef = createNavigationContainerRef();
+const windowWidth = Dimensions.get("window").width;
 
 const HomeScreen = ({ navigation, roleID }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -21,6 +24,13 @@ const HomeScreen = ({ navigation, roleID }) => {
   const [userName, setUserName] = React.useState("");
   const [userFullName, setUserFullName] = React.useState("");
   const [userRoleName, setUserRoleName] = React.useState("");
+
+  const [catalogueFullData, setCatalogueFullData] = React.useState([]);
+  const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
+  const [catalogueImagesZoom, setCatalogueImagesZoom] = React.useState([]);
+  const [catalogueImagesZoomVisible, setCatalogueImagesZoomVisible] = React.useState(false);
+  const [catalogueImages, setCatalogueImages] = React.useState([]);
+
   const [userCountData, setUserCountData] = React.useState([]);
   const [totalUsers, setTotalUsers] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -29,6 +39,13 @@ const HomeScreen = ({ navigation, roleID }) => {
   const [switchRoleNames, setSwitchRoleNames] = React.useState(false);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+  const arrQuickLinks = [
+    { title: "Pocket Diary", icon: "calculate", backgroundColor: theme.multicolors.red },
+    { title: "Feedbacks", icon: "feedback", backgroundColor: theme.multicolors.blue },
+    { title: "Profile", icon: "account-circle", backgroundColor: theme.multicolors.yellow },
+    // { title: "Dashboard", icon: "dashboard", backgroundColor: theme.multicolors.yellow },
+  ];
 
   const GetUserDetails = async () => {
     try {
@@ -50,6 +67,45 @@ const HomeScreen = ({ navigation, roleID }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const GetServiceCatalogue = () => {
+    Provider.getAll("servicecatalogue/getpostnewdesigntypes")
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setCatalogueFullData(response.data.data);
+            const categoryImageData = [];
+            const sliderImageData = [];
+            const sliderImageZoomData = [];
+            response.data.data.map((data) => {
+              categoryImageData.push({
+                image: data.designImage,
+                text: data.categoryName,
+              });
+              sliderImageData.push({
+                img: data.designImage,
+              });
+              sliderImageZoomData.push({
+                url: data.designImage,
+              });
+            });
+            setCatalogueCategoryImages(categoryImageData);
+            setCatalogueImages(sliderImageData);
+            setCatalogueImagesZoom(sliderImageZoomData);
+          }
+        } else {
+          listData[1]([]);
+          setSnackbarText("No data found");
+          setIsSnackbarVisible(true);
+        }
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+      });
   };
 
   const GetUserCount = () => {
@@ -76,6 +132,7 @@ const HomeScreen = ({ navigation, roleID }) => {
   };
 
   React.useEffect(() => {
+    GetServiceCatalogue();
     GetUserDetails();
     GetUserCount();
   }, []);
@@ -141,18 +198,18 @@ const HomeScreen = ({ navigation, roleID }) => {
   };
 
   return (
-    <View style={[Styles.flex1]}>
+    <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
-      <TouchableNativeFeedback>
-        <View
-          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
-          onTouchStart={() => {
-            navigation.dispatch(DrawerActions.toggleDrawer());
-          }}
-        >
-          <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
-        </View>
-      </TouchableNativeFeedback>
+        <TouchableNativeFeedback>
+          <View
+            style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+            onTouchStart={() => {
+              navigation.dispatch(DrawerActions.toggleDrawer());
+            }}
+          >
+            <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
+          </View>
+        </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
           <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userName}</Title>
@@ -175,6 +232,35 @@ const HomeScreen = ({ navigation, roleID }) => {
         </View>
       ) : (
         <ScrollView>
+          <View style={[Styles.flexRow, Styles.padding4, Styles.flexWrap]}>
+            {catalogueCategoryImages.map((k, i) => {
+              return (
+                <Card key={i} style={[Styles.margin4, { width: windowWidth / 2 - 12 }]}>
+                  <Card.Cover source={{ uri: k.image }} style={[Styles.height96]} />
+                  <Card.Title title={k.text} titleStyle={[Styles.fontSize14]} />
+                </Card>
+              );
+            })}
+          </View>
+          <View style={[Styles.margin4, Styles.marginTop0, Styles.border1, { height: 180 }]}>
+            <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }} autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} />
+          </View>
+          <View style={[Styles.margin4, Styles.height96, Styles.border1, { position: "relative" }]}>
+            <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
+            <Caption style={[{ position: "absolute", bottom: 4, right: 4, color: theme.colors.textLight }]}>Sponsered Ads</Caption>
+          </View>
+          <View style={[Styles.margin4, Styles.border1, Styles.flexRow, Styles.flexAlignCenter, { height: 140, justifyContent: "space-between" }]}>
+            {arrQuickLinks.map((k, i) => {
+              return (
+                <View key={i} style={[Styles.flex1, Styles.height104, Styles.padding4, Styles.flexAlignCenter, Styles.flexJustifyCenter]}>
+                  <View style={[Styles.width72, Styles.height72, Styles.flexAlignCenter, Styles.flexJustifyCenter, { backgroundColor: theme.colors.textLight, borderRadius: 36, elevation: 4 }]}>
+                    <Icon name={k.icon} color={k.backgroundColor} size={40} />
+                  </View>
+                  <Caption style={[Styles.marginTop4]}>{k.title}</Caption>
+                </View>
+              );
+            })}
+          </View>
           {userRoleName === "General User" ? (
             <View>
               <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
@@ -198,41 +284,36 @@ const HomeScreen = ({ navigation, roleID }) => {
               </Portal>
             </View>
           ) : null}
-          <Title style={[Styles.padding16, Styles.paddingBottom0]}>Total Users ({totalUsers})</Title>
-          <View style={[Styles.flexRow, Styles.padding8, Styles.flexAlignStart, Styles.flexWrap]}>
+          {/* <Subheading style={[Styles.padding16, Styles.paddingBottom0]}>Total Users ({totalUsers})</Subheading> */}
+          <View style={[Styles.flexRow, Styles.flexAlignStart]}>
             {userCountData.map((k, i) => {
               //
               return (
-                <View key={i} style={[Styles.width50per, Styles.padding4]}>
-                  <Card>
-                    <Card.Content>
-                      <Subheading>{k.roleName}s</Subheading>
-                      <Headline>{k.roleCount}</Headline>
-                    </Card.Content>
+                <View key={i} style={[Styles.flex1, Styles.padding2, Styles.paddingBottom16]}>
+                  <Card style={[Styles.padding2, Styles.flexAlignCenter, Styles.paddingVertical16]}>
+                    <Caption style={[Styles.textCenter]}>{k.roleName}s</Caption>
+                    <Headline style={[Styles.textCenter]}>{k.roleCount}</Headline>
                   </Card>
                 </View>
               );
             })}
-          </View>
-          <Title style={[Styles.paddingHorizontal16]}>Sliding Gallery</Title>
-          <View style={[Styles.padding16, { height: 240 }]}>
-            <ImageSlider
-              data={[
-                { img: "https://www.homepictures.in/wp-content/uploads/2019/10/False-Ceiling-Gypsum-Designs-For-Hall-and-Bedrooms-1.jpg" },
-                { img: "https://macj-abuyerschoice.com/wp-content/uploads/2019/10/Blog-Images.jpg" },
-                { img: "https://static.wixstatic.com/media/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg/v1/fill/w_600,h_358,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/e5df22_7e8607574d1e4d949a1b45e6f7c2d50c~mv2.jpg" },
-              ]}
-              timer={10000}
-              activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
-              autoPlay={true}
-              closeIconColor="#fff"
-            />
           </View>
         </ScrollView>
       )}
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
+      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)} transparent={true}>
+        <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
+          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => {}}>
+            View
+          </Button>
+          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 104, backgroundColor: "white" }} onPress={() => setCatalogueImagesZoomVisible(false)}>
+            Close
+          </Button>
+          <ImageViewer imageUrls={catalogueImagesZoom} backgroundColor="transparent" style={{ height: 1920 }} />
+        </View>
+      </Modal>
     </View>
   );
 };
