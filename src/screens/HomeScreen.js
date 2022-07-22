@@ -17,13 +17,12 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
 
-const HomeScreen = ({ navigation, roleID }) => {
+const HomeScreen = ({ navigation, roleID, userDetails }) => {
+  console.log(userDetails);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const [userName, setUserName] = React.useState("");
-  const [userFullName, setUserFullName] = React.useState("");
-  const [userRoleName, setUserRoleName] = React.useState("");
+  const [userRoleName, setUserRoleName] = React.useState("");//userDetails.RoleName
 
   const [catalogueFullData, setCatalogueFullData] = React.useState([]);
   const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
@@ -44,21 +43,7 @@ const HomeScreen = ({ navigation, roleID }) => {
     { title: "Pocket Diary", icon: "calculate", backgroundColor: theme.multicolors.red },
     { title: "Feedbacks", icon: "feedback", backgroundColor: theme.multicolors.blue },
     { title: "Profile", icon: "account-circle", backgroundColor: theme.multicolors.yellow },
-    // { title: "Dashboard", icon: "dashboard", backgroundColor: theme.multicolors.yellow },
   ];
-
-  const GetUserDetails = async () => {
-    try {
-      const value = await AsyncStorage.getItem("user");
-      if (value) {
-        const parsedUser = JSON.parse(value);
-        setUserFullName(parsedUser.FullName);
-        setUserRoleName(parsedUser.RoleName);
-        setUserName(parsedUser.FullName);
-        setUserID(parsedUser.UserID);
-      }
-    } catch (error) {}
-  };
 
   const LogoutUser = async () => {
     try {
@@ -133,7 +118,6 @@ const HomeScreen = ({ navigation, roleID }) => {
 
   React.useEffect(() => {
     GetServiceCatalogue();
-    GetUserDetails();
     GetUserCount();
   }, []);
 
@@ -196,32 +180,22 @@ const HomeScreen = ({ navigation, roleID }) => {
         setIsButtonLoading(false);
       });
   };
-
+  //userDetails.FullName
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
         <TouchableNativeFeedback>
-          <View
-            style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
-            onTouchStart={() => {
-              navigation.dispatch(DrawerActions.toggleDrawer());
-            }}
-          >
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.dispatch(DrawerActions.toggleDrawer())}>
             <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
-          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userName}</Title>
+          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userDetails}</Title>
           <Text style={[Styles.textTertiaryColor, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
         <TouchableNativeFeedback>
-          <View
-            style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
-            onTouchStart={() => {
-              LogoutUser();
-            }}
-          >
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
             <FontAwesomeIcon icon={faPowerOff} size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>

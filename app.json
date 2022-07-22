@@ -28,7 +28,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.diamondframes.samadhan"
+      "bundleIdentifier": "com.diamondframes.samadhan",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
