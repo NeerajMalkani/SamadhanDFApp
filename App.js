@@ -60,52 +60,69 @@ LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component
 export default function App() {
   const roleID = React.useState(0);
   const [userDetails, setUserDetails] = React.useState("");
-  const [isLoggedIn, setIsLoggedIn] = useStateIfMounted(0);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(0);
 
   let menuItems = [];
 
   useEffect(() => {
     let isMounted = true;
-    AsyncStorage.getItem("isLogin").then((value) => {
+    AsyncStorage.multiGet(["isLogin", "user"]).then((value) => {
       if (isMounted) {
-        if (value !== null && value === "true") {
+        if (value[0] !== null && value[0][1] === "true") {
           setIsLoggedIn(1);
         } else {
           setIsLoggedIn(2);
+        }
+        if(value[1] !== null){
+          switch (JSON.parse(value[1][1]).RoleID) {
+            case 1:
+              menuItems = [...MenuItemsAdmin];
+              break;
+            case 2:
+              menuItems = [...MenuItemsGeneralUser];
+              break;
+            case 3:
+              menuItems = [...MenuItemsContractor];
+              break;
+            case 4:
+              menuItems = [...MenuItemsDealer];
+              break;
+          }
+          roleID[1](JSON.parse(value[1][1]).RoleID);
         }
       }
     });
     return () => {
       isMounted = false;
     };
-  }, [isLoggedIn]);
+  }, []);
 
-  const GetRoleID = async () => {
-    try {
-      const value = await AsyncStorage.getItem("user");
-      if (value) {
-        //setUserDetails(JSON.parse(value));
-        switch (JSON.parse(value).RoleID) {
-          case 1:
-            menuItems = [...MenuItemsAdmin];
-            break;
-          case 2:
-            menuItems = [...MenuItemsGeneralUser];
-            break;
-          case 3:
-            menuItems = [...MenuItemsContractor];
-            break;
-          case 4:
-            menuItems = [...MenuItemsDealer];
-            break;
-        }
-        roleID[1](JSON.parse(value).RoleID);
-      }
-    } catch (error) {}
-  };
-  useEffect(() => {
-    GetRoleID();
-  }, [roleID[0]]);
+  // const GetRoleID = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem("user");
+  //     if (value) {
+  //       //setUserDetails(JSON.parse(value));
+  //       switch (JSON.parse(value).RoleID) {
+  //         case 1:
+  //           menuItems = [...MenuItemsAdmin];
+  //           break;
+  //         case 2:
+  //           menuItems = [...MenuItemsGeneralUser];
+  //           break;
+  //         case 3:
+  //           menuItems = [...MenuItemsContractor];
+  //           break;
+  //         case 4:
+  //           menuItems = [...MenuItemsDealer];
+  //           break;
+  //       }
+  //       roleID[1](JSON.parse(value).RoleID);
+  //     }
+  //   } catch (error) {}
+  // };
+  // useEffect(() => {
+  //   GetRoleID();
+  // }, [roleID[0]]);
 
   let activeIndex = -1;
   const DrawerContent = (props) => {
@@ -223,20 +240,20 @@ export default function App() {
       </DrawerContentScrollView>
     );
   };
-
+  //roleID: { GetRoleID },
   const DrawerNavigator = () => {
     switch (roleID[0]) {
       case 0:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID }, userDetails: {userDetails} }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
           </Drawer.Navigator>
         );
         break;
       case 1:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID }, userDetails: {userDetails} }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{  userDetails: { userDetails } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
@@ -256,7 +273,7 @@ export default function App() {
       case 2:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID }, userDetails: {userDetails} }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
             <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
           </Drawer.Navigator>
@@ -264,7 +281,7 @@ export default function App() {
       case 4:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ roleID: { GetRoleID }, userDetails: {userDetails} }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
             <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
           </Drawer.Navigator>
@@ -280,12 +297,13 @@ export default function App() {
   };
 
   const BottomTabs = ({ navigation }) => {
-    React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {
-        GetRoleID();
-      });
-      return unsubscribe;
-    }, [navigation]);
+    console.log("here16");
+    // React.useEffect(() => {
+    //   const unsubscribe = navigation.addListener("focus", () => {
+    //     GetRoleID();
+    //   });
+    //   return unsubscribe;
+    // }, [navigation]);
     const [index, setIndex] = react.useState(0);
     const [routes] = React.useState([
       { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
@@ -307,7 +325,7 @@ export default function App() {
       <PaperProvider theme={theme}>
         {isLoggedIn === 0 ? (
           <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.backgroundColor]}>
-              <Text>Initilizing Application...</Text>
+            <Text>Initilizing Application...</Text>
           </View>
         ) : (
           <NavigationContainer ref={navigationRef}>

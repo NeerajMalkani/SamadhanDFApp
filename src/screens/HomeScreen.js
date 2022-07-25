@@ -17,8 +17,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
 
-const HomeScreen = ({ navigation, roleID, userDetails }) => {
-  console.log(userDetails);
+const HomeScreen = ({ navigation, userDetails }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
@@ -141,7 +140,7 @@ const HomeScreen = ({ navigation, roleID, userDetails }) => {
   const StoreUserData = async (user) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(user));
-      roleID();
+      //roleID();
     } catch (error) {}
   };
 
