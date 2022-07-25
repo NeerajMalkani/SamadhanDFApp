@@ -26,7 +26,6 @@ import ForgotPassword from "./src/screens/ForgotPassword";
 import react from "react";
 import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/UserProfile";
-import { useStateIfMounted } from "use-state-if-mounted";
 import BasicDetailsDealerScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
 import MyServicesDealerScreen from "./src/screens/Dealer/CompanyProfile/MyServicesScreen";
 import BasicDetailsContractorScreen from "./src/screens/Contractor/CompanyProfile/BasicDetailsScreen";
@@ -58,71 +57,42 @@ const Drawer = createDrawerNavigator();
 LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component", "The action 'CLOSE_DRAWER' was not handled by any navigator."]);
 
 export default function App() {
-  const roleID = React.useState(0);
-  const [userDetails, setUserDetails] = React.useState("");
+  const [userDetails, setUserDetails] = React.useState(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(0);
 
   let menuItems = [];
 
-  useEffect(() => {
-    let isMounted = true;
+  const SetUser = () => {
     AsyncStorage.multiGet(["isLogin", "user"]).then((value) => {
-      if (isMounted) {
-        if (value[0] !== null && value[0][1] === "true") {
-          setIsLoggedIn(1);
-        } else {
-          setIsLoggedIn(2);
+      if (value[1] !== null) {
+        const ud = JSON.parse(value[1][1]);
+        switch (ud.RoleID) {
+          case 1:
+            menuItems = [...MenuItemsAdmin];
+            break;
+          case 2:
+            menuItems = [...MenuItemsGeneralUser];
+            break;
+          case 3:
+            menuItems = [...MenuItemsContractor];
+            break;
+          case 4:
+            menuItems = [...MenuItemsDealer];
+            break;
         }
-        if(value[1] !== null){
-          switch (JSON.parse(value[1][1]).RoleID) {
-            case 1:
-              menuItems = [...MenuItemsAdmin];
-              break;
-            case 2:
-              menuItems = [...MenuItemsGeneralUser];
-              break;
-            case 3:
-              menuItems = [...MenuItemsContractor];
-              break;
-            case 4:
-              menuItems = [...MenuItemsDealer];
-              break;
-          }
-          roleID[1](JSON.parse(value[1][1]).RoleID);
-        }
+        setUserDetails(ud);
+      }
+      if (value[0] !== null && value[0][1] === "true") {
+        setIsLoggedIn(1);
+      } else {
+        setIsLoggedIn(2);
       }
     });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  };
 
-  // const GetRoleID = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem("user");
-  //     if (value) {
-  //       //setUserDetails(JSON.parse(value));
-  //       switch (JSON.parse(value).RoleID) {
-  //         case 1:
-  //           menuItems = [...MenuItemsAdmin];
-  //           break;
-  //         case 2:
-  //           menuItems = [...MenuItemsGeneralUser];
-  //           break;
-  //         case 3:
-  //           menuItems = [...MenuItemsContractor];
-  //           break;
-  //         case 4:
-  //           menuItems = [...MenuItemsDealer];
-  //           break;
-  //       }
-  //       roleID[1](JSON.parse(value).RoleID);
-  //     }
-  //   } catch (error) {}
-  // };
-  // useEffect(() => {
-  //   GetRoleID();
-  // }, [roleID[0]]);
+  useEffect(() => {
+    SetUser();
+  }, []);
 
   let activeIndex = -1;
   const DrawerContent = (props) => {
@@ -131,6 +101,8 @@ export default function App() {
     const [expanded3, setExpanded3] = React.useState(false);
     const [expanded4, setExpanded4] = React.useState(false);
     const [expanded5, setExpanded5] = React.useState(false);
+    const masterExpanded = [expanded1, expanded2, expanded3, expanded4, expanded5];
+    const masterSetExpanded = [setExpanded1, setExpanded2, setExpanded3, setExpanded4, setExpanded5];
 
     return (
       <DrawerContentScrollView {...props}>
@@ -150,7 +122,7 @@ export default function App() {
           }}
         />
         {menuItems.map((k, i) => {
-          return k.roleID === roleID[0] ? (
+          return k.roleID === userDetails.RoleID ? (
             k.type === "item" ? (
               <DrawerItem
                 key={i}
@@ -176,43 +148,10 @@ export default function App() {
                 style={[Styles.backgroundColor, Styles.borderBottom1, Styles.height56, { paddingTop: -8 }]}
                 onPress={() => {
                   LayoutAnimation.easeInEaseOut();
-                  switch (i) {
-                    case 0:
-                      setExpanded1(!expanded1);
-                      setExpanded2(false);
-                      setExpanded3(false);
-                      setExpanded4(false);
-                      setExpanded5(false);
-                      break;
-                    case 1:
-                      setExpanded2(!expanded2);
-                      setExpanded1(false);
-                      setExpanded3(false);
-                      setExpanded4(false);
-                      setExpanded5(false);
-                      break;
-                    case 2:
-                      setExpanded3(!expanded3);
-                      setExpanded2(false);
-                      setExpanded1(false);
-                      setExpanded4(false);
-                      setExpanded5(false);
-                      break;
-                    case 3:
-                      setExpanded4(!expanded4);
-                      setExpanded2(false);
-                      setExpanded3(false);
-                      setExpanded1(false);
-                      setExpanded5(false);
-                      break;
-                    case 4:
-                      setExpanded5(!expanded5);
-                      setExpanded2(false);
-                      setExpanded3(false);
-                      setExpanded4(false);
-                      setExpanded1(false);
-                      break;
+                  for (let a = 0; a < masterExpanded.length; a++) {
+                    masterSetExpanded[a](!false);
                   }
+                  masterSetExpanded[i](!masterExpanded[i]);
                 }}
               >
                 {k.items.map((j, l) => {
@@ -240,20 +179,18 @@ export default function App() {
       </DrawerContentScrollView>
     );
   };
-  //roleID: { GetRoleID },
   const DrawerNavigator = () => {
-    switch (roleID[0]) {
+    switch (parseInt(userDetails.RoleID)) {
       case 0:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails }} />
           </Drawer.Navigator>
         );
-        break;
       case 1:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{  userDetails: { userDetails } }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails }} />
             <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
@@ -273,7 +210,7 @@ export default function App() {
       case 2:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails }} />
             <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
           </Drawer.Navigator>
@@ -281,7 +218,7 @@ export default function App() {
       case 4:
         return (
           <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: { userDetails } }} />
+            <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails }} />
             <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
             <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
           </Drawer.Navigator>
@@ -296,14 +233,7 @@ export default function App() {
     }
   };
 
-  const BottomTabs = ({ navigation }) => {
-    console.log("here16");
-    // React.useEffect(() => {
-    //   const unsubscribe = navigation.addListener("focus", () => {
-    //     GetRoleID();
-    //   });
-    //   return unsubscribe;
-    // }, [navigation]);
+  const BottomTabs = () => {
     const [index, setIndex] = react.useState(0);
     const [routes] = React.useState([
       { key: "dashboard", title: "Dashboard", icon: "view-dashboard" },
@@ -323,7 +253,7 @@ export default function App() {
   return (
     <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
       <PaperProvider theme={theme}>
-        {isLoggedIn === 0 ? (
+        {isLoggedIn === 0 || userDetails === null ? (
           <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.backgroundColor]}>
             <Text>Initilizing Application...</Text>
           </View>

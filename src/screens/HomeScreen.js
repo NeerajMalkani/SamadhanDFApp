@@ -17,11 +17,11 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
 
-const HomeScreen = ({ navigation, userDetails }) => {
+const HomeScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const [userRoleName, setUserRoleName] = React.useState("");//userDetails.RoleName
+  const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails.RoleName); //userDetails.RoleName
 
   const [catalogueFullData, setCatalogueFullData] = React.useState([]);
   const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
@@ -34,7 +34,7 @@ const HomeScreen = ({ navigation, userDetails }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [roleName, setRoleName] = React.useState("");
   const [userId, setUserID] = React.useState(0);
-  const [switchRoleNames, setSwitchRoleNames] = React.useState(false);
+  const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
@@ -106,6 +106,7 @@ const HomeScreen = ({ navigation, userDetails }) => {
           response.data.data.map((data) => {
             data.roleName !== "General User" ? switchRolesData.push(data.roleName) : null;
           });
+          console.log(switchRolesData);
           setSwitchRoleNames(switchRolesData);
         }
         setIsLoading(false);
@@ -179,7 +180,6 @@ const HomeScreen = ({ navigation, userDetails }) => {
         setIsButtonLoading(false);
       });
   };
-  //userDetails.FullName
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
@@ -190,7 +190,7 @@ const HomeScreen = ({ navigation, userDetails }) => {
         </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
-          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{userDetails}</Title>
+          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{route.params.userDetails.FullName}</Title>
           <Text style={[Styles.textTertiaryColor, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
         <TouchableNativeFeedback>
