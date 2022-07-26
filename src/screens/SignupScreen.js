@@ -118,7 +118,6 @@ const SignupScreen = ({ navigation }) => {
 
   const StoreUserData = async (user) => {
     try {
-      await AsyncStorage.setItem("isLogin", "true");
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack", "Signup"));
     } catch (error) {}

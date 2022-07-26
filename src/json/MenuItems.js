@@ -184,7 +184,7 @@ export const MenuItemsGeneralUser = [
 export const MenuItemsDealer = [
   {
     title: "Company Profile",
-    icon: "gift-outline",
+    icon: "office-building-cog",
     type: "accordian",
     index: 1,
     roleID: 4,
@@ -217,7 +217,7 @@ export const MenuItemsDealer = [
   },
   {
     title: "Brand & Product",
-    icon: "gift-outline",
+    icon: "watermark",
     type: "accordian",
     index: 2,
     roleID: 4,
@@ -244,7 +244,7 @@ export const MenuItemsDealer = [
   },
   {
     title: "Employee",
-    icon: "gift-outline",
+    icon: "account-tie",
     type: "accordian",
     index: 3,
     roleID: 4,
@@ -265,7 +265,7 @@ export const MenuItemsDealer = [
   },
   {
     title: "Organization",
-    icon: "gift-outline",
+    icon: "town-hall",
     type: "accordian",
     index: 4,
     roleID: 4,
@@ -292,7 +292,7 @@ export const MenuItemsDealer = [
   },
   {
     title: "Client",
-    icon: "gift-outline",
+    icon: "tie",
     type: "accordian",
     index: 5,
     roleID: 4,
@@ -307,7 +307,7 @@ export const MenuItemsDealer = [
   },
   {
     title: "Purchase",
-    icon: "gift-outline",
+    icon: "hand-coin",
     type: "accordian",
     index: 6,
     roleID: 4,

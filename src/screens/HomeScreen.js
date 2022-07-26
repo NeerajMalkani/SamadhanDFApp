@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
 import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
@@ -7,12 +6,13 @@ import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
-import { createNavigationContainerRef, StackActions, DrawerActions } from "@react-navigation/native";
+import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
 import ImageViewer from "react-native-image-zoom-viewer";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
@@ -21,19 +21,17 @@ const HomeScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails.RoleName); //userDetails.RoleName
+  const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails[0].RoleName);
 
-  const [catalogueFullData, setCatalogueFullData] = React.useState([]);
   const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
   const [catalogueImagesZoom, setCatalogueImagesZoom] = React.useState([]);
   const [catalogueImagesZoomVisible, setCatalogueImagesZoomVisible] = React.useState(false);
   const [catalogueImages, setCatalogueImages] = React.useState([]);
 
   const [userCountData, setUserCountData] = React.useState([]);
-  const [totalUsers, setTotalUsers] = React.useState(0);
+  //const [totalUsers, setTotalUsers] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [roleName, setRoleName] = React.useState("");
-  const [userId, setUserID] = React.useState(0);
   const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
@@ -46,7 +44,7 @@ const HomeScreen = ({ route, navigation }) => {
 
   const LogoutUser = async () => {
     try {
-      await AsyncStorage.setItem("isLogin", "false");
+      await AsyncStorage.setItem("user", "{}");
       navigationRef.dispatch(StackActions.replace("Login"));
     } catch (error) {
       console.log(error);
@@ -58,7 +56,6 @@ const HomeScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setCatalogueFullData(response.data.data);
             const categoryImageData = [];
             const sliderImageData = [];
             const sliderImageZoomData = [];
@@ -100,13 +97,12 @@ const HomeScreen = ({ route, navigation }) => {
           response.data.data.map((k) => {
             totalUserCount += parseInt(k.roleCount);
           });
-          setTotalUsers(totalUserCount);
+          //setTotalUsers(totalUserCount);
           setUserCountData(response.data.data);
           let switchRolesData = [];
           response.data.data.map((data) => {
             data.roleName !== "General User" ? switchRolesData.push(data.roleName) : null;
           });
-          console.log(switchRolesData);
           setSwitchRoleNames(switchRolesData);
         }
         setIsLoading(false);
@@ -139,29 +135,28 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const StoreUserData = async (user) => {
-    try {
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-      //roleID();
-    } catch (error) {}
+    await AsyncStorage.setItem("user", JSON.stringify(user));
+    route.params.setUserFunc();
   };
 
   const UpdateUserRole = () => {
     hideDialog();
     setIsButtonLoading(true);
     const params = {
-      UserID: userId,
+      UserID: route.params.userDetails[0].UserID,
       RoleID: userCountData.filter((el) => {
         return el.roleName === roleName;
       })[0].roleID,
     };
+    console.log(params);
     Provider.create("registration/updateuserrole", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           setUserRoleName(roleName);
           GetUserCount();
           const user = {
-            UserID: userId,
-            FullName: userFullName,
+            UserID: route.params.userDetails[0].UserID,
+            FullName: route.params.userDetails[0].FullName,
             RoleID: userCountData.filter((el) => {
               return el.roleName === roleName;
             })[0].roleID,
@@ -184,13 +179,13 @@ const HomeScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
         <TouchableNativeFeedback>
-          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.dispatch(DrawerActions.toggleDrawer())}>
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.toggleDrawer()}>
             <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
         <View style={[Styles.flexColumn, Styles.flexGrow]}>
-          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{route.params.userDetails.FullName}</Title>
+          <Title style={[Styles.textColorWhite, { marginTop: -4 }]}>{route.params.userDetails[0].FullName}</Title>
           <Text style={[Styles.textTertiaryColor, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
         <TouchableNativeFeedback>
@@ -222,7 +217,7 @@ const HomeScreen = ({ route, navigation }) => {
             <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
             <Caption style={[{ position: "absolute", bottom: 4, right: 4, color: theme.colors.textLight }]}>Sponsered Ads</Caption>
           </View>
-          <View style={[Styles.margin4, Styles.border1, Styles.flexRow, Styles.flexAlignCenter, { height: 140, justifyContent: "space-between" }]}>
+          {/* <View style={[Styles.margin4, Styles.border1, Styles.flexRow, Styles.flexAlignCenter, { height: 140, justifyContent: "space-between" }]}>
             {arrQuickLinks.map((k, i) => {
               return (
                 <View key={i} style={[Styles.flex1, Styles.height104, Styles.padding4, Styles.flexAlignCenter, Styles.flexJustifyCenter]}>
@@ -233,9 +228,9 @@ const HomeScreen = ({ route, navigation }) => {
                 </View>
               );
             })}
-          </View>
+          </View> */}
           {userRoleName === "General User" ? (
-            <View>
+            <View style={[Styles.marginBottom16]}>
               <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
               <View style={[Styles.paddingHorizontal16]}>
                 <Dropdown label="SELECT" data={switchRoleNames} onSelected={onRoleSelected} isError={errorRole} selectedItem={roleName} />

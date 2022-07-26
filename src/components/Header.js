@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Header = ({ navigation, title }) => {
   const LogoutUser = async () => {
     try {
-      await AsyncStorage.setItem("isLogin", "false");
+      await AsyncStorage.setItem("user", "{}");
       navigation.dispatch(StackActions.replace("Login"));
     } catch (error) {
       console.log(error);

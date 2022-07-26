@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import { Styles } from "../styles/styles";
 
-const UserProfileScreen = () => {
+const PocketDiaryScreen = () => {
     return <View style={[Styles.flex1]}></View>;
 }
 
-export default UserProfileScreen;
+export default PocketDiaryScreen;
