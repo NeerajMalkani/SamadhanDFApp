@@ -8,7 +8,7 @@ import { StackActions } from "@react-navigation/native";
 import { communication } from "../utils/communication";
 import Provider from "../api/Provider";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [isUsernameInvalid, setIsUsernameInvalid] = React.useState(false);
@@ -16,6 +16,13 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = React.useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", (e) => {
+      route.params.setUserFunc();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const onUsernameChanged = (text) => {
     setUsername(text);
