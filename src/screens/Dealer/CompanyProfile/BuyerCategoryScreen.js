@@ -9,8 +9,10 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+let dealerID = 0;
 
 const BuyerCategoryScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -22,13 +24,24 @@ const BuyerCategoryScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      dealerID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("companyprofiledealer/getbuyercategory")
+    let params = {
+      DealerID: dealerID,
+    };
+    Provider.getAll(`companyprofiledealer/getbuyercategory?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -58,7 +71,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {

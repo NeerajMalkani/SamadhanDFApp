@@ -1,4 +1,5 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -6,6 +7,7 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
+let dealerID = 0;
 const AddBuyerCategoryScreen = ({ route, navigation }) => {
   const [buyerCategoryNameError, setBuyerCategoryNameError] = React.useState(false);
   const [buyerCategoryName, setBuyerCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.buyerCategoryName : "");
@@ -14,13 +16,24 @@ const AddBuyerCategoryScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      dealerID = JSON.parse(userData).UserID;
+    }
+  };
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
+
   const onBuyerCategoryNameChanged = (text) => {
     setBuyerCategoryName(text);
     setBuyerCategoryNameError(false);
   };
 
   const InsertBuyerCategoryName = () => {
-    Provider.create("companyprofiledealer/insertbuyercategory", { BuyerCategoryName: buyerCategoryName, Display: checked })
+    Provider.create("companyprofiledealer/insertbuyercategory", { BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -38,7 +51,7 @@ const AddBuyerCategoryScreen = ({ route, navigation }) => {
   };
 
   const UpdateBuyerCategoryName = () => {
-    Provider.create("companyprofiledealer/updatebuyercategory", { ID: route.params.data.id, BuyerCategoryName: buyerCategoryName, Display: checked })
+    Provider.create("companyprofiledealer/updatebuyercategory", { ID: route.params.data.id, BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
