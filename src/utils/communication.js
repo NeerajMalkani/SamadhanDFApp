@@ -47,6 +47,7 @@ export const communication = {
   FailedUploadError: "Failed to upload your file",
   InsertError: "Unable to insert item. Please try again",
   ExistsError: "The item you are trying to add already exists",
+  AlreadyExists: "Already exists",
   UpdateError: "Unable to update item. Please try again",
   DeleteError: "Unable to delete item. Please try again",
   NetworkError: "Please check your internet connection",

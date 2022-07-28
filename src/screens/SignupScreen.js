@@ -9,7 +9,13 @@ import { StackActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ValidateFullName, ValidateMobile } from "../utils/validations";
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreen = ({ route, navigation }) => {
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", (e) => {
+      route.params.setUserFunc();
+    });
+    return unsubscribe;
+  }, [navigation]);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
 
@@ -132,7 +138,7 @@ const SignupScreen = ({ navigation }) => {
       OTP: parseInt(otp1 + otp2 + otp3 + otp4),
       IsVerified: true,
       IsActive: true,
-      PhoneNumber: mobileNumber,
+      Username: mobileNumber,
       Status: 1,
     };
     Provider.create("registration/insertuser", params)
@@ -145,6 +151,9 @@ const SignupScreen = ({ navigation }) => {
             RoleName: response.data.data[0].roleID == 1 ? "Admin" : "General User", //TBC
           };
           StoreUserData(user);
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setIsSnackbarVisible(true);
         } else {
           setSnackbarText(communication.NoData);
           setIsSnackbarVisible(true);

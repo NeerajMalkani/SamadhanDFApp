@@ -266,7 +266,7 @@ export default function App() {
           <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName={Object.keys(userDetails[0]).length !== 0 ? "HomeStack" : "Login"}>
               <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} initialParams={{ setUserFunc: SetUser }}/>
-              <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
+              <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} initialParams={{ setUserFunc: SetUser }}/>
               <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
               <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
               <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />

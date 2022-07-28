@@ -106,7 +106,7 @@ const ForgotPassword = ({ navigation }) => {
   const UpdateUser = () => {
     setIsButtonLoading(true);
     const params = {
-      PhoneNumber: mobileNumber,
+      Username: mobileNumber,
       Password: password,
       OTP: parseInt(otp1 + otp2 + otp3 + otp4),
     };
