@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import { Button, FAB, List, Searchbar, Snackbar, Subheading } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
@@ -14,9 +15,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
-const MyServicesScreen = ({ navigation }) => {
+const BuyerCategoryScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [shouldShow, setShouldShow] = React.useState(false);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -28,8 +30,28 @@ const MyServicesScreen = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
-      FetchData();
+      FetchShowBrand();
     }
+  };
+
+  const FetchShowBrand = () => {
+    let params = {
+      DealerID: dealerID,
+    };
+    Provider.getAll(`dealerbrand/getshowbrand?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setShouldShow(response.data.data[0].showBrand);
+            if (response.data.data[0].showBrand) {
+              FetchData();
+            }
+            setIsLoading(false);
+            setRefreshing(false);
+          }
+        }
+      })
+      .catch((e) => {});
   };
 
   const FetchData = (from) => {
@@ -41,7 +63,7 @@ const MyServicesScreen = ({ navigation }) => {
     let params = {
       DealerID: dealerID,
     };
-    Provider.getAll(`dealercompanyprofile/getmyservices?${new URLSearchParams(params)}`)
+    Provider.getAll(`dealerbrand/getbuyercategory?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -81,7 +103,7 @@ const MyServicesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.serviceName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.buyerCategoryName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -90,23 +112,23 @@ const MyServicesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.serviceName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item title={data.item.buyerCategoryName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddDealerMyServicesScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddDealerBuyerCategoryScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddDealerMyServicesScreen", {
+    navigation.navigate("AddDealerBuyerCategoryScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        serviceName: data.item.serviceName,
+        buyerCategoryName: data.item.buyerCategoryName,
         display: data.item.display,
       },
     });
@@ -114,10 +136,23 @@ const MyServicesScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="My Services" />
+      <Header navigation={navigation} title="Buyer Category" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : !shouldShow ? (
+        <View style={[Styles.flex1, Styles.flexAlignCenter, Styles.flexJustifyCenter, Styles.flexColumn, Styles.backgroundColor]}>
+          <MaterialIcon name="error" color={theme.colors.error} size={48} />
+          <Subheading style={[Styles.textSecondaryColor, Styles.paddingTop8, Styles.textCenter, { padding: 32 }]}>Would like to create brand and product? Please activate this option</Subheading>
+          <Button
+            mode="contained"
+            onPress={() => {
+              navigation.navigate("BasicDetailsDealerScreen");
+            }}
+          >
+            Activate
+          </Button>
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
@@ -147,7 +182,7 @@ const MyServicesScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+      {!shouldShow ? null : <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
@@ -155,4 +190,4 @@ const MyServicesScreen = ({ navigation }) => {
   );
 };
 
-export default MyServicesScreen;
+export default BuyerCategoryScreen;

@@ -81,7 +81,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
   };
 
   const InsertMyServicesName = () => {
-    Provider.create("companyprofiledealer/insertmyservices", {
+    Provider.create("dealercompanyprofile/insertmyservices", {
       ServiceID: servicesFullData.find((el) => {
         return el.serviceName === serviceName;
       }).id,
@@ -108,7 +108,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
   };
 
   const UpdateMyServicesName = () => {
-    Provider.create("companyprofiledealer/updatemyservices", {
+    Provider.create("dealercompanyprofile/updatemyservices", {
       ID: route.params.data.id,
       ServiceID: servicesFullData.find((el) => {
         return el.serviceName === serviceName;

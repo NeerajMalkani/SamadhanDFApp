@@ -207,16 +207,10 @@ export const MenuItemsDealer = [
         index: 12,
         navigation: "PresentationDealerScreen",
       },
-      {
-        title: "Buyer Category",
-        type: "accordian",
-        index: 13,
-        navigation: "BuyerCategoryDealerScreen",
-      },
     ],
   },
   {
-    title: "Brand & Product",
+    title: "Brand",
     icon: "watermark",
     type: "accordian",
     index: 2,
@@ -226,14 +220,29 @@ export const MenuItemsDealer = [
         title: "Brand Master",
         type: "accordian",
         index: 20,
-        //navigation: "BrandMasterScreen",
+        navigation: "BrandMasterDealerScreen",
       },
       {
-        title: "Brand",
+        title: "Brand Setup",
         type: "accordian",
         index: 21,
-        //navigation: "BarndScreen",
+        navigation: "BrandSetupDealerScreen",
       },
+      {
+        title: "Buyer Category",
+        type: "accordian",
+        index: 13,
+        navigation: "BuyerCategoryDealerScreen",
+      },
+    ],
+  },
+  {
+    title: "Product",
+    icon: "gift",
+    type: "accordian",
+    index: 3,
+    roleID: 4,
+    items: [
       {
         title: "Product",
         type: "accordian",
@@ -246,7 +255,7 @@ export const MenuItemsDealer = [
     title: "Employee",
     icon: "account-tie",
     type: "accordian",
-    index: 3,
+    index: 4,
     roleID: 4,
     items: [
       {
@@ -267,7 +276,7 @@ export const MenuItemsDealer = [
     title: "Organization",
     icon: "town-hall",
     type: "accordian",
-    index: 4,
+    index: 5,
     roleID: 4,
     items: [
       {
@@ -294,7 +303,7 @@ export const MenuItemsDealer = [
     title: "Client",
     icon: "tie",
     type: "accordian",
-    index: 5,
+    index: 6,
     roleID: 4,
     items: [
       {
@@ -309,7 +318,7 @@ export const MenuItemsDealer = [
     title: "Purchase",
     icon: "hand-coin",
     type: "accordian",
-    index: 6,
+    index: 7,
     roleID: 4,
     items: [
       {
