@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -57,65 +57,36 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
   const [contractorDiscountError, setContractorDiscountError] = React.useState(false);
   const [contractorDiscount, setContractorDiscount] = React.useState(route.params.type === "edit" ? route.params.data.contractorDiscount : "");
 
+  const [buyerCategoryFullData, setBuyerCategoryFullData] = React.useState([]);
+  const [selectedBuyerCategoryFullData, setSelectedBuyerCategoryFullData] = React.useState([]);
+
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const ref_input1 = useRef();
+  const ref_input2 = useRef();
+  const ref_input3 = useRef();
+  const ref_input4 = useRef();
+  const ref_input5 = useRef();
+  const myRefs = useRef([]);
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
+      FetchServices();
       FetchBrands();
+      FetchBuyerCategories();
     }
-  };
-
-  const FetchBrands = () => {
-    let params = {
-      DealerID: dealerID,
-    };
-    Provider.getAll(`dealerbrand/getbrand?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setBrandFullData(response.data.data);
-            const brands = response.data.data.map((data) => data.brandName);
-            setBrandData(brands);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
-    let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
-    };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
-          }
-        }
-      })
-      .catch((e) => {});
   };
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          console.log(response.data.data);
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
               return el.display && el.activityRoleName === "Dealer";
@@ -144,7 +115,25 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {});
   };
-
+  const FetchServices = () => {
+    let params = {
+      DealerID: dealerID,
+    };
+    Provider.getAll(`dealercompanyprofile/getmyservices?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.display;
+            });
+            setServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
   const FetchCategoriesFromServices = (selectedItem, activityData) => {
     let params = {
       ActivityID: activityData
@@ -159,7 +148,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
               return el.serviceName === selectedItem;
-            }).id,
+            }).serviceID,
     };
     Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -176,7 +165,25 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {});
   };
-
+  const FetchBrands = () => {
+    let params = {
+      DealerID: dealerID,
+    };
+    Provider.getAll(`dealerbrand/getbrand?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.display;
+            });
+            setBrandFullData(response.data.data);
+            const brands = response.data.data.map((data) => data.brandName);
+            setBrandData(brands);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
   const FetchUnitsFromCategory = (selectedItem) => {
     console.log(
       categoriesFullData.find((el) => {
@@ -211,6 +218,23 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {});
   };
+  const FetchBuyerCategories = () => {
+    let params = {
+      DealerID: dealerID,
+    };
+    Provider.getAll(`dealerbrand/getbuyercategory?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.display;
+            });
+            setBuyerCategoryFullData(response.data.data);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
 
   useEffect(() => {
     GetUserID();
@@ -225,7 +249,6 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
       }).id;
     }
     categoriesDDRef.current.reset();
-    setServiceName("");
     setCategoriesName("");
     setHSN("");
     setGST("");
@@ -237,9 +260,8 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
     setHSNError(false);
     setGSTError(false);
     setUNError(false);
-    FetchCategoriesFromServices(selectedItem);
+    FetchCategoriesFromServices(selectedItem, activityFullData);
   };
-
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
     unitDDRef.current.reset();
@@ -263,54 +285,53 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
     setUnitData([]);
     FetchUnitsFromCategory(selectedItem);
   };
-
   const onHSNChanged = (text) => {
     setHSN(text);
     setHSNError(false);
   };
-
   const onGSTChanged = (text) => {
     setGST(text);
     setGSTError(false);
   };
-
   const onBrandSetupNameChanged = (text) => {
     setBrandSetupName(text);
     setBrandSetupNameError(false);
   };
-
   const onBrandChanged = (text) => {
     setBrandName(text);
     setBNError(false);
   };
-
   const onGeneralDiscountChanged = (text) => {
     setGeneralDiscount(text);
     setGeneralDiscountError(false);
   };
-
   const onAppProviderPromotionChanged = (text) => {
     setAppProviderPromotion(text);
     setAppProviderPromotionError(false);
   };
-
   const onReferralPointsChanged = (text) => {
     setReferralPoints(text);
     setReferralPointsError(false);
   };
-
   const onContractorDiscountChanged = (text) => {
     setContractorDiscount(text);
     setContractorDiscountError(false);
   };
-
   const onUnitChanged = (text) => {
     setUnitName(text);
     setUNError(false);
   };
 
-  const InsertBrandSetupName = () => {
-    Provider.create("dealerbrand/insertbrandsetup", { BrandSetupName: brandSetupName, DealerID: dealerID, Display: checked })
+  const InsertBrandBuyerMapping = () => {
+    let arrBrandBuyerMapping = [...selectedBuyerCategoryFullData];
+    for(let i = 0; i < arrBrandBuyerMapping.length; i++){
+      arrBrandBuyerMapping[i]["dealerID"] = dealerID;
+      arrBrandBuyerMapping[i]["dealerBrandID"] = brandFullData.find((el) => {
+        return el.brandName === brandName;
+      }).id;
+    }
+    console.log(arrBrandBuyerMapping);
+    Provider.create("dealerbrand/insertbrandbuyermapping", arrBrandBuyerMapping)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -325,9 +346,57 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
-  };
+  }
 
-  const UpdateBrandSetupName = () => {
+  const InsertBrandSetup = () => {
+    let uosid = 0;
+    const objUnits1 = unitFullData.find((el) => {
+      return el.unit1Name && el.unit1Name === unitName;
+    });
+    const objUnits2 = unitFullData.find((el) => {
+      return el.unit2Name && el.unit2Name === unitName;
+    });
+    if (objUnits1) {
+      uosid = objUnits1.id;
+    } else if (objUnits2) {
+      uosid = objUnits2.id;
+    }
+    const params = {
+      DealerID: dealerID,
+      ServiceID: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).serviceID,
+      CategoryID: categoriesFullData.find((el) => {
+        return el.categoryName === categoriesName;
+      }).id,
+      BrandID: brandFullData.find((el) => {
+        return el.brandName === brandName;
+      }).id,
+      UnitOfSalesID: uosid,
+      BrandPrefixName: brandSetupName,
+      GeneralDiscount: generalDiscount === "" ? 0 : generalDiscount,
+      AppProviderDiscount: appProviderPromotion === "" ? 0 : appProviderPromotion,
+      ReferralPoints: referralPoints === "" ? 0 : referralPoints,
+      ContractorDiscount: contractorDiscount === "" ? 0 : contractorDiscount,
+      Display: checked,
+    };
+    console.log(params);
+    Provider.create("dealerbrand/insertbrandsetup", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          InsertBrandBuyerMapping();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
+  };
+  const UpdateBrandSetup = () => {
     Provider.create("dealerbrand/updatebrandsetup", { ID: route.params.data.id, BrandSetupName: brandSetupName, DealerID: dealerID, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -344,18 +413,62 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
-
   const ValidateBrandSetupName = () => {
     let isValid = true;
+    const objServices = servicesFullData.find((el) => {
+      return el.serviceName && el.serviceName === serviceName;
+    });
+    if (serviceName.length === 0 || !objServices) {
+      setSNError(true);
+      isValid = false;
+    }
+
+    const objCategories = categoriesFullData.find((el) => {
+      return el.categoryName && el.categoryName === categoriesName;
+    });
+    if (categoriesName.length === 0 || !objCategories) {
+      setCNError(true);
+      isValid = false;
+    }
+
+    if (hsn.length === 0) {
+      setHSNError(true);
+      isValid = false;
+    }
+    if (gst.length === 0) {
+      setGSTError(true);
+      isValid = false;
+    }
+
+    const objUnits1 = unitFullData.find((el) => {
+      return el.unit1Name && el.unit1Name === unitName;
+    });
+    const objUnits2 = unitFullData.find((el) => {
+      return el.unit2Name && el.unit2Name === unitName;
+    });
+    if (unitName.length === 0 || (!objUnits1 && !objUnits2)) {
+      setUNError(true);
+      isValid = false;
+    }
+
+    const objBrands = brandFullData.find((el) => {
+      return el.brandName && el.brandName === brandName;
+    });
+    if (brandName.length === 0 || !objBrands) {
+      setBNError(true);
+      isValid = false;
+    }
+
     if (brandSetupName.length === 0) {
       setBrandSetupNameError(true);
       isValid = false;
     }
+
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateBrandSetupName();
+        UpdateBrandSetup();
       } else {
-        InsertBrandSetupName();
+        InsertBrandSetup();
       }
     }
   };
@@ -380,7 +493,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>
-          <TextInput mode="flat" label="Brand Prefix Name" value={brandSetupName} onChangeText={onBrandSetupNameChanged} style={{ backgroundColor: "white" }} error={brandSetupNameError} />
+          <TextInput ref={ref_input1} mode="flat" label="Brand Prefix Name" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} value={brandSetupName} onChangeText={onBrandSetupNameChanged} style={{ backgroundColor: "white" }} error={brandSetupNameError} />
           <HelperText type="error" visible={brandSetupNameError}>
             {communication.InvalidBrandPrefixName}
           </HelperText>
@@ -392,23 +505,60 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput mode="flat" label="General Discount (%)" value={generalDiscount} onChangeText={onGeneralDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={generalDiscountError} />
+          <TextInput ref={ref_input2} mode="flat" label="General Discount (%)" returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} value={generalDiscount} onChangeText={onGeneralDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={generalDiscountError} />
           <HelperText type="error" visible={generalDiscountError}>
             {communication.InvalidGeneralDiscount}
           </HelperText>
-          <TextInput mode="flat" label="App Provider Promotion (%)" value={appProviderPromotion} onChangeText={onAppProviderPromotionChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={referralPointsError} />
+          <TextInput ref={ref_input3} mode="flat" label="App Provider Promotion (%)" returnKeyType="next" onSubmitEditing={() => ref_input4.current.focus()} value={appProviderPromotion} onChangeText={onAppProviderPromotionChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={referralPointsError} />
           <HelperText type="error" visible={appProviderPromotionError}>
             {communication.InvalidAppProviderPromotion}
           </HelperText>
-          <TextInput mode="flat" label="Referral Points (%)" value={referralPoints} onChangeText={onReferralPointsChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={appProviderPromotionError} />
+          <TextInput ref={ref_input4} mode="flat" label="Referral Points (%)" returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} value={referralPoints} onChangeText={onReferralPointsChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={appProviderPromotionError} />
           <HelperText type="error" visible={referralPointsError}>
             {communication.InvalidReferralPoints}
           </HelperText>
-          <TextInput mode="flat" label="Contractor Discount (%)" value={contractorDiscount} onChangeText={onContractorDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={contractorDiscountError} />
+          <TextInput ref={ref_input5} mode="flat" label="Contractor Discount (%)" returnKeyType="done" value={contractorDiscount} onChangeText={onContractorDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={contractorDiscountError} />
           <HelperText type="error" visible={contractorDiscountError}>
             {communication.InvalidContractorDiscount}
           </HelperText>
-          <View style={{ width: 160 }}>
+          {buyerCategoryFullData.length > 0 ? (
+            <View>
+              <Subheading>Buyer's Category Discount</Subheading>
+              {buyerCategoryFullData.map((k, i) => {
+                return (
+                  <TextInput
+                    key={i}
+                    mode="flat"
+                    returnKeyType={i == buyerCategoryFullData.length - 1 ? "done" : "next"}
+                    onSubmitEditing={() => {
+                      i < buyerCategoryFullData.length - 1 ? myRefs.current[parseInt(i) + 1].focus() : null;
+                    }}
+                    ref={(el) => (myRefs.current[parseInt(i)] = el)}
+                    label={k.buyerCategoryName}
+                    onChangeText={(text) => {
+                      let tempSelectedBuyerCats = [...selectedBuyerCategoryFullData];
+                      for (let i = 0; i < tempSelectedBuyerCats.length; i++) {
+                        if (tempSelectedBuyerCats[i].name === k.buyerCategoryName) {
+                          tempSelectedBuyerCats.splice(i, 1);
+                        }
+                      }
+                      if (text !== "") {
+                        tempSelectedBuyerCats.push({
+                          buyerCategoryID: k.id,
+                          buyerCategoryDiscount: text,
+                        });
+                      }
+                      setSelectedBuyerCategoryFullData(tempSelectedBuyerCats);
+                    }}
+                    keyboardType="decimal-pad"
+                    style={{ backgroundColor: "white" }}
+                    error={contractorDiscountError}
+                  />
+                );
+              })}
+            </View>
+          ) : null}
+          <View style={{ width: 160, marginTop: 16 }}>
             <Checkbox.Item
               label="Display"
               position="leading"
