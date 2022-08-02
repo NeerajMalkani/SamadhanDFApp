@@ -60,6 +60,8 @@ import BrandScreen from "./src/screens/Dealer/Brand/BrandMasterScreen";
 import AddBrandScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen";
 import BrandSetupScreen from "./src/screens/Dealer/Brand/BrandSetupScreen";
 import AddBrandSetupScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen";
+import DealerProductScreen from "./src/screens/Dealer/Product/ProductScreen";
+import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProductScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -244,6 +246,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false }} name="BrandMasterDealerScreen" component={BrandScreen} />
               <Drawer.Screen options={{ headerShown: false }} name="BrandSetupDealerScreen" component={BrandSetupScreen} />
               <Drawer.Screen options={{ headerShown: false }} name="BuyerCategoryDealerScreen" component={BuyerCategoryScreen} />
+              <Drawer.Screen options={{ headerShown: false }} name="DealerProductScreen" component={DealerProductScreen} />
             </Drawer.Navigator>
           );
       }
@@ -293,6 +296,7 @@ export default function App() {
               <Stack.Screen name="AddDealerBrandScreen" component={AddBrandScreen} options={{ headerTitle: "Add Brand", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBrandSetupScreen" component={AddBrandSetupScreen} options={{ headerTitle: "Add Brand Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBuyerCategoryScreen" component={AddBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerProductScreen" component={AddDealerProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

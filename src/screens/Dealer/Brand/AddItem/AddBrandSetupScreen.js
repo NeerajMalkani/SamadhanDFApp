@@ -403,6 +403,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
   };
   const InsertBrandSetup = () => {
     let uosid = 0;
+    let uosid2 = 0;
     const objUnits1 = unitFullData.find((el) => {
       return el.unit1Name && el.unit1Name === unitName;
     });
@@ -411,8 +412,10 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
     });
     if (objUnits1) {
       uosid = objUnits1.unit1ID;
+      uosid2 = objUnits1.unit2ID;
     } else if (objUnits2) {
       uosid = objUnits2.unit2ID;
+      uosid2 = objUnits2.unit2ID;
     }
     const params = {
       DealerID: dealerID,
@@ -426,6 +429,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
         return el.brandName === brandName;
       }).id,
       UnitOfSalesID: uosid,
+      UnitOfSalesID2: uosid2,
       BrandPrefixName: brandSetupName,
       GeneralDiscount: generalDiscount === "" ? 0 : generalDiscount,
       AppProviderDiscount: appProviderPromotion === "" ? 0 : appProviderPromotion,
@@ -453,6 +457,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
   };
   const UpdateBrandSetup = () => {
     let uosid = 0;
+    let uosid2 = 0;
     const objUnits1 = unitFullData.find((el) => {
       return el.unit1Name && el.unit1Name === unitName;
     });
@@ -461,8 +466,10 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
     });
     if (objUnits1) {
       uosid = objUnits1.unit1ID;
+      uosid2 = objUnits1.unit2ID;
     } else if (objUnits2) {
       uosid = objUnits2.unit2ID;
+      uosid2 = objUnits2.unit2ID;
     }
     const params = {
       ID: route.params.data.id,
@@ -477,6 +484,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
         return el.brandName === brandName;
       }).id,
       UnitOfSalesID: uosid,
+      UnitOfSalesID2: uosid2,
       BrandPrefixName: brandSetupName,
       GeneralDiscount: generalDiscount === "" ? 0 : generalDiscount,
       AppProviderDiscount: appProviderPromotion === "" ? 0 : appProviderPromotion,

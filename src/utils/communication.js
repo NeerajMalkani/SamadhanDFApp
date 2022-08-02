@@ -50,6 +50,11 @@ export const communication = {
   InvalidReferralPoints: "Enter a valid Referral Points",
   InvalidContractorDiscount: "Enter a valid Contractor Discount",
 
+  InvalidPrice: "Enter a valid Price",
+  InvalidSalesUnit: "Enter a valid Sales Unit",
+  InvalidUnitValue: "Enter a valid Unit Value",
+  InvalidDescription: "Enter a valid Description",
+
   NoImageSelectedError: "Please pick an image to continue",
   FailedUploadError: "Failed to upload your file",
   InsertError: "Unable to insert item. Please try again",

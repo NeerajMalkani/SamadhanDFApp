@@ -246,8 +246,8 @@ export const MenuItemsDealer = [
       {
         title: "Product",
         type: "accordian",
-        index: 22,
-        //navigation: "ProductScreen",
+        index: 31,
+        navigation: "DealerProductScreen",
       },
     ],
   },
