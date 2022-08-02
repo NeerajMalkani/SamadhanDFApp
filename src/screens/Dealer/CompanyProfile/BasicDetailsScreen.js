@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Dimensions, ScrollView } from "react-native";
+import { View, Dimensions, ScrollView, Image } from "react-native";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
-import { HelperText, TextInput } from "react-native-paper";
+import { Button, HelperText, Subheading, Switch, TextInput } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
+import { RNS3 } from "react-native-aws3";
+import * as ImagePicker from "expo-image-picker";
+import { creds } from "../../../utils/credentials";
+import uuid from "react-native-uuid";
+import { AWSImagePath } from "../../../utils/paths";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -57,6 +62,47 @@ const BasicDetailsDealerScreen = ({ navigation }) => {
   const [pincode, setPincode] = useState("");
   const [pincodeInvalid, setPincodeInvalid] = useState("");
   const pincodenRef = useRef({});
+
+  const [accountNo, setAccountNo] = useState("");
+  const [accountNoInvalid, setAccountNoInvalid] = useState("");
+  const accountNoRef = useRef({});
+
+  const [bankName, setBankName] = useState("");
+  const [bankNameInvalid, setBankNameInvalid] = useState("");
+  const bankNameRef = useRef({});
+
+  const [bankBranchName, setBankBranchName] = useState("");
+  const [bankBranchNameInvalid, setBankBranchNameInvalid] = useState("");
+  const bankBranchNameRef = useRef({});
+
+  const [ifscCode, setIfscCode] = useState("");
+  const [ifscCodeInvalid, setIfscCodeInvalid] = useState("");
+  const ifscCodeRef = useRef({});
+
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+
+  const [cnPrefix, setCNPrefix] = useState("");
+  const [cnPrefixInvalid, setCNPrefixInvalid] = useState("");
+  const cnPrefixRef = useRef({});
+
+  const [ecPrefix, setECPrefix] = useState("");
+  const [ecPrefixInvalid, setECPrefixInvalid] = useState("");
+  const ecPrefixRef = useRef({});
+
+  const [poPrefix, setPOPrefix] = useState("");
+  const [poPrefixInvalid, setPOPrefixInvalid] = useState("");
+  const poPrefixRef = useRef({});
+
+  const [soPrefix, setSOPrefix] = useState("");
+  const [soPrefixInvalid, setSOPrefixInvalid] = useState("");
+  const soPrefixRef = useRef({});
+
+  const [logoImage, setLogoImage] = useState(AWSImagePath + "placeholder-image.png");
+  const [image, setImage] = useState(AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = useState(null);
+  const [errorLogo, setLogoError] = useState(false);
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const FetchCities = () => {
     Provider.getAll("master/getcities")
@@ -113,50 +159,92 @@ const BasicDetailsDealerScreen = ({ navigation }) => {
     setCompanyName(text);
     setCompanyNameInvalid(false);
   };
-
   const onContactNameChanged = (text) => {
     setContactName(text);
     setContactNameInvalid(false);
   };
-
   const onContactNumberChanged = (text) => {
     setContactNumber(text);
     setContactNumberInvalid(false);
   };
-
   const onGSTNumberChanged = (text) => {
     setGSTNumber(text);
     setGSTNumberInvalid(false);
   };
-
   const onPANNumberChanged = (text) => {
     setPANNumber(text);
     setPANNumberInvalid(false);
   };
-
   const onAddressChanged = (text) => {
     setAddress(text);
     setAddressInvalid(false);
   };
-
   const onLocationChanged = (text) => {
     setLocation(text);
     setLocationInvalid(false);
   };
-
   const onCityNameSelected = (selectedItem) => {
     setCityName(selectedItem);
     setCNError(false);
   };
-
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
     setSNError(false);
   };
-
   const onPincodeChanged = (text) => {
     setPincode(text);
     setPincodeInvalid(false);
+  };
+
+  const onAccountNoChanged = (text) => {
+    setAccountNo(text);
+    setAccountNoInvalid(false);
+  };
+  const onBankNameChanged = (text) => {
+    setBankName(text);
+    setBankNameInvalid(false);
+  };
+  const onBankBranchNameChanged = (text) => {
+    setBankBranchName(text);
+    setBankBranchNameInvalid(false);
+  };
+  const onIfscCodeChanged = (text) => {
+    setIfscCode(text);
+    setIfscCodeInvalid(false);
+  };
+
+  const onCNPChanged = (text) => {
+    setCNPrefix(text);
+    setCNPrefixInvalid(false);
+  };
+  const onECPChanged = (text) => {
+    setECPrefix(text);
+    setECPrefixInvalid(false);
+  };
+  const onPOPChanged = (text) => {
+    setPOPrefix(text);
+    setPOPrefixInvalid(false);
+  };
+  const onSOPChanged = (text) => {
+    setSOPrefix(text);
+    setSOPrefixInvalid(false);
+  };
+
+  const chooseFile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setLogoError(false);
+      const arrExt = result.uri.split(".");
+      const unique_id = uuid.v4();
+      setLogoImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setImage(result.uri);
+      setFilePath(result);
+    }
   };
 
   const renderScene = ({ route }) => {
@@ -257,11 +345,69 @@ const BasicDetailsDealerScreen = ({ navigation }) => {
           </ScrollView>
         );
       case "bankDetails":
-        return <ScrollView style={[Styles.flex1]}></ScrollView>;
+        return (
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+            <View style={[Styles.padding16]}>
+              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <HelperText type="error" visible={accountNoInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+              <HelperText type="error" visible={bankNameInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+              <HelperText type="error" visible={bankBranchNameInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+              <HelperText type="error" visible={ifscCodeInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+            </View>
+          </ScrollView>
+        );
       case "commonSetup":
-        return <ScrollView style={[Styles.flex1]}></ScrollView>;
+        return (
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+            <View style={[Styles.padding16]}>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom16]}>
+                <Subheading style={[Styles.flexGrow]}>Create Brand & Product</Subheading>
+                <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} />
+              </View>
+              <TextInput ref={cnPrefixRef} mode="flat" dense label="Company Name Prefix" value={accountNo} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
+              <HelperText type="error" visible={cnPrefixInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={ecPrefixRef} mode="flat" dense label="Employee Code Prefix" value={accountNo} returnKeyType="next" onSubmitEditing={() => poPrefixRef.current.focus()} onChangeText={onECPChanged} style={{ backgroundColor: "white" }} error={ecPrefixInvalid} />
+              <HelperText type="error" visible={ecPrefixInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={poPrefixRef} mode="flat" dense label="Purchase Order Prefix" value={accountNo} returnKeyType="next" onSubmitEditing={() => soPrefixRef.current.focus()} onChangeText={onPOPChanged} style={{ backgroundColor: "white" }} error={poPrefixInvalid} />
+              <HelperText type="error" visible={poPrefixInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+              <TextInput ref={soPrefixRef} mode="flat" dense label="Sales Order Prefix" value={accountNo} returnKeyType="done" onChangeText={onSOPChanged} style={{ backgroundColor: "white" }} error={soPrefixInvalid} />
+              <HelperText type="error" visible={soPrefixInvalid}>
+                {communication.InvalidActivityName}
+              </HelperText>
+            </View>
+          </ScrollView>
+        );
       case "logo":
-        return <ScrollView style={[Styles.flex1]}></ScrollView>;
+        return (
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+            <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+              <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+              <Button mode="text" onPress={chooseFile}>
+                {filePath !== null ? "Replace" : "Choose Image"}
+              </Button>
+            </View>
+            <HelperText type="error" visible={errorLogo}>
+              {communication.InvalidDesignImage}
+            </HelperText>
+          </ScrollView>
+        );
       default:
         return null;
     }
