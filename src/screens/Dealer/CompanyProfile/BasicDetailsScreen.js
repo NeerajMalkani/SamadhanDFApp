@@ -128,25 +128,25 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             console.log(response.data.data);
-            setCompanyName(response.data.data[0].companyName);
-            setContactName(response.data.data[0].contactPersonName);
-            setContactNumber(response.data.data[0].contactPersonNumber);
-            setGSTNumber(response.data.data[0].gstNumber);
-            setPANNumber(response.data.data[0].pan);
-            setLocation(response.data.data[0].locationName);
-            setAddress(response.data.data[0].addressLine);
+            setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
+            setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
+            setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
+            setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
+            setPANNumber(response.data.data[0].pan ? response.data.data[0].pan : "");
+            setLocation(response.data.data[0].locationName ? response.data.data[0].locationName : "");
+            setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
             tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
             setPincode(response.data.data[0].pincode !== 0 ? response.data.data[0].pincode.toString() : "");
             setAccountNo(response.data.data[0].accountNumber !== 0 ? response.data.data[0].accountNumber.toString() : "");
-            setBankName(response.data.data[0].bankName);
-            setBankBranchName(response.data.data[0].branchName);
-            setIfscCode(response.data.data[0].ifscCode);
-            setCNPrefix(response.data.data[0].companyNamePrefix);
-            setECPrefix(response.data.data[0].employeeCodePrefix);
-            setPOPrefix(response.data.data[0].purchaseOrderPrefix);
-            setSOPrefix(response.data.data[0].salesOrderPrefix);
+            setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
+            setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
+            setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
+            setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
+            setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
+            setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
+            setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
             setIsSwitchOn(response.data.data[0].showBrand);
             setLogoImage(response.data.data[0].companyLogo);
             setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
@@ -431,7 +431,7 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={contactNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={gstNumberRef} mode="flat" dense keyboardType="decimal-pad" label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+              <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
               <HelperText type="error" visible={gstNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>

@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { Button, FAB, List, Searchbar, Snackbar, Subheading } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { Button, FAB, List, Searchbar, Snackbar, Subheading, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
@@ -25,6 +26,18 @@ const BrandSetupScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
+  const [appProviderDiscount, setAppProviderDiscount] = React.useState("");
+  const [brandName, setBrandName] = React.useState("");
+  const [brandPrefixName, setBrandPrefixName] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
+  const [contractorDiscount, setContractorDiscount] = React.useState("");
+  const [generalDiscount, setGeneralDiscount] = React.useState("");
+  const [referralPoints, setReferralPoints] = React.useState("");
+  const [serviceName, setServiceName] = React.useState("");
+  const [unitName, setUnitName] = React.useState("");
+
+  const refRBSheet = useRef();
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -112,7 +125,25 @@ const BrandSetupScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.brandName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item
+          title={data.item.brandName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          onPress={() => {
+            refRBSheet.current.open();
+            setBrandName(data.item.brandName);
+            setBrandPrefixName(data.item.brandPrefixName);
+            setServiceName(data.item.serviceName);
+            setCategoryName(data.item.categoryName);
+            setGeneralDiscount(data.item.generalDiscount.toFixed(2) + "%");
+            setAppProviderDiscount(data.item.appProviderDiscount.toFixed(2) + "%");
+            setReferralPoints(data.item.referralPoints.toFixed(2) + "%");
+            setContractorDiscount(data.item.contractorDiscount.toFixed(2) + "%");
+            setUnitName(data.item.unitName);
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
       </View>
     );
   };
@@ -198,8 +229,22 @@ const BrandSetupScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{brandName}</Title>
+          <ScrollView>
+            <List.Item title="Brand Prefix Name" description={brandPrefixName} />
+            <List.Item title="Service Name" description={serviceName} />
+            <List.Item title="Category Name" description={categoryName} />
+            <List.Item title="General Discount" description={generalDiscount} />
+            <List.Item title="App Provider Promotion" description={appProviderDiscount} />
+            <List.Item title="Referral Points" description={referralPoints} />
+            <List.Item title="Contractor Discount" description={contractorDiscount} />
+            <List.Item title="Sale Unit" description={unitName} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
-
 export default BrandSetupScreen;
