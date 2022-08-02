@@ -148,7 +148,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
           <Button
             mode="contained"
             onPress={() => {
-              navigation.navigate("BasicDetailsDealerScreen");
+              navigation.navigate("BasicDetailsDealerScreen", { from: "brand" });
             }}
           >
             Activate

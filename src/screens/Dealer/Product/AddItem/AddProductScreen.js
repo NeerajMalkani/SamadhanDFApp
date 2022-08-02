@@ -482,7 +482,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           </Button>
         </Card.Content>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
     </View>
