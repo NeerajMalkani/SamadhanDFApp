@@ -53,9 +53,15 @@ import AddDesignTypeScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/A
 import PostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/PostNewDesignScreen";
 import AddPostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen";
 import PresentationScreen from "./src/screens/Dealer/CompanyProfile/PresentationScreen";
-import BuyerCategoryScreen from "./src/screens/Dealer/CompanyProfile/BuyerCategoryScreen";
+import BuyerCategoryScreen from "./src/screens/Dealer/Brand/BuyerCategoryScreen";
 import AddMyServicesScreen from "./src/screens/Dealer/CompanyProfile/AddItem/AddMyServicesScreen";
-import AddBuyerCategoryScreen from "./src/screens/Dealer/CompanyProfile/AddItem/AddBuyerCategoryScreen";
+import AddBuyerCategoryScreen from "./src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen";
+import BrandScreen from "./src/screens/Dealer/Brand/BrandMasterScreen";
+import AddBrandScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen";
+import BrandSetupScreen from "./src/screens/Dealer/Brand/BrandSetupScreen";
+import AddBrandSetupScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen";
+import DealerProductScreen from "./src/screens/Dealer/Product/ProductScreen";
+import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProductScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -182,7 +188,7 @@ export default function App() {
   const DrawerNavigator = () => {
     if (Object.keys(userDetails[0]).length === 0) {
       return (
-        <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="BasicDetailsContractorScreen">
+        <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
           <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
         </Drawer.Navigator>
       );
@@ -198,46 +204,49 @@ export default function App() {
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="ServicesScreen" component={ServicesScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="CategoryScreen" component={CategoryScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="ProductScreen" component={ProductScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="DepartmentScreen" component={DepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="LocationTypeScreen" component={LocationTypeScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="DesignationScreen" component={DesignationScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="ServiceProductScreen" component={ServiceProductScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="EWayBillScreen" component={EWayBillScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="WorkFloorScreen" component={WorkFloorScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="WorkLocationScreen" component={WorkLocationScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="DesignTypeScreen" component={DesignTypeScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="PostNewDesignScreen" component={PostNewDesignScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ServicesScreen" component={ServicesScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryScreen" component={CategoryScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductScreen" component={ProductScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DepartmentScreen" component={DepartmentScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="LocationTypeScreen" component={LocationTypeScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignationScreen" component={DesignationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ServiceProductScreen" component={ServiceProductScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EWayBillScreen" component={EWayBillScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WorkFloorScreen" component={WorkFloorScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WorkLocationScreen" component={WorkLocationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignTypeScreen" component={DesignTypeScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PostNewDesignScreen" component={PostNewDesignScreen} />
             </Drawer.Navigator>
           );
         case 2:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
             </Drawer.Navigator>
           );
         case 3:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsContractorScreen" component={BasicDetailsContractorScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="MyServicesContractorScreen" component={MyServicesContractorScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BasicDetailsContractorScreen" component={BasicDetailsContractorScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyServicesContractorScreen" component={MyServicesContractorScreen} />
             </Drawer.Navigator>
           );
         case 4:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="PresentationDealerScreen" component={PresentationScreen} />
-              <Drawer.Screen options={{ headerShown: false }} name="BuyerCategoryDealerScreen" component={BuyerCategoryScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BasicDetailsDealerScreen" component={BasicDetailsDealerScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyServicesDealerScreen" component={MyServicesDealerScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PresentationDealerScreen" component={PresentationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandMasterDealerScreen" component={BrandScreen} initialParams={{ activeIndex: activeIndex }} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandSetupDealerScreen" component={BrandSetupScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BuyerCategoryDealerScreen" component={BuyerCategoryScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerProductScreen" component={DealerProductScreen} />
             </Drawer.Navigator>
           );
       }
@@ -265,8 +274,8 @@ export default function App() {
         ) : (
           <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName={Object.keys(userDetails[0]).length !== 0 ? "HomeStack" : "Login"}>
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} initialParams={{ setUserFunc: SetUser }}/>
-              <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} initialParams={{ setUserFunc: SetUser }}/>
+              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} initialParams={{ setUserFunc: SetUser }} />
+              <Stack.Screen name="Signup" component={SignupScreen} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} initialParams={{ setUserFunc: SetUser }} />
               <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
               <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
               <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -283,8 +292,11 @@ export default function App() {
               <Stack.Screen name="AddWorkLocationScreen" component={AddWorkLocationScreen} options={{ headerTitle: "Add Work Location", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDesignTypeScreen" component={AddDesignTypeScreen} options={{ headerTitle: "Add Design Type", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddPostNewDesignScreen" component={AddPostNewDesignScreen} options={{ headerTitle: "Add Post New Design", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddMyServicesScreen" component={AddMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddBuyerCategoryScreen" component={AddBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerMyServicesScreen" component={AddMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerBrandScreen" component={AddBrandScreen} options={{ headerTitle: "Add Brand", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerBrandSetupScreen" component={AddBrandSetupScreen} options={{ headerTitle: "Add Brand Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerBuyerCategoryScreen" component={AddBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerProductScreen" component={AddDealerProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

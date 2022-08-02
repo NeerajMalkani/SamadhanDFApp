@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -9,12 +9,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
-const BuyerCategoryScreen = ({ navigation }) => {
+const DealerProductScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -23,6 +24,15 @@ const BuyerCategoryScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
+  const [brandName, setBrandName] = React.useState("");
+  const [productName, setProductName] = React.useState("");
+  const [image, setImage] = React.useState("");
+  const [price, setPrice] = React.useState("");
+  const [unitValue, setUnitValue] = React.useState("");
+  const [description, setDescription] = React.useState("");
+
+  const refRBSheet = useRef();
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -41,7 +51,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
     let params = {
       DealerID: dealerID,
     };
-    Provider.getAll(`companyprofiledealer/getbuyercategory?${new URLSearchParams(params)}`)
+    Provider.getAll(`dealerproduct/getproducts?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -81,7 +91,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.buyerCategoryName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.productName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -90,23 +100,45 @@ const BuyerCategoryScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.buyerCategoryName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item
+          title={data.item.productName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          onPress={() => {
+            refRBSheet.current.open();
+            setBrandName(data.item.brandName);
+            setProductName(data.item.productName);
+            setImage(data.item.image);
+            setPrice(data.item.price.toFixed(4));
+            setUnitValue(data.item.unitValue.toFixed(4));
+            setDescription(data.item.description);
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddBuyerCategoryScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddDealerProductScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddBuyerCategoryScreen", {
+    navigation.navigate("AddDealerProductScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        buyerCategoryName: data.item.buyerCategoryName,
+        brandID: data.item.brandID,
+        brandName: data.item.brandName,
+        productID: data.item.productID,
+        productName: data.item.productName,
+        image: data.item.image,
+        price: data.item.price.toFixed(4),
+        unitValue: data.item.unitValue.toFixed(4),
+        description: data.item.description,
         display: data.item.display,
       },
     });
@@ -114,7 +146,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Buyer Category" />
+      <Header navigation={navigation} title="Product" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -151,8 +183,21 @@ const BuyerCategoryScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{productName}</Title>
+          <ScrollView>
+            <List.Item title="Brand Name" description={brandName} />
+            <List.Item title="Product Image" />
+            <Image source={{ uri: image }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <List.Item title="Price" description={price} />
+            <List.Item title="Unit Value" description={unitValue} />
+            <List.Item title="Description" description={description} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
 
-export default BuyerCategoryScreen;
+export default DealerProductScreen;

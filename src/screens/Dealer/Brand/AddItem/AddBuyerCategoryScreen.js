@@ -33,7 +33,7 @@ const AddBuyerCategoryScreen = ({ route, navigation }) => {
   };
 
   const InsertBuyerCategoryName = () => {
-    Provider.create("companyprofiledealer/insertbuyercategory", { BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
+    Provider.create("dealerbrand/insertbuyercategory", { BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -51,7 +51,7 @@ const AddBuyerCategoryScreen = ({ route, navigation }) => {
   };
 
   const UpdateBuyerCategoryName = () => {
-    Provider.create("companyprofiledealer/updatebuyercategory", { ID: route.params.data.id, BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
+    Provider.create("dealerbrand/updatebuyercategory", { ID: route.params.data.id, BuyerCategoryName: buyerCategoryName, DealerID: dealerID, Display: checked })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
