@@ -360,7 +360,7 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
     const params = {
       UserID: userID,
       CompanyName: companyName,
-      CompanyLogo: logoImage,
+      CompanyLogo: logoImage ? logoImage : "",
       ContactPersonName: contactName,
       ContactPersonNumber: contactNumber,
       AddressLine: address,
