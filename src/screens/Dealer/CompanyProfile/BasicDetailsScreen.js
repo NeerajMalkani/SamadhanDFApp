@@ -380,7 +380,6 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
       SalesOrderPrefix: soPrefix,
       ShowBrand: isSwitchOn,
     };
-    console.log(params);
     Provider.create("master/insertuserprofile", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

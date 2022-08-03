@@ -165,7 +165,6 @@ const AddDealerProductScreen = ({ route, navigation }) => {
               return el.brandName + " (" + el.categoryName + ")" === selectedItem;
             }).categoryID,
     };
-    console.log(params);
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -317,7 +316,6 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   };
 
   const uploadFile = () => {
-    console.log("here");
     if (route.params.type === "edit" && !isImageReplaced) {
       UpdateData();
     } else {
