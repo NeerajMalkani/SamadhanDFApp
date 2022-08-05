@@ -124,7 +124,7 @@ export const MenuItemsAdmin = [
         title: "Materials Setup",
         type: "accordian",
         index: 33,
-        //navigation: "MaterialsSetupScreen",
+        navigation: "MaterialSetupScreen",
       },
       {
         title: "Post New Design",
