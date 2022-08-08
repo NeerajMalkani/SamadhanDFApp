@@ -390,6 +390,9 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);

@@ -46,6 +46,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches : "0");
 
+  const [brandsFullData, setBrandsFullData] = React.useState([]);
+  const [brandsData, setBrandsData] = React.useState([]);
+  const [brandName, setBrandName] = React.useState([]);
+
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
@@ -216,6 +220,26 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
+  const FetchBrandsFromProductIds = () => {
+    const productids = arrProductData[0].map((data) => data.productID);
+    let params = {
+      ProductID: productids.join(","),
+    };
+    console.log(params);
+    Provider.getAll(`servicecatalogue/getbrandsbyproductids?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setBrandsFullData(response.data.data);
+            const brands = response.data.data.map((data) => data.brandName + " (" + data.categoryName + ")");
+            //const uniqueBrands = uniqueByKey(brands, "brandID");
+            setBrandsData(uniqueBrands);
+          }
+        }
+      })
+      .catch((e) => {});
+  }
+
   useEffect(() => {
     FetchActvityRoles();
   }, []);
@@ -293,6 +317,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     setWidthInches(selectedItem);
   };
 
+  const onBrandNameSelected = (selectedItem) => {
+    setBrandName(selectedItem);
+  };
+
   const ValidateData = () => {};
 
   const OpenProductDialog = () => {
@@ -301,6 +329,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const OpenProductViewDialog = () => {
+    FetchBrandsFromProductIds();
     refRBSheet.current.open();
     setShowView(2);
   };
@@ -312,6 +341,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     }
     return arrNumbers;
   };
+
+  function uniqueByKey(array, key) {
+    return [...new Map(array.map((x) => [x[key], x])).values()];
+  }
 
   return (
     <View style={[Styles.flex1]}>
@@ -384,6 +417,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               <AddMaterialSetupProducts arrProductData={arrProductData} />
             </View>
             <View style={[Styles.padding16, { display: showView === 2 ? "flex" : "none" }]}>
+            <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
               {arrProductData[0].map((k, i) => {
                 return (
                   <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>

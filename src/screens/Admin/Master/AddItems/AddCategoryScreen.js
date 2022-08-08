@@ -161,6 +161,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -180,6 +183,21 @@ const AddCategoryScreen = ({ route, navigation }) => {
         arrunitOfSalesName.push(o.id);
       }
     });
+    const params = {
+      ID: route.params.data.id,
+      CategoryName: name,
+      RoleID: activityFullData.find((el) => {
+        return el.activityRoleName === acivityName;
+      }).id,
+      ServiceID: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      HSNSACCode: hsn,
+      GSTRate: parseFloat(gst),
+      UnitID: arrunitOfSalesName.join(","),
+      Display: checked,
+    };
+    console.log(params);
     Provider.create("master/updatecategory", {
       ID: route.params.data.id,
       CategoryName: name,
@@ -198,6 +216,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);

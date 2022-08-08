@@ -82,6 +82,9 @@ const AddEWayBillScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -108,6 +111,9 @@ const AddEWayBillScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);
@@ -153,7 +159,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnSubmit={false}
-            initialValue= {{ id: parseInt(stateSelectedID) }} //{stateSelectedID}//
+            initialValue={{ id: parseInt(stateSelectedID) }} //{stateSelectedID}//
             inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorSN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
             textInputProps={{
               value: stateName,

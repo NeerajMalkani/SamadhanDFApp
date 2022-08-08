@@ -64,7 +64,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
-
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
       ID: activityData.find((el) => {
@@ -436,6 +435,9 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -475,6 +477,9 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);

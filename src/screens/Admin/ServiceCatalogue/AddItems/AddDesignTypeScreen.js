@@ -225,6 +225,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -256,6 +259,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);

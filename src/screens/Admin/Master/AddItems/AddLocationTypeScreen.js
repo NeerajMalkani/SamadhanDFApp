@@ -149,6 +149,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -173,6 +176,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -222,9 +228,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
               refActivityRBSheet.current.open();
             }}
           >
-            <Text style={[Styles.textSecondaryColor, Styles.fontSize16, Styles.paddingStart12, { position: "absolute", zIndex: -2 }]}>
-              {activitySelectedValue.length > 0 ? activitySelectedValue.length + " activities selected" : "Select Activities"}
-            </Text>
+            <Text style={[Styles.textSecondaryColor, Styles.fontSize16, Styles.paddingStart12, { position: "absolute", zIndex: -2 }]}>{activitySelectedValue.length > 0 ? activitySelectedValue.length + " activities selected" : "Select Activities"}</Text>
           </View>
           <View style={[Styles.flexRow, Styles.flexWrap]}>
             {activities.map((item, i) => {
@@ -310,15 +314,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet
-        ref={refActivityRBSheet}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        dragFromTopOnly={true}
-        height={400}
-        animationType="fade"
-        customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}
-      >
+      <RBSheet ref={refActivityRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={400} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View style={[Styles.flex1, Styles.marginBottom16]}>
           <ScrollView style={[Styles.marginBottom48]}>
             <List.Section>
@@ -350,15 +346,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={refServicesRBSheet}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        dragFromTopOnly={true}
-        height={400}
-        animationType="fade"
-        customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}
-      >
+      <RBSheet ref={refServicesRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={400} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View style={[Styles.flex1, Styles.marginBottom16]}>
           <ScrollView style={[Styles.marginBottom48]}>
             <List.Section>
