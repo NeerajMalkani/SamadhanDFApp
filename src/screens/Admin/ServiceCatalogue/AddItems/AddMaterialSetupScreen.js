@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View, Dimensions } from "react-native";
-import { Button, Card, Checkbox, DataTable, HelperText, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
+import { Button, Card, Checkbox, DataTable, Headline, HelperText, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -11,6 +11,8 @@ import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   const arrProductData = React.useState([]);
+
+  const [arrProductDataTemp, setArrProductDataTemp] = React.useState([]);
 
   const [activityFullData, setActivityFullData] = React.useState([]);
 
@@ -52,6 +54,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const [total, setTotal] = React.useState(0);
 
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
@@ -231,14 +235,15 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBrandsFullData(response.data.data);
-            const brands = response.data.data.map((data) => data.brandName + " (" + data.categoryName + ")");
-            //const uniqueBrands = uniqueByKey(brands, "brandID");
-            setBrandsData(uniqueBrands);
+            const key = "brandID";
+            const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
+            const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
+            setBrandsData(formattedData);
           }
         }
       })
       .catch((e) => {});
-  }
+  };
 
   useEffect(() => {
     FetchActvityRoles();
@@ -317,8 +322,22 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     setWidthInches(selectedItem);
   };
 
-  const onBrandNameSelected = (selectedItem) => {
+  const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
+    const selecedBrand = brandsFullData[parseInt(index)];
+
+    const appliedProducts = brandsFullData.filter((el) => {
+      return el.brandID === selecedBrand.brandID;
+    });
+    console.log(brandsFullData);
+    const newData = [...arrProductData[0]];
+    newData.map((k) => {
+      if (appliedProducts.find((el) => el.productID === k.productID)) {
+        k.brandName = selecedBrand.brandName;
+        k.price = selecedBrand.price.toFixed(4);
+      }
+    });
+    arrProductData[1](newData);
   };
 
   const ValidateData = () => {};
@@ -328,12 +347,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     setShowView(1);
   };
 
-  const OpenProductViewDialog = () => {
-    FetchBrandsFromProductIds();
-    refRBSheet.current.open();
-    setShowView(2);
-  };
-
   const CreateNumberDropdown = (startCount, endCount) => {
     let arrNumbers = [];
     for (var i = startCount; i <= endCount; i++) {
@@ -341,10 +354,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     }
     return arrNumbers;
   };
-
-  function uniqueByKey(array, key) {
-    return [...new Map(array.map((x) => [x[key], x])).values()];
-  }
 
   return (
     <View style={[Styles.flex1]}>
@@ -392,18 +401,91 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
           </View>
           <TextInput mode="flat" label="Total (Sq.Ft.)" value={(parseFloat(lengthFeet + "." + lengthInches) * parseFloat(widthFeet + "." + widthInches)).toFixed(4)} editable={false} />
+          <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
+            Add Products
+          </Button>
+          <View style={[Styles.padding16]}>
+            <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
+            {arrProductData[0].map((k, i) => {
+              return (
+                <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
+                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
+                  </View>
+                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Text style={[Styles.flex1]}>Brand Name</Text>
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
+                  </View>
+                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Text style={[Styles.flex1]}>Quantity</Text>
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity} />
+                  </View>
+                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Text style={[Styles.flex1]}>Rate</Text>
+                    <TextInput
+                      mode="flat"
+                      dense
+                      keyboardType="decimal-pad"
+                      value={k.price}
+                      style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
+                      onChangeText={(text) => {
+                        if (k.brandName) {
+                          const changeData1 = [...arrProductData[0]];
+                          changeData1[parseInt(i)].price = text;
+
+                          arrProductData[1](changeData1);
+                        }
+                      }}
+                    />
+                  </View>
+                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Text style={[Styles.flex1]}>Amount</Text>
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.amount} />
+                  </View>
+                  <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter]}>
+                    <Text style={[Styles.flex1]}>Formula</Text>
+                    <TextInput
+                      mode="flat"
+                      dense
+                      keyboardType="decimal-pad"
+                      style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
+                      onChangeText={(text) => {
+                        if (k.brandName) {
+                          const changeData = [...arrProductData[0]];
+                          if (text) {
+                            const amount = parseFloat(k.price) / parseFloat(text);
+                            changeData[parseInt(i)].amount = amount.toFixed(4);
+                            changeData[parseInt(i)].quantity = (amount / parseFloat(k.price)).toFixed(4);
+                            changeData[parseInt(i)].formula = text;
+                          } else {
+                            changeData[parseInt(i)].amount = "";
+                            changeData[parseInt(i)].quantity = "";
+                            changeData[parseInt(i)].formula = "";
+                          }
+                          setTotal(0);
+                          let totalTemp = 0;
+                          changeData.map((k) => {
+                            if (k.amount) {
+                              totalTemp += parseFloat(k.amount);
+                            }
+                          });
+                          setTotal(totalTemp);
+                          arrProductData[1](changeData);
+                        }
+                      }}
+                    />
+                  </View>
+                </View>
+              );
+            })}
+          </View>
         </View>
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Button mode="outlined" onPress={OpenProductDialog}>
-            Add
-          </Button>
+          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {total}</Subheading>
           <Button mode="contained" onPress={ValidateData}>
             Submit
-          </Button>
-          <Button mode="outlined" onPress={OpenProductViewDialog}>
-            Show
           </Button>
         </Card.Content>
       </View>
@@ -412,45 +494,21 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
         <View style={[Styles.flex1]}>
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}>
-            <View style={{ display: showView === 1 ? "flex" : "none" }}>
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+            <View>
               <AddMaterialSetupProducts arrProductData={arrProductData} />
-            </View>
-            <View style={[Styles.padding16, { display: showView === 2 ? "flex" : "none" }]}>
-            <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
-              {arrProductData[0].map((k, i) => {
-                return (
-                  <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Title style={[Styles.flex1, Styles.primaryColor]}>{k.productName}</Title>
-                    </View>
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Brand Name</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} />
-                    </View>
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Quantity</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} />
-                    </View>
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Rate</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]} />
-                    </View>
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Amount</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} />
-                    </View>
-                    <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Formula</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]} />
-                    </View>
-                  </View>
-                );
-              })}
             </View>
           </ScrollView>
           <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-            <Button mode="contained" onPress={() => refRBSheet.current.close()}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                setBrandsData([]);
+                setBrandsFullData([]);
+                FetchBrandsFromProductIds();
+                refRBSheet.current.close();
+              }}
+            >
               Done
             </Button>
           </View>
