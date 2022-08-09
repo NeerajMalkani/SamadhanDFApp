@@ -296,7 +296,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     if (route.params.type === "edit") {
       route.params.data.productID = productsFullData.find((el) => {
         return el.productName === selectedItem;
-      }).id;
+      }).productID;
     }
     designTypeDDRef.current.reset();
     setPNError(false);

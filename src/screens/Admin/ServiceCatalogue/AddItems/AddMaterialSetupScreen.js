@@ -214,6 +214,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               return el.productName === selectedItem;
             }).productID,
     };
+    console.log(params);
     Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -258,7 +259,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
@@ -336,7 +336,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     if (route.params.type === "edit") {
       route.params.data.productID = productsFullData.find((el) => {
         return el.productName === selectedItem;
-      }).id;
+      }).productID;
     }
     setPNError(false);
     FetchDesignTypeFromProduct(selectedItem);
@@ -407,6 +407,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         }).id,
         Length: parseFloat(lengthFeet + "." + lengthInches),
         Width: parseFloat(widthFeet + "." + widthInches),
+        Subtotal: parseFloat(total),
         Display: checked,
       },
       MaterialProductMappings: arrMaterialProducts,
@@ -447,6 +448,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         }).id,
         Length: parseFloat(lengthFeet + "." + lengthInches),
         Width: parseFloat(widthFeet + "." + widthInches),
+        Subtotal: parseFloat(total),
         Display: checked,
       },
       MaterialProductMappings: arrMaterialProducts,

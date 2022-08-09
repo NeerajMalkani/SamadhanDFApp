@@ -10,7 +10,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { roundToNearestPixel } from "react-native/Libraries/Utilities/PixelRatio";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -30,6 +29,7 @@ const MaterialSetupScreen = ({ navigation }) => {
   const [productName, setProductName] = React.useState("");
   const [length, setLength] = React.useState("");
   const [width, setWidth] = React.useState("");
+  const [subtotal, setSubtotal] = React.useState("");
 
   const refRBSheet = useRef();
 
@@ -101,6 +101,7 @@ const MaterialSetupScreen = ({ navigation }) => {
             setProductName(data.item.productName);
             setLength(data.item.length);
             setWidth(data.item.width);
+            setSubtotal((parseFloat(data.item.subtotal) / (parseFloat(data.item.length) * parseFloat(data.item.width))).toFixed(4));
           }}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
@@ -175,7 +176,7 @@ const MaterialSetupScreen = ({ navigation }) => {
         {snackbarText}
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View>
+        <View style={{ paddingBottom: 64 }}>
           <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
           <ScrollView>
             <List.Item title="Service Name" description={serviceName} />
@@ -183,6 +184,7 @@ const MaterialSetupScreen = ({ navigation }) => {
             <List.Item title="Product Name" description={productName} />
             <List.Item title="Length" description={length} />
             <List.Item title="Width" description={width} />
+            <List.Item title="Material Cost (per Sq.Ft)" description={subtotal} />
           </ScrollView>
         </View>
       </RBSheet>

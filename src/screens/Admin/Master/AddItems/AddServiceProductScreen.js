@@ -300,7 +300,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     if (route.params.type === "edit") {
       route.params.data.productID = productsFullData.find((el) => {
         return el.productName === selectedItem;
-      }).id;
+      }).productID;
     }
     setPNError(false);
     setUnitName("");
