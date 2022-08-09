@@ -34,7 +34,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [designTypeFullData, setDesignTypeFullData] = React.useState([]);
   const [designTypeData, setDesignTypeData] = React.useState([]);
-  const [designType, setDesignType] = React.useState(route.params.type === "edit" ? route.params.data.designType : "");
+  const [designType, setDesignType] = React.useState(route.params.type === "edit" ? route.params.data.designTypeName : "");
   const [errorDT, setDTError] = React.useState(false);
   const designTypeDDRef = useRef({});
 
@@ -330,6 +330,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
+    setBNError(false);
     const selecedBrand = brandsFullData[parseInt(index)];
     const appliedProducts = brandsFullData.filter((el) => {
       return el.brandID === selecedBrand.brandID;
@@ -339,11 +340,91 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     newData.map((k) => {
       const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
       if (foundProduct) {
+        k.brandID = foundProduct.brandID;
         k.brandName = foundProduct.brandName;
         k.price = foundProduct.price.toFixed(4);
       }
     });
     arrProductData[1](newData);
+  };
+
+  const InsertData = () => {
+    const arrMaterialProducts = [];
+    arrProductData[0].map((k) => {
+      arrMaterialProducts.push({
+        ProductID: k.productID,
+        BrandID: k.brandID,
+        Rate: k.price,
+        Amount: k.amount,
+        Quantity: k.quantity,
+        Formula: k.formula,
+      });
+    });
+    Provider.create("servicecatalogue/insertmaterialsetup", {
+      MaterialSetupMaster: {
+        DesignTypeID: designTypeFullData.find((el) => {
+          return el.designTypeName === designType;
+        }).id,
+        Length: parseFloat(lengthFeet + "." + lengthInches),
+        Width: parseFloat(widthFeet + "." + widthInches),
+        Display: checked,
+      },
+      MaterialProductMappings: arrMaterialProducts,
+    })
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("add");
+          navigation.goBack();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
+  };
+
+  const UpdateData = () => {
+    const arrMaterialProducts = [];
+    arrProductData[0].map((k) => {
+      arrMaterialProducts.push({
+        ProductID: k.productID,
+        BrandID: k.brandID,
+        Rate: k.price,
+        Amount: k.amount,
+        Quantity: k.quantity,
+        Formula: k.formula,
+      });
+    });
+    Provider.create("servicecatalogue/updatematerialsetup", {
+      MaterialSetupMaster: {
+        ID: route.params.data.id,
+        DesignTypeID: designTypeFullData.find((el) => {
+          return el.designTypeName === designType;
+        }).id,
+        Length: parseFloat(lengthFeet + "." + lengthInches),
+        Width: parseFloat(widthFeet + "." + widthInches),
+        Display: checked,
+      },
+      MaterialProductMappings: arrMaterialProducts,
+    })
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("add");
+          navigation.goBack();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
   };
 
   const ValidateData = () => {
@@ -394,14 +475,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       }
     });
 
-    if(isValid){
-      if(route.params.type === "edit"){
-        //Update data
+    if (isValid) {
+      if (route.params.type === "edit") {
+        UpdateData();
       } else {
-        //Insert data
+        InsertData();
       }
     }
-
   };
 
   const OpenProductDialog = () => {
@@ -561,8 +641,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
         <View style={[Styles.flex1]}>
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-            <View>
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={[Styles.flex1]}>
               <AddMaterialSetupProducts arrProductData={arrProductData} />
             </View>
           </ScrollView>
@@ -573,6 +653,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                 setBrandsData([]);
                 setBrandsFullData([]);
                 FetchBrandsFromProductIds();
+                if (arrProductData[0].length > 0) {
+                  setPLError(false);
+                }
                 refRBSheet.current.close();
               }}
             >

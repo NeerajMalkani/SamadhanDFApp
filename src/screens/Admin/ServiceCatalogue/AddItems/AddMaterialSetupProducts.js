@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { Checkbox, Title } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
+import NoItems from "../../../../components/NoItems";
 import { Styles } from "../../../../styles/styles";
 
 const AddMaterialSetupProducts = ({ arrProductData }) => {
@@ -101,7 +102,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
         return el.categoryName === selectedItem;
       }).id,
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getproductsbycategoryidforbrands?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -143,7 +144,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   };
 
   return (
-    <View>
+    <View style={[Styles.flex1]}>
       <View style={[Styles.flexRow, Styles.padding16]}>
         <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex1]}>
           <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} selectedItem={serviceName} reference={servicesDDRef} />
@@ -152,8 +153,14 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
           <Dropdown label="Category Name" data={categoriesData} onSelected={onCategoriesNameSelected} selectedItem={categoriesName} reference={categoriesDDRef} />
         </View>
       </View>
-      <View style={[Styles.padding16]}>
-        {productsFullData.length > 0 ? <Title style={[Styles.paddingHorizontal16, Styles.paddingBottom16, Styles.borderBottom1]}>Products</Title> : null}
+      <View style={[Styles.flex1, Styles.padding16]}>
+        {productsFullData.length > 0 ? (
+          <Title style={[Styles.paddingHorizontal16, Styles.paddingBottom16, Styles.borderBottom1]}>Products</Title>
+        ) : (
+          <View style={[Styles.flex1, Styles.flexAlignCenter, Styles.flexJustifyCenter]}>
+            <NoItems icon="format-list-bulleted" text="No records found." />
+          </View>
+        )}
         {productsFullData.map((k, i) => {
           return (
             <Checkbox.Item
