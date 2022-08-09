@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { roundToNearestPixel } from "react-native/Libraries/Utilities/PixelRatio";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -126,8 +127,10 @@ const MaterialSetupScreen = ({ navigation }) => {
         productName: data.item.productName,
         designTypeID: data.item.designTypeID,
         designTypeName: data.item.designTypeName,
-        lengthFeet: data.item.length.split(".")[0],
-        width: data.item.width,
+        lengthFeet: data.item["length"].toString().includes(".") ? data.item["length"].toString().split(".")[0] : data.item["length"].toString(),
+        lengthInches: data.item["length"].toString().includes(".") ? (data.item["length"].toString().split(".").length > 0 ? data.item["length"].toString().split(".")[1] : "0") : "0",
+        widthFeet: data.item.width.toString().includes(".") ? data.item.width.toString().split(".")[0] : data.item.width.toString(),
+        widthInches: data.item.width.toString().includes(".") ? (data.item.width.toString().split(".").length > 0 ? data.item.width.toString().split(".")[1] : "0") : "0",
         display: data.item.display,
       },
     });

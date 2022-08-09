@@ -112,7 +112,7 @@ const PostNewDesignScreen = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData, data: {count: listData[0].length} });
+    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData, data: { count: listData[0].length } });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -136,14 +136,14 @@ const PostNewDesignScreen = ({ navigation }) => {
         designImage: data.item.designImage,
         labourCost: data.item.labourCost,
         display: data.item.display,
-        count: listData[0].length
+        count: listData[0].length,
       },
     });
   };
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="PostNewDesign" />
+      <Header navigation={navigation} title="Post New Design" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />

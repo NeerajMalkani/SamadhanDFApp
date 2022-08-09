@@ -40,11 +40,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
-  const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet : "1");
-  const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches : "0");
+  const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet.toString() : "1");
+  const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches.toString() : "0");
 
-  const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet : "1");
-  const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches : "0");
+  const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
+  const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -230,12 +230,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchBrandsFromProductIds = () => {
-    const productids = arrProductData[0].map((data) => data.productID);
+  const FetchBrandsFromProductIds = (productData) => {
+    const productids = productData ? productData.map((data) => data.productID) : arrProductData[0].map((data) => data.productID);
     let params = {
       ProductID: productids.join(","),
     };
-    console.log(params);
     Provider.getAll(`servicecatalogue/getbrandsbyproductids?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -251,8 +250,49 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
+  const FetchProductsFromMaterialSetup = () => {
+    let params = {
+      MaterialSetupID: route.params.data.id,
+    };
+    Provider.getAll(`servicecatalogue/getmaterialsetupmapping?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log(response.data.data);
+            const tempArr = [];
+            setTotal(0);
+            let totalTemp = 0;
+            response.data.data.map((k) => {
+              if (k.amount) {
+                totalTemp += parseFloat(k.amount);
+              }
+              tempArr.push({
+                productID: k.productID,
+                productName: k.productName,
+                brandID: k.brandID,
+                brandName: k.brandName,
+                price: k.rate.toFixed(4),
+                amount: k.amount.toFixed(4),
+                quantity: Math.ceil(k.quantity),
+                formula: k.formula.toFixed(4),
+              });
+            });
+            setTotal(totalTemp);
+            arrProductData[1](tempArr);
+            setBrandsData([]);
+            setBrandsFullData([]);
+            FetchBrandsFromProductIds(tempArr);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
   useEffect(() => {
     FetchActvityRoles();
+    if (route.params.type === "edit") {
+      FetchProductsFromMaterialSetup();
+    }
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
@@ -565,7 +605,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity} />
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? k.quantity.toString() : ""} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Rate</Text>
@@ -579,7 +619,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                         if (k.brandName) {
                           const changeData1 = [...arrProductData[0]];
                           changeData1[parseInt(i)].price = text;
-
                           arrProductData[1](changeData1);
                         }
                       }}
@@ -595,6 +634,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       mode="flat"
                       dense
                       keyboardType="decimal-pad"
+                      value={k.formula}
                       style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
                       onChangeText={(text) => {
                         if (k.brandName) {
@@ -602,7 +642,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                           if (text) {
                             const amount = parseFloat(k.price) / parseFloat(text);
                             changeData[parseInt(i)].amount = amount.toFixed(4);
-                            changeData[parseInt(i)].quantity = (amount / parseFloat(k.price)).toFixed(4);
+                            changeData[parseInt(i)].quantity = Math.ceil(amount / parseFloat(k.price));
                             changeData[parseInt(i)].formula = text;
                           } else {
                             changeData[parseInt(i)].amount = "";

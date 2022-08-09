@@ -236,7 +236,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
               return el.productName === selectedItem;
             }).productID,
     };
-    Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
+    Provider.getAll(`servicecatalogue/getdesigntypebyproductidformaterialsetup?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
