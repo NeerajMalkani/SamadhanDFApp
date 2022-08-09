@@ -12,8 +12,6 @@ import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   const arrProductData = React.useState([]);
 
-  const [arrProductDataTemp, setArrProductDataTemp] = React.useState([]);
-
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -48,9 +46,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches : "0");
 
+  const [errorPL, setPLError] = React.useState(false);
+
   const [brandsFullData, setBrandsFullData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
+
+  const [errorBN, setBNError] = React.useState(false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -59,8 +61,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
-
-  const [showView, setShowView] = React.useState(1);
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -82,6 +82,12 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               setServicesData([]);
               setProductsData([]);
               setDesignTypeData([]);
+              setSNError(false);
+              setCNError(false);
+              setPNError(false);
+              setDTError(false);
+              setPLError(false);
+              setBNError(false);
             }
             FetchServicesFromActivity("Contractor", response.data.data);
             if (route.params.type === "edit") {
@@ -325,26 +331,81 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
     const selecedBrand = brandsFullData[parseInt(index)];
-
     const appliedProducts = brandsFullData.filter((el) => {
       return el.brandID === selecedBrand.brandID;
     });
-    console.log(brandsFullData);
+
     const newData = [...arrProductData[0]];
     newData.map((k) => {
-      if (appliedProducts.find((el) => el.productID === k.productID)) {
-        k.brandName = selecedBrand.brandName;
-        k.price = selecedBrand.price.toFixed(4);
+      const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
+      if (foundProduct) {
+        k.brandName = foundProduct.brandName;
+        k.price = foundProduct.price.toFixed(4);
       }
     });
     arrProductData[1](newData);
   };
 
-  const ValidateData = () => {};
+  const ValidateData = () => {
+    let isValid = true;
+    const objServices = servicesFullData.find((el) => {
+      return el.serviceName && el.serviceName === serviceName;
+    });
+    if (serviceName.length === 0 || !objServices) {
+      setSNError(true);
+      isValid = false;
+    }
+    const objCategories = categoriesFullData.find((el) => {
+      return el.categoryName && el.categoryName === categoriesName;
+    });
+    if (categoriesName.length === 0 || !objCategories) {
+      setCNError(true);
+      isValid = false;
+    }
+    const objProducts = productsFullData.find((el) => {
+      return el.productName && el.productName === productsName;
+    });
+    if (productsName.length === 0 || !objProducts) {
+      setPNError(true);
+      isValid = false;
+    }
+    const objDesignType = designTypeFullData.find((el) => {
+      return el.designTypeName && el.designTypeName === designType;
+    });
+    if (designType.length === 0 || !objDesignType) {
+      setDTError(true);
+      isValid = false;
+    }
+
+    if (arrProductData[0].length === 0) {
+      setPLError(true);
+      setBNError(true);
+      isValid = false;
+    }
+
+    let amountAdded = true;
+    arrProductData[0].map((el) => {
+      if (!el.amount || el.amount == 0) {
+        if (amountAdded) {
+          amountAdded = false;
+          setBNError(true);
+          isValid = false;
+        }
+      }
+    });
+
+    if(isValid){
+      if(route.params.type === "edit"){
+        //Update data
+      } else {
+        //Insert data
+      }
+    }
+
+  };
 
   const OpenProductDialog = () => {
     refRBSheet.current.open();
-    setShowView(1);
   };
 
   const CreateNumberDropdown = (startCount, endCount) => {
@@ -404,8 +465,14 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
             Add Products
           </Button>
+          <HelperText type="error" visible={errorPL}>
+            {communication.InvalidProductList}
+          </HelperText>
           <View style={[Styles.padding16]}>
             <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
+            <HelperText type="error" visible={errorBN}>
+              {communication.InvalidBrnadSelected}
+            </HelperText>
             {arrProductData[0].map((k, i) => {
               return (
                 <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
@@ -483,7 +550,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {total}</Subheading>
+          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {total.toFixed(4)}</Subheading>
           <Button mode="contained" onPress={ValidateData}>
             Submit
           </Button>

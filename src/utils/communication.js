@@ -55,6 +55,9 @@ export const communication = {
   InvalidUnitValue: "Enter a valid Unit Value",
   InvalidDescription: "Enter a valid Description",
 
+  InvalidProductList: "Add some products to complete material setup",
+  InvalidBrnadSelected: "Select all the brands before continuing",
+
   NoImageSelectedError: "Please pick an image to continue",
   FailedUploadError: "Failed to upload your file",
   InsertError: "Unable to insert item. Please try again",
