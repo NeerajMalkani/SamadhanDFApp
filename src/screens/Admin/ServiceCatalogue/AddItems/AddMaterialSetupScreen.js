@@ -273,7 +273,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                 brandName: k.brandName,
                 price: k.rate.toFixed(4),
                 amount: k.amount.toFixed(4),
-                quantity: Math.ceil(k.quantity),
+                quantity: parseFloat(k.quantity),
                 formula: k.formula.toFixed(4),
               });
             });
@@ -508,7 +508,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
     let amountAdded = true;
     arrProductData[0].map((el) => {
-      if (!el.amount || el.amount == 0) {
+      if (!el.amount || el.amount == 0 || !el.rate || el.rate == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
         if (amountAdded) {
           amountAdded = false;
           setBNError(true);
@@ -607,7 +607,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? k.quantity.toString() : ""} />
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? k.quantity.toFixed(4) : ""} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Rate</Text>
@@ -621,6 +621,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                         if (k.brandName) {
                           const changeData1 = [...arrProductData[0]];
                           changeData1[parseInt(i)].price = text;
+                          if (text && text != 0 && k.formula && k.formula != 0) {
+                            const amount1 = parseFloat(text) / parseFloat(k.formula);
+                            changeData1[parseInt(i)].amount = amount1.toFixed(4);
+                            changeData1[parseInt(i)].quantity = (parseFloat(amount1) / parseFloat(text));
+                          }
                           arrProductData[1](changeData1);
                         }
                       }}
@@ -641,16 +646,15 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       onChangeText={(text) => {
                         if (k.brandName) {
                           const changeData = [...arrProductData[0]];
-                          if (text) {
-                            const amount = parseFloat(k.price) / parseFloat(text);
+                          if (text && text != 0) {
+                            const amount = k.price ? parseFloat(k.price) / parseFloat(text) : parseFloat(1) / parseFloat(text);
                             changeData[parseInt(i)].amount = amount.toFixed(4);
-                            changeData[parseInt(i)].quantity = Math.ceil(amount / parseFloat(k.price));
-                            changeData[parseInt(i)].formula = text;
+                            changeData[parseInt(i)].quantity = k.price ? parseFloat(amount / parseFloat(k.price)) : parseFloat(amount / parseFloat(1));
                           } else {
                             changeData[parseInt(i)].amount = "";
                             changeData[parseInt(i)].quantity = "";
-                            changeData[parseInt(i)].formula = "";
                           }
+                          changeData[parseInt(i)].formula = text;
                           setTotal(0);
                           let totalTemp = 0;
                           changeData.map((k) => {

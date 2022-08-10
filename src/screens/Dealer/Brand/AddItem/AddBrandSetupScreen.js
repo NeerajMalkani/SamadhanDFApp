@@ -387,7 +387,7 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
     }
     Provider.create(route.params.type === "edit" ? "dealerbrand/updatebrandbuyermapping" : "dealerbrand/insertbrandbuyermapping", arrBrandBuyerMapping)
       .then((response) => {
-        if (response.data && response.data.code === 200) {
+        if (response.data && (response.data.code === 200 || response.data.code === 204)) {
           route.params.fetchData("add");
           navigation.goBack();
         } else if (response.data.code === 304) {
