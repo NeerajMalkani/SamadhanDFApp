@@ -46,6 +46,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
+  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? ((parseFloat(route.params.data.lengthFeet) * 12 + parseFloat(route.params.data.lengthInches)) * (parseFloat(route.params.data.widthFeet) * 12 + parseFloat(route.params.data.widthInches))) / 144 : "");
+
   const [errorPL, setPLError] = React.useState(false);
 
   const [brandsFullData, setBrandsFullData] = React.useState([]);
@@ -354,18 +356,22 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const onLengthFeetSelected = (selectedItem) => {
     setLengthFeet(selectedItem);
+    CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches);
   };
 
   const onLengthInchesSelected = (selectedItem) => {
     setLengthInches(selectedItem);
+    CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches);
   };
 
   const onWidthFeetSelected = (selectedItem) => {
     setWidthFeet(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches);
   };
 
   const onWidthInchesSelected = (selectedItem) => {
     setWidthInches(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
@@ -383,8 +389,14 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         k.brandID = foundProduct.brandID;
         k.brandName = foundProduct.brandName;
         k.price = foundProduct.price.toFixed(4);
+        if (parseFloat(k.formula) !== 0) {
+          k.quantity = (parseFloat(totalSqFt.toString()) / parseFloat(k.formula)).toFixed(4);
+          k.amount = (parseFloat(k.quantity) * parseFloat(k.price === "0" ? "1" : k.rate)).toFixed(4);
+        }
       }
     });
+    const amounts = newData.map((data) => data.amount);
+    setSubTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
     arrProductData[1](newData);
   };
 
@@ -538,6 +550,28 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     return arrNumbers;
   };
 
+  const CalculateSqFt = (lf, li, wf, wi) => {
+    if (lf > 0 && li > -1 && wf > 0 && wi > -1) {
+      const inches = ((lf * 12 + li) * (wf * 12 + wi)) / 144;
+      setTotalSqft(parseFloat(inches.toFixed(4)));
+      if (arrProductData[0].length > 0) {
+        let total = 0;
+         const arrMaterialProducts = [...productItem];
+         arrMaterialProducts.map((k) => {
+           if (parseFloat(k.formula) !== 0) {
+             k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
+             k.amount = (parseFloat(k.quantity) * parseFloat(k.price === "0" ? "1" : k.price)).toFixed(4);
+             total += parseFloat(k.amount);
+           }
+         });
+         arrProductData[1](arrMaterialProducts);
+         setTotal(total.toFixed(4));
+      }
+    } else {
+      setTotalSqft(0);
+    }
+  };
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
@@ -583,7 +617,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             </View>
             <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" value={(parseFloat(lengthFeet + "." + lengthInches) * parseFloat(widthFeet + "." + widthInches)).toFixed(4)} editable={false} />
+          <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
             Add Products
           </Button>
@@ -618,16 +652,14 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       value={k.price}
                       style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
                       onChangeText={(text) => {
-                        if (k.brandName) {
-                          const changeData1 = [...arrProductData[0]];
-                          changeData1[parseInt(i)].price = text;
-                          if (text && text != 0 && k.formula && k.formula != 0) {
-                            const amount1 = parseFloat(text) / parseFloat(k.formula);
-                            changeData1[parseInt(i)].amount = amount1.toFixed(4);
-                            changeData1[parseInt(i)].quantity = (parseFloat(amount1) / parseFloat(text));
-                          }
-                          arrProductData[1](changeData1);
+                        const changeData1 = [...arrProductData[0]];
+                        changeData1[parseInt(i)].price = text;
+                        if (text && text != 0 && k.formula && k.formula != 0) {
+                          const quant = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+                          changeData1[parseInt(i)].quantity = quant.toFixed(4);
+                          changeData1[parseInt(i)].amount = (quant * parseFloat(text)).toFixed(4);
                         }
+                        arrProductData[1](changeData1);
                       }}
                     />
                   </View>
@@ -644,27 +676,26 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       value={k.formula}
                       style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
                       onChangeText={(text) => {
-                        if (k.brandName) {
-                          const changeData = [...arrProductData[0]];
-                          if (text && text != 0) {
-                            const amount = k.price ? parseFloat(k.price) / parseFloat(text) : parseFloat(1) / parseFloat(text);
-                            changeData[parseInt(i)].amount = amount.toFixed(4);
-                            changeData[parseInt(i)].quantity = k.price ? parseFloat(amount / parseFloat(k.price)) : parseFloat(amount / parseFloat(1));
-                          } else {
-                            changeData[parseInt(i)].amount = "";
-                            changeData[parseInt(i)].quantity = "";
-                          }
-                          changeData[parseInt(i)].formula = text;
-                          setTotal(0);
-                          let totalTemp = 0;
-                          changeData.map((k) => {
-                            if (k.amount) {
-                              totalTemp += parseFloat(k.amount);
-                            }
-                          });
-                          setTotal(totalTemp);
-                          arrProductData[1](changeData);
+                        const changeData = [...arrProductData[0]];
+                        if (text && text != 0) {
+                          const quanti = parseFloat(totalSqFt.toString()) / parseFloat(text);
+                          changeData[parseInt(i)].quantity = quanti.toFixed(4);
+                          changeData[parseInt(i)].amount = (quanti * parseFloat(k.price)).toFixed(4);
+                          
+                        } else {
+                          changeData[parseInt(i)].amount = "";
+                          changeData[parseInt(i)].quantity = "";
                         }
+                        changeData[parseInt(i)].formula = text;
+                        setTotal(0);
+                        let totalTemp = 0;
+                        changeData.map((k) => {
+                          if (k.amount) {
+                            totalTemp += parseFloat(k.amount);
+                          }
+                        });
+                        setTotal(totalTemp);
+                        arrProductData[1](changeData);
                       }}
                     />
                   </View>
