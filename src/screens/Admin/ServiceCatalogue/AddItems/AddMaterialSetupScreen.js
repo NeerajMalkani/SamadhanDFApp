@@ -51,6 +51,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [errorPL, setPLError] = React.useState(false);
 
   const [brandsFullData, setBrandsFullData] = React.useState([]);
+  const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
 
@@ -216,7 +217,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               return el.productName === selectedItem;
             }).productID,
     };
-    console.log(params);
     Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -245,6 +245,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             setBrandsFullData(response.data.data);
             const key = "brandID";
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
+            setUniqueBrandsData(uniqueBrands);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
             setBrandsData(formattedData);
           }
@@ -377,11 +378,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
     setBNError(false);
-    const selecedBrand = brandsFullData[parseInt(index)];
+    const selecedBrand = uniqueBrandsData[parseInt(index)];
     const appliedProducts = brandsFullData.filter((el) => {
       return el.brandID === selecedBrand.brandID;
     });
-
     const newData = [...arrProductData[0]];
     newData.map((k) => {
       const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
@@ -389,15 +389,22 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         k.brandID = foundProduct.brandID;
         k.brandName = foundProduct.brandName;
         k.price = foundProduct.price.toFixed(4);
-        if (parseFloat(k.formula) !== 0) {
-          const quants = (parseFloat(totalSqFt.toString()) / parseFloat(k.formula));
+        if (k.formula) {
+          const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
           k.quantity = quants.toFixed(4);
-          k.amount = (quants * parseFloat(k.price === "0" ? "1" : k.price)).toFixed(4);
+          if (k.price) {
+            k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+          } else {
+            k.amount = "0.0000";
+          }
+        } else {
+          k.quantity = "";
+          k.amount = "0.0000";
         }
       }
     });
     const amounts = newData.map((data) => data.amount);
-    setSubTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
+    setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
     arrProductData[1](newData);
   };
 
@@ -553,21 +560,27 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const CalculateSqFt = (lf, li, wf, wi) => {
     if (lf > 0 && li > -1 && wf > 0 && wi > -1) {
-      const inches = ((lf * 12 + li) * (wf * 12 + wi)) / 144;
-      setTotalSqft(parseFloat(inches.toFixed(4)));
+      const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
+      setTotalSqft(parseFloat(inches).toFixed(4));
       if (arrProductData[0].length > 0) {
         let total = 0;
-         const arrMaterialProducts = [...arrProductData[0]];
-         arrMaterialProducts.map((k) => {
-           if (parseFloat(k.formula) !== 0) {
-             k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
-             k.amount = (parseFloat(k.quantity) * parseFloat(k.price === "0" ? "1" : k.price)).toFixed(4);
-             console.log(k.price);
-             total += parseFloat(k.amount);
-           }
-         });
-         arrProductData[1](arrMaterialProducts);
-         setTotal(parseFloat(total).toFixed(4));
+        const arrMaterialProducts = [...arrProductData[0]];
+        arrMaterialProducts.map((k) => {
+          if (k.formula) {
+            k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
+            if (k.price) {
+              k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+            } else {
+              k.amount = "0.0000";
+            }
+            total += parseFloat(k.amount);
+          } else {
+            k.quantity = "";
+            k.amount = "0.0000";
+          }
+        });
+        arrProductData[1](arrMaterialProducts);
+        setTotal(parseFloat(total).toFixed(4));
       }
     } else {
       setTotalSqft(0);
@@ -682,8 +695,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                         if (text && text != 0) {
                           const quanti = parseFloat(totalSqFt.toString()) / parseFloat(text);
                           changeData[parseInt(i)].quantity = quanti.toFixed(4);
-                          changeData[parseInt(i)].amount = (quanti * parseFloat(k.price)).toFixed(4);
-                          
+                          if (k.price) {
+                            changeData[parseInt(i)].amount = (quanti * parseFloat(k.price)).toFixed(4);
+                          } else {
+                            changeData[parseInt(i)].amount = "0.0000";
+                          }
                         } else {
                           changeData[parseInt(i)].amount = "";
                           changeData[parseInt(i)].quantity = "";

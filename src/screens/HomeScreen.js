@@ -148,7 +148,6 @@ const HomeScreen = ({ route, navigation }) => {
         return el.roleName === roleName;
       })[0].roleID,
     };
-    console.log(params);
     Provider.create("registration/updateuserrole", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

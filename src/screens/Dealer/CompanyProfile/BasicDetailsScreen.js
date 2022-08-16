@@ -127,7 +127,6 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
             setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
             setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
@@ -138,8 +137,8 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
             tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
-            setPincode(response.data.data[0].pincode !== 0 ? response.data.data[0].pincode.toString() : "");
-            setAccountNo(response.data.data[0].accountNumber !== 0 ? response.data.data[0].accountNumber.toString() : "");
+            setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
+            setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
             setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
             setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
             setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
