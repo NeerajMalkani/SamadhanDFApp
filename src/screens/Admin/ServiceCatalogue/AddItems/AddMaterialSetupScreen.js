@@ -46,7 +46,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
-  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? ((parseFloat(route.params.data.lengthFeet) * 12 + parseFloat(route.params.data.lengthInches)) * (parseFloat(route.params.data.widthFeet) * 12 + parseFloat(route.params.data.widthInches))) / 144 : "");
+  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? ((parseFloat(route.params.data.lengthFeet) * 12 + parseFloat(route.params.data.lengthInches)) * (parseFloat(route.params.data.widthFeet) * 12 + parseFloat(route.params.data.widthInches))) / 144 : "1");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -390,8 +390,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         k.brandName = foundProduct.brandName;
         k.price = foundProduct.price.toFixed(4);
         if (parseFloat(k.formula) !== 0) {
-          k.quantity = (parseFloat(totalSqFt.toString()) / parseFloat(k.formula)).toFixed(4);
-          k.amount = (parseFloat(k.quantity) * parseFloat(k.price === "0" ? "1" : k.rate)).toFixed(4);
+          const quants = (parseFloat(totalSqFt.toString()) / parseFloat(k.formula));
+          k.quantity = quants.toFixed(4);
+          k.amount = (quants * parseFloat(k.price === "0" ? "1" : k.price)).toFixed(4);
         }
       }
     });
@@ -556,16 +557,17 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       setTotalSqft(parseFloat(inches.toFixed(4)));
       if (arrProductData[0].length > 0) {
         let total = 0;
-         const arrMaterialProducts = [...productItem];
+         const arrMaterialProducts = [...arrProductData[0]];
          arrMaterialProducts.map((k) => {
            if (parseFloat(k.formula) !== 0) {
              k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
              k.amount = (parseFloat(k.quantity) * parseFloat(k.price === "0" ? "1" : k.price)).toFixed(4);
+             console.log(k.price);
              total += parseFloat(k.amount);
            }
          });
          arrProductData[1](arrMaterialProducts);
-         setTotal(total.toFixed(4));
+         setTotal(parseFloat(total).toFixed(4));
       }
     } else {
       setTotalSqft(0);
@@ -641,7 +643,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? k.quantity.toFixed(4) : ""} />
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Rate</Text>
@@ -707,7 +709,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {total.toFixed(4)}</Subheading>
+          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
           <Button mode="contained" onPress={ValidateData}>
             Submit
           </Button>
