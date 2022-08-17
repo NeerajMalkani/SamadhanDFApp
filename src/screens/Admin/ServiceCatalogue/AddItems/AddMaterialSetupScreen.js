@@ -46,7 +46,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
-  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? ((parseFloat(route.params.data.lengthFeet) * 12 + parseFloat(route.params.data.lengthInches)) * (parseFloat(route.params.data.widthFeet) * 12 + parseFloat(route.params.data.widthInches))) / 144 : "1");
+  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? (((parseInt(route.params.data.lengthFeet.toString()) * 12 + parseInt(route.params.data.lengthInches.toString())) * (parseInt(route.params.data.widthFeet.toString()) * 12 + parseInt(route.params.data.widthInches.toString()))) / 144).toFixed(4) : "1.0000");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -433,9 +433,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       MaterialProductMappings: arrMaterialProducts,
     })
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -527,8 +531,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     }
 
     let amountAdded = true;
+    console.log(arrProductData[0]);
     arrProductData[0].map((el) => {
-      if (!el.amount || el.amount == 0 || !el.rate || el.rate == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
+      if (!el.amount || el.amount == 0 || !el.price || el.price == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
         if (amountAdded) {
           amountAdded = false;
           setBNError(true);
