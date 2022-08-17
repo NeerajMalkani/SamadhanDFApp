@@ -433,7 +433,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       MaterialProductMappings: arrMaterialProducts,
     })
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -531,7 +530,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     }
 
     let amountAdded = true;
-    console.log(arrProductData[0]);
     arrProductData[0].map((el) => {
       if (!el.amount || el.amount == 0 || !el.price || el.price == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
         if (amountAdded) {
