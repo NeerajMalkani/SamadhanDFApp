@@ -46,9 +46,12 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
   const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
+  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? (((parseInt(route.params.data.lengthFeet.toString()) * 12 + parseInt(route.params.data.lengthInches.toString())) * (parseInt(route.params.data.widthFeet.toString()) * 12 + parseInt(route.params.data.widthInches.toString()))) / 144).toFixed(4) : "1.0000");
+
   const [errorPL, setPLError] = React.useState(false);
 
   const [brandsFullData, setBrandsFullData] = React.useState([]);
+  const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
 
@@ -214,7 +217,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               return el.productName === selectedItem;
             }).productID,
     };
-    console.log(params);
     Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -243,6 +245,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             setBrandsFullData(response.data.data);
             const key = "brandID";
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
+            setUniqueBrandsData(uniqueBrands);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
             setBrandsData(formattedData);
           }
@@ -354,28 +357,31 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const onLengthFeetSelected = (selectedItem) => {
     setLengthFeet(selectedItem);
+    CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches);
   };
 
   const onLengthInchesSelected = (selectedItem) => {
     setLengthInches(selectedItem);
+    CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches);
   };
 
   const onWidthFeetSelected = (selectedItem) => {
     setWidthFeet(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches);
   };
 
   const onWidthInchesSelected = (selectedItem) => {
     setWidthInches(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
     setBNError(false);
-    const selecedBrand = brandsFullData[parseInt(index)];
+    const selecedBrand = uniqueBrandsData[parseInt(index)];
     const appliedProducts = brandsFullData.filter((el) => {
       return el.brandID === selecedBrand.brandID;
     });
-
     const newData = [...arrProductData[0]];
     newData.map((k) => {
       const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
@@ -383,8 +389,22 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         k.brandID = foundProduct.brandID;
         k.brandName = foundProduct.brandName;
         k.price = foundProduct.price.toFixed(4);
+        if (k.formula) {
+          const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+          k.quantity = quants.toFixed(4);
+          if (k.price) {
+            k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+          } else {
+            k.amount = "0.0000";
+          }
+        } else {
+          k.quantity = "";
+          k.amount = "0.0000";
+        }
       }
     });
+    const amounts = newData.map((data) => data.amount);
+    setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
     arrProductData[1](newData);
   };
 
@@ -416,6 +436,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
@@ -508,7 +531,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
     let amountAdded = true;
     arrProductData[0].map((el) => {
-      if (!el.amount || el.amount == 0 || !el.rate || el.rate == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
+      if (!el.amount || el.amount == 0 || !el.price || el.price == 0 || !el.quantity || el.quantity == 0 || !el.formula || el.formula == 0) {
         if (amountAdded) {
           amountAdded = false;
           setBNError(true);
@@ -536,6 +559,35 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       arrNumbers.push(i.toString());
     }
     return arrNumbers;
+  };
+
+  const CalculateSqFt = (lf, li, wf, wi) => {
+    if (lf > 0 && li > -1 && wf > 0 && wi > -1) {
+      const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
+      setTotalSqft(parseFloat(inches).toFixed(4));
+      if (arrProductData[0].length > 0) {
+        let total = 0;
+        const arrMaterialProducts = [...arrProductData[0]];
+        arrMaterialProducts.map((k) => {
+          if (k.formula) {
+            k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
+            if (k.price) {
+              k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+            } else {
+              k.amount = "0.0000";
+            }
+            total += parseFloat(k.amount);
+          } else {
+            k.quantity = "";
+            k.amount = "0.0000";
+          }
+        });
+        arrProductData[1](arrMaterialProducts);
+        setTotal(parseFloat(total).toFixed(4));
+      }
+    } else {
+      setTotalSqft(0);
+    }
   };
 
   return (
@@ -583,7 +635,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             </View>
             <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" value={(parseFloat(lengthFeet + "." + lengthInches) * parseFloat(widthFeet + "." + widthInches)).toFixed(4)} editable={false} />
+          <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
             Add Products
           </Button>
@@ -607,7 +659,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? k.quantity.toFixed(4) : ""} />
+                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Rate</Text>
@@ -618,16 +670,14 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       value={k.price}
                       style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
                       onChangeText={(text) => {
-                        if (k.brandName) {
-                          const changeData1 = [...arrProductData[0]];
-                          changeData1[parseInt(i)].price = text;
-                          if (text && text != 0 && k.formula && k.formula != 0) {
-                            const amount1 = parseFloat(text) / parseFloat(k.formula);
-                            changeData1[parseInt(i)].amount = amount1.toFixed(4);
-                            changeData1[parseInt(i)].quantity = (parseFloat(amount1) / parseFloat(text));
-                          }
-                          arrProductData[1](changeData1);
+                        const changeData1 = [...arrProductData[0]];
+                        changeData1[parseInt(i)].price = text;
+                        if (text && text != 0 && k.formula && k.formula != 0) {
+                          const quant = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+                          changeData1[parseInt(i)].quantity = quant.toFixed(4);
+                          changeData1[parseInt(i)].amount = (quant * parseFloat(text)).toFixed(4);
                         }
+                        arrProductData[1](changeData1);
                       }}
                     />
                   </View>
@@ -644,27 +694,29 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                       value={k.formula}
                       style={[Styles.flex1, { backgroundColor: theme.colors.textLight }]}
                       onChangeText={(text) => {
-                        if (k.brandName) {
-                          const changeData = [...arrProductData[0]];
-                          if (text && text != 0) {
-                            const amount = k.price ? parseFloat(k.price) / parseFloat(text) : parseFloat(1) / parseFloat(text);
-                            changeData[parseInt(i)].amount = amount.toFixed(4);
-                            changeData[parseInt(i)].quantity = k.price ? parseFloat(amount / parseFloat(k.price)) : parseFloat(amount / parseFloat(1));
+                        const changeData = [...arrProductData[0]];
+                        if (text && text != 0) {
+                          const quanti = parseFloat(totalSqFt.toString()) / parseFloat(text);
+                          changeData[parseInt(i)].quantity = quanti.toFixed(4);
+                          if (k.price) {
+                            changeData[parseInt(i)].amount = (quanti * parseFloat(k.price)).toFixed(4);
                           } else {
-                            changeData[parseInt(i)].amount = "";
-                            changeData[parseInt(i)].quantity = "";
+                            changeData[parseInt(i)].amount = "0.0000";
                           }
-                          changeData[parseInt(i)].formula = text;
-                          setTotal(0);
-                          let totalTemp = 0;
-                          changeData.map((k) => {
-                            if (k.amount) {
-                              totalTemp += parseFloat(k.amount);
-                            }
-                          });
-                          setTotal(totalTemp);
-                          arrProductData[1](changeData);
+                        } else {
+                          changeData[parseInt(i)].amount = "";
+                          changeData[parseInt(i)].quantity = "";
                         }
+                        changeData[parseInt(i)].formula = text;
+                        setTotal(0);
+                        let totalTemp = 0;
+                        changeData.map((k) => {
+                          if (k.amount) {
+                            totalTemp += parseFloat(k.amount);
+                          }
+                        });
+                        setTotal(totalTemp);
+                        arrProductData[1](changeData);
                       }}
                     />
                   </View>
@@ -676,7 +728,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {total.toFixed(4)}</Subheading>
+          <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
           <Button mode="contained" onPress={ValidateData}>
             Submit
           </Button>
