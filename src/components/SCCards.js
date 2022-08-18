@@ -1,20 +1,19 @@
-import { Button, Card, Headline, Paragraph, Title } from "react-native-paper";
+import { Button, Card, Headline, Paragraph, Subheading, Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
 
-const CreateSCCards = ({ image, title, id, subttitle, cardImageClick, cardClick, buttonData }) => {
-  console.log(image);
+const CreateSCCards = ({ image, title, id, subttitle, data, cardImageClick, cardClick, buttonData }) => {
   return (
     <Card
       style={[Styles.marginTop16]}
       onPress={() => {
-        cardClick && cardClick(title, id);
-        cardImageClick && cardImageClick(image);
+        cardClick && cardClick(title, id, data);
+        cardImageClick && cardImageClick(image, data);
       }}
     >
       <Card.Cover source={{ uri: image }} />
       <Card.Content>
-        <Headline style={[Styles.paddingTop12]}>{title}</Headline>
-        <Paragraph style={[Styles.paddingBottom12]}>({subttitle})</Paragraph>
+        <Title style={[Styles.paddingTop12]}>{title}</Title>
+        <Subheading style={[Styles.paddingBottom12]}>({subttitle})</Subheading>
       </Card.Content>
       {buttonData && (
         <Card.Actions>

@@ -159,22 +159,37 @@ export const MenuItemsAdmin = [
 
 export const MenuItemsGeneralUser = [
   {
-    title: "Brands & Prodcuts",
-    icon: "gift-outline",
+    title: "Profile Update",
+    icon: "account",
     type: "accordian",
     index: 1,
     roleID: 2,
     items: [
       {
-        title: "Image Gallery",
+        title: "Profile Update",
         type: "accordian",
         index: 10,
+        //navigation: "ProfileUpdateScreen",
+      },
+    ],
+  },
+  {
+    title: "Enquiry & Estimation",
+    icon: "timetable",
+    type: "accordian",
+    index: 2,
+    roleID: 2,
+    items: [
+      {
+        title: "Image Gallery",
+        type: "accordian",
+        index: 20,
         navigation: "ImageGalleryScreen",
       },
       {
         title: "Your Estimations",
         type: "accordian",
-        index: 11,
+        index: 21,
         navigation: "YourEstimationsScreen",
       },
     ],

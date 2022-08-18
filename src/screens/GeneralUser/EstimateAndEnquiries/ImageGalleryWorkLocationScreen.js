@@ -9,7 +9,6 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 
 const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
-  navigation.setOptions({ headerTitle: route.params.headerTitle });
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -17,12 +16,12 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
+  const [imageToZoomData, setImageToZoomData] = React.useState([]);
 
   const FetchImageGalleryData = () => {
     let params = {
       CategoryID: route.params.categoryID,
     };
-    console.log(route.params);
     Provider.getAll(`generaluserenquiryestimations/getimagegallerybycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -47,16 +46,18 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     FetchImageGalleryData();
+    navigation.setOptions({ headerTitle: route.params.headerTitle });
   }, []);
 
   const SingleCardClick = () => {};
 
-  const CardImageClick = (imageToZoom) => {
+  const CardImageClick = (imageToZoom, data) => {
     setImageToZoom([
       {
         url: imageToZoom,
       },
     ]);
+    setImageToZoomData(data);
     setIsZoomShow(true);
   };
 
@@ -67,10 +68,30 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : imageGalleryData.length > 0 ? (
-        <ScrollView style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor, Styles.padding16, Styles.paddingTop0]}>
-          {imageGalleryData.map((k, i) => {
-            return <CreateSCCards key={i} image={k.designImage} title={k.workLocationName} subttitle={k.designTypeName} id={k.designTypeID} cardImageClick={CardImageClick} cardClick={SingleCardClick} buttonData={{ text: "Go to Estimation", click: () => {} }} />;
-          })}
+        <ScrollView style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+          <View style={[Styles.padding16, Styles.paddingTop0]}>
+            {imageGalleryData.map((k, i) => {
+              return (
+                <CreateSCCards
+                  key={i}
+                  image={k.designImage}
+                  title={k.workLocationName}
+                  subttitle={k.designTypeName}
+                  id={k.designTypeID}
+                  data={k}
+                  cardImageClick={CardImageClick}
+                  cardClick={SingleCardClick}
+                  buttonData={{
+                    text: "Go to Estimation",
+                    click: () => {
+                      setIsZoomShow(false);
+                      navigation.navigate("EstimationPreviewScreen", { data: k });
+                    },
+                  }}
+                />
+              );
+            })}
+          </View>
         </ScrollView>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found." />
@@ -80,13 +101,20 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
       </Snackbar>
       <Modal visible={isZoomShow} onRequestClose={() => setIsZoomShow(false)} transparent={true}>
         <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
-          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => {}}>
+          <Button
+            mode="contained"
+            style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
+            onPress={() => {
+              setIsZoomShow(false);
+              navigation.navigate("EstimationPreviewScreen", { data: imageToZoomData });
+            }}
+          >
             Go to Estimation
           </Button>
           <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 204, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
             Close
           </Button>
-          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} />
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => {}} />
         </View>
       </Modal>
     </View>

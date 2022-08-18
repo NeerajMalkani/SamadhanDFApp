@@ -17,8 +17,8 @@ import AddServicesScreen from "./src/screens/Admin/Master/AddItems/AddServicesSc
 import AddUnitOfSalesScreen from "./src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen";
 import CategoryScreen from "./src/screens/Admin/Master/CategoryScreen";
 import AddCategoryScreen from "./src/screens/Admin/Master/AddItems/AddCategoryScreen";
-import ImageGalleryScreen from "./src/screens/GeneralUser/BrandAndProducts/ImageGalleryScreen";
-import YourEstimationsScreen from "./src/screens/GeneralUser/BrandAndProducts/YourEstimationsScreen";
+import ImageGalleryScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryScreen";
+import YourEstimationsScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/YourEstimationsScreen";
 import React, { useEffect } from "react";
 import LoginScreen from "./src/screens/LoginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -65,8 +65,8 @@ import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProd
 import MaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/MaterialSetupScreen";
 import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen";
 import AddContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/AddItem/AddMyServicesScreen";
-import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/BrandAndProducts/ImageGalleryWorkLocationScreen";
-
+import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
+import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -306,6 +306,7 @@ export default function App() {
               <Stack.Screen name="AddMaterialSetupScreen" component={AddMaterialSetupScreen} options={{ headerTitle: "Add Material Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddContractorMyServicesScreen" component={AddContractorMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ImageGalleryWorkLocationScreen" component={ImageGalleryWorkLocationScreen} options={{ headerTitle: "Image Gallery", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

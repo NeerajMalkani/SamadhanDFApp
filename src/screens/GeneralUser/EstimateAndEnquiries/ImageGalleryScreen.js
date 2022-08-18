@@ -42,22 +42,24 @@ const ImageGalleryScreen = ({ navigation }) => {
     FetchImageGalleryData();
   }, []);
 
-  const SingleCardClick = (headerTitle, categoryID) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID });
+  const SingleCardClick = (headerTitle, categoryID, data) => {
+    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data });
   };
 
   return (
-    <View style={[Styles.flex1]}>
+    <View style={[Styles.flex1, Styles.backgroundColor]}>
       <Header navigation={navigation} title="Image Gallery" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : imageGalleryData.length > 0 ? (
-        <ScrollView style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor, Styles.padding16, Styles.paddingTop0]}>
-          {imageGalleryData.map((k, i) => {
-            return <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} cardClick={SingleCardClick}/>;
-          })}
+        <ScrollView style={[Styles.flex1, Styles.flexColumn]}>
+          <View style={[Styles.padding16, Styles.paddingTop0]}>
+            {imageGalleryData.map((k, i) => {
+              return <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />;
+            })}
+          </View>
         </ScrollView>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found." />
