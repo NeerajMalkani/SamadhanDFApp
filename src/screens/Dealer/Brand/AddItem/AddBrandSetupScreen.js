@@ -9,7 +9,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
-const AddBrandSetupScreen = ({ route, navigation }) => {
+const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -689,4 +689,4 @@ const AddBrandSetupScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddBrandSetupScreen;
+export default AddDealerBrandSetupScreen;

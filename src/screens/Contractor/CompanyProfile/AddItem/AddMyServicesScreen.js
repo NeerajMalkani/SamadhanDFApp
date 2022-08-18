@@ -1,17 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
+import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
-let dealerID = 0;
-const AddDealerBrandMasterScreen = ({ route, navigation }) => {
-  const [brandNameError, setBrandNameError] = React.useState(false);
-  const [brandName, setBrandName] = React.useState(route.params.type === "edit" ? route.params.data.brandName : "");
+let contractorID = 0;
+const AddContractorMyServicesScreen = ({ route, navigation }) => {
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+
+  const [servicesFullData, setServicesFullData] = React.useState([]);
+  const [servicesData, setServicesData] = React.useState([]);
+  const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+  const [errorSN, setSNError] = React.useState(false);
+  const servicesDDRef = useRef({});
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -19,27 +24,56 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      dealerID = JSON.parse(userData).UserID;
+      contractorID = JSON.parse(userData).UserID;
     }
   };
 
+  const FetchServices = () => {
+    Provider.getAll("master/getservices")
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.display;
+            });
+            setServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
   useEffect(() => {
+    FetchServices();
     GetUserID();
   }, []);
 
-  const onBrandNameChanged = (text) => {
-    setBrandName(text);
-    setBrandNameError(false);
+  const onMyServicesNameChanged = (selectedItem) => {
+    setServiceName(selectedItem);
+    setSNError(false);
+    if (route.params.type === "edit") {
+      route.params.data.serviceID = servicesFullData.find((el) => {
+        return el.serviceName === selectedItem;
+      }).id;
+    }
   };
 
-  const InsertBrandName = () => {
-    Provider.create("dealerbrand/insertbrand", { BrandName: brandName, DealerID: dealerID, Display: checked })
+  const InsertMyServicesName = () => {
+    Provider.create("contractorcompanyprofile/insertmyservices", {
+      ServiceID: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      ContractorID: contractorID,
+      Display: checked,
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
         } else if (response.data.code === 304) {
-          setSnackbarText(communication.AlreadyExists);
+          setSnackbarText(communication.ExistsError);
           setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.InsertError);
@@ -53,14 +87,21 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateBrandName = () => {
-    Provider.create("dealerbrand/updatebrand", { ID: route.params.data.id, BrandName: brandName, DealerID: dealerID, Display: checked })
+  const UpdateMyServicesName = () => {
+    Provider.create("contractorcompanyprofile/updatemyservices", {
+      ID: route.params.data.id,
+      ServiceID: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      ContractorID: contractorID,
+      Display: checked,
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
-          setSnackbarText(communication.AlreadyExists);
+          setSnackbarText(communication.ExistsError);
           setSnackbarVisible(true);
         } else {
           setSnackbarText(communication.UpdateError);
@@ -74,17 +115,20 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateBrandName = () => {
+  const ValidateMyServicesName = () => {
     let isValid = true;
-    if (brandName.length === 0) {
-      setBrandNameError(true);
+    const objServices = servicesFullData.find((el) => {
+      return el.serviceName && el.serviceName === serviceName;
+    });
+    if (serviceName.length === 0 || !objServices) {
+      setSNError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateBrandName();
+        UpdateMyServicesName();
       } else {
-        InsertBrandName();
+        InsertMyServicesName();
       }
     }
   };
@@ -93,9 +137,9 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Brand Name" value={brandName} onChangeText={onBrandNameChanged} style={{ backgroundColor: "white" }} error={brandNameError} />
-          <HelperText type="error" visible={brandNameError}>
-            {communication.InvalidBrandName}
+          <Dropdown label="Service Name" data={servicesData} onSelected={onMyServicesNameChanged} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
+          <HelperText type="error" visible={errorSN}>
+            {communication.InvalidServiceName}
           </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item
@@ -113,7 +157,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateBrandName}>
+          <Button mode="contained" onPress={ValidateMyServicesName}>
             SAVE
           </Button>
         </Card.Content>
@@ -125,4 +169,4 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddDealerBrandMasterScreen;
+export default AddContractorMyServicesScreen;

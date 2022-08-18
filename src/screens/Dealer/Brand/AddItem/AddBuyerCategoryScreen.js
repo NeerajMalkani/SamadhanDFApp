@@ -8,7 +8,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
-const AddBuyerCategoryScreen = ({ route, navigation }) => {
+const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
   const [buyerCategoryNameError, setBuyerCategoryNameError] = React.useState(false);
   const [buyerCategoryName, setBuyerCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.buyerCategoryName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
@@ -125,4 +125,4 @@ const AddBuyerCategoryScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddBuyerCategoryScreen;
+export default AddDealerBuyerCategoryScreen;

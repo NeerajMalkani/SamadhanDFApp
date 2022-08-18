@@ -9,7 +9,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
-const AddMyServicesScreen = ({ route, navigation }) => {
+const AddDealerMyServicesScreen = ({ route, navigation }) => {
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -189,4 +189,4 @@ const AddMyServicesScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddMyServicesScreen;
+export default AddDealerMyServicesScreen;

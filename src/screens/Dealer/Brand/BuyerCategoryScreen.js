@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
-const BuyerCategoryScreen = ({ navigation }) => {
+const DealerBuyerCategoryScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [shouldShow, setShouldShow] = React.useState(false);
@@ -148,7 +148,7 @@ const BuyerCategoryScreen = ({ navigation }) => {
           <Button
             mode="contained"
             onPress={() => {
-              navigation.navigate("BasicDetailsDealerScreen", { from: "brand" });
+              navigation.navigate("DealerBasicDetailsScreen", { from: "brand" });
             }}
           >
             Activate
@@ -190,4 +190,4 @@ const BuyerCategoryScreen = ({ navigation }) => {
   );
 };
 
-export default BuyerCategoryScreen;
+export default DealerBuyerCategoryScreen;

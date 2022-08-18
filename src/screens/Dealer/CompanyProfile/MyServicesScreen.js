@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
-const MyServicesScreen = ({ navigation }) => {
+const DealerMyServicesScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -155,4 +155,4 @@ const MyServicesScreen = ({ navigation }) => {
   );
 };
 
-export default MyServicesScreen;
+export default DealerMyServicesScreen;

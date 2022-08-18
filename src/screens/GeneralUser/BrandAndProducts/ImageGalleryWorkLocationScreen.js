@@ -1,22 +1,29 @@
 import React, { useEffect } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { ActivityIndicator, Snackbar } from "react-native-paper";
+import { Modal, ScrollView, View } from "react-native";
+import { ActivityIndicator, Button, Snackbar } from "react-native-paper";
+import ImageViewer from "react-native-image-zoom-viewer";
 import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
 import NoItems from "../../../components/NoItems";
 import CreateSCCards from "../../../components/SCCards";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 
-const ImageGalleryScreen = ({ navigation }) => {
+const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
+  navigation.setOptions({ headerTitle: route.params.headerTitle });
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [isZoomShow, setIsZoomShow] = React.useState(false);
+  const [imageToZoom, setImageToZoom] = React.useState([]);
 
   const FetchImageGalleryData = () => {
-    Provider.getAll("generaluserenquiryestimations/getimagegallery")
+    let params = {
+      CategoryID: route.params.categoryID,
+    };
+    console.log(route.params);
+    Provider.getAll(`generaluserenquiryestimations/getimagegallerybycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -42,13 +49,19 @@ const ImageGalleryScreen = ({ navigation }) => {
     FetchImageGalleryData();
   }, []);
 
-  const SingleCardClick = (headerTitle, categoryID) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID });
+  const SingleCardClick = () => {};
+
+  const CardImageClick = (imageToZoom) => {
+    setImageToZoom([
+      {
+        url: imageToZoom,
+      },
+    ]);
+    setIsZoomShow(true);
   };
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Image Gallery" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -56,7 +69,7 @@ const ImageGalleryScreen = ({ navigation }) => {
       ) : imageGalleryData.length > 0 ? (
         <ScrollView style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor, Styles.padding16, Styles.paddingTop0]}>
           {imageGalleryData.map((k, i) => {
-            return <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} cardClick={SingleCardClick}/>;
+            return <CreateSCCards key={i} image={k.designImage} title={k.workLocationName} subttitle={k.designTypeName} id={k.designTypeID} cardImageClick={CardImageClick} cardClick={SingleCardClick} buttonData={{ text: "Go to Estimation", click: () => {} }} />;
           })}
         </ScrollView>
       ) : (
@@ -65,8 +78,19 @@ const ImageGalleryScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <Modal visible={isZoomShow} onRequestClose={() => setIsZoomShow(false)} transparent={true}>
+        <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
+          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => {}}>
+            Go to Estimation
+          </Button>
+          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 204, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
+            Close
+          </Button>
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} />
+        </View>
+      </Modal>
     </View>
   );
 };
 
-export default ImageGalleryScreen;
+export default ImageGalleryWorkLocationScreen;

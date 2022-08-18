@@ -17,7 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
-const BasicDetailsDealerScreen = ({ route, navigation }) => {
+const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
   const [companyName, setCompanyName] = useState("");
@@ -558,4 +558,4 @@ const BasicDetailsDealerScreen = ({ route, navigation }) => {
   );
 };
 
-export default BasicDetailsDealerScreen;
+export default DealerBasicDetailsScreen;

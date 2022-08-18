@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
-const BrandScreen = ({ route, navigation }) => {
+const DealerBrandMasterScreen = ({ route, navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [shouldShow, setShouldShow] = React.useState(false);
@@ -118,12 +118,12 @@ const BrandScreen = ({ route, navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddDealerBrandScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddDealerBrandMasterScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddDealerBrandScreen", {
+    navigation.navigate("AddDealerBrandMasterScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
@@ -149,7 +149,7 @@ const BrandScreen = ({ route, navigation }) => {
             mode="contained"
             onPress={() => {
               route.params.activeIndex = 10;
-              navigation.navigate("BasicDetailsDealerScreen", { from: "brand" });
+              navigation.navigate("DealerBasicDetailsScreen", { from: "brand" });
             }}
           >
             Activate
@@ -191,4 +191,4 @@ const BrandScreen = ({ route, navigation }) => {
   );
 };
 
-export default BrandScreen;
+export default DealerBrandMasterScreen;
