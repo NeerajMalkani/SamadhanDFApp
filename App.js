@@ -67,6 +67,8 @@ import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItem
 import AddContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/AddItem/AddMyServicesScreen";
 import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
+import ProfileUpdateScreen from "./src/screens/GeneralUser/ProfileUpdate/ProfileUpdateScreen";
+import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -232,6 +234,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProfileUpdateScreen" component={ProfileUpdateScreen} />
             </Drawer.Navigator>
           );
         case 3:
@@ -307,6 +310,7 @@ export default function App() {
               <Stack.Screen name="AddContractorMyServicesScreen" component={AddContractorMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ImageGalleryWorkLocationScreen" component={ImageGalleryWorkLocationScreen} options={{ headerTitle: "Image Gallery", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}
