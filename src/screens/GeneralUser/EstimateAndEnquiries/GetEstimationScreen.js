@@ -1,10 +1,13 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Button, Card, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { communication } from "../../../utils/communication";
 
+let userID = 0;
 const GetEstimationScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -18,6 +21,13 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
   const [showMCLC, setShowMCLC] = React.useState(false);
   const [showMCD, setShowMCD] = React.useState(false);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+    }
+  };
 
   const FetchEstimationData = () => {
     let params = {
@@ -74,8 +84,37 @@ const GetEstimationScreen = ({ route, navigation }) => {
       });
   };
 
+  const InsertDesignEstimationEnquiry = () => {
+    const params = {
+      ID: route.params.userDesignEstimationID,
+      Status: true,
+    };
+    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          const newEst = [...estimationData];
+          newEst[0].status = true;
+          setEstimationData(newEst);
+          setSnackbarText(communication.EstimationSent);
+          setSnackbarColor(theme.colors.success);
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
+  };
+
   useEffect(() => {
     FetchEstimationData();
+    GetUserID();
   }, []);
 
   const CalculateSqFt = (data) => {
@@ -140,9 +179,9 @@ const GetEstimationScreen = ({ route, navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
-        <View style={[Styles.flex1, Styles.padding8]}>
+        <View style={[Styles.flex1, Styles.backgroundColor]}>
           {estimationData && (
-            <View>
+            <View style={[Styles.paddingHorizontal8]}>
               <View style={[Styles.flexRow]}>
                 <View style={[Styles.flex1, Styles.padding8]}>
                   <Card>
@@ -156,7 +195,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                   <Card>
                     <Card.Content>
                       <Text>Total Amount</Text>
-                      <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                      <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
                     </Card.Content>
                   </Card>
                 </View>
@@ -168,32 +207,30 @@ const GetEstimationScreen = ({ route, navigation }) => {
                   </Button>
                 </View>
               )}
-              {showMCLC && (
-                <View style={[Styles.flexRow]}>
-                  <View style={[Styles.flexJustifyCenter]}>
-                    <Title> = </Title>
-                  </View>
-                  <View style={[Styles.flex1, Styles.padding8]}>
-                    <Card>
-                      <Card.Content>
-                        <Text>Material Cost</Text>
-                        <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
-                      </Card.Content>
-                    </Card>
-                  </View>
-                  <View style={[Styles.flexJustifyCenter]}>
-                    <Title>+</Title>
-                  </View>
-                  <View style={[Styles.flex1, Styles.margin8]}>
-                    <Card>
-                      <Card.Content>
-                        <Text>Labour Cost</Text>
-                        <Subheading style={[Styles.fontBold]}>{estimationData[0].labourCost.toFixed(4)}</Subheading>
-                      </Card.Content>
-                    </Card>
-                  </View>
+              <View style={[Styles.flexRow, { opacity: showMCLC ? 1 : 0 }]}>
+                <View style={[Styles.flexJustifyCenter]}>
+                  <Title> = </Title>
                 </View>
-              )}
+                <View style={[Styles.flex1, Styles.padding8]}>
+                  <Card>
+                    <Card.Content>
+                      <Text>Material Cost</Text>
+                      <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                    </Card.Content>
+                  </Card>
+                </View>
+                <View style={[Styles.flexJustifyCenter]}>
+                  <Title>+</Title>
+                </View>
+                <View style={[Styles.flex1, Styles.margin8]}>
+                  <Card>
+                    <Card.Content>
+                      <Text>Labour Cost</Text>
+                      <Subheading style={[Styles.fontBold]}>{(parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                    </Card.Content>
+                  </Card>
+                </View>
+              </View>
               {!showMCD && showMCLC && (
                 <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
                   <Button mode="text" onPress={() => setShowMCD(true)}>
@@ -204,7 +241,8 @@ const GetEstimationScreen = ({ route, navigation }) => {
             </View>
           )}
           {estimationDataForMaterialSetup && (
-            <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0 }]}>
+            <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0, marginBottom: estimationData && estimationData[0] && !estimationData[0].status ? 64 : 0 }]}>
+              <Title style={[Styles.paddingHorizontal16]}>Material Details</Title>
               <ScrollView>
                 <CreateMaterialsTable />
               </ScrollView>
@@ -223,9 +261,14 @@ const GetEstimationScreen = ({ route, navigation }) => {
             </View>
           )}
           {estimationData && estimationData[0] && !estimationData[0].status && (
-            <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginVertical8, { position: "absolute", bottom: 0, elevation: 3 }]}>
+            <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
               <Card.Content>
-                <Button mode="contained" onPress={() => {}}>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    InsertDesignEstimationEnquiry();
+                  }}
+                >
                   Send Enquiry
                 </Button>
               </Card.Content>

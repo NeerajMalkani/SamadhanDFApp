@@ -61,6 +61,8 @@ export const communication = {
   InvalidDepartmentID: "Please select Department",
   InvalidDesignationID: "Please select Designation",
 
+  EstimationSent: "Your estimation request has been sent successfully",
+
   NoImageSelectedError: "Please pick an image to continue",
   FailedUploadError: "Failed to upload your file",
   InsertError: "Unable to insert item. Please try again",

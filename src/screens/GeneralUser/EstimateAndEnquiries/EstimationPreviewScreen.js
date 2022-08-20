@@ -61,7 +61,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       Width: widthFeet + "." + widthInches,
       Status: false,
     };
-    console.log(params);
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
