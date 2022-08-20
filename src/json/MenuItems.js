@@ -400,7 +400,7 @@ export const MenuItemsContractor = [
         title: "Add Department",
         type: "accordian",
         index: 30,
-        //navigation: "AddDepartmentScreen",
+        navigation: "ContractorDepartmentScreen",
       },
       {
         title: "Add Branch",
@@ -412,7 +412,7 @@ export const MenuItemsContractor = [
         title: "Add Designation",
         type: "accordian",
         index: 32,
-        //navigation: "AddDesignationScreen",
+        navigation: "ContractorDesignationScreen",
       },
     ],
   },

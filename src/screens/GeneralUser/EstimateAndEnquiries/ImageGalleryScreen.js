@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Snackbar } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";

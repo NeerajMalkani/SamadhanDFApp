@@ -1,10 +1,19 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect } from "react";
 import { Image, ScrollView, View } from "react-native";
-import { Button, Card, Headline, Subheading, Text, TextInput, Title } from "react-native-paper";
+import { Button, Card, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
 import { Styles } from "../../../styles/styles";
+import { theme } from "../../../theme/apptheme";
+import { communication } from "../../../utils/communication";
 
+let userID = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
   const [lengthFeet, setLengthFeet] = React.useState("1");
   const [lengthInches, setLengthInches] = React.useState("0");
 
@@ -12,6 +21,17 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [widthInches, setWidthInches] = React.useState("0");
 
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+    }
+  };
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
 
   const onLengthFeetSelected = (selectedItem) => {
     setLengthFeet(selectedItem);
@@ -31,6 +51,37 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const onWidthInchesSelected = (selectedItem) => {
     setWidthInches(selectedItem);
     CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
+  };
+
+  const InsertDesignEstimationEnquiry = (from) => {
+    const params = {
+      UserID: userID,
+      DesignTypeID: route.params.data.designTypeID,
+      Length: lengthFeet + "." + lengthInches,
+      Width: widthFeet + "." + widthInches,
+      Status: false,
+    };
+    console.log(params);
+    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (from === "add") {
+            navigation.goBack();
+          } else {
+            navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
+          }
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
   };
 
   const CalculateSqFt = (lf, li, wf, wi) => {
@@ -67,7 +118,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
             <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Category Name</Subheading>
             <Subheading style={[Styles.flex1]}>{route.params.data.categoryName}</Subheading>
           </View>
-          <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
+          <View style={[Styles.flexRow, Styles.padding16, Styles.flexAlignCenter]}>
             <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Product Name</Subheading>
             <Subheading style={[Styles.flex1]}>{route.params.data.productName}</Subheading>
           </View>
@@ -103,16 +154,24 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           <Button
             mode="outlined"
             onPress={() => {
-              navigation.goBack();
+              InsertDesignEstimationEnquiry("add");
             }}
           >
             Add More Designs
           </Button>
-          <Button mode="contained" onPress={() => {}}>
+          <Button
+            mode="contained"
+            onPress={() => {
+              InsertDesignEstimationEnquiry("get");
+            }}
+          >
             Get Estimation
           </Button>
         </Card.Content>
       </View>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

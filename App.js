@@ -69,6 +69,10 @@ import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAn
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
 import ProfileUpdateScreen from "./src/screens/GeneralUser/ProfileUpdate/ProfileUpdateScreen";
 import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
+import ContractorDepartmentScreen from "./src/screens/Contractor/Organization/DepartmentScreen";
+import AddContractorDepartmentScreen from "./src/screens/Contractor/Organization/AddItem/AddDepartmentScreen";
+import ContractorDesignationScreen from "./src/screens/Contractor/Organization/DesignationScreen";
+import AddContractorDesignationScreen from "./src/screens/Contractor/Organization/AddItem/AddDesignationScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -243,6 +247,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorBasicDetailsScreen" component={ContractorBasicDetailsScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorMyServicesScreen" component={ContractorMyServicesScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDepartmentScreen" component={ContractorDepartmentScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDesignationScreen" component={ContractorDesignationScreen} />
             </Drawer.Navigator>
           );
         case 4:
@@ -308,6 +314,8 @@ export default function App() {
               <Stack.Screen name="AddDealerProductScreen" component={AddDealerProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMaterialSetupScreen" component={AddMaterialSetupScreen} options={{ headerTitle: "Add Material Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddContractorMyServicesScreen" component={AddContractorMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddContractorDepartmentScreen" component={AddContractorDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddContractorDesignationScreen" component={AddContractorDesignationScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ImageGalleryWorkLocationScreen" component={ImageGalleryWorkLocationScreen} options={{ headerTitle: "Image Gallery", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />

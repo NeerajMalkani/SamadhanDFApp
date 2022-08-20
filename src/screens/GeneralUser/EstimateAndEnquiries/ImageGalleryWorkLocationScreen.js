@@ -49,8 +49,6 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
     navigation.setOptions({ headerTitle: route.params.headerTitle });
   }, []);
 
-  const SingleCardClick = () => {};
-
   const CardImageClick = (imageToZoom, data) => {
     setImageToZoom([
       {
@@ -80,7 +78,6 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
                   id={k.designTypeID}
                   data={k}
                   cardImageClick={CardImageClick}
-                  cardClick={SingleCardClick}
                   buttonData={{
                     text: "Go to Estimation",
                     click: () => {
