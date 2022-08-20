@@ -162,6 +162,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     return arrNumbers;
   };
 
+  function pad(n, width, z) {
+    z = z || "0";
+    n = n + "";
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+  }
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
@@ -169,7 +175,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         <View style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
           <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
             <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Code</Subheading>
-            <Subheading style={[Styles.flex1]}>{route.params.data.designNumber}</Subheading>
+            <Subheading style={[Styles.flex1]}>{"DS-" + pad(route.params.data.designTypeID, 4, "0")}</Subheading>
           </View>
           <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
             <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Type</Subheading>

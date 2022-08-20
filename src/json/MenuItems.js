@@ -349,7 +349,7 @@ export const MenuItemsDealer = [
 export const MenuItemsContractor = [
   {
     title: "Company Profile",
-    icon: "gift-outline",
+    icon: "office-building-cog",
     type: "accordian",
     index: 1,
     roleID: 3,
@@ -370,7 +370,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Employee",
-    icon: "gift-outline",
+    icon: "account-tie",
     type: "accordian",
     index: 2,
     roleID: 3,
@@ -391,7 +391,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Organization",
-    icon: "gift-outline",
+    icon: "town-hall",
     type: "accordian",
     index: 3,
     roleID: 3,
@@ -418,7 +418,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Rate Card",
-    icon: "gift-outline",
+    icon: "card-bulleted",
     type: "accordian",
     index: 4,
     roleID: 3,
@@ -439,7 +439,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Client",
-    icon: "gift-outline",
+    icon: "tie",
     type: "accordian",
     index: 5,
     roleID: 3,
@@ -454,7 +454,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Quotation & Enquiries",
-    icon: "gift-outline",
+    icon: "newspaper-variant",
     type: "accordian",
     index: 6,
     roleID: 3,
@@ -481,7 +481,7 @@ export const MenuItemsContractor = [
   },
   {
     title: "Projects",
-    icon: "gift-outline",
+    icon: "head-lightbulb",
     type: "accordian",
     index: 6,
     roleID: 3,

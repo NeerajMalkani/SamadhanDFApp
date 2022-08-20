@@ -1,12 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
-import { RefreshControl, ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
+import { RefreshControl, ScrollView, TouchableNativeFeedback, View } from "react-native";
 import { ActivityIndicator, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
@@ -25,6 +24,11 @@ const YourEstimationsScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [designTypeName, setDesignTypeName] = React.useState("");
+  const [estimationNo, setEstimationNo] = React.useState("");
+  const [designCode, setDesignCode] = React.useState("");
+  const [productName, setProductName] = React.useState("");
+  const [totalSqFt, setTotalSqFt] = React.useState("");
+  const [status, setStatus] = React.useState(false);
 
   const refRBSheet = useRef();
 
@@ -120,8 +124,13 @@ const YourEstimationsScreen = ({ navigation }) => {
           onPress={() => {
             refRBSheet.current.open();
             setDesignTypeName(data.item.designTypeName);
+            setEstimationNo("AUG" + pad(data.item.id.toString(), 4, "0"));
+            setDesignCode("DS-" + pad(data.item.designTypeID.toString(), 4, "0"));
+            setProductName(data.item.productName);
+            setTotalSqFt(CalculateSqFt(data.item));
+            setStatus(data.item.status);
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="calculator" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
@@ -152,10 +161,31 @@ const YourEstimationsScreen = ({ navigation }) => {
     return (
       <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
         {CreateActionButtons("send", !data.item.status ? theme.multicolors.blue : theme.colors.backgroundSecondary, !data.item.status ? () => callbacks[0](data, rowMap) : null)}
-        {CreateActionButtons("eye", theme.multicolors.red, () => callbacks[1](data, rowMap))}
+        {CreateActionButtons("newspaper-variant", theme.multicolors.red, () => callbacks[1](data, rowMap))}
       </View>
     );
   };
+
+  const CalculateSqFt = (data) => {
+    if (data) {
+      const lengthFeetIn = data["length"].toString().split(".");
+      const widthFeetIn = data["width"].toString().split(".");
+      const lf = lengthFeetIn[0];
+      const li = lengthFeetIn.length > 1 ? lengthFeetIn[1] : 0;
+      const wf = widthFeetIn[0];
+      const wi = widthFeetIn.length > 1 ? widthFeetIn[1] : 0;
+      const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
+      return parseFloat(inches).toFixed(4);
+    } else {
+      return 0;
+    }
+  };
+
+  function pad(n, width, z) {
+    z = z || "0";
+    n = n + "";
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+  }
 
   return (
     <View style={[Styles.flex1]}>
@@ -195,9 +225,15 @@ const YourEstimationsScreen = ({ navigation }) => {
         {snackbarText}
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View>
+        <View style={[Styles.flex1]}>
           <Title style={[Styles.paddingHorizontal16]}>{designTypeName}</Title>
-          <ScrollView></ScrollView>
+          <ScrollView>
+            <List.Item title="Estimation No." description={estimationNo} />
+            <List.Item title="Design Code" description={designCode} />
+            <List.Item title="Product Name" description={productName} />
+            <List.Item title="Total Sq.Ft." description={totalSqFt} />
+            <List.Item title="Enquiry Status" descriptionStyle={{ color: status ? theme.multicolors.green : theme.multicolors.red }} description={status ? "Yes" : "No"} />
+          </ScrollView>
         </View>
       </RBSheet>
     </View>
