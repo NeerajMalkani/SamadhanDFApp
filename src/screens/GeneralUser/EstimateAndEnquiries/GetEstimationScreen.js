@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { ActivityIndicator, Button, Card, Headline, Snackbar, Subheading, Title } from "react-native-paper";
+import { ActivityIndicator, Button, Card, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
@@ -13,6 +13,11 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
   const [estimationData, setEstimationData] = React.useState([]);
   const [estimationDataForMaterialSetup, setEstimationDataForMaterialSetup] = React.useState([]);
+
+  const [subtotal, setSubtotal] = React.useState(0);
+
+  const [showMCLC, setShowMCLC] = React.useState(false);
+  const [showMCD, setShowMCD] = React.useState(false);
 
   const FetchEstimationData = () => {
     let params = {
@@ -73,43 +78,53 @@ const GetEstimationScreen = ({ route, navigation }) => {
     FetchEstimationData();
   }, []);
 
-  const CalculateSqFt = () => {
-    if (estimationData[0]) {
-      const lengthFeetIn = estimationData[0]["length"].toString().split(".");
-      const widthFeetIn = estimationData[0]["width"].toString().split(".");
+  const CalculateSqFt = (data) => {
+    if (data) {
+      const lengthFeetIn = data["length"].toString().split(".");
+      const widthFeetIn = data["width"].toString().split(".");
       const lf = lengthFeetIn[0];
       const li = lengthFeetIn.length > 1 ? lengthFeetIn[1] : 0;
       const wf = widthFeetIn[0];
       const wi = widthFeetIn.length > 1 ? widthFeetIn[1] : 0;
       const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
       return parseFloat(inches).toFixed(4);
-      return 0;
     } else {
       return 0;
     }
   };
 
   const CreateMaterialsTable = () => {
+    const targetSqFt = CalculateSqFt(estimationData[0]);
+    let subtotalCal = 0;
     return (
       <View style={[Styles.flexColumn]}>
         {estimationDataForMaterialSetup.map((k, i) => {
+          const destinationSqFt = CalculateSqFt(k);
+          const newRate = (parseFloat(targetSqFt) * parseFloat(k.rate)) / parseFloat(destinationSqFt);
+          const newQuant = (parseFloat(targetSqFt) * parseFloat(k.quantity)) / parseFloat(destinationSqFt);
+          let newAmount = (parseFloat(targetSqFt) * parseFloat(k.amount)) / parseFloat(destinationSqFt);
+          newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+          subtotalCal += newAmount;
+          if (parseInt(i) === estimationDataForMaterialSetup.length - 1) {
+            setSubtotal(subtotalCal);
+          }
           return (
-            <View key={i} style={[Styles.marginTop16, Styles.border1]}>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
+            <View key={i} style={[Styles.marginTop8, Styles.border1]}>
+              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                 <Subheading style={[Styles.fontBold]}>{k.productName + " > "}</Subheading>
                 <Subheading style={[Styles.fontBold, { color: theme.colors.primary }]}>{k.brandName}</Subheading>
               </View>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
+              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                 <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Quantity</Subheading>
-                <Subheading style={[Styles.flex1]}>{k.quantity.toFixed(4)}</Subheading>
+                <Subheading style={[Styles.flex1]}>{newQuant.toFixed(4)}</Subheading>
               </View>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
+              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                 <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Rate</Subheading>
-                <Subheading style={[Styles.flex1]}>{k.rate.toFixed(4)}</Subheading>
+                <Subheading style={[Styles.flex1]}>{newRate.toFixed(4)}</Subheading>
               </View>
-              <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
+              <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                 <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Amount</Subheading>
-                <Subheading style={[Styles.flex1]}>{k.amount.toFixed(4)}</Subheading>
+                <Subheading style={[Styles.flex1]}>{newAmount.toFixed(4)}</Subheading>
               </View>
             </View>
           );
@@ -132,76 +147,93 @@ const GetEstimationScreen = ({ route, navigation }) => {
                 <View style={[Styles.flex1, Styles.padding8]}>
                   <Card>
                     <Card.Content>
-                      <Subheading>Total Sq.Ft.</Subheading>
-                      <Title>{CalculateSqFt()}</Title>
+                      <Text>Total Sq.Ft.</Text>
+                      <Subheading style={[Styles.fontBold]}>{CalculateSqFt(estimationData[0])}</Subheading>
                     </Card.Content>
                   </Card>
-                </View>
-                <View style={[Styles.flex1, Styles.margin8]}>
-                  <Card>
-                    <Card.Content>
-                      <Subheading>Total Amount</Subheading>
-                      <Title>{estimationData[0].materialCostPerSqFeet.toFixed(4)}</Title>
-                    </Card.Content>
-                  </Card>
-                </View>
-              </View>
-              <View style={[Styles.flexRow]}>
-                <View style={[Styles.flexJustifyCenter]}>
-                  <Title> = </Title>
                 </View>
                 <View style={[Styles.flex1, Styles.padding8]}>
                   <Card>
                     <Card.Content>
-                      <Subheading>Material Cost</Subheading>
-                      <Title>{estimationData[0].materialCostPerSqFeet.toFixed(4)}</Title>
-                    </Card.Content>
-                  </Card>
-                </View>
-                <View style={[Styles.flexJustifyCenter]}>
-                  <Title>+</Title>
-                </View>
-                <View style={[Styles.flex1, Styles.margin8]}>
-                  <Card>
-                    <Card.Content>
-                      <Subheading>Labour Cost</Subheading>
-                      <Title>{estimationData[0].labourCost.toFixed(4)}</Title>
+                      <Text>Total Amount</Text>
+                      <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
                     </Card.Content>
                   </Card>
                 </View>
               </View>
+              {!showMCLC && (
+                <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
+                  <Button mode="text" onPress={() => setShowMCLC(true)}>
+                    Details
+                  </Button>
+                </View>
+              )}
+              {showMCLC && (
+                <View style={[Styles.flexRow]}>
+                  <View style={[Styles.flexJustifyCenter]}>
+                    <Title> = </Title>
+                  </View>
+                  <View style={[Styles.flex1, Styles.padding8]}>
+                    <Card>
+                      <Card.Content>
+                        <Text>Material Cost</Text>
+                        <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                      </Card.Content>
+                    </Card>
+                  </View>
+                  <View style={[Styles.flexJustifyCenter]}>
+                    <Title>+</Title>
+                  </View>
+                  <View style={[Styles.flex1, Styles.margin8]}>
+                    <Card>
+                      <Card.Content>
+                        <Text>Labour Cost</Text>
+                        <Subheading style={[Styles.fontBold]}>{estimationData[0].labourCost.toFixed(4)}</Subheading>
+                      </Card.Content>
+                    </Card>
+                  </View>
+                </View>
+              )}
+              {!showMCD && showMCLC && (
+                <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
+                  <Button mode="text" onPress={() => setShowMCD(true)}>
+                    Details
+                  </Button>
+                </View>
+              )}
             </View>
           )}
           {estimationDataForMaterialSetup && (
-            <View style={[Styles.flex1, { marginBottom: 64 }]}>
-              <Title style={[Styles.paddingHorizontal8, Styles.marginTop16]}>Material Details</Title>
+            <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0 }]}>
               <ScrollView>
                 <CreateMaterialsTable />
               </ScrollView>
               <View style={[Styles.flexRow, Styles.borderTop2, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
                 <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Sub Total</Subheading>
-                <Subheading style={[Styles.flex1, Styles.fontBold]}>250.0000</Subheading>
+                <Subheading style={[Styles.flex1, Styles.fontBold]}>{subtotal.toFixed(4)}</Subheading>
               </View>
               <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
                 <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Transport Charges</Subheading>
-                <Subheading style={[Styles.flex1, Styles.fontBold]}>250.0000</Subheading>
+                <Subheading style={[Styles.flex1, Styles.fontBold]}>{(subtotal * (5 / 100)).toFixed(4)}</Subheading>
               </View>
+              <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
+                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Total</Subheading>
+                <Subheading style={[Styles.flex1, Styles.fontBold, Styles.primaryColor]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+              </View>
+            </View>
+          )}
+          {estimationData && estimationData[0] && !estimationData[0].status && (
+            <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginVertical8, { position: "absolute", bottom: 0, elevation: 3 }]}>
+              <Card.Content>
+                <Button mode="contained" onPress={() => {}}>
+                  Send Enquiry
+                </Button>
+              </Card.Content>
             </View>
           )}
         </View>
       )}
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-        <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Subheading style={[Styles.fontBold]}>
-            Total: <Subheading style={[Styles.fontBold, Styles.primaryColor]}>2005.5515</Subheading>
-          </Subheading>
-          {estimationData && estimationData[0] && !estimationData[0].status && (
-            <Button mode="contained" onPress={() => {}}>
-              Send Enquiry
-            </Button>
-          )}
-        </Card.Content>
-      </View>
+
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
