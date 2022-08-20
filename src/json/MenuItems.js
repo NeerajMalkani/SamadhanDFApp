@@ -298,7 +298,7 @@ export const MenuItemsDealer = [
         title: "Add Department",
         type: "accordian",
         index: 40,
-        //navigation: "AddDepartmentScreen",
+        navigation: "DealerDepartmentScreen",
       },
       {
         title: "Add Branch",
@@ -310,7 +310,7 @@ export const MenuItemsDealer = [
         title: "Add Designation",
         type: "accordian",
         index: 42,
-        //navigation: "AddDesignationScreen",
+        navigation: "DealerDesignationScreen",
       },
     ],
   },

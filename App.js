@@ -73,6 +73,10 @@ import ContractorDepartmentScreen from "./src/screens/Contractor/Organization/De
 import AddContractorDepartmentScreen from "./src/screens/Contractor/Organization/AddItem/AddDepartmentScreen";
 import ContractorDesignationScreen from "./src/screens/Contractor/Organization/DesignationScreen";
 import AddContractorDesignationScreen from "./src/screens/Contractor/Organization/AddItem/AddDesignationScreen";
+import DealerDepartmentScreen from "./src/screens/Dealer/Organization/DepartmentScreen";
+import AddDealerDepartmentScreen from "./src/screens/Dealer/Organization/AddItem/AddDepartmentScreen";
+import AddDealerDesignationScreen from "./src/screens/Dealer/Organization/AddItem/AddDesignationScreen";
+import DealerDesignationScreen from "./src/screens/Dealer/Organization/DesignationScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -262,6 +266,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandSetupScreen" component={DealerBrandSetupScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBuyerCategoryScreen" component={DealerBuyerCategoryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerProductScreen" component={DealerProductScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDepartmentScreen" component={DealerDepartmentScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDesignationScreen" component={DealerDesignationScreen} />
             </Drawer.Navigator>
           );
       }
@@ -312,6 +318,8 @@ export default function App() {
               <Stack.Screen name="AddDealerBrandSetupScreen" component={AddDealerBrandSetupScreen} options={{ headerTitle: "Add Brand Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBuyerCategoryScreen" component={AddDealerBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerProductScreen" component={AddDealerProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerDepartmentScreen" component={AddDealerDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddDealerDesignationScreen" component={AddDealerDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMaterialSetupScreen" component={AddMaterialSetupScreen} options={{ headerTitle: "Add Material Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddContractorMyServicesScreen" component={AddContractorMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddContractorDepartmentScreen" component={AddContractorDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
