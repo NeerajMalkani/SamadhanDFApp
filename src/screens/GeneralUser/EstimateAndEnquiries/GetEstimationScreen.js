@@ -86,6 +86,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
   const InsertDesignEstimationEnquiry = () => {
     const params = {
       ID: route.params.userDesignEstimationID,
+      TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4),
       Status: true,
     };
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)

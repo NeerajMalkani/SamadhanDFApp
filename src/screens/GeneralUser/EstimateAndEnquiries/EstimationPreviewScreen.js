@@ -53,7 +53,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
-  const FetchEstimationMaterialSetupData = (materialSetupID, from, userDesignEstimationID) => {
+  const FetchEstimationMaterialSetupData = (materialSetupID, from, userDesignEstimationID, labourCost) => {
     let params = {
       MaterialSetupID: materialSetupID,
     };
@@ -69,7 +69,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
               subtotalCal += newAmount;
             });
-            InsertDesignEstimationEnquiry(from, "2", subtotalCal, userDesignEstimationID);
+            InsertDesignEstimationEnquiry(from, "2", subtotalCal, userDesignEstimationID, labourCost);
           }
         }
       })
@@ -84,21 +84,22 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            FetchEstimationMaterialSetupData(response.data.data[0].id, from, userDesignEstimationID);
+            FetchEstimationMaterialSetupData(response.data.data[0].id, from, userDesignEstimationID, response.data.data[0].labourCost);
           }
         }
       })
       .catch((e) => {});
   };
 
-  const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID) => {
+  const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID, labourCost) => {
+    const totAm = subtotal + subtotal * (5 / 100) + parseFloat(totalSqFt) * parseFloat(labourCost);
     const params = {
       UserID: userID,
       DesignTypeID: route.params.data.designTypeID,
       Length: lengthFeet + "." + lengthInches,
       Width: widthFeet + "." + widthInches,
       Status: false,
-      TotalAmount: subtotal + subtotal * (5 / 100),
+      TotalAmount: totAm,
     };
     if (number === "2") {
       params.ID = userDesignEstimationID;
@@ -108,7 +109,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (number === "2") {
             if (from === "add") {
-              navigation.goBack();
+              navigation.navigate("ImageGalleryScreen");
             } else {
               navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
             }

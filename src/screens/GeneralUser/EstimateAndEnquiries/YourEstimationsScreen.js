@@ -1,11 +1,205 @@
-import { Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef } from "react";
+import { RefreshControl, ScrollView, Text, TouchableNativeFeedback, View } from "react-native";
+import { ActivityIndicator, List, Searchbar, Snackbar, Title } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { SwipeListView } from "react-native-swipe-list-view";
+import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
+import { RenderHiddenItems } from "../../../components/ListActions";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
+import { theme } from "../../../theme/apptheme";
+import { communication } from "../../../utils/communication";
 
+let userID = 0;
 const YourEstimationsScreen = ({ navigation }) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(true);
+  const listData = React.useState([]);
+  const listSearchData = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
+  const [designTypeName, setDesignTypeName] = React.useState("");
+
+  const refRBSheet = useRef();
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+  const FetchData = () => {
+    let params = {
+      UserID: userID,
+    };
+    Provider.getAll(`generaluserenquiryestimations/getuserallestimation?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            const lisData = [...response.data.data];
+            lisData.map((k, i) => {
+              k.key = (parseInt(i) + 1).toString();
+            });
+            listData[1](response.data.data);
+            listSearchData[1](response.data.data);
+          }
+        } else {
+          listData[1]([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+        setIsLoading(false);
+        setRefreshing(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
+  const InsertDesignEstimationEnquiry = (userDesignEstimationID, totalAmount) => {
+    const params = {
+      ID: userDesignEstimationID,
+      TotalAmount: totalAmount,
+      Status: true,
+    };
+    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setSnackbarText(communication.EstimationSent);
+          setSnackbarColor(theme.colors.success);
+          setSnackbarVisible(true);
+          FetchData();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
+  };
+  useEffect(() => {
+    GetUserID();
+  }, []);
+
+  const onChangeSearch = (query) => {
+    setSearchQuery(query);
+    if (query === "") {
+      listSearchData[1](listData[0]);
+    } else {
+      listSearchData[1](
+        listData[0].filter((el) => {
+          return el.designTypeName.toString().toLowerCase().includes(query.toLowerCase());
+        })
+      );
+    }
+  };
+
+  const RenderItems = (data) => {
+    return (
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+        <List.Item
+          title={data.item.designTypeName}
+          titleStyle={{ fontSize: 18 }}
+          description={data.item.totalAmount}
+          onPress={() => {
+            refRBSheet.current.open();
+            setDesignTypeName(data.item.designTypeName);
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
+    );
+  };
+
+  const SendEnquiryCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    InsertDesignEstimationEnquiry(data.item.id, data.item.totalAmount);
+  };
+
+  const ViewDetailsCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id });
+  };
+
+  const CreateActionButtons = (icon, color, callback) => {
+    return (
+      <TouchableNativeFeedback onPress={callback}>
+        <View style={[Styles.width72, Styles.height72, Styles.flexJustifyCenter, Styles.flexAlignCenter, { backgroundColor: color }]}>
+          <Icon name={icon} color={theme.colors.textLight} size={28} />
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
+
+  const RenderLocalHiddenItems = (data, rowMap, callbacks) => {
+    return (
+      <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
+        {CreateActionButtons("send", !data.item.status ? theme.multicolors.blue : theme.colors.backgroundSecondary, !data.item.status ? () => callbacks[0](data, rowMap) : null)}
+        {CreateActionButtons("eye", theme.multicolors.red, () => callbacks[1](data, rowMap))}
+      </View>
+    );
+  };
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Your Estimations" />
+      {isLoading ? (
+        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : listData[0].length > 0 ? (
+        <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+          <SwipeListView
+            previewDuration={1000}
+            previewOpenValue={-144}
+            previewRowKey="1"
+            previewOpenDelay={1000}
+            refreshControl={
+              <RefreshControl
+                colors={[theme.colors.primary]}
+                refreshing={refreshing}
+                onRefresh={() => {
+                  FetchData();
+                }}
+              />
+            }
+            data={listSearchData[0]}
+            disableRightSwipe={true}
+            rightOpenValue={-144}
+            renderItem={(data) => RenderItems(data)}
+            renderHiddenItem={(data, rowMap) => RenderLocalHiddenItems(data, rowMap, [SendEnquiryCallback, ViewDetailsCallback])}
+          />
+        </View>
+      ) : (
+        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+      )}
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+        {snackbarText}
+      </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{designTypeName}</Title>
+          <ScrollView></ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
