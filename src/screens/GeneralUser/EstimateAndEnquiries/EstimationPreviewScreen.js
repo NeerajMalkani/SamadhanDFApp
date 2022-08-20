@@ -53,21 +53,67 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
-  const InsertDesignEstimationEnquiry = (from) => {
+  const FetchEstimationMaterialSetupData = (materialSetupID, from, userDesignEstimationID) => {
+    let params = {
+      MaterialSetupID: materialSetupID,
+    };
+    Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiriesformaterialsetup?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            const targetSqFt = totalSqFt;
+            let subtotalCal = 0;
+            response.data.data.map((k, i) => {
+              const destinationSqFt = CalculateSqFtData(k);
+              let newAmount = (parseFloat(targetSqFt) * parseFloat(k.amount)) / parseFloat(destinationSqFt);
+              newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+              subtotalCal += newAmount;
+            });
+            InsertDesignEstimationEnquiry(from, "2", subtotalCal, userDesignEstimationID);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchEstimationData = (userDesignEstimationID, from) => {
+    let params = {
+      UserDesignEstimationID: userDesignEstimationID,
+    };
+    Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiries?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            FetchEstimationMaterialSetupData(response.data.data[0].id, from, userDesignEstimationID);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID) => {
     const params = {
       UserID: userID,
       DesignTypeID: route.params.data.designTypeID,
       Length: lengthFeet + "." + lengthInches,
       Width: widthFeet + "." + widthInches,
       Status: false,
+      TotalAmount: subtotal + subtotal * (5 / 100),
     };
+    if (number === "2") {
+      params.ID = userDesignEstimationID;
+    }
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          if (from === "add") {
-            navigation.goBack();
+          if (number === "2") {
+            if (from === "add") {
+              navigation.goBack();
+            } else {
+              navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
+            }
           } else {
-            navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
+            FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
           }
         } else {
           setSnackbarText(communication.InsertError);
@@ -89,6 +135,21 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       setTotalSqft(parseFloat(inches).toFixed(4));
     } else {
       setTotalSqft(0);
+    }
+  };
+
+  const CalculateSqFtData = (data) => {
+    if (data) {
+      const lengthFeetIn = data["length"].toString().split(".");
+      const widthFeetIn = data["width"].toString().split(".");
+      const lf = lengthFeetIn[0];
+      const li = lengthFeetIn.length > 1 ? lengthFeetIn[1] : 0;
+      const wf = widthFeetIn[0];
+      const wi = widthFeetIn.length > 1 ? widthFeetIn[1] : 0;
+      const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
+      return parseFloat(inches).toFixed(4);
+    } else {
+      return 0;
     }
   };
 
@@ -153,7 +214,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           <Button
             mode="outlined"
             onPress={() => {
-              InsertDesignEstimationEnquiry("add");
+              InsertDesignEstimationEnquiry("add", "1");
             }}
           >
             Add More Designs
@@ -161,7 +222,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           <Button
             mode="contained"
             onPress={() => {
-              InsertDesignEstimationEnquiry("get");
+              InsertDesignEstimationEnquiry("get", "1");
             }}
           >
             Get Estimation

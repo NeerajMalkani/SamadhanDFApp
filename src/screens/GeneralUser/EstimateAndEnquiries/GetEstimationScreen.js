@@ -65,7 +65,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             setEstimationDataForMaterialSetup(response.data.data);
           }
         } else {
@@ -92,12 +91,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          const newEst = [...estimationData];
-          newEst[0].status = true;
-          setEstimationData(newEst);
-          setSnackbarText(communication.EstimationSent);
-          setSnackbarColor(theme.colors.success);
-          setSnackbarVisible(true);
+          navigation.navigate("YourEstimationsScreen");
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);
