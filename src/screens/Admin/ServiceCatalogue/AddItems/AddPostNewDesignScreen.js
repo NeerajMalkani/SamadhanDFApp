@@ -199,6 +199,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
               return el.categoryName === selectedItem;
             }).id,
     };
+    console.log(params);
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -297,6 +298,14 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       route.params.data.productID = productsFullData.find((el) => {
         return el.productName === selectedItem;
       }).productID;
+    }
+    const labCo = productsFullData.find((el) => {
+      return el.productName === selectedItem;
+    }).rateWithoutMaterials;
+    if (labCo) {
+      setName(parseFloat(labCo).toFixed(2));
+    } else {
+      setName("");
     }
     designTypeDDRef.current.reset();
     setPNError(false);
