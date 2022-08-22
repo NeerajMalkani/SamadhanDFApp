@@ -77,6 +77,8 @@ import DealerDepartmentScreen from "./src/screens/Dealer/Organization/Department
 import AddDealerDepartmentScreen from "./src/screens/Dealer/Organization/AddItem/AddDepartmentScreen";
 import AddDealerDesignationScreen from "./src/screens/Dealer/Organization/AddItem/AddDesignationScreen";
 import DealerDesignationScreen from "./src/screens/Dealer/Organization/DesignationScreen";
+import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
+import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -253,6 +255,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorMyServicesScreen" component={ContractorMyServicesScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDepartmentScreen" component={ContractorDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDesignationScreen" component={ContractorDesignationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignWiseScreen" component={DesignWiseScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="QuotationWiseScreen" component={QuotationWiseScreen} />
             </Drawer.Navigator>
           );
         case 4:
