@@ -7,25 +7,26 @@ import { theme } from "../../../theme/apptheme";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import CreateSCCards from "../../../components/SCCards";
+import DesignGalleryTab from "./DesignGalleryTab";
 
 const windowWidth = Dimensions.get("window").width;
 const DesignWiseScreen = ({ navigation }) => {
   const [index, setIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [imageGalleryData, setImageGalleryData] = React.useState([]);
+  const [imageGalleryData, setDesignGalleryData] = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const FetchImageGalleryData = () => {
+  const FetchDesignGalleryData = () => {
     Provider.getAll("generaluserenquiryestimations/getimagegallery")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setImageGalleryData(response.data.data);
+            setDesignGalleryData(response.data.data);
           }
         } else {
-          setImageGalleryData([]);
+          setDesignGalleryData([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -41,29 +42,17 @@ const DesignWiseScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchImageGalleryData();
+    FetchDesignGalleryData();
   }, []);
 
-  const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data });
-  };
+  
 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "designGallery":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-            {imageGalleryData.length > 0 ? (
-              <ScrollView style={[Styles.flex1, Styles.flexColumn]}>
-                <View style={[Styles.padding16, Styles.paddingTop0]}>
-                  {imageGalleryData.map((k, i) => {
-                    return <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />;
-                  })}
-                </View>
-              </ScrollView>
-            ) : (
-              <NoItems icon="format-list-bulleted" text="No records found." />
-            )}
+            <DesignGalleryTab navigation={navigation} designGalleryData={imageGalleryData}/>
           </ScrollView>
         );
       case "pending":
@@ -77,7 +66,7 @@ const DesignWiseScreen = ({ navigation }) => {
 
   const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
   const [routes] = React.useState([
-    { key: "designGallery", title: "Design Gallery" },
+    { key: "designGallery", title: "Design" },
     { key: "pending", title: "Pending" },
     { key: "approved", title: "Approved" },
     { key: "rejected", title: "Rejected" },
