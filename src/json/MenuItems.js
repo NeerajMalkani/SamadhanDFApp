@@ -445,10 +445,10 @@ export const MenuItemsContractor = [
     roleID: 3,
     items: [
       {
-        title: "Client List",
+        title: "Clients",
         type: "accordian",
         index: 50,
-        //navigation: "ClientListScreen",
+        navigation: "ClientScreen",
       },
     ],
   },
