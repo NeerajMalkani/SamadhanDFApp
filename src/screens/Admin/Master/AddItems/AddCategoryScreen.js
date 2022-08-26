@@ -197,7 +197,6 @@ const AddCategoryScreen = ({ route, navigation }) => {
       UnitID: arrunitOfSalesName.join(","),
       Display: checked,
     };
-    console.log(params);
     Provider.create("master/updatecategory", {
       ID: route.params.data.id,
       CategoryName: name,

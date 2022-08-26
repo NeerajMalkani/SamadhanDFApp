@@ -149,7 +149,7 @@ const DealerBrandMasterScreen = ({ route, navigation }) => {
             mode="contained"
             onPress={() => {
               route.params.activeIndex = 10;
-              navigation.navigate("DealerBasicDetailsScreen", { from: "brand" });
+              navigation.navigate("UserProfile", { from: "brand" });
             }}
           >
             Activate

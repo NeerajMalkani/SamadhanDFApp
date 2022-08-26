@@ -158,38 +158,38 @@ export const MenuItemsAdmin = [
 ];
 
 export const MenuItemsGeneralUser = [
+  // {
+  //   title: "Profile Update",
+  //   icon: "account",
+  //   type: "accordian",
+  //   index: 1,
+  //   roleID: 2,
+  //   items: [
+  //     {
+  //       title: "Profile Update",
+  //       type: "accordian",
+  //       index: 10,
+  //       navigation: "ProfileUpdateScreen",
+  //     },
+  //   ],
+  // },
   {
-    title: "Profile Update",
-    icon: "account",
+    title: "Enquiry & Estimation",
+    icon: "timetable",
     type: "accordian",
     index: 1,
     roleID: 2,
     items: [
       {
-        title: "Profile Update",
-        type: "accordian",
-        index: 10,
-        navigation: "ProfileUpdateScreen",
-      },
-    ],
-  },
-  {
-    title: "Enquiry & Estimation",
-    icon: "timetable",
-    type: "accordian",
-    index: 2,
-    roleID: 2,
-    items: [
-      {
         title: "Image Gallery",
         type: "accordian",
-        index: 20,
+        index: 10,
         navigation: "ImageGalleryScreen",
       },
       {
         title: "Your Estimations",
         type: "accordian",
-        index: 21,
+        index: 11,
         navigation: "YourEstimationsScreen",
       },
     ],
@@ -204,22 +204,22 @@ export const MenuItemsDealer = [
     index: 1,
     roleID: 4,
     items: [
-      {
-        title: "Basic Details",
-        type: "accordian",
-        index: 10,
-        navigation: "DealerBasicDetailsScreen",
-      },
+      // {
+      //   title: "Basic Details",
+      //   type: "accordian",
+      //   index: 10,
+      //   navigation: "DealerBasicDetailsScreen",
+      // },
       {
         title: "My Services",
         type: "accordian",
-        index: 11,
+        index: 10,
         navigation: "DealerMyServicesScreen",
       },
       {
         title: "Presentation",
         type: "accordian",
-        index: 12,
+        index: 11,
         navigation: "DealerPresentationScreen",
       },
     ],
@@ -354,16 +354,16 @@ export const MenuItemsContractor = [
     index: 1,
     roleID: 3,
     items: [
-      {
-        title: "Basic Details",
-        type: "accordian",
-        index: 10,
-        navigation: "ContractorBasicDetailsScreen",
-      },
+      // {
+      //   title: "Basic Details",
+      //   type: "accordian",
+      //   index: 10,
+      //   navigation: "ContractorBasicDetailsScreen",
+      // },
       {
         title: "My Services",
         type: "accordian",
-        index: 11,
+        index: 10,
         navigation: "ContractorMyServicesScreen",
       },
     ],

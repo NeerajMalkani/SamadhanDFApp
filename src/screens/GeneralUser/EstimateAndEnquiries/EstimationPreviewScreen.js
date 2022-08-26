@@ -109,7 +109,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (number === "2") {
             if (from === "add") {
-              navigation.navigate("ImageGalleryScreen");
+              if(route.params.from === "home"){
+                navigation.navigate("HomeScreen");
+              } else {
+                navigation.navigate("ImageGalleryScreen");
+              }
+              
             } else {
               navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
             }
@@ -224,7 +229,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               InsertDesignEstimationEnquiry("add", "1");
             }}
           >
-            Add More Designs
+            Add More
           </Button>
           <Button
             mode="contained"

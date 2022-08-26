@@ -13,6 +13,7 @@ import { communication } from "../utils/communication";
 import ImageViewer from "react-native-image-zoom-viewer";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CreateSCCards from "../components/SCCards";
 
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
@@ -23,24 +24,19 @@ const HomeScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails[0].RoleName);
 
+  const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
   const [catalogueImagesZoom, setCatalogueImagesZoom] = React.useState([]);
   const [catalogueImagesZoomVisible, setCatalogueImagesZoomVisible] = React.useState(false);
   const [catalogueImages, setCatalogueImages] = React.useState([]);
 
   const [userCountData, setUserCountData] = React.useState([]);
-  //const [totalUsers, setTotalUsers] = React.useState(0);
+  const [totalUsers, setTotalUsers] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [roleName, setRoleName] = React.useState("");
   const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
-
-  const arrQuickLinks = [
-    { title: "Pocket Diary", icon: "calculate", backgroundColor: theme.multicolors.red },
-    { title: "Feedbacks", icon: "feedback", backgroundColor: theme.multicolors.blue },
-    { title: "Profile", icon: "account-circle", backgroundColor: theme.multicolors.yellow },
-  ];
 
   const LogoutUser = async () => {
     try {
@@ -49,6 +45,29 @@ const HomeScreen = ({ route, navigation }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const FetchImageGalleryData = () => {
+    Provider.getAll("generaluserenquiryestimations/getimagegallery")
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setImageGalleryData(response.data.data);
+          }
+        } else {
+          setImageGalleryData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
   };
 
   const GetServiceCatalogue = () => {
@@ -97,7 +116,7 @@ const HomeScreen = ({ route, navigation }) => {
           response.data.data.map((k) => {
             totalUserCount += parseInt(k.roleCount);
           });
-          //setTotalUsers(totalUserCount);
+          setTotalUsers(totalUserCount);
           setUserCountData(response.data.data);
           let switchRolesData = [];
           response.data.data.map((data) => {
@@ -114,12 +133,17 @@ const HomeScreen = ({ route, navigation }) => {
 
   React.useEffect(() => {
     GetServiceCatalogue();
+    FetchImageGalleryData();
     GetUserCount();
   }, []);
 
   const showDialog = () => setIsDialogVisible(true);
 
   const hideDialog = () => setIsDialogVisible(false);
+
+  const SingleCardClick = (headerTitle, categoryID, data) => {
+    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, from: "home" });
+  };
 
   const onRoleSelected = (role) => {
     setErrorRole(false);
@@ -174,6 +198,7 @@ const HomeScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
@@ -200,12 +225,11 @@ const HomeScreen = ({ route, navigation }) => {
       ) : (
         <ScrollView>
           <View style={[Styles.flexRow, Styles.padding4, Styles.flexWrap]}>
-            {catalogueCategoryImages.map((k, i) => {
+            {imageGalleryData.map((k, i) => {
               return (
-                <Card key={i} style={[Styles.margin4, { width: windowWidth / 2 - 12 }]}>
-                  <Card.Cover source={{ uri: k.image }} style={[Styles.height96]} />
-                  <Card.Title title={k.text} titleStyle={[Styles.fontSize14]} />
-                </Card>
+                <View key={i} style={[Styles.flex1, Styles.height100per, Styles.padding8, Styles.paddingTop0]}>
+                  <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
+                </View>
               );
             })}
           </View>
@@ -216,18 +240,6 @@ const HomeScreen = ({ route, navigation }) => {
             <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
             <Caption style={[{ position: "absolute", bottom: 4, right: 4, color: theme.colors.textLight }]}>Sponsered Ads</Caption>
           </View>
-          {/* <View style={[Styles.margin4, Styles.border1, Styles.flexRow, Styles.flexAlignCenter, { height: 140, justifyContent: "space-between" }]}>
-            {arrQuickLinks.map((k, i) => {
-              return (
-                <View key={i} style={[Styles.flex1, Styles.height104, Styles.padding4, Styles.flexAlignCenter, Styles.flexJustifyCenter]}>
-                  <View style={[Styles.width72, Styles.height72, Styles.flexAlignCenter, Styles.flexJustifyCenter, { backgroundColor: theme.colors.textLight, borderRadius: 36, elevation: 4 }]}>
-                    <Icon name={k.icon} color={k.backgroundColor} size={40} />
-                  </View>
-                  <Caption style={[Styles.marginTop4]}>{k.title}</Caption>
-                </View>
-              );
-            })}
-          </View> */}
           {userRoleName === "General User" ? (
             <View style={[Styles.marginBottom16]}>
               <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>

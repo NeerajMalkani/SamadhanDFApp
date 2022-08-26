@@ -67,7 +67,6 @@ import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItem
 import AddContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/AddItem/AddMyServicesScreen";
 import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
-import ProfileUpdateScreen from "./src/screens/GeneralUser/ProfileUpdate/ProfileUpdateScreen";
 import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
 import ContractorDepartmentScreen from "./src/screens/Contractor/Organization/DepartmentScreen";
 import AddContractorDepartmentScreen from "./src/screens/Contractor/Organization/AddItem/AddDepartmentScreen";
@@ -246,14 +245,13 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProfileUpdateScreen" component={ProfileUpdateScreen} />
             </Drawer.Navigator>
           );
         case 3:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorBasicDetailsScreen" component={ContractorBasicDetailsScreen} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorBasicDetailsScreen" component={ContractorBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorMyServicesScreen" component={ContractorMyServicesScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDepartmentScreen" component={ContractorDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDesignationScreen" component={ContractorDesignationScreen} />
@@ -266,7 +264,7 @@ export default function App() {
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerMyServicesScreen" component={DealerMyServicesScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerPresentationScreen" component={DealerPresentationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandMasterScreen" component={DealerBrandMasterScreen} initialParams={{ activeIndex: activeIndex }} />
@@ -283,12 +281,17 @@ export default function App() {
   };
 
   const BottomTabs = ({ navigation }) => {
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+      });
+      return unsubscribe;
+    }, [navigation]);
     return (
       <Tab.Navigator shifting={true} initialRouteName="dashboard" activeColor={theme.colors.primary} barStyle={{ backgroundColor: theme.colors.textLight }}>
-        <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
-        <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
-        <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-        <Tab.Screen name="UserProfile" component={UserProfileScreen} options={{ tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
+        <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: true, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
+        <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
+        <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
+        <Tab.Screen name="UserProfile" component={ parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
       </Tab.Navigator>
     );
   };

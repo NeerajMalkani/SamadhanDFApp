@@ -82,7 +82,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
                     text: "Go to Estimation",
                     click: () => {
                       setIsZoomShow(false);
-                      navigation.navigate("EstimationPreviewScreen", { data: k });
+                      navigation.navigate("EstimationPreviewScreen", { data: k, from: route.params.from });
                     },
                   }}
                 />
@@ -103,7 +103,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
             style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
             onPress={() => {
               setIsZoomShow(false);
-              navigation.navigate("EstimationPreviewScreen", { data: imageToZoomData });
+              navigation.navigate("EstimationPreviewScreen", { data: imageToZoomData, from: route.params.from });
             }}
           >
             Go to Estimation

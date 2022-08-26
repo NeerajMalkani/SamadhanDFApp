@@ -148,7 +148,7 @@ const DealerBuyerCategoryScreen = ({ navigation }) => {
           <Button
             mode="contained"
             onPress={() => {
-              navigation.navigate("DealerBasicDetailsScreen", { from: "brand" });
+              navigation.navigate("UserProfile", { from: "brand" });
             }}
           >
             Activate

@@ -13,13 +13,15 @@ import { creds } from "../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const DealerBasicDetailsScreen = ({ route, navigation }) => {
+  const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
-
+  
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -376,6 +378,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       EmployeeCodePrefix: ecPrefix,
       PurchaseOrderPrefix: poPrefix,
       SalesOrderPrefix: soPrefix,
+      QuotationBudgetPrefix: "",
       ShowBrand: isSwitchOn,
     };
     Provider.create("master/insertuserprofile", params)
@@ -535,26 +538,28 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     { key: "logo", title: "Logo" },
   ]);
   return (
-    <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Basic Details" />
-      {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+    isFocused && (
+      <View style={[Styles.flex1]}>
+        <Header navigation={navigation} title="Basic Details" isDrawer="false" />
+        {isLoading ? (
+          <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </View>
+        ) : (
+          <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+        )}
+        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+          <Card.Content>
+            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+              Update
+            </Button>
+          </Card.Content>
         </View>
-      ) : (
-        <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
-      )}
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-        <Card.Content>
-          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
-            Update
-          </Button>
-        </Card.Content>
+        <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+          {snackbarText}
+        </Snackbar>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
-        {snackbarText}
-      </Snackbar>
-    </View>
+    )
   );
 };
 

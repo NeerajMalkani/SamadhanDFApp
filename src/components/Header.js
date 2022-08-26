@@ -8,7 +8,7 @@ import { Styles } from "../styles/styles";
 import { DrawerActions, StackActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Header = ({ navigation, title }) => {
+const Header = ({ navigation, title, isDrawer }) => {
   const LogoutUser = async () => {
     try {
       await AsyncStorage.setItem("user", "{}");
@@ -19,16 +19,18 @@ const Header = ({ navigation, title }) => {
   };
   return (
     <View style={[Styles.height64, Styles.paddingHorizontal16, Styles.flexAlignCenter, Styles.primaryBgColor, Styles.flexRow, { justifyContent: "space-between" }]}>
-      <TouchableNativeFeedback>
-        <View
-          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
-          onTouchStart={() => {
-            navigation.dispatch(DrawerActions.toggleDrawer());
-          }}
-        >
-          <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
-        </View>
-      </TouchableNativeFeedback>
+      {(!isDrawer || (isDrawer && isDrawer != "false")) && (
+        <TouchableNativeFeedback>
+          <View
+            style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+            onTouchStart={() => {
+              navigation.dispatch(DrawerActions.toggleDrawer());
+            }}
+          >
+            <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
+          </View>
+        </TouchableNativeFeedback>
+      )}
       <Title style={[Styles.textColorWhite, Styles.flexGrow, Styles.paddingStart12]}>{title}</Title>
       <TouchableNativeFeedback>
         <View
