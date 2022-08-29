@@ -97,7 +97,20 @@ const ClientScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        clientName: data.item.contactPerson
+        addedByUserID: data.item.addedByUserID,
+        companyName: data.item.companyName,
+        contactPerson: data.item.contactPerson,
+        contactMobileNumber: data.item.contactMobileNumber,
+        address1: data.item.address1,
+        stateID: data.item.stateID,
+        stateName: data.item.stateName,
+        cityID: data.item.cityID,
+        cityName: data.item.cityName,
+        pincode: data.item.pincode.toString(),
+        gstNumber: data.item.gstNumber,
+        pan: data.item.pan,
+        serviceType: data.item.serviceType.toString(),
+        display: data.item.display,
       },
     });
   };
@@ -105,7 +118,7 @@ const ClientScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.contactPerson} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item title={data.item.companyName} titleStyle={{ fontSize: 18 }} description={"Mob.: " + data.item.contactMobileNumber} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
       </View>
     );
   };

@@ -61,6 +61,17 @@ export const communication = {
   InvalidDepartmentID: "Please select Department",
   InvalidDesignationID: "Please select Designation",
 
+  InvalidCompanyName: "Enter a valid Name / Company Name",
+  InvalidContactPerson: "Enter a valid Contact Person",
+  InvalidContactMobileNo: "Enter a valid Contact Mobile No",
+  InvalidAddress: "Enter a valid Address 1",
+  InvalidState: "Enter a valid State",
+  InvalidCity: "Enter a valid City",
+  InvalidPincode: "Enter a valid Pincode",
+  InvalidGSTNo: "Enter a valid GST No.",
+  InvalidPANNo: "Enter a valid PAN No.",
+  InvalidServiceTypeRole: "Select at least one Service Type Role",
+
   EstimationSent: "Your estimation request has been sent successfully",
 
   NoImageSelectedError: "Please pick an image to continue",
