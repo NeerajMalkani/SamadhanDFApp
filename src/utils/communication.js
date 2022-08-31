@@ -74,7 +74,13 @@ export const communication = {
 
   InvalidClient: "Select a client to proceed",
 
+  InvalidRemarks: "Enter a valid remark/reason",
+  InvalidClientApprovedThrough: "Enter a valid mode of approval from client",
+
   EstimationSent: "Your estimation request has been sent successfully",
+
+  QuoteApproved: "You have approved the quotation successfully",
+  QuoteRejected: "You have rejected the quotation successfully",
 
   NoImageSelectedError: "Please pick an image to continue",
   FailedUploadError: "Failed to upload your file",

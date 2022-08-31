@@ -57,7 +57,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
-              return el.serviceType === 3;
+              return el.serviceType === 3 || el.serviceType === 13 || el.serviceType === 23 || el.serviceType === 123;
             });
             setClientsFullData(response.data.data);
             let clientData = response.data.data.map((data) => data.companyName);
@@ -209,6 +209,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               navigation.navigate("GetEstimationScreen", {
                 userDesignEstimationID: response.data.data[0].userDesignEstimationID,
                 isContractor: route.params.isContractor,
+                fetchData: route.params.fetchData,
                 clientID: clientsFullData.find((el) => {
                   return el.companyName === clientName;
                 }).id,
@@ -238,7 +239,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.create("contractorquotationestimation/insertotherclient", params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           refRBSheet.current.close();
           FetchClients();
@@ -339,7 +339,14 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 <Button mode="outlined" onPress={() => refRBSheet.current.open()}>
                   Search & Add
                 </Button>
-                <Button mode="contained">Create New</Button>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchClients });
+                  }}
+                >
+                  Create New
+                </Button>
               </View>
             </View>
           )}
@@ -353,7 +360,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
                 <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
               </View>
-              <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+              <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
             </View>
             <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
@@ -364,7 +371,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
                 <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
               </View>
-              <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+              <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
             </View>
             <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           </View>
@@ -388,7 +395,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           </Card.Content>
         )}
       </View>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={240} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={640} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
           <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
             <AutocompleteDropdown

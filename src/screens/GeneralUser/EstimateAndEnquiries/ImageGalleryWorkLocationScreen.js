@@ -82,7 +82,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
                     text: "Go to Estimation",
                     click: () => {
                       setIsZoomShow(false);
-                      navigation.navigate("EstimationPreviewScreen", { data: k, from: route.params.from, isContractor: route.params.isContractor });
+                      navigation.navigate("EstimationPreviewScreen", { data: k, from: route.params.from, isContractor: route.params.isContractor, fetchData: route.params.fetchData });
                     },
                   }}
                 />

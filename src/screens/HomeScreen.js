@@ -142,7 +142,7 @@ const HomeScreen = ({ route, navigation }) => {
   const hideDialog = () => setIsDialogVisible(false);
 
   const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, from: "home" });
+    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, from: "home", isContractor: userRoleName === "Contractor" ? true : false });
   };
 
   const onRoleSelected = (role) => {

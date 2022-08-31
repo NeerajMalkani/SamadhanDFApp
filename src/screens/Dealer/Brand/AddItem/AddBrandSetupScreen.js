@@ -612,7 +612,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorBN}>
             {communication.InvalidBrandName}
           </HelperText>
-          <Dropdown label="Unit Name" data={unitData} onSelected={onUnitChanged} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
+          <Dropdown label="Unit of Sales" data={unitData} onSelected={onUnitChanged} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>

@@ -110,6 +110,7 @@ const ClientScreen = ({ navigation }) => {
         gstNumber: data.item.gstNumber,
         pan: data.item.pan,
         serviceType: data.item.serviceType,
+        addedBy: data.item.addedBy,
         display: data.item.display,
       },
     });

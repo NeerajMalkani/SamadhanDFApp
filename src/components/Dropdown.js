@@ -19,20 +19,20 @@ export default Dropdown = ({ data, label, onSelected, isError, selectedItem, ref
       buttonStyle={{
         width: "100%",
         height: 56,
-        borderBottomWidth: 1,
+        borderBottomWidth: forceDisable ? 0 : 1,
         backgroundColor: "transparent",
         borderBottomColor: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textfield,
       }}
       renderCustomizedButtonChild={(selectedItem) => {
         return (
           <View style={[Styles.flex1, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal8, { justifyContent: "space-between" }]}>
-            <Text style={selectedItem ? { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.text, fontSize: 16 } : { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary, fontSize: 16 }}>{selectedItem ? selectedItem : label}</Text>
+            <Text style={selectedItem ? { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : forceDisable ? theme.colors.disabled : theme.colors.text, fontSize: 16 } : { color: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary, fontSize: 16 }}>{selectedItem ? selectedItem : label}</Text>
           </View>
         );
       }}
       dropdownStyle={{ marginTop: -38, elevation: 23 }}
       renderDropdownIcon={(isOpened) => {
-        return <FontAwesome name={isOpened ? "caret-up" : "caret-down"} color={isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textSecondary} size={18} />;
+        return <FontAwesome name={isOpened ? "caret-up" : "caret-down"} color={isError ? theme.colors.error : isFocused ? theme.colors.primary : forceDisable ? theme.colors.disabled : theme.colors.textSecondary} size={18} />;
       }}
       onSelect={(selectedItem, index) => {
         onSelected(selectedItem, index);

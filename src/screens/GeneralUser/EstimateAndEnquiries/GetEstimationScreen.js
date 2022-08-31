@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Button, Card, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import Provider from "../../../api/Provider";
+import Dropdown from "../../../components/Dropdown";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
@@ -21,6 +22,11 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
   const [showMCLC, setShowMCLC] = React.useState(false);
   const [showMCD, setShowMCD] = React.useState(false);
+
+  const [brandsFullData, setBrandsFullData] = React.useState([]);
+  const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
+  const [brandsData, setBrandsData] = React.useState([]);
+  const [brandName, setBrandName] = React.useState([]);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -66,6 +72,9 @@ const GetEstimationScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setEstimationDataForMaterialSetup(response.data.data);
+            if (route.params.isUpdate) {
+              FetchBrandsForMaterialSetup(response.data.data);
+            }
           }
         } else {
           setEstimationDataForMaterialSetup([]);
@@ -99,6 +108,9 @@ const GetEstimationScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (route.params.isContractor) {
+            if (route.params.fetchData) {
+              route.params.fetchData(true);
+            }
             navigation.navigate("DesignWiseScreen");
           } else {
             navigation.navigate("YourEstimationsScreen");
@@ -115,6 +127,60 @@ const GetEstimationScreen = ({ route, navigation }) => {
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
       });
+  };
+
+  const FetchBrandsForMaterialSetup = (productData) => {
+    const productids = productData.map((data) => data.productID);
+    let params = {
+      ProductID: productids.join(","),
+    };
+    Provider.getAll(`servicecatalogue/getbrandsbyproductids?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setBrandsFullData(response.data.data);
+            const key = "brandID";
+            const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
+            setUniqueBrandsData(uniqueBrands);
+            const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
+            setBrandsData(formattedData);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const onBrandNameSelected = (selectedItem, index) => {
+    setBrandName(selectedItem);
+    // setBNError(false);
+    // const selecedBrand = uniqueBrandsData[parseInt(index)];
+    // const appliedProducts = brandsFullData.filter((el) => {
+    //   return el.brandID === selecedBrand.brandID;
+    // });
+    // const newData = [...arrProductData[0]];
+    // newData.map((k) => {
+    //   const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
+    //   if (foundProduct) {
+    //     k.brandID = foundProduct.brandID;
+    //     k.brandName = foundProduct.brandName;
+    //     k.price = foundProduct.price.toFixed(4);
+    //     if (k.formula) {
+    //       const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+    //       k.quantity = quants.toFixed(4);
+    //       if (k.price) {
+    //         k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+    //       } else {
+    //         k.amount = "0.0000";
+    //       }
+    //     } else {
+    //       k.quantity = "";
+    //       k.amount = "0.0000";
+    //     }
+    //   }
+    //});
+    // const amounts = newData.map((data) => data.amount);
+    // setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
+    // arrProductData[1](newData);
   };
 
   useEffect(() => {
@@ -212,7 +278,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                   </Button>
                 </View>
               )}
-              <View style={[Styles.flexRow, { opacity: showMCLC ? 1 : 0 }]}>
+              <View style={[Styles.flexRow, { opacity: showMCLC ? 1 : 0, height: showMCLC ? "auto" : 0 }]}>
                 <View style={[Styles.flexJustifyCenter]}>
                   <Title> = </Title>
                 </View>
@@ -245,6 +311,11 @@ const GetEstimationScreen = ({ route, navigation }) => {
               </View>
             </View>
           )}
+          {route.params.isUpdate && (
+            <View style={[Styles.paddingHorizontal16]}>
+              <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
+            </View>
+          )}
           {estimationDataForMaterialSetup && (
             <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0, marginBottom: showMCD ? 64 : 0 }]}>
               <Title style={[Styles.paddingHorizontal16]}>Material Details</Title>
@@ -265,7 +336,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
               </View>
             </View>
           )}
-          {((estimationData && estimationData[0] && !estimationData[0].status) || showMCD) && (
+          {((estimationData && estimationData[0] && !estimationData[0].status) || showMCD || route.params.isContractor) && (
             <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, Styles.borderTop2, { position: "absolute", bottom: 0, elevation: 50 }]}>
               <Card.Content style={[estimationData && estimationData[0] && !estimationData[0].status && showMCD ? Styles.flexRowReverse : "", { justifyContent: "space-between" }]}>
                 {showMCD ? (
@@ -273,14 +344,14 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     Add to Cart
                   </Button>
                 ) : null}
-                {estimationData && estimationData[0] && !estimationData[0].status ? (
+                {(estimationData && estimationData[0] && !estimationData[0].status) || route.params.isContractor ? (
                   <Button
                     mode="contained"
                     onPress={() => {
                       InsertDesignEstimationEnquiry();
                     }}
                   >
-                    {route.params.isContractor ? "Send Quote to Client" : "Send Enquiry"}
+                    {route.params.isContractor ? (route.params.isUpdate ? "Update and Send Quote" : "Send Quote to Client") : "Send Enquiry"}
                   </Button>
                 ) : null}
               </Card.Content>

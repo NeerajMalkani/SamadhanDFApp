@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View, Dimensions } from "react-native";
-import { Button, Card, Checkbox, DataTable, Headline, HelperText, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
+import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -622,7 +622,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
               <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
           </View>
           <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
@@ -633,7 +633,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
               <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
           </View>
           <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
@@ -652,6 +652,36 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                 <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
+                    <IconButton
+                      icon="close"
+                      iconColor={theme.colors.text}
+                      size={20}
+                      onPress={() => {
+                        let arrProductsTemp = [...arrProductData[0]];
+                        let brandsFullDataTemp = [...brandsFullData];
+                        arrProductsTemp.splice(arrProductsTemp.indexOf(k), 1);
+                        const allBrandsForProduct = brandsFullDataTemp.filter((el) => {
+                          return el.productID === k.productID;
+                        });
+                        allBrandsForProduct.map((all) => {
+                          const arrTemp = arrProductsTemp.filter((el) => {
+                            return el.brandID === all.brandID;
+                          });
+                          if (arrTemp.length === 0) {
+                            brandsFullDataTemp = brandsFullDataTemp.filter((el) => {
+                              return el.brandID !== all.brandID;
+                            });
+                          }
+                        });
+                        setBrandsFullData(brandsFullDataTemp);
+                        const key = "brandID";
+                        const uniqueBrands = [...new Map(brandsFullDataTemp.map((item) => [item[key], item])).values()];
+                        setUniqueBrandsData(uniqueBrands);
+                        const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
+                        setBrandsData(formattedData);
+                        arrProductData[1](arrProductsTemp);
+                      }}
+                    />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Brand Name</Text>

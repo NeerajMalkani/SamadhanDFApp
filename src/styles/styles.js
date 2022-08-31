@@ -609,6 +609,9 @@ export const Styles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
+  flex1_5: {
+    flex: 1.5,
+  },
   flex2: {
     flex: 2,
   },

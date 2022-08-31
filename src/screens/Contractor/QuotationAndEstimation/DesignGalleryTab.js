@@ -3,9 +3,9 @@ import NoItems from "../../../components/NoItems";
 import CreateSCCards from "../../../components/SCCards";
 import { Styles } from "../../../styles/styles";
 
-const DesignGalleryTab = ({ navigation, designGalleryData }) => {
+const DesignGalleryTab = ({ navigation, designGalleryData, fetchData }) => {
   const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, isContractor: true });
+    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, isContractor: true, fetchData: fetchData });
   };
 
   return (

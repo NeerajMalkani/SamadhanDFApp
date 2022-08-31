@@ -1,27 +1,28 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useRef } from "react";
-import { Image, RefreshControl, ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { ActivityIndicator, List, Searchbar, Snackbar, Text, Title } from "react-native-paper";
+import React, { useRef } from "react";
+import { Image, ScrollView, TouchableNativeFeedback, View } from "react-native";
+import { Button, Dialog, HelperText, List, Portal, RadioButton, Searchbar, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
+import { RNS3 } from "react-native-aws3";
+import * as ImagePicker from "expo-image-picker";
+import { creds } from "../../../utils/credentials";
+import uuid from "react-native-uuid";
+import { AWSImagePath } from "../../../utils/paths";
 
-let userID = 0;
-const DesignPendingTab = ({ navigation }) => {
+const DesignPendingTab = ({ fetchData, listData, listSearchData, navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [popupVisible, setPopupVisible] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
+  const [id, setID] = React.useState(0);
+  const [clientID, setClientID] = React.useState(0);
   const [fullName, setFullName] = React.useState("");
   const [estimationNo, setEstimationNo] = React.useState("");
   const [serviceName, setServiceName] = React.useState("");
@@ -33,63 +34,33 @@ const DesignPendingTab = ({ navigation }) => {
   const [materialCost, setMaterialCost] = React.useState("");
   const [labourCost, setLabourCost] = React.useState("");
 
+  const [estStatus, setEstStatus] = React.useState(0);
+  const [value, setValue] = React.useState("");
+  const [errorCAT, setErrorCAT] = React.useState(false);
+  const [remarks, setRemarks] = React.useState("");
+  const [errorR, setErrorR] = React.useState(false);
+
+  const [designImage, setDesignImage] = React.useState("");
+  const [image, setImage] = React.useState(AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = React.useState(null);
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const refRBSheet = useRef();
 
-  const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem("user");
-    if (userData !== null) {
-      userID = JSON.parse(userData).UserID;
-      FetchData();
-    }
-  };
-  const FetchData = () => {
-    let params = {
-      UserID: userID,
-    };
-    Provider.getAll(`contractorquotationestimation/getcontractorallestimation?${new URLSearchParams(params)}`)
-      .then((response) => {
-        console.log(response.data);
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            const lisData = [...response.data.data];
-            lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
-            });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
-          }
-        } else {
-          listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-        }
-        setIsLoading(false);
-        setRefreshing(false);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-        setRefreshing(false);
-      });
-  };
-  const InsertDesignEstimationEnquiry = (userDesignEstimationID, totalAmount) => {
+  const InsertEstimationStatusData = () => {
     const params = {
-      ID: userDesignEstimationID,
-      TotalAmount: totalAmount,
-      Status: true,
+      UserEstimationID: id,
+      Remarks: remarks,
+      ApprovedThrough: parseInt(value),
+      ApproveProof: designImage,
     };
-    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+    Provider.create("contractorquotationestimation/insertapprovedestimations", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          setSnackbarText(communication.EstimationSent);
-          setSnackbarColor(theme.colors.success);
-          setSnackbarVisible(true);
-          FetchData();
+          InsertDesignEstimationEnquiry();
         } else {
-          setSnackbarText(communication.InsertError);
+          setSnackbarText(communication.NoData);
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
         }
@@ -101,9 +72,64 @@ const DesignPendingTab = ({ navigation }) => {
         setSnackbarVisible(true);
       });
   };
-  useEffect(() => {
-    GetUserID();
-  }, []);
+
+  const InsertDesignEstimationEnquiry = () => {
+    const params = {
+      ID: id,
+      ApprovalStatus: estStatus,
+    };
+    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setSnackbarText(estStatus === 1 ? communication.QuoteApproved : communication.QuoteRejected);
+          setSnackbarColor(theme.colors.success);
+          setSnackbarVisible(true);
+          setPopupVisible(false);
+          setTimeout(() => {
+            fetchData();
+          }, 600);
+        } else {
+          setSnackbarText(communication.NoData);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
+  };
+
+  const ValidateEstimationStatus = () => {
+    let isValid = true;
+
+    if (remarks.length === 0) {
+      isValid = false;
+      setErrorR(true);
+    }
+    if (value === "") {
+      isValid = false;
+      setErrorCAT(true);
+    }
+
+    if (isValid) {
+      setValue("");
+      setRemarks("");
+      setErrorR(false);
+      setErrorCAT(false);
+      setDesignImage("");
+      setImage(AWSImagePath + "placeholder-image.png");
+      setFilePath(null);
+      uploadFile();
+    }
+  };
+
+  const onChangeRemarks = (text) => {
+    setRemarks(text);
+    setErrorR(false);
+  };
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -120,6 +146,8 @@ const DesignPendingTab = ({ navigation }) => {
 
   const ClickRow = (data) => {
     refRBSheet.current.open();
+    setID(data.id);
+    setClientID(data.clientID);
     setFullName(data.fullName);
     setEstimationNo("AUG" + pad(data.id.toString(), 4, "0"));
     setServiceName(data.serviceName);
@@ -130,6 +158,71 @@ const DesignPendingTab = ({ navigation }) => {
     setTotalSqFt(CalculateSqFt(data));
     setMaterialCost(data.subtotalAmount.toFixed(4));
     setLabourCost(data.labourCost.toFixed(4));
+  };
+
+  const chooseFile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      const arrExt = result.uri.split(".");
+      const unique_id = uuid.v4();
+      setDesignImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setImage(result.uri);
+      setFilePath(result);
+    }
+  };
+
+  const uploadFile = () => {
+    if (filePath && filePath.uri) {
+      if (Object.keys(filePath).length == 0) {
+        setSnackbarText(communication.NoImageSelectedError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        return;
+      }
+      RNS3.put(
+        {
+          uri: filePath.uri,
+          name: designImage.split(AWSImagePath)[1],
+          type: "image/*",
+        },
+        {
+          keyPrefix: "",
+          bucket: creds.awsBucket,
+          region: creds.awsRegion,
+          accessKey: creds.awsAccessKey,
+          secretKey: creds.awsSecretKey,
+          successActionStatus: 201,
+        }
+      )
+        .progress((progress) => {
+          setIsButtonLoading(true);
+          setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+        })
+        .then((response) => {
+          setIsButtonLoading(false);
+          if (response.status !== 201) {
+            setSnackbarVisible(true);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(communication.FailedUploadError);
+          } else {
+            InsertEstimationStatusData();
+          }
+        })
+        .catch((ex) => {
+          console.log(ex);
+          setIsButtonLoading(false);
+          setSnackbarVisible(true);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarText(communication.FailedUploadError);
+        });
+    } else {
+      InsertEstimationStatusData();
+    }
   };
 
   const CalculateSqFt = (data) => {
@@ -155,14 +248,10 @@ const DesignPendingTab = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
-      ) : listData[0].length > 0 ? (
+      {listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-          <ScrollView refreshControl={<RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => FetchData()} />}>
+          <ScrollView>
             {listSearchData[0].map((k, i) => {
               return (
                 <View key={i} style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter]}>
@@ -184,23 +273,54 @@ const DesignPendingTab = ({ navigation }) => {
             <Title numberOfLines={1} style={[Styles.flex1, Styles.paddingHorizontal16]}>
               {fullName}
             </Title>
-            <View style={[Styles.flexRow, Styles.paddingEnd8]}>
-              <TouchableNativeFeedback>
-                <View style={[Styles.padding12]}>
-                  <Icon name="pencil" size={24} color={theme.multicolors.yellow} />
-                </View>
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback>
-                <View style={[Styles.padding12]}>
-                  <Icon name="check-circle" size={24} color={theme.multicolors.green} />
-                </View>
-              </TouchableNativeFeedback>
-              <TouchableNativeFeedback>
-                <View style={[Styles.padding12]}>
-                  <Icon name="cancel" size={24} color={theme.multicolors.red} />
-                </View>
-              </TouchableNativeFeedback>
-            </View>
+          </View>
+          <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.marginTop12]}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                refRBSheet.current.close();
+                setTimeout(() => {
+                  navigation.navigate("GetEstimationScreen", {
+                    userDesignEstimationID: id,
+                    clientID: clientID,
+                    isContractor: true,
+                    fetchData: fetchData,
+                    isUpdate: true,
+                  });
+                }, 300);
+              }}
+              labelStyle={[{ textTransform: "capitalize" }]}
+              style={[Styles.yellowBgColor]}
+              icon={() => <Icon name="pencil" size={18} color={theme.colors.textLight} />}
+            >
+              Edit
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                setEstStatus(1);
+                refRBSheet.current.close();
+                setPopupVisible(true);
+              }}
+              labelStyle={[{ textTransform: "capitalize" }]}
+              style={[Styles.marginStart4, Styles.greenBgColor]}
+              icon={() => <Icon name="check-circle" size={18} color={theme.colors.textLight} />}
+            >
+              Approve
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                setEstStatus(2);
+                refRBSheet.current.close();
+                setPopupVisible(true);
+              }}
+              labelStyle={[{ textTransform: "capitalize" }]}
+              style={[Styles.marginStart4, Styles.redBgColor]}
+              icon={() => <Icon name="cancel" size={18} color={theme.colors.textLight} />}
+            >
+              Reject
+            </Button>
           </View>
           <ScrollView>
             <List.Item title="Estimation No." description={estimationNo} />
@@ -217,7 +337,7 @@ const DesignPendingTab = ({ navigation }) => {
               description={() => {
                 return (
                   <View style={[Styles.flexRow]}>
-                    <Text style={[Styles.redBgColor, Styles.textColorWhite, Styles.marginTop8, Styles.borderRadius4, Styles.paddingVertical4, Styles.paddingHorizontal12]}>Pending</Text>
+                    <Text style={[Styles.yellowBgColor, Styles.textColorWhite, Styles.marginTop8, Styles.borderRadius4, Styles.paddingVertical4, Styles.paddingHorizontal12]}>Pending</Text>
                   </View>
                 );
               }}
@@ -225,6 +345,66 @@ const DesignPendingTab = ({ navigation }) => {
           </ScrollView>
         </View>
       </RBSheet>
+      <Portal>
+        <Dialog visible={popupVisible} dismissable={false}>
+          <Dialog.Title>Estimation Status</Dialog.Title>
+          <Dialog.Content>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <TextInput mode="flat" dense style={[Styles.backgroundColor]} label="Remarks/Reason" value={remarks} onChangeText={onChangeRemarks} error={errorR} />
+              <HelperText type="error" visible={errorR}>
+                {communication.InvalidRemarks}
+              </HelperText>
+              <View>
+                <Subheading style={[Styles.marginBottom12]}>Client Approved Through</Subheading>
+                <RadioButton.Group
+                  onValueChange={(value) => {
+                    setValue(value);
+                    setErrorCAT(false);
+                  }}
+                  value={value}
+                >
+                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Whatsapp" value="1" />
+                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Email" value="2" />
+                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="SMS" value="3" />
+                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Other" value="4" />
+                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="OwnApproved" value="5" />
+                </RadioButton.Group>
+                <HelperText type="error" visible={errorCAT}>
+                  {communication.InvalidClientApprovedThrough}
+                </HelperText>
+              </View>
+
+              <Subheading>Attach Client Approved Proof</Subheading>
+              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+                <Image source={{ uri: image }} style={[Styles.width64, Styles.height64, Styles.border1]} />
+                <Button mode="text" onPress={chooseFile}>
+                  {filePath !== null ? "Replace" : "Choose Image"}
+                </Button>
+              </View>
+            </ScrollView>
+          </Dialog.Content>
+          <Dialog.Actions style={[Styles.padding16]}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setPopupVisible(false);
+                setValue("");
+                setRemarks("");
+                setErrorR(false);
+                setErrorCAT(false);
+                setDesignImage("");
+                setImage(AWSImagePath + "placeholder-image.png");
+                setFilePath(null);
+              }}
+            >
+              Close
+            </Button>
+            <Button style={[Styles.marginStart12]} loading={isButtonLoading} mode="contained" onPress={ValidateEstimationStatus}>
+              Confirm
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };

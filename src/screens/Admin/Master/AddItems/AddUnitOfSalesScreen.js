@@ -50,9 +50,9 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("master/updateunitofsales", { Unit1Name: name, Unit2Name: conversion, Display: checked })
+    Provider.create("master/updateunitofsales", { Unit1ID: parseInt(route.params.data.unit1ID), Unit2ID: parseInt(route.params.data.unit2ID), Unit1Name: name, Unit2Name: conversion, Display: checked })
       .then((response) => {
-        if (response.data && response.data.code === 200) {
+        if (response.data && (response.data.code === 200 || response.data.code === 204)) {
           route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
