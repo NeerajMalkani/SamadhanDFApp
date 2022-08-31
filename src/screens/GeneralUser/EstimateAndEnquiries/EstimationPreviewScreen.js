@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect } from "react";
-import { Image, ScrollView, View } from "react-native";
-import { Button, Card, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { Button, Card, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
 import { Styles } from "../../../styles/styles";
@@ -14,6 +16,17 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
+  const [otherClients, setOtherClients] = React.useState([]);
+  const [otherClientsAutocomplete, setOtherClientsAutocomplete] = React.useState([]);
+  const [selectedClient, setSelectedClient] = React.useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
+  const [errorSN, setSNError] = React.useState(false);
+
+  const [clientsFullData, setClientsFullData] = React.useState([]);
+  const [clients, setClients] = React.useState([]);
+  const [clientName, setClientName] = React.useState("");
+  const [errorCN, setCNError] = React.useState(false);
+
   const [lengthFeet, setLengthFeet] = React.useState("1");
   const [lengthInches, setLengthInches] = React.useState("0");
 
@@ -22,16 +35,84 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
 
+  const refRBSheet = useRef();
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      if (route.params.isContractor) {
+        FetchClients();
+        FetchOtherClients();
+      }
     }
+  };
+
+  const FetchClients = () => {
+    let params = {
+      AddedByUserID: userID,
+    };
+    Provider.getAll(`contractorquotationestimation/getclients?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.serviceType === 3;
+            });
+            setClientsFullData(response.data.data);
+            let clientData = response.data.data.map((data) => data.companyName);
+            setClients(clientData);
+          }
+        } else {
+          setClients([]);
+          setClientsFullData([]);
+        }
+      })
+      .catch((e) => {
+        setClients([]);
+        setClientsFullData([]);
+      });
+  };
+
+  const FetchOtherClients = () => {
+    let params = {
+      AddedByUserID: userID,
+    };
+    Provider.getAll(`contractorquotationestimation/getotherclients?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setOtherClients(response.data.data);
+            let clientData = [];
+            response.data.data.map((data, i) => {
+              clientData.push({
+                id: i.toString(),
+                title: data.companyName,
+                contact: data.contactMobileNumber,
+                clientID: data.id,
+              });
+            });
+            setOtherClientsAutocomplete(clientData);
+          }
+        } else {
+          setOtherClients([]);
+          setOtherClientsAutocomplete([]);
+        }
+      })
+      .catch((e) => {
+        setOtherClients([]);
+        setOtherClientsAutocomplete([]);
+      });
   };
 
   useEffect(() => {
     GetUserID();
   }, []);
+
+  const onClientNameSelected = (selectedItem) => {
+    setClientName(selectedItem);
+    setCNError(false);
+  };
 
   const onLengthFeetSelected = (selectedItem) => {
     setLengthFeet(selectedItem);
@@ -59,6 +140,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiriesformaterialsetup?${new URLSearchParams(params)}`)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const targetSqFt = totalSqFt;
@@ -96,27 +178,41 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     const params = {
       UserID: userID,
       DesignTypeID: route.params.data.designTypeID,
+      WorkLocationID: route.params.data.workLocationID,
       Length: lengthFeet + "." + lengthInches,
       Width: widthFeet + "." + widthInches,
       Status: false,
-      TotalAmount: totAm,
+      SubtotalAmount: subtotal ? parseFloat(subtotal) : 0,
+      LabourCost: subtotal ? parseFloat(totalSqFt) * parseFloat(labourCost) : 0,
+      TotalAmount: subtotal ? totAm : 0,
     };
     if (number === "2") {
       params.ID = userDesignEstimationID;
+    }
+    if (route.params.isContractor) {
+      params.ClientID = clientsFullData.find((el) => {
+        return el.companyName === clientName;
+      }).id;
+      params.ApprovalStatus = 0;
     }
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (number === "2") {
             if (from === "add") {
-              if(route.params.from === "home"){
+              if (route.params.from === "home") {
                 navigation.navigate("HomeScreen");
               } else {
                 navigation.navigate("ImageGalleryScreen");
               }
-              
             } else {
-              navigation.navigate("GetEstimationScreen", { userDesignEstimationID: response.data.data[0].userDesignEstimationID });
+              navigation.navigate("GetEstimationScreen", {
+                userDesignEstimationID: response.data.data[0].userDesignEstimationID,
+                isContractor: route.params.isContractor,
+                clientID: clientsFullData.find((el) => {
+                  return el.companyName === clientName;
+                }).id,
+              });
             }
           } else {
             FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
@@ -133,6 +229,43 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
       });
+  };
+
+  const InsertOtherClient = () => {
+    const params = {
+      ID: parseInt(selectedClient),
+      AddedByUserID: userID,
+    };
+    Provider.create("contractorquotationestimation/insertotherclient", params)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          refRBSheet.current.close();
+          FetchClients();
+          FetchOtherClients();
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
+  };
+
+  const CreateQuote = () => {
+    let isValid = true;
+    if (clientName.length === 0) {
+      isValid = false;
+      setCNError(true);
+    }
+    if (isValid) {
+      InsertDesignEstimationEnquiry("get", "1");
+    }
   };
 
   const CalculateSqFt = (lf, li, wf, wi) => {
@@ -175,72 +308,123 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-        <Image source={{ uri: route.params.data.designImage }} style={[Styles.width100per, { height: 192 }]} />
-        <View style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
-          <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
-            <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Code</Subheading>
-            <Subheading style={[Styles.flex1]}>{"DS-" + pad(route.params.data.designTypeID, 4, "0")}</Subheading>
-          </View>
-          <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
-            <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Type</Subheading>
-            <Subheading style={[Styles.flex1]}>{route.params.data.designTypeName}</Subheading>
-          </View>
-          <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
-            <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Category Name</Subheading>
-            <Subheading style={[Styles.flex1]}>{route.params.data.categoryName}</Subheading>
-          </View>
-          <View style={[Styles.flexRow, Styles.padding16, Styles.flexAlignCenter]}>
-            <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Product Name</Subheading>
-            <Subheading style={[Styles.flex1]}>{route.params.data.productName}</Subheading>
-          </View>
-        </View>
-        <View style={[Styles.paddingHorizontal16, Styles.paddingBottom16]}>
-          <Subheading style={[Styles.marginTop16]}>Length</Subheading>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
-            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
+        <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+          <Image source={{ uri: route.params.data.designImage }} style={[Styles.width100per, { height: 192 }]} />
+          <View style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
+            <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
+              <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Code</Subheading>
+              <Subheading style={[Styles.flex1]}>{"DS-" + pad(route.params.data.designTypeID, 4, "0")}</Subheading>
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
+            <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
+              <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Type</Subheading>
+              <Subheading style={[Styles.flex1]}>{route.params.data.designTypeName}</Subheading>
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+            <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
+              <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Category Name</Subheading>
+              <Subheading style={[Styles.flex1]}>{route.params.data.categoryName}</Subheading>
+            </View>
+            <View style={[Styles.flexRow, Styles.padding16, Styles.flexAlignCenter]}>
+              <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Product Name</Subheading>
+              <Subheading style={[Styles.flex1]}>{route.params.data.productName}</Subheading>
+            </View>
           </View>
-          <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
+          {route.params.isContractor && (
+            <View style={[Styles.padding16, Styles.paddingBottom0, { zIndex: 10 }]}>
+              <Dropdown label="Client Name" data={clients} onSelected={onClientNameSelected} isError={errorCN} selectedItem={clientName} />
+              <HelperText type="error" visible={errorCN}>
+                {communication.InvalidClient}
+              </HelperText>
+              <View style={[Styles.flexRow, Styles.marginTop8, { justifyContent: "space-between" }]}>
+                <Button mode="outlined" onPress={() => refRBSheet.current.open()}>
+                  Search & Add
+                </Button>
+                <Button mode="contained">Create New</Button>
+              </View>
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
+          )}
+          <View style={[Styles.paddingHorizontal16, Styles.paddingBottom16]}>
+            <Subheading style={[Styles.marginTop16]}>Length</Subheading>
+            <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+              <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+                <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
+              </View>
+              <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+              <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+                <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
+              </View>
+              <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
             </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+            <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
+            <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+              <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+                <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
+              </View>
+              <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+              <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+                <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
+              </View>
+              <Text style={[Styles.flex1, Styles.paddingStart4]}>in</Text>
+            </View>
+            <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-        <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-          <Button
-            mode="outlined"
-            onPress={() => {
-              InsertDesignEstimationEnquiry("add", "1");
-            }}
-          >
-            Add More
-          </Button>
-          <Button
-            mode="contained"
-            onPress={() => {
-              InsertDesignEstimationEnquiry("get", "1");
-            }}
-          >
-            Get Estimation
-          </Button>
-        </Card.Content>
+        {route.params.isContractor ? (
+          <Card.Content>
+            <Button mode="contained" onPress={() => CreateQuote()}>
+              Create Quote
+            </Button>
+          </Card.Content>
+        ) : (
+          <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
+            <Button mode="outlined" onPress={() => InsertDesignEstimationEnquiry("add", "1")}>
+              Add More
+            </Button>
+            <Button mode="contained" onPress={() => InsertDesignEstimationEnquiry("get", "1")}>
+              Get Estimation
+            </Button>
+          </Card.Content>
+        )}
       </View>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={240} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
+          <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
+            <AutocompleteDropdown
+              clearOnFocus={false}
+              closeOnBlur={true}
+              direction="down"
+              suggestionsListContainerStyle={{ borderColor: theme.colors.border, borderWidth: 1 }}
+              inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorSN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
+              textInputProps={{
+                placeholder: "Client Name",
+                placeholderTextColor: errorSN ? theme.colors.error : theme.colors.textSecondary,
+              }}
+              renderItem={(item) => (
+                <View style={[Styles.paddingVertical8]}>
+                  <Text style={{ color: theme.colors.text, paddingHorizontal: 16 }}>{item ? item.title : ""}</Text>
+                  <Text style={{ color: theme.colors.textSecondary, paddingHorizontal: 16 }}>{item ? item.contact : ""}</Text>
+                </View>
+              )}
+              onClear={() => {
+                setIsButtonDisabled(true);
+                setSelectedClient("");
+              }}
+              onSelectItem={(item) => {
+                if (item) {
+                  setIsButtonDisabled(false);
+                  setSelectedClient(item ? item.clientID.toString() : "");
+                }
+              }}
+              dataSet={otherClientsAutocomplete}
+            />
+            <Button mode="contained" disabled={isButtonDisabled} style={[Styles.marginTop32]} onPress={() => InsertOtherClient()}>
+              Add to Client List
+            </Button>
+          </View>
+        </ScrollView>
+      </RBSheet>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>

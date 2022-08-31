@@ -154,11 +154,11 @@ const AddEWayBillScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} contentInsetAdjustmentBehavior="automatic" keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" nestedScrollEnabled>
         <View style={[Styles.padding16]}>
           <AutocompleteDropdown
             clearOnFocus={false}
-            closeOnSubmit={false}
+            closeOnBlur={true}
             initialValue={{ id: parseInt(stateSelectedID) }} //{stateSelectedID}//
             inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorSN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
             textInputProps={{

@@ -52,15 +52,15 @@ const AddClientScreen = ({ route, navigation }) => {
   const [serviceTypeRoles, setServiceTypeRoles] = useState([
     {
       title: "Vendor",
-      isChecked: route.params.type === "edit" && route.params.data.serviceType.includes("1") ? true : false,
+      isChecked: route.params.type === "edit" && route.params.data.serviceType && route.params.data.serviceType.toString().includes("1") ? true : false,
     },
     {
       title: "Supplier",
-      isChecked: route.params.type === "edit" && route.params.data.serviceType.includes("2") ? true : false,
+      isChecked: route.params.type === "edit" && route.params.data.serviceType && route.params.data.serviceType.toString().includes("2") ? true : false,
     },
     {
       title: "Client",
-      isChecked: route.params.type === "edit" && route.params.data.serviceType.includes("3") ? true : false,
+      isChecked: route.params.type === "edit" && route.params.data.serviceType && route.params.data.serviceType.toString().includes("3") ? true : false,
     },
   ]);
   const [serviceTypeInvalid, setServiceTypeInvalid] = useState(false);

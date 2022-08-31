@@ -5,7 +5,7 @@ import { Styles } from "../../../styles/styles";
 
 const DesignGalleryTab = ({ navigation, designGalleryData }) => {
   const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data });
+    navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, isContractor: true });
   };
 
   return (

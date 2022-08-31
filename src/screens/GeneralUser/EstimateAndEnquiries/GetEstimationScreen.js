@@ -84,15 +84,25 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const InsertDesignEstimationEnquiry = () => {
-    const params = {
+    let params = {
       ID: route.params.userDesignEstimationID,
+      SubtotalAmount: parseFloat(subtotal),
+      LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost),
       TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4),
       Status: true,
     };
+    if (route.params.isContractor) {
+      params.ClientID = route.params.clientID;
+      params.ApprovalStatus = 0;
+    }
     Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          navigation.navigate("YourEstimationsScreen");
+          if (route.params.isContractor) {
+            navigation.navigate("DesignWiseScreen");
+          } else {
+            navigation.navigate("YourEstimationsScreen");
+          }
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);
@@ -211,7 +221,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     <Card.Content style={[Styles.paddingHorizontal0]}>
                       <Text style={[Styles.paddingHorizontal16]}>Material Cost</Text>
                       <Subheading style={[Styles.fontBold, Styles.paddingHorizontal16]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
-                      {!showMCD && showMCLC && (
+                      {!showMCD && showMCLC && !route.params.isContractor && (
                         <View style={[Styles.flexRow]}>
                           <Button mode="text" style={[Styles.marginStart8]} labelStyle={[Styles.fontSize12]} compact onPress={() => setShowMCD(true)}>
                             Material Details
@@ -257,7 +267,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
           )}
           {((estimationData && estimationData[0] && !estimationData[0].status) || showMCD) && (
             <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, Styles.borderTop2, { position: "absolute", bottom: 0, elevation: 50 }]}>
-              <Card.Content style={[(estimationData && estimationData[0] && !estimationData[0].status && showMCD) ? Styles.flexRowReverse : "", { justifyContent: "space-between" }]}>
+              <Card.Content style={[estimationData && estimationData[0] && !estimationData[0].status && showMCD ? Styles.flexRowReverse : "", { justifyContent: "space-between" }]}>
                 {showMCD ? (
                   <Button mode={estimationData && estimationData[0] && !estimationData[0].status ? "outlined" : "contained"} onPress={() => {}}>
                     Add to Cart
@@ -270,7 +280,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                       InsertDesignEstimationEnquiry();
                     }}
                   >
-                    Send Enquiry
+                    {route.params.isContractor ? "Send Quote to Client" : "Send Enquiry"}
                   </Button>
                 ) : null}
               </Card.Content>

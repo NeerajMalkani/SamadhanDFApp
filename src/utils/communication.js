@@ -72,6 +72,8 @@ export const communication = {
   InvalidPANNo: "Enter a valid PAN No.",
   InvalidServiceTypeRole: "Select at least one Service Type Role",
 
+  InvalidClient: "Select a client to proceed",
+
   EstimationSent: "Your estimation request has been sent successfully",
 
   NoImageSelectedError: "Please pick an image to continue",

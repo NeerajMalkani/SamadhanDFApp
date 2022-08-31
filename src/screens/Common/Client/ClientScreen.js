@@ -109,7 +109,7 @@ const ClientScreen = ({ navigation }) => {
         pincode: data.item.pincode.toString(),
         gstNumber: data.item.gstNumber,
         pan: data.item.pan,
-        serviceType: data.item.serviceType.toString(),
+        serviceType: data.item.serviceType,
         display: data.item.display,
       },
     });

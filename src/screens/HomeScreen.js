@@ -227,7 +227,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={[Styles.flexRow, Styles.padding4, Styles.flexWrap]}>
             {imageGalleryData.map((k, i) => {
               return (
-                <View key={i} style={[Styles.flex1, Styles.height100per, Styles.padding8, Styles.paddingTop0]}>
+                <View key={i} style={[Styles.width50per, Styles.padding8, Styles.paddingTop0]}>
                   <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
                 </View>
               );

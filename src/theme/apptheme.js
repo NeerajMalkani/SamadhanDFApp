@@ -21,8 +21,8 @@ export const theme = {
     backgroundSecondary: "#f1f1f1",
   },
   multicolors: {
-    red: "#ff5959",
-    green: "#4cd97b",
+    red: "#C41E3A",
+    green: "#1FA100",
     yellow: "#db8b2f",
     blue: "#4cb5ff",
   },

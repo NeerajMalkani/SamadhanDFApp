@@ -6,8 +6,8 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
-import CreateSCCards from "../../../components/SCCards";
 import DesignGalleryTab from "./DesignGalleryTab";
+import DesignPendingTab from "./DesignPendingTab";
 
 const windowWidth = Dimensions.get("window").width;
 const DesignWiseScreen = ({ navigation }) => {
@@ -45,18 +45,20 @@ const DesignWiseScreen = ({ navigation }) => {
     FetchDesignGalleryData();
   }, []);
 
-  
-
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "designGallery":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-            <DesignGalleryTab navigation={navigation} designGalleryData={imageGalleryData}/>
+            <DesignGalleryTab navigation={navigation} designGalleryData={imageGalleryData} />
           </ScrollView>
         );
       case "pending":
-        return <ScrollView style={[Styles.flex1, Styles.backgroundColor]}></ScrollView>;
+        return (
+          <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
+            <DesignPendingTab navigation={navigation} />
+          </ScrollView>
+        );
       case "approved":
         return <ScrollView style={[Styles.flex1, Styles.backgroundColor]}></ScrollView>;
       case "rejected":
@@ -80,7 +82,7 @@ const DesignWiseScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
-        <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+        <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
       )}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}

@@ -126,8 +126,10 @@ export default function App() {
     const [expanded5, setExpanded5] = React.useState(false);
     const [expanded6, setExpanded6] = React.useState(false);
     const [expanded7, setExpanded7] = React.useState(false);
-    const masterExpanded = [expanded1, expanded2, expanded3, expanded4, expanded5, expanded6, expanded7];
-    const masterSetExpanded = [setExpanded1, setExpanded2, setExpanded3, setExpanded4, setExpanded5, setExpanded6, setExpanded7];
+    const [expanded8, setExpanded8] = React.useState(false);
+    const [expanded9, setExpanded9] = React.useState(false);
+    const masterExpanded = [expanded1, expanded2, expanded3, expanded4, expanded5, expanded6, expanded7, expanded8, expanded9];
+    const masterSetExpanded = [setExpanded1, setExpanded2, setExpanded3, setExpanded4, setExpanded5, setExpanded6, setExpanded7, setExpanded8, setExpanded9];
     return (
       <DrawerContentScrollView {...props}>
         <DrawerItem
@@ -167,7 +169,7 @@ export default function App() {
               <List.Accordion
                 key={i}
                 title={k.title}
-                expanded={i == 0 ? expanded1 : i == 1 ? expanded2 : i == 2 ? expanded3 : i == 3 ? expanded4 : i == 4 ? expanded5 : i == 5 ? expanded6 : expanded7}
+                expanded={i == 0 ? expanded1 : i == 1 ? expanded2 : i == 2 ? expanded3 : i == 3 ? expanded4 : i == 4 ? expanded5 : i == 5 ? expanded6 : i == 6 ? expanded7 : i == 7 ? expanded8 : expanded9}
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[Styles.backgroundColor, Styles.borderBottom1, Styles.height56, { paddingTop: -8 }]}
                 onPress={() => {
@@ -282,8 +284,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener('focus', () => {
-      });
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
     return (
@@ -291,7 +292,7 @@ export default function App() {
         <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: true, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
         <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
         <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-        <Tab.Screen name="UserProfile" component={ parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
+        <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
       </Tab.Navigator>
     );
   };

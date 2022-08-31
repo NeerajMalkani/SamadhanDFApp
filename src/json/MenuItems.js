@@ -474,8 +474,8 @@ export const MenuItemsContractor = [
     ],
   },
   {
-    title: "Quotation & Estimation",
-    icon: "newspaper-variant",
+    title: "Enquiries",
+    icon: "information",
     type: "accordian",
     index: 7,
     roleID: 3,
@@ -485,7 +485,13 @@ export const MenuItemsContractor = [
         type: "accordian",
         index: 70,
         //navigation: "CreatePurchaseOrderScreen",
-      }
+      },
+      {
+        title: "Architect & Consultant-Boq",
+        type: "accordian",
+        index: 71,
+        //navigation: "CreatePurchaseOrderScreen",
+      },
     ],
   },
   {

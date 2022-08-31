@@ -219,7 +219,7 @@ const YourEstimationsScreen = ({ navigation }) => {
           />
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems icon="format-list-bulleted" text="No records found." />
       )}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
