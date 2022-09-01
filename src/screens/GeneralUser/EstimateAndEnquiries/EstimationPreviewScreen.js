@@ -208,11 +208,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
             } else {
               navigation.navigate("GetEstimationScreen", {
                 userDesignEstimationID: response.data.data[0].userDesignEstimationID,
+                designImage: route.params.data.designImage,
                 isContractor: route.params.isContractor,
                 fetchData: route.params.fetchData,
-                clientID: clientsFullData.find((el) => {
+                clientID: route.params.isContractor ? clientsFullData.find((el) => {
                   return el.companyName === clientName;
-                }).id,
+                }).id : 0,
               });
             }
           } else {

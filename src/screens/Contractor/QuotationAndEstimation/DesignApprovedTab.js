@@ -29,6 +29,7 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
   const [categoryName, setCategoryName] = React.useState("");
   const [productName, setProductName] = React.useState("");
   const [designTypeName, setDesignTypeName] = React.useState("");
+  const [designTypeImage, setDesignTypeImage] = React.useState("");
   const [designCode, setDesignCode] = React.useState("");
   const [totalSqFt, setTotalSqFt] = React.useState("");
   const [materialCost, setMaterialCost] = React.useState("");
@@ -154,6 +155,7 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
     setCategoryName(data.categoryName);
     setProductName(data.productName);
     setDesignTypeName(data.designTypeName);
+    setDesignTypeImage(data.designTypeImage);
     setDesignCode("DS-" + pad(data.designTypeID.toString(), 4, "0"));
     setTotalSqFt(CalculateSqFt(data));
     setMaterialCost(data.subtotalAmount.toFixed(4));
@@ -284,6 +286,7 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
                     userDesignEstimationID: id,
                     clientID: clientID,
                     isContractor: true,
+                    designImage: designTypeImage,
                     fetchData: fetchData,
                     isUpdate: true,
                   });

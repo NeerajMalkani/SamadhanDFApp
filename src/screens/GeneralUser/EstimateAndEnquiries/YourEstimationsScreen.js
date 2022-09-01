@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
-import { RefreshControl, ScrollView, TouchableNativeFeedback, View } from "react-native";
+import { Image, RefreshControl, ScrollView, TouchableNativeFeedback, View } from "react-native";
 import { ActivityIndicator, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -45,6 +45,7 @@ const YourEstimationsScreen = ({ navigation }) => {
     };
     Provider.getAll(`generaluserenquiryestimations/getuserallestimation?${new URLSearchParams(params)}`)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -130,7 +131,7 @@ const YourEstimationsScreen = ({ navigation }) => {
             setTotalSqFt(CalculateSqFt(data.item));
             setStatus(data.item.status);
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="calculator" />}
+          left={() => <Image source={{ uri: data.item.designTypeImage }} style={[Styles.width56, Styles.height56]} />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
@@ -144,7 +145,7 @@ const YourEstimationsScreen = ({ navigation }) => {
 
   const ViewDetailsCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id });
+    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id, designImage: data.item.designTypeImage});
   };
 
   const CreateActionButtons = (icon, color, callback) => {

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 import { ActivityIndicator, Button, Card, Snackbar, Subheading, Text, Title } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -27,7 +27,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
   const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
-
+  console.log(route.params.designImage);
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -251,115 +251,116 @@ const GetEstimationScreen = ({ route, navigation }) => {
         </View>
       ) : (
         <View style={[Styles.flex1, Styles.backgroundColor]}>
-          {estimationData && (
-            <View style={[Styles.paddingHorizontal8]}>
-              <View style={[Styles.flexRow]}>
-                <View style={[Styles.flex1, Styles.padding8]}>
-                  <Card>
-                    <Card.Content>
-                      <Text>Total Sq.Ft.</Text>
-                      <Subheading style={[Styles.fontBold]}>{CalculateSqFt(estimationData[0])}</Subheading>
-                    </Card.Content>
-                  </Card>
+          <Image source={{ uri: route.params.designImage }} style={[Styles.width100per, { height: 192 }]} />
+          <ScrollView>
+            {estimationData && (
+              <View style={[Styles.paddingHorizontal8]}>
+                <View style={[Styles.flexRow]}>
+                  <View style={[Styles.flex1, Styles.padding8]}>
+                    <Card>
+                      <Card.Content>
+                        <Text>Total Sq.Ft.</Text>
+                        <Subheading style={[Styles.fontBold]}>{CalculateSqFt(estimationData[0])}</Subheading>
+                      </Card.Content>
+                    </Card>
+                  </View>
+                  <View style={[Styles.flex1, Styles.padding8]}>
+                    <Card>
+                      <Card.Content>
+                        <Text>Total Amount</Text>
+                        <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                      </Card.Content>
+                    </Card>
+                  </View>
                 </View>
-                <View style={[Styles.flex1, Styles.padding8]}>
-                  <Card>
-                    <Card.Content>
-                      <Text>Total Amount</Text>
-                      <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
-                    </Card.Content>
-                  </Card>
+                {!showMCLC && (
+                  <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
+                    <Button mode="text" onPress={() => setShowMCLC(true)}>
+                      Details
+                    </Button>
+                  </View>
+                )}
+                <View style={[Styles.flexRow, { opacity: showMCLC ? 1 : 0, height: showMCLC ? "auto" : 0 }]}>
+                  <View style={[Styles.flexJustifyCenter]}>
+                    <Title> = </Title>
+                  </View>
+                  <View style={[Styles.flex1, Styles.padding8, { alignSelf: "stretch" }]}>
+                    <Card>
+                      <Card.Content style={[Styles.paddingHorizontal0]}>
+                        <Text style={[Styles.paddingHorizontal16]}>Material Cost</Text>
+                        <Subheading style={[Styles.fontBold, Styles.paddingHorizontal16]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                        {!showMCD && showMCLC && !route.params.isContractor && (
+                          <View style={[Styles.flexRow]}>
+                            <Button mode="text" style={[Styles.marginStart8]} labelStyle={[Styles.fontSize12]} compact onPress={() => setShowMCD(true)}>
+                              Material Details
+                            </Button>
+                          </View>
+                        )}
+                      </Card.Content>
+                    </Card>
+                  </View>
+                  <View style={[Styles.flexJustifyCenter]}>
+                    <Title>+</Title>
+                  </View>
+                  <View style={[Styles.flex1, Styles.margin8, { alignSelf: "stretch" }]}>
+                    <Card style={[Styles.flex1]}>
+                      <Card.Content>
+                        <Text>Labour Cost</Text>
+                        <Subheading style={[Styles.fontBold]}>{(parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                      </Card.Content>
+                    </Card>
+                  </View>
                 </View>
               </View>
-              {!showMCLC && (
-                <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
-                  <Button mode="text" onPress={() => setShowMCLC(true)}>
-                    Details
-                  </Button>
-                </View>
-              )}
-              <View style={[Styles.flexRow, { opacity: showMCLC ? 1 : 0, height: showMCLC ? "auto" : 0 }]}>
-                <View style={[Styles.flexJustifyCenter]}>
-                  <Title> = </Title>
-                </View>
-                <View style={[Styles.flex1, Styles.padding8, { alignSelf: "stretch" }]}>
-                  <Card>
-                    <Card.Content style={[Styles.paddingHorizontal0]}>
-                      <Text style={[Styles.paddingHorizontal16]}>Material Cost</Text>
-                      <Subheading style={[Styles.fontBold, Styles.paddingHorizontal16]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
-                      {!showMCD && showMCLC && !route.params.isContractor && (
-                        <View style={[Styles.flexRow]}>
-                          <Button mode="text" style={[Styles.marginStart8]} labelStyle={[Styles.fontSize12]} compact onPress={() => setShowMCD(true)}>
-                            Material Details
-                          </Button>
-                        </View>
-                      )}
-                    </Card.Content>
-                  </Card>
-                </View>
-                <View style={[Styles.flexJustifyCenter]}>
-                  <Title>+</Title>
-                </View>
-                <View style={[Styles.flex1, Styles.margin8, { alignSelf: "stretch" }]}>
-                  <Card style={[Styles.flex1]}>
-                    <Card.Content>
-                      <Text>Labour Cost</Text>
-                      <Subheading style={[Styles.fontBold]}>{(parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
-                    </Card.Content>
-                  </Card>
-                </View>
+            )}
+            {route.params.isUpdate && (
+              <View style={[Styles.paddingHorizontal16]}>
+                <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
               </View>
-            </View>
-          )}
-          {route.params.isUpdate && (
-            <View style={[Styles.paddingHorizontal16]}>
-              <Dropdown label="Brand Name" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
-            </View>
-          )}
-          {estimationDataForMaterialSetup && (
-            <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0, marginBottom: showMCD ? 64 : 0 }]}>
-              <Title style={[Styles.paddingHorizontal16]}>Material Details</Title>
-              <ScrollView>
+            )}
+            {(estimationData && estimationData[0] && !estimationData[0].status) || route.params.isContractor ? (
+              <View style={[Styles.padding16]}>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    InsertDesignEstimationEnquiry();
+                  }}
+                >
+                  {route.params.isContractor ? (route.params.isUpdate ? "Update and Send Quote" : "Send Quote to Client") : "Send Enquiry"}
+                </Button>
+              </View>
+            ) : null}
+            {estimationDataForMaterialSetup && (
+              <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0, marginBottom: showMCD ? 64 : 0 }]}>
+                <Title style={[Styles.paddingHorizontal16]}>Material Details</Title>
                 <CreateMaterialsTable />
-              </ScrollView>
-              <View style={[Styles.flexRow, Styles.borderTop2, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Sub Total</Subheading>
-                <Subheading style={[Styles.flex1, Styles.fontBold]}>{subtotal.toFixed(4)}</Subheading>
+                <View style={[Styles.flexRow, Styles.borderTop2, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Sub Total</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{subtotal.toFixed(4)}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Transport Charges</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{(subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Total</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold, Styles.primaryColor]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                </View>
               </View>
-              <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Transport Charges</Subheading>
-                <Subheading style={[Styles.flex1, Styles.fontBold]}>{(subtotal * (5 / 100)).toFixed(4)}</Subheading>
-              </View>
-              <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Total</Subheading>
-                <Subheading style={[Styles.flex1, Styles.fontBold, Styles.primaryColor]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
-              </View>
-            </View>
-          )}
-          {((estimationData && estimationData[0] && !estimationData[0].status) || showMCD || route.params.isContractor) && (
+            )}
+          </ScrollView>
+          {showMCD && (
             <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, Styles.borderTop2, { position: "absolute", bottom: 0, elevation: 50 }]}>
-              <Card.Content style={[estimationData && estimationData[0] && !estimationData[0].status && showMCD ? Styles.flexRowReverse : "", { justifyContent: "space-between" }]}>
-                {showMCD ? (
-                  <Button mode={estimationData && estimationData[0] && !estimationData[0].status ? "outlined" : "contained"} onPress={() => {}}>
-                    Add to Cart
-                  </Button>
-                ) : null}
-                {(estimationData && estimationData[0] && !estimationData[0].status) || route.params.isContractor ? (
-                  <Button
-                    mode="contained"
-                    onPress={() => {
-                      InsertDesignEstimationEnquiry();
-                    }}
-                  >
-                    {route.params.isContractor ? (route.params.isUpdate ? "Update and Send Quote" : "Send Quote to Client") : "Send Enquiry"}
-                  </Button>
-                ) : null}
+              <Card.Content style={[Styles.flexRow, Styles.flexAlignCenter, { justifyContent: "flex-end" }]}>
+                <Subheading style={[Styles.paddingEnd16]}>To buy material</Subheading>
+                <Button mode="contained" onPress={() => {}}>
+                  Add to Cart
+                </Button>
               </Card.Content>
             </View>
           )}
         </View>
       )}
-
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>

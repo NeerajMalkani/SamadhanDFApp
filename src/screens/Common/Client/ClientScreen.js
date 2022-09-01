@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
+import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import NoItems from "../../../components/NoItems";
@@ -22,6 +23,21 @@ const ClientScreen = ({ navigation }) => {
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  const [companyName, setCompanyName] = React.useState("");
+  const [contactPerson, setContactPerson] = React.useState("");
+  const [contactMobileNumber, setContactMobileNumber] = React.useState("");
+  const [address1, setAddress1] = React.useState("");
+  const [stateName, setStateName] = React.useState("");
+  const [cityName, setCityName] = React.useState("");
+  const [pincode, setPincode] = React.useState("");
+  const [gstNumber, setGstNumber] = React.useState("");
+  const [pan, setPan] = React.useState("");
+  const [serviceType, setServiceType] = React.useState(0);
+  const [addedBy, setAddedBy] = React.useState(false);
+  const [display, setDisplay] = React.useState(false);
+
+  const refRBSheet = useRef();
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -119,7 +135,52 @@ const ClientScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.companyName} titleStyle={{ fontSize: 18 }} description={"Mob.: " + data.item.contactMobileNumber} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item
+          title={data.item.companyName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Mob.: " + data.item.contactMobileNumber}
+          onPress={() => {
+            let serviceTypeRole = "";
+            switch(data.item.serviceType){
+              case 1:
+                serviceTypeRole = "Vendor";
+               break; 
+               case 2:
+                serviceTypeRole = "Supplier";
+               break; 
+               case 3:
+                serviceTypeRole = "Client";
+               break; 
+               case 12:
+                serviceTypeRole = "Vendor, Supplier";
+               break; 
+               case 13:
+                serviceTypeRole = "Vendor, Client";
+               break; 
+               case 23:
+                serviceTypeRole = "Supplier, Client";
+               break; 
+               case 123:
+                serviceTypeRole = "Vendor, Supplier, Client";
+               break; 
+            }
+            refRBSheet.current.open();
+            setCompanyName(data.item.companyName);
+            setContactPerson(data.item.contactPerson);
+            setContactMobileNumber(data.item.contactMobileNumber);
+            setAddress1(data.item.address1);
+            setStateName(data.item.stateName);
+            setCityName(data.item.cityName);
+            setPincode(data.item.pincode);
+            setGstNumber(data.item.gstNumber);
+            setPan(data.item.pan);
+            setServiceType(serviceTypeRole);
+            setAddedBy(data.item.addedBy);
+            setDisplay(data.item.display);
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
       </View>
     );
   };
@@ -163,6 +224,24 @@ const ClientScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{companyName}</Title>
+          <ScrollView style={{marginBottom: 64}}>
+            <List.Item title="Contact Person" description={contactPerson} />
+            <List.Item title="Contact Mobile No" description={contactMobileNumber} />
+            <List.Item title="Address" description={address1} />
+            <List.Item title="State Name" description={stateName} />
+            <List.Item title="City Name" description={cityName} />
+            <List.Item title="Pincode" description={pincode} />
+            <List.Item title="GST" description={gstNumber} />
+            <List.Item title="PAN" description={pan} />
+            <List.Item title="Service Type" description={serviceType} />
+            <List.Item title="Added By" description={addedBy == 1 ? "Create" : "Add"} />
+            <List.Item title="Display" description={display ? "Yes" : "No"} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
