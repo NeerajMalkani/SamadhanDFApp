@@ -199,7 +199,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
               return el.categoryName === selectedItem;
             }).id,
     };
-    console.log(params);
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {

@@ -7,6 +7,7 @@ import NoItems from "../../../components/NoItems";
 import CreateSCCards from "../../../components/SCCards";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -17,6 +18,14 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [imageToZoomData, setImageToZoomData] = React.useState([]);
+  const [user, setUser] = React.useState(null);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      setUser(JSON.parse(userData));
+    }
+  };
 
   const FetchImageGalleryData = () => {
     let params = {
@@ -46,6 +55,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     FetchImageGalleryData();
+    GetUserID();
     navigation.setOptions({ headerTitle: route.params.headerTitle });
   }, []);
 
@@ -80,6 +90,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
                   cardImageClick={CardImageClick}
                   buttonData={{
                     text: "Go to Estimation",
+                    disabled: user && (user.RoleID == 1 || user.RoleID == 4 || user.RoleID == 5 || user.RoleID == 6) ? true : false,
                     click: () => {
                       setIsZoomShow(false);
                       navigation.navigate("EstimationPreviewScreen", { data: k, from: route.params.from, isContractor: route.params.isContractor, fetchData: route.params.fetchData });
@@ -98,18 +109,19 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
       </Snackbar>
       <Modal visible={isZoomShow} onRequestClose={() => setIsZoomShow(false)} transparent={true}>
         <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
+          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
+            Close
+          </Button>
           <Button
             mode="contained"
-            style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
+            style={{ position: "absolute", bottom: 16, zIndex: 20, right: 114 }}
+            disabled={user && (user.RoleID == 1 || user.RoleID == 4 || user.RoleID == 5 || user.RoleID == 6) ? true : false}
             onPress={() => {
               setIsZoomShow(false);
               navigation.navigate("EstimationPreviewScreen", { data: imageToZoomData, from: route.params.from, isContractor: route.params.isContractor });
             }}
           >
             Go to Estimation
-          </Button>
-          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 204, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
-            Close
           </Button>
           <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => {}} />
         </View>

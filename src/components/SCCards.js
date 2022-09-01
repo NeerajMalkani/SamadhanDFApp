@@ -12,12 +12,16 @@ const CreateSCCards = ({ image, title, id, subttitle, data, cardImageClick, card
     >
       <Card.Cover source={{ uri: image }} />
       <Card.Content>
-        <Title numberOfLines={1} style={[Styles.paddingTop12]}>{title}</Title>
+        <Title numberOfLines={1} style={[Styles.paddingTop12]}>
+          {title}
+        </Title>
         <Subheading style={[Styles.paddingBottom12]}>({subttitle})</Subheading>
       </Card.Content>
       {buttonData && (
         <Card.Actions>
-          <Button onPress={buttonData.click}>{buttonData.text}</Button>
+          <Button disabled={buttonData.disabled ? buttonData.disabled : false} onPress={buttonData.click}>
+            {buttonData.text}
+          </Button>
         </Card.Actions>
       )}
     </Card>

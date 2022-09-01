@@ -140,7 +140,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiriesformaterialsetup?${new URLSearchParams(params)}`)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const targetSqFt = totalSqFt;
@@ -211,9 +210,11 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 designImage: route.params.data.designImage,
                 isContractor: route.params.isContractor,
                 fetchData: route.params.fetchData,
-                clientID: route.params.isContractor ? clientsFullData.find((el) => {
-                  return el.companyName === clientName;
-                }).id : 0,
+                clientID: route.params.isContractor
+                  ? clientsFullData.find((el) => {
+                      return el.companyName === clientName;
+                    }).id
+                  : 0,
               });
             }
           } else {

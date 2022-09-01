@@ -69,7 +69,6 @@ const DesignWiseScreen = ({ navigation }) => {
     Provider.getAll(`contractorquotationestimation/getcontractorallestimation?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          console.log(response.data);
           if (response.data.data) {
             const pendData = response.data.data.filter((el) => {
               return el.approvalStatus === 0;

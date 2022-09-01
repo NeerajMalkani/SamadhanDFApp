@@ -45,7 +45,6 @@ const YourEstimationsScreen = ({ navigation }) => {
     };
     Provider.getAll(`generaluserenquiryestimations/getuserallestimation?${new URLSearchParams(params)}`)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -145,7 +144,7 @@ const YourEstimationsScreen = ({ navigation }) => {
 
   const ViewDetailsCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id, designImage: data.item.designTypeImage});
+    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id, designImage: data.item.designTypeImage });
   };
 
   const CreateActionButtons = (icon, color, callback) => {

@@ -27,7 +27,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
   const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
-  console.log(route.params.designImage);
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -152,35 +152,34 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
-    // setBNError(false);
-    // const selecedBrand = uniqueBrandsData[parseInt(index)];
-    // const appliedProducts = brandsFullData.filter((el) => {
-    //   return el.brandID === selecedBrand.brandID;
-    // });
-    // const newData = [...arrProductData[0]];
-    // newData.map((k) => {
-    //   const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
-    //   if (foundProduct) {
-    //     k.brandID = foundProduct.brandID;
-    //     k.brandName = foundProduct.brandName;
-    //     k.price = foundProduct.price.toFixed(4);
-    //     if (k.formula) {
-    //       const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
-    //       k.quantity = quants.toFixed(4);
-    //       if (k.price) {
-    //         k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-    //       } else {
-    //         k.amount = "0.0000";
-    //       }
-    //     } else {
-    //       k.quantity = "";
-    //       k.amount = "0.0000";
-    //     }
-    //   }
-    //});
-    // const amounts = newData.map((data) => data.amount);
-    // setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
-    // arrProductData[1](newData);
+    const selecedBrand = uniqueBrandsData[parseInt(index)];
+    const appliedProducts = brandsFullData.filter((el) => {
+      return el.brandID === selecedBrand.brandID;
+    });
+    const totalSqFt = CalculateSqFt(estimationData[0]);
+    const newData = [...estimationDataForMaterialSetup];
+    newData.map((k) => {
+      const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
+      if (foundProduct) {
+        k.brandID = foundProduct.brandID;
+        k.brandName = foundProduct.brandName;
+        k.price = foundProduct.price.toFixed(4);
+        const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+        k.quantity = quants.toFixed(4);
+        let newAmount = parseFloat(quants) * parseFloat(foundProduct.price);
+        newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+        k.amount = newAmount.toFixed(4);
+      } else {
+        const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+        k.quantity = quants.toFixed(4);
+        let newAmount = parseFloat(quants) * parseFloat(k.rate);
+        newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+        k.amount = newAmount.toFixed(4);
+      }
+    });
+    const amounts = newData.map((data) => data.amount);
+    const totAmount = amounts.reduce((a, b) => a + parseFloat(b), 0);
+    setSubtotal(parseFloat(totAmount));
   };
 
   useEffect(() => {
@@ -204,43 +203,49 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const CreateMaterialsTable = () => {
-    const targetSqFt = CalculateSqFt(estimationData[0]);
-    let subtotalCal = 0;
-    return (
-      <View style={[Styles.flexColumn]}>
-        {estimationDataForMaterialSetup.map((k, i) => {
-          const destinationSqFt = CalculateSqFt(k);
-          const newRate = (parseFloat(targetSqFt) * parseFloat(k.rate)) / parseFloat(destinationSqFt);
-          const newQuant = (parseFloat(targetSqFt) * parseFloat(k.quantity)) / parseFloat(destinationSqFt);
-          let newAmount = (parseFloat(targetSqFt) * parseFloat(k.amount)) / parseFloat(destinationSqFt);
-          newAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
-          subtotalCal += newAmount;
-          if (parseInt(i) === estimationDataForMaterialSetup.length - 1) {
-            setSubtotal(subtotalCal);
-          }
-          return (
-            <View key={i} style={[Styles.marginTop8, Styles.border1]}>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
-                <Subheading style={[Styles.fontBold]}>{k.productName + " > "}</Subheading>
-                <Subheading style={[Styles.fontBold, { color: theme.colors.primary }]}>{k.brandName}</Subheading>
+    if (subtotal === 0 || !route.params.isContractor) {
+      const targetSqFt = CalculateSqFt(estimationData[0]);
+      let subtotalCal = 0;
+      return (
+        <View style={[Styles.flexColumn]}>
+          {estimationDataForMaterialSetup.map((k, i) => {
+            const newQuant = parseFloat(parseFloat(targetSqFt) / parseFloat(k.formula));
+            let newAmount = parseFloat(newQuant) * parseFloat(k.rate);
+            let discountedNewAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+            subtotalCal += discountedNewAmount;
+            if (parseInt(i) === estimationDataForMaterialSetup.length - 1) {
+              setSubtotal(subtotalCal);
+            }
+            return (
+              <View key={i} style={[Styles.marginTop8, Styles.border1]}>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.fontBold]}>{k.productName + " > "}</Subheading>
+                  <Subheading style={[Styles.fontBold, { color: theme.colors.primary }]}>{k.brandName}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Quantity</Subheading>
+                  <Subheading style={[Styles.flex1]}>{newQuant.toFixed(2)}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Rate</Subheading>
+                  <Subheading style={[Styles.flex1]}>{k.rate.toFixed(4)}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Amount</Subheading>
+                  <Subheading style={[Styles.flex1]}>{newAmount.toFixed(4)}</Subheading>
+                </View>
+                <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+                  <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>{"Amount (-" + k.generalDiscount.toFixed(0) + "%)"}</Subheading>
+                  <Subheading style={[Styles.flex1]}>{discountedNewAmount.toFixed(4)}</Subheading>
+                </View>
               </View>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Quantity</Subheading>
-                <Subheading style={[Styles.flex1]}>{newQuant.toFixed(4)}</Subheading>
-              </View>
-              <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Rate</Subheading>
-                <Subheading style={[Styles.flex1]}>{newRate.toFixed(4)}</Subheading>
-              </View>
-              <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
-                <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Amount</Subheading>
-                <Subheading style={[Styles.flex1]}>{newAmount.toFixed(4)}</Subheading>
-              </View>
-            </View>
-          );
-        })}
-      </View>
-    );
+            );
+          })}
+        </View>
+      );
+    } else {
+      return null;
+    }
   };
 
   return (
