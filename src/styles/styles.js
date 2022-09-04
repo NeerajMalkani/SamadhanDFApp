@@ -35,6 +35,9 @@ export const Styles = StyleSheet.create({
   backgroundSecondaryColor: {
     backgroundColor: theme.colors.backgroundSecondary,
   },
+  backgroundColorred : {
+    backgroundColor:"red"
+  },
 
   redColor: {
     color: theme.colors.red,
@@ -77,6 +80,7 @@ export const Styles = StyleSheet.create({
   /* #endregion */
 
   /* #region Borders */
+  
   border0: {
     borderWidth: 0,
   },
@@ -92,6 +96,15 @@ export const Styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: theme.colors.border,
   },
+  borderred:{
+    borderWidth:3,
+    borderColor:"red"
+  },
+  borderyellow:{
+    borderWidth:3,
+    borderColor:"yellow"
+  },
+
 
   borderBottom0: {
     borderBottomWidth: 0,
@@ -108,6 +121,11 @@ export const Styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderBottomColor: theme.colors.border,
   },
+  borderBottom5:{
+    borderBottomWidth:1,
+    bodorBottemColor:"1px solid black"
+  },
+
 
   borderTop0: {
     borderTopWidth: 0,
@@ -123,6 +141,10 @@ export const Styles = StyleSheet.create({
   borderTop4: {
     borderTopWidth: 4,
     borderTopColor: theme.colors.border,
+  },
+  borderTop5:{
+    borderBottomWidth:1,
+    bodorBottemColor:"1px solid black"
   },
 
   borderLeft0: {
@@ -760,6 +782,9 @@ export const Styles = StyleSheet.create({
   width104: {
     width: 104,
   },
+  width35per: {
+    width: "35%"
+  },
   width50per: {
     width: "50%",
   },
@@ -796,6 +821,9 @@ export const Styles = StyleSheet.create({
   },
   height104: {
     height: 104,
+  },
+  height85per: {
+    height: "85%"
   },
   height50per: {
     height: "50%",

@@ -1,8 +1,8 @@
 //import { View } from "react-native";
-//import { Styles } from "../styles/styles";
+// import {Stylesone} from "../styles/stylesone";
 
 import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl ,Text} from "react-native";
 
 import { FAB, List, Searchbar, Snackbar, RadioButton } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -31,26 +31,29 @@ const PocketDiaryScreen = ({ navigation }) => {
     useEffect(() => {
         //FetchData();
       }, []);
-
-    //return <View style={[Styles.flex1]}></View>;
-
     return (
         <View style={[Styles.flex1]}>
           <Header navigation={navigation} title="Pocket Diary" />
-          
-          <RadioButton.Group
-          style={[Styles.width100per]}
-                  onValueChange={(value) => {
-                    setValue(value);
-                    //setErrorCAT(false);
-                  }}
-                  value={value}
-                >
-                  <RadioButton.Item position="leading" style={[Styles.paddingHorizontal2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Company" value="1" />
-                  <RadioButton.Item position="leading" style={[Styles.paddingHorizontal2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Self" value="2" />
-                  <RadioButton.Item position="leading" style={[Styles.paddingHorizontal2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Both" value="3" />
-                </RadioButton.Group>
-
+            <View style={[Styles.borderred,Styles.height50per,Styles.padding32]}>
+              <View style={[Styles.borderyellow,Styles.height100per,Styles.flexJustifyCenter,Styles.flexAlignCenter,Styles.flexRow,Styles.flexWrap]}>
+                <View style={[Styles.width50per,Styles.borderBottom5,Styles.borderRight1,Styles.height50per,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
+                  <Text style={[Styles.fontSize24,Styles.fontBold,Styles.primaryColor]}>200</Text>
+                  <Text style={[Styles.fontSize16,Styles.fontBold]}>Add Expense</Text>
+                </View>
+                <View style={[Styles.width50per,Styles.borderBottom5,Styles.height50per,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
+                  <Text style={[Styles.fontSize24,Styles.fontBold,Styles.primaryColor]}>1000</Text>
+                  <Text style={[Styles.fontSize16,Styles.fontBold]}>Add Source</Text>
+                </View>
+                <View style={[Styles.width50per,Styles.borderTop1,Styles.borderRight1,Styles.height50per,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
+                  <Text style={[Styles.fontSize24,Styles.fontBold,Styles.primaryColor]}>5000</Text>
+                  <Text style={[Styles.fontSize16,Styles.fontBold]}>Payable</Text>
+                </View>
+                <View style={[Styles.width50per,Styles.borderTop1,Styles.height50per,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
+                  <Text style={[Styles.fontSize24,Styles.fontBold,Styles.primaryColor]}>1500</Text>
+                  <Text style={[Styles.fontSize16,Styles.fontBold]}>Receviable</Text>
+                </View>
+              </View>
+            </View>
           <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
             {snackbarText}
           </Snackbar>
