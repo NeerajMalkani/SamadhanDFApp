@@ -80,6 +80,9 @@ import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/De
 import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 import ClientScreen from "./src/screens/Common/Client/ClientScreen";
 import AddClientScreen from "./src/screens/Common/Client/AddClientScreen";
+import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
+import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
+import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -239,6 +242,10 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignTypeScreen" component={DesignTypeScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MaterialSetupScreen" component={MaterialSetupScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PostNewDesignScreen" component={PostNewDesignScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApprovedUserScreen" component={ApprovedUserScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DeclinedUserScreen" component={DeclinedUserScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PendingUserScreen" component={PendingUserScreen} />
+              
             </Drawer.Navigator>
           );
         case 2:
@@ -340,6 +347,7 @@ export default function App() {
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              
             </Stack.Navigator>
           </NavigationContainer>
         )}

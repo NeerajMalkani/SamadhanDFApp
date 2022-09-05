@@ -7,3 +7,13 @@ export const ValidateFullName = (fullName) => {
     const re = /^[a-zA-Z ]+$/;
     return re.test(fullName);
 };
+
+
+export const NullOrEmpty = (param) => {
+  if (param === undefined || param === null || param === "") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
