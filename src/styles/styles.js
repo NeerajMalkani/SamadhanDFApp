@@ -51,6 +51,9 @@ export const Styles = StyleSheet.create({
   blueColor: {
     color: theme.colors.blue,
   },
+  whiteColor: {
+    color : "white"
+  },
 
   primaryBgColor: {
     backgroundColor: theme.colors.primary,
@@ -76,6 +79,15 @@ export const Styles = StyleSheet.create({
   },
   blueBgColor: {
     backgroundColor: theme.multicolors.blue,
+  },
+  backgroundColorYelow:{
+    backgroundColor:"#FECA0A"
+  },
+  backgroundColorWhite:{
+    backgroundColor:"#FAFAFA"
+  },
+  backgroundColorDarkGreen:{
+    backgroundColor:"#286144"
   },
   /* #endregion */
 
@@ -785,8 +797,14 @@ export const Styles = StyleSheet.create({
   width35per: {
     width: "35%"
   },
+  width40per:{
+    width:"40%"
+  },
   width50per: {
     width: "50%",
+  },
+  width80per:{
+    width:"80%"
   },
   width100per: {
     width: "100%",
@@ -822,11 +840,20 @@ export const Styles = StyleSheet.create({
   height104: {
     height: 104,
   },
+  height40per:{
+    height: "40%"
+  },
   height85per: {
     height: "85%"
   },
+  height71per: {
+    height: "71%"
+  },
   height50per: {
     height: "50%",
+  },
+  height60per: {
+    height: "60%",
   },
   height100per: {
     height: "100%",
@@ -844,4 +871,24 @@ export const Styles = StyleSheet.create({
     textAlign: "right",
   },
   /* #endregion */
-});
+
+  /*#start position */
+  positionRelative: {
+    position :"relative"
+  },
+  positionAbsolute: {
+    position:"absolute"
+  },
+/*#end position*/
+
+/*#start Top */
+  Top70:{
+    top: 70
+  },
+  Bottom10:{
+    bottom: 10
+  }
+/*#end postion */
+}
+
+);

@@ -364,7 +364,7 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
                   }}
                   value={value}
                 >
-                  <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Whatsapp" value="1" />
+                  <RadioButton.Item position="leading" color="white" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Whatsapp" value="1" />
                   <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Email" value="2" />
                   <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="SMS" value="3" />
                   <RadioButton.Item position="leading" style={[Styles.paddingVertical2]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} label="Other" value="4" />
