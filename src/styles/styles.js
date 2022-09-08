@@ -296,6 +296,9 @@ export const Styles = StyleSheet.create({
   padding8: {
     padding: 8,
   },
+  padding10: {
+    padding: 10,
+  },
   padding12: {
     padding: 12,
   },
@@ -890,6 +893,21 @@ export const Styles = StyleSheet.create({
   },
   Bottom10:{
     bottom: 10
+  },
+  Bottom0:{
+    bottom: 0
+  },
+  Right0:{
+    right:0
+  },
+  Right75:{
+    right:75
+  },
+  OverFlow:{
+    overflow:'hidden'
+  },
+  SpaceEvenly:{
+    justifyContent:"space-evenly"
   }
 /*#end postion */
 }

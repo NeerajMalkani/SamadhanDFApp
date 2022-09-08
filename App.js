@@ -84,7 +84,8 @@ import AddClientScreen from "./src/screens/Common/Client/AddClientScreen";
 import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
 import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
 import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
-
+import EmployeeList from "./src/screens/Contractor/Employee/EmployeeList";
+import SearchNAdd from "./src/screens/Contractor/Employee/AddItems/SearchNAdd";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -349,6 +350,8 @@ export default function App() {
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{headerShown:false}} />
+              <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EmployeeList" component={EmployeeList} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

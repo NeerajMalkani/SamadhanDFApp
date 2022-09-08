@@ -277,8 +277,9 @@ export const MenuItemsDealer = [
         title: "Employee New / List",
         type: "accordian",
         index: 30,
-        //navigation: "AddEmployeeScreen",
+        navigation: "EmployeeList",
       },
+      
       {
         title: "Employee Report",
         type: "accordian",
@@ -379,7 +380,7 @@ export const MenuItemsContractor = [
         title: "Employee New / List",
         type: "accordian",
         index: 20,
-        //navigation: "AddEmployeeScreen",
+        navigation: "EmployeeList",
       },
       {
         title: "Employee Report",
