@@ -855,6 +855,9 @@ export const Styles = StyleSheet.create({
   height60per: {
     height: "60%",
   },
+  height90per:{
+    height:"90%"
+  },
   height100per: {
     height: "100%",
   },

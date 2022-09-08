@@ -26,6 +26,7 @@ import SignupScreen from "./src/screens/SignupScreen";
 import ForgotPassword from "./src/screens/ForgotPassword";
 import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
+import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
 import FeedbackScreen from "./src/screens/FeedbackScreen";
 import UserProfileScreen from "./src/screens/UserProfile";
 import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
@@ -347,7 +348,7 @@ export default function App() {
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              
+              <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{headerShown:false}} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

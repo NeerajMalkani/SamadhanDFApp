@@ -19,7 +19,6 @@ import { height } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const PocketDiaryScreen = ({ navigation }) => {
-
     const [isLoading, setIsLoading] = React.useState(true);
     const listData = React.useState([]);
     const listSearchData = React.useState([]);
@@ -91,7 +90,7 @@ const PocketDiaryScreen = ({ navigation }) => {
             </RadioButton.Group>
             </View>
             <View style={[Styles.width100per,Styles.height56,Styles.positionAbsolute,Styles.Bottom10,Styles.backgroundColorDarkGreen,Styles.flexRow,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
-            <TouchableOpacity style={[Styles.backgroundColorYelow,Styles.width50per,Styles.height40,Styles.borderRadius64,Styles.flexJustifyCenter,Styles.flexAlignCenter]}>
+            <TouchableOpacity style={[Styles.backgroundColorYelow,Styles.width50per,Styles.height40,Styles.borderRadius64,Styles.flexJustifyCenter,Styles.flexAlignCenter]} onPress={()=>navigation.navigate("PocketScreenOne")}>
               <Text style={[Styles.fontBold,Styles.fontSize18]}>ADD CATEGORY</Text>
             </TouchableOpacity>
             </View>
