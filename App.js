@@ -84,8 +84,10 @@ import AddClientScreen from "./src/screens/Common/Client/AddClientScreen";
 import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
 import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
 import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
-import EmployeeList from "./src/screens/Contractor/Employee/EmployeeList";
 import SearchNAdd from "./src/screens/Contractor/Employee/AddItems/SearchNAdd";
+import EmployeeListScreen from "./src/screens/Contractor/Employee/EmployeeList";
+import EmployeeEditScreen from "./src/screens/Contractor/Employee/AddItems/EmployeeEdit";
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -269,6 +271,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignWiseScreen" component={DesignWiseScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="QuotationWiseScreen" component={QuotationWiseScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeEditScreen" component={EmployeeEditScreen} />
             </Drawer.Navigator>
           );
         case 4:

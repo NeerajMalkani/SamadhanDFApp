@@ -728,6 +728,9 @@ export const Styles = StyleSheet.create({
   flexAlignSelfEnd: {
     alignSelf: "flex-end",
   },
+  flexSpaceBetween:{
+    justifyContent:"space-between",
+  },
   /* #endregion */
 
   /* #region Fonts */

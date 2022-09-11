@@ -91,4 +91,13 @@ export const communication = {
   DeleteError: "Unable to delete item. Please try again",
   NetworkError: "Please check your internet connection",
   NoData: "No data found",
+  UpdateSuccess: "Item updated successfully",
+
+
+  InvalidEmployeeName: "Enter a valid Eemployee Name",
+  InvalidEmployeeCode: "Enter a valid Eemployee Code",
+  InvalidAadharNo: "Enter a valid Aadhar Number",
+  InvalidFatherName: "Enter a valid Father Name",
+  
+
 };

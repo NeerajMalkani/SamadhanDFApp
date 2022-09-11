@@ -380,7 +380,7 @@ export const MenuItemsContractor = [
         title: "Employee New / List",
         type: "accordian",
         index: 20,
-        navigation: "EmployeeList",
+        navigation: "EmployeeListScreen",
       },
       {
         title: "Employee Report",

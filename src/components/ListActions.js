@@ -37,3 +37,13 @@ export const RenderHiddenItems = (data, rowMap, callbacks) => {
     </View>
   );
 };
+
+export const RenderHiddenMultipleItems = (data, rowMap, callbacks) => {
+  return (
+    <View style={[Styles.height80, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
+      {CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap, "edit"))}
+      {CreateActionButtons("send", theme.multicolors.green, () => callbacks[0](data, rowMap, "otp"))}
+    </View>
+    
+  );
+};

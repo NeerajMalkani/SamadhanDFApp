@@ -17,3 +17,37 @@ export const NullOrEmpty = (param) => {
   }
 };
 
+export const BloodGroup = [
+  {
+    ID:1,
+    Name:"A+"
+  },
+  {
+    ID:2,
+    Name:"O+"
+  },
+  {
+    ID:3,
+    Name:"B+"
+  },
+  {
+    ID:4,
+    Name:"AB+"
+  },
+  {
+    ID:5,
+    Name:"A-"
+  },
+  {
+    ID:6,
+    Name:"O-"
+  },
+  {
+    ID:7,
+    Name:"B-"
+  },
+  {
+    ID:8,
+    Name:"AB-"
+  },
+]
