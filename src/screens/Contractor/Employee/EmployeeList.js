@@ -33,7 +33,6 @@ const EmployeeListScreen = ({ navigation }) => {
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
-
   const [employeeName, setEmployeeName] = React.useState("");
   
   const [mobileNo, setMobileNo] = React.useState("");
@@ -41,11 +40,9 @@ const EmployeeListScreen = ({ navigation }) => {
   const [department, setDepartment] = React.useState("");
   const [designation, setDesignation] = React.useState("");
 
-
   const [profileStatus, setProfileStatus] = React.useState("");
   const [loginStatus, setLoginStatus] = React.useState("");
   const [verifyStatus, setVerifyStatus] = React.useState("");
-
 
   const refRBSheet = useRef();
 

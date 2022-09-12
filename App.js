@@ -355,7 +355,6 @@ export default function App() {
               <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{headerShown:false}} />
               <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="EmployeeList" component={EmployeeList} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

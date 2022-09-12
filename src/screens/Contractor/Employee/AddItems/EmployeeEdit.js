@@ -1,16 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
-import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton,Text } from "react-native-paper";
+import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-//import { DatePickerModal } from 'react-native-paper-dates';
 import RadioGroup from "react-native-radio-buttons-group";
 import DropDown from "react-native-paper-dropdown";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
@@ -22,26 +20,31 @@ import { AWSImagePath } from "../../../../utils/paths";
 import {NullOrEmpty} from "../../../../utils/validations";
 import {BloodGroup} from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
+import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
+import { color } from "react-native-reanimated";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 
 const EmployeeEditScreen = ({ route, navigation }) => {
 
-  const [radioButtons, setRadioButtons] = useState([
+  const [ETRadioButtons, setETRadioButtons] = useState([
     {
         id: '1', // acts as primary key, should be unique and non-empty string
         label: 'Permanent',
+        selected: true,
         value: '1'
     },
     {
         id: '2',
         label: 'Temporary',
+        selected:false,
         value: '2'
     },
     {
       id: '3',
       label: 'Releave',
+      selected:false,
       value: '3'
   }
 ]);
@@ -50,123 +53,65 @@ const [wagesRadioButtons, setWagesRadioButtons] = useState([
   {
       id: '1', // acts as primary key, should be unique and non-empty string
       label: 'Daily',
-      value: '1'
+      value: '0'
   },
   {
       id: '2',
       label: 'Monthly',
-      value: '2'
+      value: '1'
   }
 ]);
 
-function onPressRadioButton(radioButtonsArray) {
-    setRadioButtons(radioButtonsArray);
+function onPressETRadioButton(radioButtonsArray) {
+  setETRadioButtons(radioButtonsArray);
 }
 
 function onPressWagesRadioButton(radioButtonsArray) {
   setWagesRadioButtons(radioButtonsArray);
 }
 
+function onABC() {
+  console.log('abc');
+}
+
   const [showDropDown, setShowDropDown] = useState(false);
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
   const [colors, setColors] = React.useState("");
+
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
-
-  const [checkedLoginStatus, setCheckedLoginStatus] = React.useState(false);
 
   const [empType, setEmpType] = React.useState();
 
   const [wType, setWType] = React.useState();
 
-  const [reporting, setReporting] = useState({
-    value: '',
-    list: [],
-    selectedList: [],
-    error: '',
-  });
-
-  const [isDOBVisible, setDOBVisibility] = useState(false);
-  const [isDOJVisible, setDOJVisibility] = useState(false);
-  const [isCVVisible, setCVVisibility] = useState(false);
-  const [isLWDVisible, setLWDVisibility] = useState(false);
-
   const colorList = [
     {
       label: "White",
       value: "white",
+      selected:true,
     },
     {
       label: "Red",
       value: "red",
+      selected:true,
     },
     {
       label: "Blue",
       value: "blue",
+      selected:false,
     },
     {
       label: "Green",
       value: "green",
+      selected:false,
     },
     {
       label: "Orange",
       value: "orange",
+      selected:false,
     },
   ];
-
-  const showDOBDatePicker = () => {
-    setDOBVisibility(true);
-  };
-
-  const hideDOBDatePicker = () => {
-    setDOBVisibility(false);
-  };
-
-  const handleDOBConfirm = (date) => {
-    setDob(moment(date).format("DD/MM/YYYY"));
-    hideDOBDatePicker();
-  };
-
-
-  const showDOJDatePicker = () => {
-    setDOJVisibility(true);
-  };
-
-  const hideDOJDatePicker = () => {
-    setDOJVisibility(false);
-  };
-
-  const handleDOJConfirm = (date) => {
-    setDoj(moment(date).format("DD/MM/YYYY"));
-    hideDOJDatePicker();
-  };
-
-
-  const showCVDatePicker = () => {
-    setCVVisibility(true);
-  };
-
-  const hideCVDatePicker = () => {
-    setCVVisibility(false);
-  };
-
-  const handleCVConfirm = (date) => {
-    setCardValidity(moment(date).format("DD/MM/YYYY"));
-    hideCVDatePicker();
-  };
-
-  const showLWDDatePicker = () => {
-    setLWDVisibility(true);
-  };
-
-  const hideLWDDatePicker = () => {
-    setLWDVisibility(false);
-  };
-
-  const handleLWDConfirm = (date) => {
-    setLwd(moment(date).format("DD/MM/YYYY"));
-    hideLWDDatePicker();
-  };
 
 
   //#region Input Variables
@@ -220,12 +165,12 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [errorBloodGroup, setBloodGroupError] = React.useState(false);
   const bloodGroupRef = useRef({});
 
-  const [dob, setDob] = useState("");
+  const [dob, setDob] = useState(new Date());
   const [dobInvalid, setDobInvalid] = useState("");
   const dobRef = useRef({});
 
-  const [doj, setDoj] = useState("");
-  const [dojInvalid, setDojInvalid] = useState("");
+  const [doj, setDoj] = useState(new Date());
+  const [dojInvalid, setDojInvalid] = useState(new Date());
   const dojRef = useRef({});
 
   const [emergencyContactName, setEmergencyContactName] = useState("");
@@ -236,7 +181,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [emergencyContactNoInvalid, setEmergencyContactNoInvalid] = useState("");
   const emergencyContactNoRef = useRef({});
 
-  const [cardValidity, setCardValidity] = useState("");
+  const [cardValidity, setCardValidity] = useState(new Date());
   const [cardValidityInvalid, setCardValidityInvalid] = useState("");
   const cardValidityRef = useRef({});
 
@@ -277,7 +222,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [employeeTypeInvalid, setEmployeeTypeInvalid] = useState("");
   const employeeTypeRef = useRef({});
 
-  const [lwd, setLwd] = useState("");
+  const [lwd, setLwd] = useState(new Date());
   const [lwdInvalid, setLwdInvalid] = useState("");
   const lwdRef = useRef({});
 
@@ -293,7 +238,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [accountHolderName, setAccountHolderName] = useState("");
   const [accountHolderNameInvalid, setAccountHolderNameInvalid] = useState("");
   const accountHolderNameRef = useRef({});
-
 
   const [accountNo, setAccountNo] = useState("");
   const [accountNoInvalid, setAccountNoInvalid] = useState("");
@@ -323,6 +267,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+
 //#endregion
   
   const GetUserID = async () => {
@@ -330,7 +275,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       FetchBasicDetails();
-      setBloodGroupFullData(BloodGroup);
+      //setBloodGroupFullData(BloodGroup);
     }
   };
 
@@ -341,23 +286,28 @@ function onPressWagesRadioButton(radioButtonsArray) {
     };
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            let employee_data = response.data.data[0].employee[0];
+            let reporting_data = response.data.data[0].employeeReportingAuthority[0];
+            let bankDetails_data = response.data.data[0].bankDetails[0];
+            
 
-            let employee_data = _data.employee;
-            let reporting_data = response.data.data[1].employee;
-            let bankDetails_data = response.data.data[2].employee;
+          if (!NullOrEmpty(employee_data)) {
 
-            setEmployeeName(employee_data.companyName ? employee_data.companyName : "");
-            setEemployeeCode(employee_data.companyName ? employee_data.companyName : "");
-            setMobileNo(employee_data.companyName ? employee_data.companyName : "");
-            setAadharNo(employee_data.companyName ? employee_data.companyName : "");
-            setFatherName(employee_data.companyName ? employee_data.companyName : "");
-            setAddress(employee_data.companyName ? employee_data.companyName : "");
+            setEmployeeName(employee_data.employeeName ? employee_data.employeeName : "");
+            setEemployeeCode(employee_data.employeeCode ? employee_data.employeeCode : "");
+            setMobileNo(employee_data.mobileNo ? employee_data.mobileNo : "");
+            setAadharNo(employee_data.aadharNo ? employee_data.aadharNo : "");
+            setFatherName(employee_data.fatherName ? employee_data.fatherName : "");
+            setAddress(employee_data.address ? employee_data.address : "");
 
             if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
             }
+            console.log("fetch city id: "+ employee_data.cityID);
+
             if (!NullOrEmpty(employee_data.cityID)) {
               setCityID(employee_data.cityID);
             }
@@ -366,15 +316,28 @@ function onPressWagesRadioButton(radioButtonsArray) {
             }
 
             setPincode(employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
+            if(!NullOrEmpty(employee_data.dob)) {
+              setDob(new Date(employee_data.dob));
+            }
 
-            setDob(employee_data.dob ? employee_data.dob : "");
-            setDoj(employee_data.doj ? employee_data.doj : "");
-            setCardValidity(employee_data.doj ? employee_data.doj : "");
-            setLwd(employee_data.lastWorkDate ? employee_data.lastWorkDate : "");
+            if(!NullOrEmpty(employee_data.doj)) {
+              setDoj(new Date(employee_data.doj));
+            }
 
-            setEmergencyContactName(employee_data.companyName ? employee_data.companyName : "");
-            setEmergencyContactNo(employee_data.companyName ? employee_data.companyName : "");
-            setLoginActiveStatus(employee_data.companyName ? employee_data.companyName : "");
+            if(!NullOrEmpty(employee_data.idCardValidity)) {
+              setCardValidity(new Date(employee_data.idCardValidity));
+            }
+
+            if(!NullOrEmpty(employee_data.lastWorkDate)) {
+              setLwd(new Date(employee_data.lastWorkDate));
+            }
+
+            setEmergencyContactName(employee_data.emergencyContactName ? employee_data.emergencyContactName : "");
+            setEmergencyContactNo(employee_data.emergencyContactNo ? employee_data.emergencyContactNo : "");
+
+            setLoginActiveStatus(employee_data.loginStatus ? employee_data.loginStatus : "");
+
+            
 
             if (!NullOrEmpty(employee_data.branchID)) {
               setBranchID(employee_data.branchID);
@@ -386,34 +349,65 @@ function onPressWagesRadioButton(radioButtonsArray) {
               setDesignationID(employee_data.designationID);
             }
 
-            setEmployeeTypeID(_data.companyName ? _data.companyName : "");
+            if(!NullOrEmpty(employee_data.employeeType)) {
 
-            setWagesTypeID(_data.wagesType ? _data.wagesType : "");
-            setSalary(_data.salary ? _data.salary : "");
+              {ETRadioButtons.map(r => {
+                r.selected= false;
+                if(r.value === employee_data.employeeType.toString()) {
+                  r.selected=true;
+                }
+              })}
 
-            //setStateName(_data.stateName === null ? "" : _data.stateName);
-            //tempStateName = _data.stateName === null ? "" : _data.stateName;
-            //setCityName(_data.cityName === null ? "" : _data.cityName);
-            setAccountHolderName(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-            setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-            setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
-            setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
-            setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
-            
+              onPressETRadioButton(ETRadioButtons);
+              setEmployeeTypeID(employee_data.employeeType ? employee_data.employeeType : "");
+              
+            }
+              if(!NullOrEmpty(employee_data.wagesType)) {
+              
+              setWagesTypeID(employee_data.wagesType == true ? "1" : "0");
+              {wagesRadioButtons.map(r => {
+                r.selected= false;
+
+                if(r.value === wagesTypeID) {
+                  r.selected=true;
+                }
+              })}
+
+              onPressWagesRadioButton(wagesRadioButtons);
+            }
+
+            setSalary(employee_data.salary ? employee_data.salary : "");
+
             setLogoImage(employee_data.profilePhoto);
             setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
             setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
+
+          }
+
+            
+            //setCityName(_data.cityName === null ? "" : _data.cityName);
+
+            if (!NullOrEmpty(bankDetails_data)) {
+
+              setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
+              setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
+              setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
+              setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
+              setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
+            }
+            
+            
           }
           FetchStates();
-          FetchBranch();
-          FetchDepartments();
-          FetchDesignations();
-          FetchReportingEmployee();
+          // FetchBranch();
+          // FetchDepartments();
+          // FetchDesignations();
+          // FetchReportingEmployee();
           setIsLoading(false);
         }
       })
       .catch((e) => {
-        console.log('abc');
+        console.log(e);
         setIsLoading(false);
       });
   };
@@ -436,8 +430,13 @@ function onPressWagesRadioButton(radioButtonsArray) {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCityFullData(response.data.data);
+            
+            let ct = cityFullData.filter((el) => {
+              return el.id.toString() === cityID.toString();
+            });
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
+            setCityName(ct[0].cityName);
           }
         }
       })
@@ -450,8 +449,13 @@ function onPressWagesRadioButton(radioButtonsArray) {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setStatesFullData(response.data.data);
+            let st = statesFullData.filter((el) => {
+              return el.id.toString() === statesID.toString();
+            });
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
+            setStateName(st[0].stateName);
+            tempStateName = st[0].stateName;
             if (tempStateName !== "") {
               FetchCities(tempStateName, response.data.data);
             }
@@ -548,8 +552,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
   useEffect(() => {
     GetUserID();
-    FetchBasicDetails();
-  }, []);
+  }, []);  
 
 //#region OnChange Function
 
@@ -597,16 +600,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
     setBloodGroupError(false);
   };
 
-  const onDOBChanged = (text) => {
-    setDob(text);
-    setDobInvalid(false);
-  };
-
-  const onDOJChanged = (text) => {
-    setDoj(text);
-    setDojInvalid(false);
-  };
-
   const onEmergencyContactNameChanged = (text) => {
     setEmergencyContactName(text);
     setEmergencyContactNameInvalid(false);
@@ -615,11 +608,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const onEmergencyContactNoChanged = (text) => {
     setEmergencyContactNo(text);
     setEmergencyContactNoInvalid(false);
-  };
-
-  const onCardValidityChanged = (text) => {
-    setCardValidity(text);
-    setCardValidityInvalid(false);
   };
 
   const onLoginActiveStatusChanged = (text) => {
@@ -645,11 +633,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const onReportingChanged = (selectedItem) => {
     setReportingName(selectedItem);
     setReportingError(false);
-  };
-
-  const onLastWorkDateChanged = (selectedItem) => {
-    setLwd(selectedItem);
-    setLwdInvalid(false);
   };
 
   const onWagesTypeChanged = (selectedItem) => {
@@ -806,15 +789,16 @@ function onPressWagesRadioButton(radioButtonsArray) {
   };
 
   const ValidateData = () => {
+    console.log(colors);
     const isValid = true;
 
-    if (isValid) {
-      if (filePath !== null) {
-        uploadFile();
-      } else {
-        InsertData();
-      }
-    }
+    // if (isValid) {
+    //   if (filePath !== null) {
+    //     uploadFile();
+    //   } else {
+    //     InsertData();
+    //   }
+    // }
   };
 
   const renderScene = ({ route }) => {
@@ -839,7 +823,8 @@ function onPressWagesRadioButton(radioButtonsArray) {
                 {communication.InvalidEmployeeCode}
               </HelperText>
 
-              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
+              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} 
+              returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
               <HelperText type="error" visible={mobileNoInvalid}>
                 {communication.mobileNoInvalid}
               </HelperText>
@@ -852,48 +837,59 @@ function onPressWagesRadioButton(radioButtonsArray) {
                 {communication.InvalidFatherName}
               </HelperText>
               <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" 
-              onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} 
+              onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={[Styles.marginBottom16, {backgroundColor: "white"}]} 
               error={addressInvalid} />
               
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
-              
+              <View style={[Styles.height24]}></View>
               <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
               
-              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" 
+              onChangeText={onPincodeChanged} style={[Styles.marginTop24, Styles.marginBottom16, { backgroundColor: "white" }]} error={pincodeInvalid} />
               
               <Dropdown label="Blood Group" data={bloodGroupData} onSelected={onBloodGroupSelected} isError={errorBloodGroup} selectedItem={bloodGroup} reference={bloodGroupRef} />
 
-              <TextInput mode="flat" onFocus={showDOBDatePicker} label="Date of Birth" value={dob} style={{ backgroundColor: "white" }} returnKeyType="done" />
-                
-                <DateTimePickerModal
-                  isVisible={isDOBVisible}
-                  mode="date"
-                  onConfirm={handleDOBConfirm}
-                  onCancel={hideDOBDatePicker}
+              <View>
+                <DateTimePicker
+                    label="Date of Birth"
+                    type="date"
+                    value={dob}
+                    onChangeDate={setDob}
                 />
+            </View>
 
-              <TextInput mode="flat" onFocus={showDOJDatePicker} label="Date of Joining" value={doj} style={{ backgroundColor: "white" }} returnKeyType="done" />
-                <DateTimePickerModal
-                  isVisible={isDOJVisible}
-                  mode="date"
-                  onConfirm={handleDOJConfirm}
-                  onCancel={hideDOJDatePicker}
+            <View>
+                <DateTimePicker
+                    label="Date of Joining"
+                    type="date"
+                    value={doj}
+                    onChangeDate={setDoj}
                 />
+            </View>
 
                 <TextInput ref={emergencyContactNameRef} mode="flat" dense label="Emergency Contact Name" value={emergencyContactName} returnKeyType="next" 
-                onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={{ backgroundColor: "white" }} 
+                onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} 
                 error={emergencyContactNameInvalid} />
 
                 <TextInput ref={emergencyContactNoRef} mode="flat" dense label="Emergency Contact No" value={emergencyContactNo} returnKeyType="next" 
-                onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={{ backgroundColor: "white" }} 
+                onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} 
                 error={emergencyContactNoInvalid} />
+
+              <View>
+                <DateTimePicker
+                    label="ID Card Valid Upto"
+                    type="date"
+                    value={cardValidity}
+                    onChangeDate={setCardValidity}
+                />
+            </View>
 
                 <Checkbox.Item
                 style={Styles.marginTop8}
                     label="Login Active Status"
-                    status={checkedLoginStatus ? 'checked' : 'unchecked'}
+                    status={loginActiveStatus ? 'checked' : 'unchecked'}
                     onPress={() => {
-                        setChecked(!checkedLoginStatus);
+                        setLoginActiveStatus(!loginActiveStatus);
                     }}
                     />
             </View>
@@ -917,11 +913,15 @@ function onPressWagesRadioButton(radioButtonsArray) {
                 <Text>Employee Type</Text>
               </View>
 
-              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row"
-            radioButtons={radioButtons} 
-            onPress={onPressRadioButton} />
+            <RadioGroup containerStyle={[Styles.marginTop16]} layout="row"
+            radioButtons={ETRadioButtons} 
+            onPress={onPressETRadioButton} />
 
-<DropDown
+            <View style={[Styles.marginTop24, Styles.marginBottom8]}>
+                <Text>Reporting to</Text>
+              </View>
+
+              <DropDown
               label={"Colors"}
               mode={"outlined"}
               visible={showMultiSelectDropDown}
@@ -933,14 +933,14 @@ function onPressWagesRadioButton(radioButtonsArray) {
               multiSelect
             />
 
-<TextInput mode="flat" onFocus={showLWDDatePicker} label="Last Working Date" value={lwd} style={{ backgroundColor: "white" }} returnKeyType="done" />
-                
-                <DateTimePickerModal
-                  isVisible={isLWDVisible}
-                  mode="date"
-                  onConfirm={handleLWDConfirm}
-                  onCancel={hideLWDDatePicker}
+            <View>
+                <DateTimePicker
+                    label="Last Working Date"
+                    type="date"
+                    value={lwd}
+                    onChangeDate={setLwd}
                 />
+            </View>
 
             </View>
           </ScrollView>
