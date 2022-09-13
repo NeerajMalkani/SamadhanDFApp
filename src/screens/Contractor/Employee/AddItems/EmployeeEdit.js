@@ -70,10 +70,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   setWagesRadioButtons(radioButtonsArray);
 }
 
-function onABC() {
-  console.log('abc');
-}
-
   const [showDropDown, setShowDropDown] = useState(false);
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
   const [colors, setColors] = React.useState("");
@@ -274,8 +270,8 @@ function onABC() {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      setBloodGroupFullData(BloodGroup);
       FetchBasicDetails();
-      //setBloodGroupFullData(BloodGroup);
     }
   };
 
@@ -306,7 +302,6 @@ function onABC() {
             if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
             }
-            console.log("fetch city id: "+ employee_data.cityID);
 
             if (!NullOrEmpty(employee_data.cityID)) {
               setCityID(employee_data.cityID);
@@ -336,9 +331,7 @@ function onABC() {
             setEmergencyContactNo(employee_data.emergencyContactNo ? employee_data.emergencyContactNo : "");
 
             setLoginActiveStatus(employee_data.loginStatus ? employee_data.loginStatus : "");
-
             
-
             if (!NullOrEmpty(employee_data.branchID)) {
               setBranchID(employee_data.branchID);
             }
@@ -384,9 +377,6 @@ function onABC() {
 
           }
 
-            
-            //setCityName(_data.cityName === null ? "" : _data.cityName);
-
             if (!NullOrEmpty(bankDetails_data)) {
 
               setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
@@ -396,12 +386,12 @@ function onABC() {
               setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
             }
             
-            
           }
           FetchStates();
-          // FetchBranch();
-          // FetchDepartments();
-          // FetchDesignations();
+          BloodGroupDropdown();
+          FetchBranch();
+          FetchDepartments();
+          FetchDesignations();
           // FetchReportingEmployee();
           setIsLoading(false);
         }
@@ -465,6 +455,24 @@ function onABC() {
       .catch((e) => {});
   };
 
+  const BloodGroupDropdown = () => {
+    let b = bloodGroupFullData.filter((el) => {
+      
+if(!NullOrEmpty(el)){
+  if(el.ID.toString() === bloodGroupID.toString()){
+return el;
+  }
+}
+    });
+
+    const bg = bloodGroupFullData.map((data) => data.Name);
+    setBloodGroupData(bg);
+    if(!NullOrEmpty(b[0])) {
+      setBloodGroup(b[0].Name);
+    }
+  };
+
+
   const FetchBranch = () => {
     let params = {
       AddedByUserID: userID,
@@ -474,11 +482,13 @@ function onABC() {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBranchFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+            let b = branchFullData.filter((el) => {
+              return el.id.toString() === branchID.toString();
+            });
+            
+            const branch = response.data.data.map((data) => data.locationName);
+            setBranchData(branch);
+            setBranchName(b[0].locationName);
           }
         }
       })
@@ -495,11 +505,12 @@ function onABC() {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDepartmentFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+            let d = departmentFullData.filter((el) => {
+              return el.departmentID.toString() === departmentID.toString();
+            });
+            const department = response.data.data.map((data) => data.departmentName);
+            setDepartmentData(department);
+            setDepartmentName(d[0].departmentName);
           }
         }
       })
@@ -516,11 +527,12 @@ function onABC() {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDesignationFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+            let d = designationFullData.filter((el) => {
+              return el.designationID.toString() === designationID.toString();
+            });
+            const designation = response.data.data.map((data) => data.designationName);
+            setDesignationData(designation);
+            setDesignationName(d[0].designationName);
           }
         }
       })
@@ -789,7 +801,6 @@ function onABC() {
   };
 
   const ValidateData = () => {
-    console.log(colors);
     const isValid = true;
 
     // if (isValid) {
