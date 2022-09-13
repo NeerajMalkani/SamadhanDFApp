@@ -288,10 +288,10 @@ const EmployeeListScreen = ({ navigation }) => {
             </HelperText> 
               </View>
               <Card.Content style={[Styles.marginTop16]}>
-          <Button mode="contained" onPress={OnOTPSend}>
-          Submit & Verify
-          </Button>
-          </Card.Content>
+                <Button mode="contained" onPress={OnOTPSend}>
+                  Submit & Verify
+                </Button>
+              </Card.Content>
             </Dialog.Content>
           </Dialog>
         </Portal>

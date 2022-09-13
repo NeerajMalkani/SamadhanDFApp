@@ -32,7 +32,7 @@ export const CreateActionButtons = (icon, color, callback) => {
 };
 export const RenderHiddenItems = (data, rowMap, callbacks) => {
   return (
-    <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
+    <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]} >
       {CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap))}
     </View>
   );

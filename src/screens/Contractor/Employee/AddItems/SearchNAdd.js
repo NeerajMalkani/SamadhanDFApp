@@ -300,7 +300,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
       }
       else {
         rowMap[data.item.key].closeRow();
-        navigation.navigate("EmployeeEditScreen", {
+        navigation.navigate("EmployeeListScreen", {
           type: "edit",
           fetchData: FetchData,
           data: {

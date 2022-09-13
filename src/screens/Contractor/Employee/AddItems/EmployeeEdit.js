@@ -883,7 +883,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
       UpdateData();
       }
     }
-  };
+  
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -1095,7 +1095,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
     { key: "payDetails", title: "Pay Details" },
     { key: "photo", title: "Profile Photo" },
   ]);
-
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
@@ -1120,7 +1119,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
       </View>
     )
   );
-        };
+};
 
 
 export default EmployeeEditScreen;
