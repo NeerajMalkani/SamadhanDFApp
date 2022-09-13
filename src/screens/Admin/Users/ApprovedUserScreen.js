@@ -47,7 +47,6 @@ const ApprovedUserScreen = ({ navigation }) => {
     
     Provider.getAll("master/getapprovedusers")
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];

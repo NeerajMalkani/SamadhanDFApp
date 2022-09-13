@@ -1,39 +1,67 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
+import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
-import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RenderHiddenItems } from "../../../components/ListActions";
+import { RenderHiddenMultipleItems } from "../../../components/ListActions";
+import { Styles } from "../../../styles/styles";
+import { NullOrEmpty } from "../../../utils/validations";
+import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
+import { communication } from "../../../utils/communication";
+
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let ContractorID = 0;
+let userID = 0;
 
-const BranchScreen = ({ navigation }) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
+const BranchListScreen = ({ navigation }) => {
+  const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [employeeID, setEmployeeID] = React.useState("");
+ // const [otp, setOTP] = React.useState("");
+  //const [otpError, setOtpError] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const listData = React.useState([]);
+  const listSearchData = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const [employeeName, setEmployeeName] = React.useState("");
+
+  const [locationType, setLocationType] = React.useState("");
+  
+  const [locationName, setLocationName] = React.useState("");
+  const [branchAdmin, setBranchAdmin] = React.useState("");
+  const [address, setAddress] = React.useState("");
+  const [gstNo, setGSTNo] = React.useState("");
+
+
+  const [panNo, setPANNo] = React.useState("");
+  const [display, setDispaly] = React.useState("");
+  const [action, setAction] = React.useState("");
+
+
+  const refRBSheet = useRef();
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-        ContractorID = JSON.parse(userData).UserID;
-        FetchData();
+      userID = JSON.parse(userData).UserID;
+      FetchData();
     }
   };
 
-  useEffect(() => {
-    GetUserID();
-  }, []);
+  // const showDialog = () => setVisible(true);
+
+  // const hideDialog = () => setVisible(false);
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -42,12 +70,10 @@ const BranchScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-        UserType: 3,
-        UserId: ContractorID
-      };
-    Provider.getAll(`master/getuserdesignation?${new URLSearchParams(params)}`)
+      AddedByUserID: userID,
+    };
+    Provider.getAll(`master/getuseremployeelist?${new URLSearchParams(params)}`)
       .then((response) => {
-        debugger;
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -75,6 +101,38 @@ const BranchScreen = ({ navigation }) => {
       });
   };
 
+  const SubmitVerify = () => {
+    Provider.create("master/updateuserbranch", 
+    { 
+      EmployeeID: employeeID, 
+     // OTP: otp
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.data && response.data.code === 200) {
+          FetchData();
+         // hideDialog();
+          setSnackbarText(communication.UpdateSuccess);
+          setSnackbarVisible(true);
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
+  };
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
+
   const onChangeSearch = (query) => {
     setSearchQuery(query);
     if (query === "") {
@@ -82,42 +140,84 @@ const BranchScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.designationName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.contactPerson.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
   };
 
+  const AddCallback = () => {
+    navigation.navigate("AddBranchScreen", { type: "add", fetchData: FetchData });
+  };
+
+  const EditCallback = (data, rowMap, buttonType) => {
+
+     if(buttonType == "otp") 
+    {
+      // setEmployeeID(data.item.id);
+      // setOTP(data.item.otp.toString());
+      // showDialog();
+    }
+    else {
+      rowMap[data.item.key].closeRow();
+      navigation.navigate("AddBranchScreen", {
+        type: "edit",
+        fetchData: FetchData,
+        data: {
+           id: data.item.id,
+        },
+      });
+    }
+  };
+
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.designationName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
+        <List.Item
+           title={data.item.branchAdmin}
+          titleStyle={{ fontSize: 18 }}
+          description={`Mob.: ${NullOrEmpty(data.item.mobileNo) ? "" : data.item.mobileNo}\nLocation Type: ${NullOrEmpty(data.item.locationType) ? "" : data.item.locationType} `}
+          onPress={() => {
+            
+            refRBSheet.current.open();
+            setLocationType(data.item.locationType);
+            setLocationName(data.item.locationName);
+            setBranchAdmin(data.item.branchAdmin);
+            setAddress(data.item.address);321
+            setGSTNo(data.item.gstNo);
+            setPANNo(data.item.panNo);
+            setDispaly(data.item.display);
+            setAction(data.item.action);
+
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+        
       </View>
     );
   };
 
-  const AddCallback = () => {
-    navigation.navigate("AddDesignationScreen", { type: "add", fetchData: FetchData });
+  const OnOTPSend = () => {
+    let isValid = true;
+    
+    if (otp.trim() === "") {
+      setOtpError(true);
+      isValid = false;
+    }
+    if (isValid) {
+      SubmitVerify();
+    }
   };
 
-  const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddDesignationScreen", {
-      type: "edit",
-      fetchData: FetchData,
-      data: {
-        id: data.item.id,
-        designationName: data.item.designationName,
-        display: data.item.display,
-        reportingAuthority: data.item.reportingAuthority,
-        uid: ContractorID
-      },
-    });
+  const onOTPChange = (text) => {
+    setOTP(text);
+    setOtpError(false);
   };
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Designations" />
+      <Header navigation={navigation} title="My Branch List" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -127,7 +227,7 @@ const BranchScreen = ({ navigation }) => {
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
-            previewOpenValue={-72}
+            previewOpenValue={-160}
             previewRowKey="1"
             previewOpenDelay={1000}
             refreshControl={
@@ -142,20 +242,40 @@ const BranchScreen = ({ navigation }) => {
             data={listSearchData[0]}
             useFlatList={true}
             disableRightSwipe={true}
-            rightOpenValue={-72}
+            rightOpenValue={-160}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => RenderHiddenMultipleItems(data, rowMap, [EditCallback])}
           />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+
+      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} />
+
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{employeeName}</Title>
+          <ScrollView style={{marginBottom: 64}}>
+            <List.Item title="Location Type" description={locationType} />
+            <List.Item title="Location Name" description={locationName} />
+            <List.Item title="Branch Admin" description={branchAdmin} />
+            <List.Item title="Address" description={address} />
+            <List.Item title="GST No" description={gstNo} />
+            <List.Item title="PAN No" description={panNo} />
+            <List.Item title="Dispaly" description={display} />
+            <List.Item title="Action" description={action} />
+          </ScrollView>
+        </View>
+      </RBSheet>
+
+       
     </View>
   );
 };
 
-export default BranchScreen;
+export default BranchListScreen;

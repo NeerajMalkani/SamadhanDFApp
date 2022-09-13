@@ -407,7 +407,7 @@ export const MenuItemsContractor = [
         title: "Add Branch",
         type: "accordian",
         index: 31,
-        //navigation: "AddBranchScreen",
+        navigation: "BranchListScreen",
       },
       {
         title: "Add Designation",

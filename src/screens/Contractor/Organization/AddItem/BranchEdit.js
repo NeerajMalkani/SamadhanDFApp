@@ -20,6 +20,7 @@ import { styles } from "react-native-image-slider-banner/src/style";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
+
 const BranchEditScreen = ({ route, navigation }) => {
 
   const isFocused = useIsFocused();

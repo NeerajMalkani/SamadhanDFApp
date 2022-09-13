@@ -252,6 +252,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const ifscCodeRef = useRef({});
 
   const [logoImage, setLogoImage] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
   const [image, setImage] = useState(AWSImagePath + "placeholder-image.png");
   const [filePath, setFilePath] = useState(null);
   const [errorLogo, setLogoError] = useState(false);
@@ -368,6 +369,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
               onPressWagesRadioButton(wagesRadioButtons);
             }
+            
 
             setSalary(employee_data.salary ? employee_data.salary : "");
 
@@ -458,9 +460,9 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const BloodGroupDropdown = () => {
     let b = bloodGroupFullData.filter((el) => {
       
-if(!NullOrEmpty(el)){
-  if(el.ID.toString() === bloodGroupID.toString()){
-return el;
+    if(!NullOrEmpty(el)){
+    if(el.ID.toString() === bloodGroupID.toString()){
+    return el;
   }
 }
     });
@@ -700,7 +702,7 @@ return el;
     }
   };
 
-  const uploadFile = () => {
+  const ProfilePhoto = () => {
     if (!isImageReplaced) {
       InsertData();
     } else {
@@ -800,16 +802,87 @@ return el;
       });
   };
 
+  const UpdateData = () => {
+    console.log;
+    const params = {
+      ID:id,
+      MobileNo: mobileNo.trim(),
+      AadharNo: aadharNo.trim(),
+      FatherName: fatherName,
+      Address: address,
+      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
+      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
+      Pincode: pincode ? pincode : 0,
+      ProfilePhoto: profilePhoto ? profilePhoto: "",
+      BloodGroup:bloodGroup,
+      DOB:dob,
+      DOJ:doj,
+      EmergencyContactName:emergencyContactName,
+      EmergencyContactNo:emergencyContactNo,
+      IDCardValidity:cardValidity,
+      LoginActiveStatus:loginActiveStatus,
+      BranchID:branchID,
+      DepartmentID:departmentID,
+      DesignationID:designationID,
+      EmployeeType:employeeType,
+      LastWorkDate:lwd,
+      WagesType:wagesType,
+      Salary:salary,
+      AccountHolderName:accountHolderName,
+      AccountNumber:accountNo,
+      BankName:bankName,
+      BranchName:branchName,
+      IFSCCode:ifscCode
+    };
+    Provider.create("master/updateemployeedetails", params)
+      .then((response) => {
+        console.log;
+        if (response.data && response.data.code === 200) {
+          setSnackbarColor(theme.colors.success);
+          setSnackbarText("Data updated successfully");
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarColor(theme.colors.error);
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
+  };
+
   const ValidateData = () => {
     const isValid = true;
 
-    // if (isValid) {
-    //   if (filePath !== null) {
-    //     uploadFile();
-    //   } else {
-    //     InsertData();
-    //   }
-    // }
+    if(NullOrEmpty(employeeName.trim())){
+      isValid=false;
+      setEemployeeNameInvalid(true);
+    }
+    if(NullOrEmpty(employeeCode.trim())){
+      isvalid=false;
+      setEemployeeCodeInvalid(true);
+    }
+    if(NullOrEmpty(mobileNo.trim())){
+      isvalid=false;
+      setMobileNoInvalid(true);
+    }
+    if(NullOrEmpty(aadharNo.trim())){
+      isvalid=false;
+      setAadharNoInvalid(true);
+    }
+    if(NullOrEmpty(fatherName.trim())){
+      isvalid=false;
+      setFatherNameInvalid(true);
+    }
+
+    if (isValid) {
+      UpdateData();
+      }
+    }
   };
 
   const renderScene = ({ route }) => {
@@ -1022,6 +1095,7 @@ return el;
     { key: "payDetails", title: "Pay Details" },
     { key: "photo", title: "Profile Photo" },
   ]);
+
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
@@ -1035,7 +1109,7 @@ return el;
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading} >
               Update
             </Button>
           </Card.Content>
@@ -1046,6 +1120,7 @@ return el;
       </View>
     )
   );
-};
+        };
+
 
 export default EmployeeEditScreen;
