@@ -38,11 +38,19 @@ export const RenderHiddenItems = (data, rowMap, callbacks) => {
   );
 };
 
+export const RenderHiddenItemGeneric = (iconName, data, rowMap, callbacks) => {
+  return (
+    <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]} >
+      {CreateActionButtons(iconName, theme.multicolors.yellow, () => callbacks[0](data, rowMap))}
+    </View>
+  );
+};
+
 export const RenderHiddenMultipleItems = (data, rowMap, callbacks) => {
   return (
     <View style={[Styles.height80, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
       {CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap, "edit"))}
-      {CreateActionButtons("send", theme.multicolors.green, () => callbacks[0](data, rowMap, "otp"))}
+      {CreateActionButtons("send", theme.multicolors.blue, () => callbacks[0](data, rowMap, "otp"))}
     </View>
     
   );

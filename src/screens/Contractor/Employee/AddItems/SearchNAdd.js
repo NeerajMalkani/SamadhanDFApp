@@ -8,10 +8,11 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import {NullOrEmpty} from "../../../../utils/validations";
 import { communication } from "../../../../utils/communication";
 import Provider from "../../../../api/Provider";
-import { RenderHiddenItems } from "../../../../components/ListActions";
+import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NoItems from "../../../../components/NoItems";
 
 let userID = 0;
 
@@ -19,6 +20,7 @@ const SearchNAdd = ({ navigation }) => {
 
 const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [displayLoader, setDisplayLoader] = React.useState(false);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -57,7 +59,6 @@ const [searchQuery, setSearchQuery] = React.useState("");
       const userData = await AsyncStorage.getItem("user");
       if (userData !== null) {
         userID = JSON.parse(userData).UserID;
-        FetchData();
       }
     };
   
@@ -110,7 +111,6 @@ const [searchQuery, setSearchQuery] = React.useState("");
         OTP: otp
       })
         .then((response) => {
-          console.log(response);
           if (response.data && response.data.code === 200) {
             FetchData();
             hideDialog();
@@ -174,28 +174,59 @@ const [searchQuery, setSearchQuery] = React.useState("");
     };
 
     const InsertNewEmployee = () => {
-      console.log("adding new employee");
       const params = {
         AddedByUserID:userID,
         EmployeeName:employeeName.trim(),
         MobileNo: addMobileNo.trim(),
         AadharNo: addAadharNo.trim()
-              };
+         };
+
       Provider.create("master/insertuseremployees", params)
         .then((response) => {
-
+          
           if (response.data && response.data.code === 200) {
             // redirect to employee list.
             setSnackbarColor(theme.colors.success);
             setSnackbarText("Employee Added successfully");
             setSnackbarVisible(true);
-
+            navigation.navigate("EmployeeListScreen", { type: "add", fetchData: FetchData });
+            
           } else {
 
             setSnackbarColor(theme.colors.error);
             setSnackbarText(communication.UpdateError);
             setSnackbarVisible(true);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarText(communication.NetworkError);
+          setSnackbarVisible(true);
+        });
+    };
 
+    const InsertExistingEmployee = (ID) => {
+      const params = {
+        AddedByUserID:userID,
+        EmployeeID:ID,
+         };
+
+      Provider.create("master/insertnewemployee", params)
+        .then((response) => {
+          
+          if (response.data && response.data.code === 200) {
+            // redirect to employee list.
+            setSnackbarColor(theme.colors.success);
+            setSnackbarText("Employee Added successfully");
+            setSnackbarVisible(true);
+            navigation.navigate("EmployeeListScreen", { type: "add", fetchData: FetchData });
+            
+          } else {
+
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(communication.UpdateError);
+            setSnackbarVisible(true);
           }
         })
         .catch((e) => {
@@ -244,14 +275,11 @@ const [searchQuery, setSearchQuery] = React.useState("");
         setAddAadharNoInvalid(true);
       }
 
-      if(isValid){
+      if(isValid) {
         InsertNewEmployee();
       }
 
     };
-
-
-
 
     const FetchSearchEmployee = (from) => {
       let params = {
@@ -264,7 +292,6 @@ const [searchQuery, setSearchQuery] = React.useState("");
         .then((response) => {
           if (response.data && response.data.code === 200) {
             if (response.data.data) {
-              console.log(response.data.data);
               const lisData = [...response.data.data];
               lisData.map((k, i) => {
                 k.key = (parseInt(i) + 1).toString();
@@ -292,22 +319,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
   
   
     const EditCallback = (data, rowMap, buttonType) => {
-  
-      if(buttonType == "otp") {
-        setEmployeeID(data.item.id);
-        setOTP(data.item.otp.toString());
-        showDialog();
-      }
-      else {
-        rowMap[data.item.key].closeRow();
-        navigation.navigate("EmployeeListScreen", {
-          type: "edit",
-          fetchData: FetchData,
-          data: {
-             id: data.item.id,
-          },
-        });
-      }
+      InsertExistingEmployee(data.item.id);
     };
   
     const RenderItems = (data) => {
@@ -327,7 +339,6 @@ const [searchQuery, setSearchQuery] = React.useState("");
             left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
             right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
           />
-          
         </View>
       );
     };
@@ -361,7 +372,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
               <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} 
               returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
               <HelperText type="error" visible={mobileNoInvalid}>
-                {communication.mobileNoInvalid}
+                {communication.InvalidMobileNumber}
               </HelperText>
 
                 <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32,Styles.primaryBgColor,Styles.padding10,Styles.flexAlignCenter]}>
@@ -370,12 +381,16 @@ const [searchQuery, setSearchQuery] = React.useState("");
 
             </View>
             <View style={[Styles.padding16]}>
-            <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2,Styles.marginTop32]}>
+            <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2,Styles.marginTop8]}>
                     <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.primaryColor]}>Employee Search Result</Text>
                 </View>
             {isLoading ? (
-                <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <View  style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+                  { displayLoader ? (
+
+<ActivityIndicator size="large" color={theme.colors.secondary} />
+) : null }
+                
                 </View>
             ) : listData[0].length > 0 ? (
                 <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
@@ -399,7 +414,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
                     disableRightSwipe={true}
                     rightOpenValue={-72}
                     renderItem={(data) => RenderItems(data)}
-                    renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+                    renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("add-to-list", data, rowMap, [EditCallback])}
                 />
                 </View>
             ) : (
@@ -419,13 +434,13 @@ const [searchQuery, setSearchQuery] = React.useState("");
                 {communication.InvalidEmployeeName}
               </HelperText>
 
-              <TextInput ref={addMobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={addMobileNo} 
+              <TextInput ref={addMobileNoRef} mode="flat" dense keyboardType="number-pad" maxLength={10} label="Mobile No" value={addMobileNo} 
               returnKeyType="next" onSubmitEditing={() => addMobileNoRef.current.focus()} onChangeText={onAddMobileNoChanged} style={{ backgroundColor: "white" }} error={addMobileNoInvalid} />
               <HelperText type="error" visible={addMobileNoInvalid}>
-                {communication.mobileNoInvalid}
+                {communication.InvalidMobileNumber}
               </HelperText>
 
-              <TextInput ref={addAadharNoRef} mode="flat" dense label="Aadhar No" value={addAadharNo} returnKeyType="next" onSubmitEditing={() => addAadharNoRef.current.focus()} onChangeText={onAddAadharNoChanged} style={{ backgroundColor: "white" }} error={addAadharNoInvalid} />
+              <TextInput ref={addAadharNoRef} mode="flat" dense keyboardType="number-pad" maxLength={12} label="Aadhar No" value={addAadharNo} returnKeyType="next" onSubmitEditing={() => addAadharNoRef.current.focus()} onChangeText={onAddAadharNoChanged} style={{ backgroundColor: "white" }} error={addAadharNoInvalid} />
               <HelperText type="error" visible={addAadharNoInvalid}>
                 {communication.InvalidAadharNo}
               </HelperText>

@@ -803,7 +803,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   };
 
   const UpdateData = () => {
-    console.log;
     const params = {
       ID:id,
       MobileNo: mobileNo.trim(),
@@ -836,7 +835,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
     };
     Provider.create("master/updateemployeedetails", params)
       .then((response) => {
-        console.log;
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");

@@ -146,7 +146,6 @@ const EmployeeListScreen = ({ navigation }) => {
   };
 
 
-
   const EditCallback = (data, rowMap, buttonType) => {
 
     if(buttonType == "otp") {
@@ -274,11 +273,11 @@ const EmployeeListScreen = ({ navigation }) => {
             <Dialog.Content>
               <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
                 <Text >Enter OTP No:</Text>
-                <TextInput 
-                  mode="flat"
-                  value={otp} 
-                  onChangeText={onOTPChange}
-                  error={otpError}
+              <TextInput 
+              mode="flat"
+              value={otp} 
+              onChangeText={onOTPChange}
+              error={otpError}
                   style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  
                 />
               </View>
@@ -288,10 +287,10 @@ const EmployeeListScreen = ({ navigation }) => {
             </HelperText> 
               </View>
               <Card.Content style={[Styles.marginTop16]}>
-                <Button mode="contained" onPress={OnOTPSend}>
-                  Submit & Verify
-                </Button>
-              </Card.Content>
+          <Button mode="contained" onPress={OnOTPSend}>
+          Submit & Verify
+          </Button>
+          </Card.Content>
             </Dialog.Content>
           </Dialog>
         </Portal>
