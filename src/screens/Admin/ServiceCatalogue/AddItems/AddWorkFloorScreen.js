@@ -9,7 +9,7 @@ import { communication } from "../../../../utils/communication";
 const AddWorkFloorScreen = ({ route, navigation }) => {
   const [workFloorNameError, setWorkFloorNameError] = React.useState(false);
   const [workFloorName, setWorkFloorName] = React.useState(route.params.type === "edit" ? route.params.data.workFloorName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

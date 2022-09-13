@@ -277,7 +277,7 @@ export const MenuItemsDealer = [
         title: "Employee New / List",
         type: "accordian",
         index: 30,
-        navigation: "EmployeeList",
+        navigation: "EmployeeListScreen",
       },
       
       {

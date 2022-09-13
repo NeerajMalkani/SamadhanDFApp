@@ -60,7 +60,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const [buyerCategoryFullData, setBuyerCategoryFullData] = React.useState([]);
   const [selectedBuyerCategoryFullData, setSelectedBuyerCategoryFullData] = React.useState([]);
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

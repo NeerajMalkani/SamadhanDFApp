@@ -51,7 +51,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   const [description, setDescription] = React.useState(route.params.type === "edit" ? route.params.data.description : "");
   const [errorD, setDError] = React.useState(false);
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

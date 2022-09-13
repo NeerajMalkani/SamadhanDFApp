@@ -31,7 +31,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [gstError, setGSTError] = React.useState(false);
   const [gst, setGST] = React.useState(route.params.type === "edit" ? route.params.data.gstRate.toString() : "");
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

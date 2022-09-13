@@ -11,7 +11,7 @@ let dealerID = 0;
 const AddDealerBrandMasterScreen = ({ route, navigation }) => {
   const [brandNameError, setBrandNameError] = React.useState(false);
   const [brandName, setBrandName] = React.useState(route.params.type === "edit" ? route.params.data.brandName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

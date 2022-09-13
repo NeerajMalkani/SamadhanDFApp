@@ -9,7 +9,7 @@ import { communication } from "../../../../utils/communication";
 const AddDepartmentScreen = ({ route, navigation }) => {
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

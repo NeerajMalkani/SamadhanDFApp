@@ -51,7 +51,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   const designNumber = React.useState("DC-" + (parseInt(route.params.data.count) + 1).toString());
   const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);

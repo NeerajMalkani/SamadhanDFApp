@@ -9,7 +9,7 @@ import { communication } from "../../../../utils/communication";
 const AddDesignationScreen = ({ route, navigation }) => {
   const [designationNameError, setDesignationNameError] = React.useState(false);
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

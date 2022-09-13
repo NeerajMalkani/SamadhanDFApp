@@ -31,7 +31,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   const [error, setError] = React.useState(false);
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.designTypeName : "");
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

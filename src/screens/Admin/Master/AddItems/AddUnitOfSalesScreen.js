@@ -11,7 +11,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [errorC, setCError] = React.useState(false);
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
   const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

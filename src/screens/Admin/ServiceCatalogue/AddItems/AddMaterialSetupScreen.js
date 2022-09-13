@@ -38,7 +38,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [errorDT, setDTError] = React.useState(false);
   const designTypeDDRef = useRef({});
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet.toString() : "1");
   const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches.toString() : "0");

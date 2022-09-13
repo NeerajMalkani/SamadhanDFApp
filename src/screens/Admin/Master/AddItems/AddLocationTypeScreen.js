@@ -23,7 +23,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarText, setSnackbarText] = useState("");
 
-  const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const refActivityRBSheet = useRef();
   const refServicesRBSheet = useRef();

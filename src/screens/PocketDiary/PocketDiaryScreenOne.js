@@ -26,7 +26,7 @@ const PocketDiaryScreenOne = ({ navigation }) => {
         <View style={[Styles.flex1]}>
           <Header navigation={navigation} title="Pocket Diary" />
             <View style={[Styles.height85per,Styles.borderred]}>
-                <Text>one</Text>
+                
             </View>
             <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
               {snackbarText}

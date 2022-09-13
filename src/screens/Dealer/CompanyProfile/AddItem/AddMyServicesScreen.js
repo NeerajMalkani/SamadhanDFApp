@@ -10,7 +10,7 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerMyServicesScreen = ({ route, navigation }) => {
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);

@@ -14,7 +14,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
   const [designationError, setDesignationError] = React.useState(false);
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
   const [reportingAuthority, setReportingAuthority] = React.useState(route.params.type === "edit" ? route.params.data.reportingAuthority : false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);

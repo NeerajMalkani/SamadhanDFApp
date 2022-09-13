@@ -15,7 +15,7 @@ import { Styles } from "../../../styles/styles";
 import {NullOrEmpty} from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-
+import SearchNAdd from "../Employee/AddItems/SearchNAdd";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
@@ -142,7 +142,7 @@ const EmployeeListScreen = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("EmployeeEditScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
   };
 
 
@@ -274,12 +274,13 @@ const EmployeeListScreen = ({ navigation }) => {
             <Dialog.Content>
               <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
                 <Text >Enter OTP No:</Text>
-              <TextInput 
-              mode="flat"
-              value={otp} 
-              onChangeText={onOTPChange}
-              error={otpError}
-              style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  />
+                <TextInput 
+                  mode="flat"
+                  value={otp} 
+                  onChangeText={onOTPChange}
+                  error={otpError}
+                  style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  
+                />
               </View>
               <View>
               <HelperText type="error" visible={otpError} style={[Styles.textCenter]}>

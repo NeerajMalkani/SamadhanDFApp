@@ -9,7 +9,7 @@ import { communication } from "../../../../utils/communication";
 const AddWorkLocationScreen = ({ route, navigation }) => {
   const [workLocationNameError, setWorkLocationNameError] = React.useState(false);
   const [workLocationName, setWorkLocationName] = React.useState(route.params.type === "edit" ? route.params.data.workLocationName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

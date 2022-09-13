@@ -9,7 +9,7 @@ import { communication } from "../../../../utils/communication";
 const AddActivityRolesScreen = ({ route, navigation }) => {
   const [activityNameError, setActivityNameError] = React.useState(false);
   const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : false);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
