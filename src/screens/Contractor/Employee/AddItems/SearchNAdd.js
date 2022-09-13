@@ -361,7 +361,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
     };
      return (
     <View style={[Styles.flex1]}>
-        <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+        <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
             <View style={[Styles.padding16]}>
 
               <TextInput ref={aadharNoRef} mode="flat" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
