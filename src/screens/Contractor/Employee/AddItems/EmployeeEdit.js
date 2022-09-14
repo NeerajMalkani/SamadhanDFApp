@@ -487,8 +487,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchDepartments = () => {
     let params = {
-      UserType: 3,
-      UserId: userID,
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -509,8 +508,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchDesignations = () => {
     let params = {
-      UserType: 3,
-      UserId: userID,
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
