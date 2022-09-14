@@ -1,33 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
-import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton,Text } from "react-native-paper";
+import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import { RNS3 } from "react-native-aws3";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 //import { DatePickerModal } from 'react-native-paper-dates';
 import DropDown from "react-native-paper-dropdown";
-import moment from "moment";
+//import moment from "moment";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
-import { Styles } from "../../../../styles/styles"; 
+import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import { AWSImagePath } from "../../../../utils/paths";
-import {NullOrEmpty} from "../../../../utils/validations";
-import {BloodGroup} from "../../../../utils/validations";
+import { NullOrEmpty } from "../../../../utils/validations";
+import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
-
 const BranchEditScreen = ({ route, navigation }) => {
-
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
   //#region Input Variables
-  
+
   const [companyName, setComapnyName] = useState("");
   const [companyNameInvalid, setComapnyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -103,8 +101,8 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
-//#endregion
-  
+  //#endregion
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -123,7 +121,6 @@ const BranchEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             let employee_data = _data.employee;
             let reporting_data = response.data.data[1].employee;
             let bankDetails_data = response.data.data[2].employee;
@@ -136,7 +133,7 @@ const BranchEditScreen = ({ route, navigation }) => {
             setAddress(employee_data.companyName ? employee_data.companyName : "");
 
             if (!NullOrEmpty(employee_data.stateID)) {
-                setStatesID(employee_data.stateID);
+              setStatesID(employee_data.stateID);
             }
             if (!NullOrEmpty(employee_data.cityID)) {
               setCityID(employee_data.cityID);
@@ -179,7 +176,7 @@ const BranchEditScreen = ({ route, navigation }) => {
             setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
             setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
             setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
-            
+
             setLogoImage(employee_data.profilePhoto);
             setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
             setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
@@ -193,13 +190,12 @@ const BranchEditScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log('abc');
+        console.log("abc");
         setIsLoading(false);
       });
   };
 
- //#region Dropdown Functions
-
+  //#region Dropdown Functions
 
   const FetchCities = (stateName, stateData) => {
     let params = {
@@ -264,7 +260,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const FetchDepartments = () => {
     let params = {
       UserType: 3,
-      UserId: userID
+      UserId: userID,
     };
     Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -285,7 +281,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const FetchDesignations = () => {
     let params = {
       UserType: 3,
-      UserId: userID
+      UserId: userID,
     };
     Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -305,7 +301,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   const FetchReportingEmployee = () => {
     let params = {
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getreportingemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -325,13 +321,12 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
-
   useEffect(() => {
     GetUserID();
     //FetchBasicDetails();
   }, []);
 
-//#region OnChange Function
+  //#region OnChange Function
 
   const onCompanyNameChanged = (text) => {
     setCompanyName(text);
@@ -365,7 +360,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     setBranchLocationName(text);
     setBranchLocationNameInvalid(false);
   };
-  const onAddressChanged= (text) => {
+  const onAddressChanged = (text) => {
     setAddress(text);
     setAddressInvalid(false);
   };
@@ -401,8 +396,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     setIfscCodeInvalid(false);
   };
 
-
-//#endregion
+  //#endregion
 
   const InsertData = () => {
     const params = {
@@ -467,57 +461,45 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company Name" 
-              value={CompanyName} returnKeyType="next" 
-              onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onCompanyNameChanged} 
-              style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="flat" dense label="Company Name" value={CompanyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
 
-              <TextInput ref={branchTypeRef} mode="flat"  dense label="Branch Type" 
-              value={branchType} returnKeyType="next" editable={false} selectTextOnFocus={false} 
-              onSubmitEditing={() => branchTypeRef.current.focus()} 
-              onChangeText={onBranchTypeChanged} style={{ backgroundColor: "#cdcdcd" }} error={branchTypeInvalid} />
+              <TextInput ref={branchTypeRef} mode="flat" dense label="Branch Type" value={branchType} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => branchTypeRef.current.focus()} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "#cdcdcd" }} error={branchTypeInvalid} />
 
               <HelperText type="error" visible={branchTypeInvalid}>
                 {communication.InvalidBranchType}
               </HelperText>
 
-              <TextInput ref={assignBranchAdminRef } mode="flat" dense keyboardType="number-pad" label="Assign Branch Admin" value={assignBranchAdmin} returnKeyType="next" 
-              onSubmitEditing={() => assignBranchAdminRef .current.focus()} 
-              onChangeText={onAssignBranchAdminChanged} style={{ backgroundColor: "white" }} error={assignBranchAdminInvalid} />
+              <TextInput ref={assignBranchAdminRef} mode="flat" dense keyboardType="number-pad" label="Assign Branch Admin" value={assignBranchAdmin} returnKeyType="next" onSubmitEditing={() => assignBranchAdminRef.current.focus()} onChangeText={onAssignBranchAdminChanged} style={{ backgroundColor: "white" }} error={assignBranchAdminInvalid} />
               <HelperText type="error" visible={assignBranchAdminInvalid}>
                 {communication.InvalidAssignBranchAdmin}
               </HelperText>
 
-              <TextInput ref={contactPersonNoRef } mode="flat" dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next"
-               onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
+              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
               <HelperText type="error" visible={contactPersonNoInvalid}>
                 {communication.InvalidContactPersonNo}
               </HelperText>
 
-              <TextInput ref={gstNoRef } mode="flat" dense label="GST No" value={gstNo} returnKeyType="next"
-               onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
-              <HelperText type="error" visible={gstNoInvalid }>
+              <TextInput ref={gstNoRef} mode="flat" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
+              <HelperText type="error" visible={gstNoInvalid}>
                 {communication.InvalidGSTNo}
               </HelperText>
 
-              <TextInput ref={panNoRef } mode="flat" dense label="Pan No" value={panNo} returnKeyType="next" 
-              onSubmitEditing={() => panNoRef .current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} 
-              error={panNoInvalid} />
-              <HelperText type="error" visible={panNoInvalid }>
+              <TextInput ref={panNoRef} mode="flat" dense label="Pan No" value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
+              <HelperText type="error" visible={panNoInvalid}>
                 {communication.InvalidPANNo}
               </HelperText>
 
               <Checkbox.Item
                 style={Styles.marginTop8}
-                    label="Display"
-                    status={checkedDisplay ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                        setChecked(!checkedDisplay);
-                    }}
-                 />
+                label="Display"
+                status={checkedDisplay ? "checked" : "unchecked"}
+                onPress={() => {
+                  setChecked(!checkedDisplay);
+                }}
+              />
             </View>
           </ScrollView>
         );
@@ -525,27 +507,21 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
+              <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={setBranchLocationNameInvalid} />
+              <HelperText type="error" visible={setBranchLocationNameInvalid}>
+                {communication.InvalidBranchLocationName}
+              </HelperText>
 
-            <TextInput ref={branchLocationNameRef  } mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" 
-            onSubmitEditing={() => branchLocationNameRef  .current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} 
-            error={setBranchLocationNameInvalid} />
-            <HelperText type="error" visible={setBranchLocationNameInvalid }>
-            {communication.InvalidBranchLocationName}
-            </HelperText>
+              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={setAddressInvalid} />
+              <HelperText type="error" visible={setAddressInvalid}>
+                {communication.InvalidAddress}
+              </HelperText>
 
-            <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" 
-            onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} 
-            error={setAddressInvalid } />
-            <HelperText type="error" visible={setAddressInvalid }>
-            {communication.InvalidAddress}
-            </HelperText>
+              <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
 
-            <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
-              
-            <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
-              
-            <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
-              
+              <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
+
+              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
             </View>
           </ScrollView>
         );
@@ -553,8 +529,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-
-            <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               {/* <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
@@ -570,7 +545,6 @@ const BranchEditScreen = ({ route, navigation }) => {
               {/* <HelperText type="error" visible={ifscCodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
-
             </View>
           </ScrollView>
         );
@@ -583,10 +557,8 @@ const BranchEditScreen = ({ route, navigation }) => {
     { key: "branchDetails", title: "Branch Details" },
     { key: "locationDetails", title: "Location Details" },
     { key: "bankDetails", title: "Bank Details" },
-  
   ]);
 
-  
   return (
     isFocused && (
       <View style={[Styles.flex1]}>

@@ -9,66 +9,64 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import RadioGroup from "react-native-radio-buttons-group";
 import DropDown from "react-native-paper-dropdown";
-import moment from "moment";
+//import moment from "moment";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
-import { Styles } from "../../../../styles/styles"; 
+import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import { creds } from "../../../../utils/credentials";
 import { AWSImagePath } from "../../../../utils/paths";
-import {NullOrEmpty} from "../../../../utils/validations";
-import {BloodGroup} from "../../../../utils/validations";
+import { NullOrEmpty } from "../../../../utils/validations";
+import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
-import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { color } from "react-native-reanimated";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
-
 const EmployeeEditScreen = ({ route, navigation }) => {
-
   const [ETRadioButtons, setETRadioButtons] = useState([
     {
-        id: '1', // acts as primary key, should be unique and non-empty string
-        label: 'Permanent',
-        selected: true,
-        value: '1'
+      id: "1", // acts as primary key, should be unique and non-empty string
+      label: "Permanent",
+      selected: true,
+      value: "1",
     },
     {
-        id: '2',
-        label: 'Temporary',
-        selected:false,
-        value: '2'
+      id: "2",
+      label: "Temporary",
+      selected: false,
+      value: "2",
     },
     {
-      id: '3',
-      label: 'Releave',
-      selected:false,
-      value: '3'
+      id: "3",
+      label: "Releave",
+      selected: false,
+      value: "3",
+    },
+  ]);
+
+  const [wagesRadioButtons, setWagesRadioButtons] = useState([
+    {
+      id: "1", // acts as primary key, should be unique and non-empty string
+      label: "Daily",
+      value: "0",
+    },
+    {
+      id: "2",
+      label: "Monthly",
+      value: "1",
+    },
+  ]);
+
+  function onPressETRadioButton(radioButtonsArray) {
+    setETRadioButtons(radioButtonsArray);
   }
-]);
 
-const [wagesRadioButtons, setWagesRadioButtons] = useState([
-  {
-      id: '1', // acts as primary key, should be unique and non-empty string
-      label: 'Daily',
-      value: '0'
-  },
-  {
-      id: '2',
-      label: 'Monthly',
-      value: '1'
+  function onPressWagesRadioButton(radioButtonsArray) {
+    setWagesRadioButtons(radioButtonsArray);
   }
-]);
-
-function onPressETRadioButton(radioButtonsArray) {
-  setETRadioButtons(radioButtonsArray);
-}
-
-function onPressWagesRadioButton(radioButtonsArray) {
-  setWagesRadioButtons(radioButtonsArray);
-}
 
   const [showDropDown, setShowDropDown] = useState(false);
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
@@ -85,33 +83,32 @@ function onPressWagesRadioButton(radioButtonsArray) {
     {
       label: "White",
       value: "white",
-      selected:true,
+      selected: true,
     },
     {
       label: "Red",
       value: "red",
-      selected:true,
+      selected: true,
     },
     {
       label: "Blue",
       value: "blue",
-      selected:false,
+      selected: false,
     },
     {
       label: "Green",
       value: "green",
-      selected:false,
+      selected: false,
     },
     {
       label: "Orange",
       value: "orange",
-      selected:false,
+      selected: false,
     },
   ];
 
-
   //#region Input Variables
-  
+
   const [employeeName, setEmployeeName] = useState("");
   const [employeeNameInvalid, setEemployeeNameInvalid] = useState("");
   const employeeNameRef = useRef({});
@@ -265,8 +262,8 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
 
-//#endregion
-  
+  //#endregion
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -283,111 +280,105 @@ function onPressWagesRadioButton(radioButtonsArray) {
     };
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
-        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             let employee_data = response.data.data[0].employee[0];
             let reporting_data = response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
-            
 
-          if (!NullOrEmpty(employee_data)) {
+            if (!NullOrEmpty(employee_data)) {
+              setEmployeeName(employee_data.employeeName ? employee_data.employeeName : "");
+              setEemployeeCode(employee_data.employeeCode ? employee_data.employeeCode : "");
+              setMobileNo(employee_data.mobileNo ? employee_data.mobileNo : "");
+              setAadharNo(employee_data.aadharNo ? employee_data.aadharNo : "");
+              setFatherName(employee_data.fatherName ? employee_data.fatherName : "");
+              setAddress(employee_data.address ? employee_data.address : "");
 
-            setEmployeeName(employee_data.employeeName ? employee_data.employeeName : "");
-            setEemployeeCode(employee_data.employeeCode ? employee_data.employeeCode : "");
-            setMobileNo(employee_data.mobileNo ? employee_data.mobileNo : "");
-            setAadharNo(employee_data.aadharNo ? employee_data.aadharNo : "");
-            setFatherName(employee_data.fatherName ? employee_data.fatherName : "");
-            setAddress(employee_data.address ? employee_data.address : "");
-
-            if (!NullOrEmpty(employee_data.stateID)) {
+              if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
-            }
+              }
 
-            if (!NullOrEmpty(employee_data.cityID)) {
-              setCityID(employee_data.cityID);
-            }
-            if (!NullOrEmpty(employee_data.bloodGroup)) {
-              setBloodGroupID(employee_data.bloodGroup);
-            }
+              if (!NullOrEmpty(employee_data.cityID)) {
+                setCityID(employee_data.cityID);
+              }
+              if (!NullOrEmpty(employee_data.bloodGroup)) {
+                setBloodGroupID(employee_data.bloodGroup);
+              }
 
-            setPincode(employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
-            if(!NullOrEmpty(employee_data.dob)) {
-              setDob(new Date(employee_data.dob));
-            }
+              setPincode(employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
+              if (!NullOrEmpty(employee_data.dob)) {
+                setDob(new Date(employee_data.dob));
+              }
 
-            if(!NullOrEmpty(employee_data.doj)) {
-              setDoj(new Date(employee_data.doj));
-            }
+              if (!NullOrEmpty(employee_data.doj)) {
+                setDoj(new Date(employee_data.doj));
+              }
 
-            if(!NullOrEmpty(employee_data.idCardValidity)) {
-              setCardValidity(new Date(employee_data.idCardValidity));
-            }
+              if (!NullOrEmpty(employee_data.idCardValidity)) {
+                setCardValidity(new Date(employee_data.idCardValidity));
+              }
 
-            if(!NullOrEmpty(employee_data.lastWorkDate)) {
-              setLwd(new Date(employee_data.lastWorkDate));
-            }
+              if (!NullOrEmpty(employee_data.lastWorkDate)) {
+                setLwd(new Date(employee_data.lastWorkDate));
+              }
 
-            setEmergencyContactName(employee_data.emergencyContactName ? employee_data.emergencyContactName : "");
-            setEmergencyContactNo(employee_data.emergencyContactNo ? employee_data.emergencyContactNo : "");
+              setEmergencyContactName(employee_data.emergencyContactName ? employee_data.emergencyContactName : "");
+              setEmergencyContactNo(employee_data.emergencyContactNo ? employee_data.emergencyContactNo : "");
 
-            setLoginActiveStatus(employee_data.loginStatus ? employee_data.loginStatus : "");
-            
-            if (!NullOrEmpty(employee_data.branchID)) {
-              setBranchID(employee_data.branchID);
-            }
-            if (!NullOrEmpty(employee_data.departmentID)) {
-              setDepartmentID(employee_data.departmentID);
-            }
-            if (!NullOrEmpty(employee_data.designationID)) {
-              setDesignationID(employee_data.designationID);
-            }
+              setLoginActiveStatus(employee_data.loginStatus ? employee_data.loginStatus : "");
 
-            if(!NullOrEmpty(employee_data.employeeType)) {
+              if (!NullOrEmpty(employee_data.branchID)) {
+                setBranchID(employee_data.branchID);
+              }
+              if (!NullOrEmpty(employee_data.departmentID)) {
+                setDepartmentID(employee_data.departmentID);
+              }
+              if (!NullOrEmpty(employee_data.designationID)) {
+                setDesignationID(employee_data.designationID);
+              }
 
-              {ETRadioButtons.map(r => {
-                r.selected= false;
-                if(r.value === employee_data.employeeType.toString()) {
-                  r.selected=true;
+              if (!NullOrEmpty(employee_data.employeeType)) {
+                {
+                  ETRadioButtons.map((r) => {
+                    r.selected = false;
+                    if (r.value === employee_data.employeeType.toString()) {
+                      r.selected = true;
+                    }
+                  });
                 }
-              })}
 
-              onPressETRadioButton(ETRadioButtons);
-              setEmployeeTypeID(employee_data.employeeType ? employee_data.employeeType : "");
-              
-            }
-              if(!NullOrEmpty(employee_data.wagesType)) {
-              
-              setWagesTypeID(employee_data.wagesType == true ? "1" : "0");
-              {wagesRadioButtons.map(r => {
-                r.selected= false;
+                onPressETRadioButton(ETRadioButtons);
+                setEmployeeTypeID(employee_data.employeeType ? employee_data.employeeType : "");
+              }
+              if (!NullOrEmpty(employee_data.wagesType)) {
+                setWagesTypeID(employee_data.wagesType == true ? "1" : "0");
+                {
+                  wagesRadioButtons.map((r) => {
+                    r.selected = false;
 
-                if(r.value === wagesTypeID) {
-                  r.selected=true;
+                    if (r.value === wagesTypeID) {
+                      r.selected = true;
+                    }
+                  });
                 }
-              })}
 
-              onPressWagesRadioButton(wagesRadioButtons);
+                onPressWagesRadioButton(wagesRadioButtons);
+              }
+
+              setSalary(employee_data.salary ? employee_data.salary : "");
+
+              setLogoImage(employee_data.profilePhoto);
+              setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
+              setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
             }
-            
-
-            setSalary(employee_data.salary ? employee_data.salary : "");
-
-            setLogoImage(employee_data.profilePhoto);
-            setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
-            setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
-
-          }
 
             if (!NullOrEmpty(bankDetails_data)) {
-
               setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
               setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
               setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
               setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
               setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
             }
-            
           }
           FetchStates();
           BloodGroupDropdown();
@@ -404,8 +395,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
       });
   };
 
- //#region Dropdown Functions
-
+  //#region Dropdown Functions
 
   const FetchCities = (stateName, stateData) => {
     let params = {
@@ -422,7 +412,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCityFullData(response.data.data);
-            
+
             let ct = cityFullData.filter((el) => {
               return el.id.toString() === cityID.toString();
             });
@@ -459,21 +449,19 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
   const BloodGroupDropdown = () => {
     let b = bloodGroupFullData.filter((el) => {
-      
-    if(!NullOrEmpty(el)){
-    if(el.ID.toString() === bloodGroupID.toString()){
-    return el;
-  }
-}
+      if (!NullOrEmpty(el)) {
+        if (el.ID.toString() === bloodGroupID.toString()) {
+          return el;
+        }
+      }
     });
 
     const bg = bloodGroupFullData.map((data) => data.Name);
     setBloodGroupData(bg);
-    if(!NullOrEmpty(b[0])) {
+    if (!NullOrEmpty(b[0])) {
       setBloodGroup(b[0].Name);
     }
   };
-
 
   const FetchBranch = () => {
     let params = {
@@ -487,7 +475,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
             let b = branchFullData.filter((el) => {
               return el.id.toString() === branchID.toString();
             });
-            
+
             const branch = response.data.data.map((data) => data.locationName);
             setBranchData(branch);
             setBranchName(b[0].locationName);
@@ -500,7 +488,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const FetchDepartments = () => {
     let params = {
       UserType: 3,
-      UserId: userID
+      UserId: userID,
     };
     Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -522,7 +510,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const FetchDesignations = () => {
     let params = {
       UserType: 3,
-      UserId: userID
+      UserId: userID,
     };
     Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -543,7 +531,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
   const FetchReportingEmployee = () => {
     let params = {
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getreportingemployee?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -563,12 +551,11 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
   //#endregion
 
-
   useEffect(() => {
     GetUserID();
-  }, []);  
+  }, []);
 
-//#region OnChange Function
+  //#region OnChange Function
 
   const onEmployeeNameChanged = (text) => {
     setEmployeeName(text);
@@ -658,11 +645,11 @@ function onPressWagesRadioButton(radioButtonsArray) {
     setSalary(selectedItem);
     setSalaryInvalid(false);
   };
-  
+
   const onAccountHolderNameChanged = (text) => {
     setAccountHolderName(text);
     setAccountHolderNameInvalid(false);
-  };  
+  };
 
   const onAccountNoChanged = (text) => {
     setAccountNo(text);
@@ -681,8 +668,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
     setIfscCodeInvalid(false);
   };
 
-
-//#endregion
+  //#endregion
 
   const chooseFile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -804,7 +790,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
 
   const UpdateData = () => {
     const params = {
-      ID:id,
+      ID: id,
       MobileNo: mobileNo.trim(),
       AadharNo: aadharNo.trim(),
       FatherName: fatherName,
@@ -812,26 +798,26 @@ function onPressWagesRadioButton(radioButtonsArray) {
       StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
       CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
       Pincode: pincode ? pincode : 0,
-      ProfilePhoto: profilePhoto ? profilePhoto: "",
-      BloodGroup:bloodGroup,
-      DOB:dob,
-      DOJ:doj,
-      EmergencyContactName:emergencyContactName,
-      EmergencyContactNo:emergencyContactNo,
-      IDCardValidity:cardValidity,
-      LoginActiveStatus:loginActiveStatus,
-      BranchID:branchID,
-      DepartmentID:departmentID,
-      DesignationID:designationID,
-      EmployeeType:employeeType,
-      LastWorkDate:lwd,
-      WagesType:wagesType,
-      Salary:salary,
-      AccountHolderName:accountHolderName,
-      AccountNumber:accountNo,
-      BankName:bankName,
-      BranchName:branchName,
-      IFSCCode:ifscCode
+      ProfilePhoto: profilePhoto ? profilePhoto : "",
+      BloodGroup: bloodGroup,
+      DOB: dob,
+      DOJ: doj,
+      EmergencyContactName: emergencyContactName,
+      EmergencyContactNo: emergencyContactNo,
+      IDCardValidity: cardValidity,
+      LoginActiveStatus: loginActiveStatus,
+      BranchID: branchID,
+      DepartmentID: departmentID,
+      DesignationID: designationID,
+      EmployeeType: employeeType,
+      LastWorkDate: lwd,
+      WagesType: wagesType,
+      Salary: salary,
+      AccountHolderName: accountHolderName,
+      AccountNumber: accountNo,
+      BankName: bankName,
+      BranchName: branchName,
+      IFSCCode: ifscCode,
     };
     Provider.create("master/updateemployeedetails", params)
       .then((response) => {
@@ -856,32 +842,31 @@ function onPressWagesRadioButton(radioButtonsArray) {
   const ValidateData = () => {
     const isValid = true;
 
-    if(NullOrEmpty(employeeName.trim())){
-      isValid=false;
+    if (NullOrEmpty(employeeName.trim())) {
+      isValid = false;
       setEemployeeNameInvalid(true);
     }
-    if(NullOrEmpty(employeeCode.trim())){
-      isvalid=false;
+    if (NullOrEmpty(employeeCode.trim())) {
+      isvalid = false;
       setEemployeeCodeInvalid(true);
     }
-    if(NullOrEmpty(mobileNo.trim())){
-      isvalid=false;
+    if (NullOrEmpty(mobileNo.trim())) {
+      isvalid = false;
       setMobileNoInvalid(true);
     }
-    if(NullOrEmpty(aadharNo.trim())){
-      isvalid=false;
+    if (NullOrEmpty(aadharNo.trim())) {
+      isvalid = false;
       setAadharNoInvalid(true);
     }
-    if(NullOrEmpty(fatherName.trim())){
-      isvalid=false;
+    if (NullOrEmpty(fatherName.trim())) {
+      isvalid = false;
       setFatherNameInvalid(true);
     }
 
     if (isValid) {
       UpdateData();
-      }
     }
-  
+  };
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -889,24 +874,18 @@ function onPressWagesRadioButton(radioButtonsArray) {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={employeeNameRef} mode="flat" dense label="Employee Name" value={employeeName} returnKeyType="next" 
-              onSubmitEditing={() => employeeNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onEmployeeNameChanged} 
-              style={{ backgroundColor: "#cdcdcd" }} error={employeeNameInvalid} />
+              <TextInput ref={employeeNameRef} mode="flat" dense label="Employee Name" value={employeeName} returnKeyType="next" onSubmitEditing={() => employeeNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onEmployeeNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={employeeNameInvalid} />
               <HelperText type="error" visible={employeeNameInvalid}>
                 {communication.InvalidEmployeeName}
               </HelperText>
 
-              <TextInput ref={employeeCodeRef} mode="flat"  dense label="Employee Code" 
-              value={employeeCode} returnKeyType="next" editable={false} selectTextOnFocus={false} 
-              onSubmitEditing={() => employeeCodeRef.current.focus()} 
-              onChangeText={onEmployeeCodeChanged} style={{ backgroundColor: "#cdcdcd" }} error={employeeCodeInvalid} />
+              <TextInput ref={employeeCodeRef} mode="flat" dense label="Employee Code" value={employeeCode} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => employeeCodeRef.current.focus()} onChangeText={onEmployeeCodeChanged} style={{ backgroundColor: "#cdcdcd" }} error={employeeCodeInvalid} />
 
               <HelperText type="error" visible={employeeCodeInvalid}>
                 {communication.InvalidEmployeeCode}
               </HelperText>
 
-              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} 
-              returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
+              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
               <HelperText type="error" visible={mobileNoInvalid}>
                 {communication.mobileNoInvalid}
               </HelperText>
@@ -918,62 +897,40 @@ function onPressWagesRadioButton(radioButtonsArray) {
               <HelperText type="error" visible={fatherNameInvalid}>
                 {communication.InvalidFatherName}
               </HelperText>
-              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" 
-              onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={[Styles.marginBottom16, {backgroundColor: "white"}]} 
-              error={addressInvalid} />
-              
+              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={[Styles.marginBottom16, { backgroundColor: "white" }]} error={addressInvalid} />
+
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
               <View style={[Styles.height24]}></View>
               <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
-              
-              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" 
-              onChangeText={onPincodeChanged} style={[Styles.marginTop24, Styles.marginBottom16, { backgroundColor: "white" }]} error={pincodeInvalid} />
-              
+
+              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={[Styles.marginTop24, Styles.marginBottom16, { backgroundColor: "white" }]} error={pincodeInvalid} />
+
               <Dropdown label="Blood Group" data={bloodGroupData} onSelected={onBloodGroupSelected} isError={errorBloodGroup} selectedItem={bloodGroup} reference={bloodGroupRef} />
 
               <View>
-                <DateTimePicker
-                    label="Date of Birth"
-                    type="date"
-                    value={dob}
-                    onChangeDate={setDob}
-                />
-            </View>
-
-            <View>
-                <DateTimePicker
-                    label="Date of Joining"
-                    type="date"
-                    value={doj}
-                    onChangeDate={setDoj}
-                />
-            </View>
-
-                <TextInput ref={emergencyContactNameRef} mode="flat" dense label="Emergency Contact Name" value={emergencyContactName} returnKeyType="next" 
-                onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} 
-                error={emergencyContactNameInvalid} />
-
-                <TextInput ref={emergencyContactNoRef} mode="flat" dense label="Emergency Contact No" value={emergencyContactNo} returnKeyType="next" 
-                onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} 
-                error={emergencyContactNoInvalid} />
+                <DateTimePicker label="Date of Birth" type="date" value={dob} onChangeDate={setDob} />
+              </View>
 
               <View>
-                <DateTimePicker
-                    label="ID Card Valid Upto"
-                    type="date"
-                    value={cardValidity}
-                    onChangeDate={setCardValidity}
-                />
-            </View>
+                <DateTimePicker label="Date of Joining" type="date" value={doj} onChangeDate={setDoj} />
+              </View>
 
-                <Checkbox.Item
+              <TextInput ref={emergencyContactNameRef} mode="flat" dense label="Emergency Contact Name" value={emergencyContactName} returnKeyType="next" onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNameInvalid} />
+
+              <TextInput ref={emergencyContactNoRef} mode="flat" dense label="Emergency Contact No" value={emergencyContactNo} returnKeyType="next" onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNoInvalid} />
+
+              <View>
+                <DateTimePicker label="ID Card Valid Upto" type="date" value={cardValidity} onChangeDate={setCardValidity} />
+              </View>
+
+              <Checkbox.Item
                 style={Styles.marginTop8}
-                    label="Login Active Status"
-                    status={loginActiveStatus ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                        setLoginActiveStatus(!loginActiveStatus);
-                    }}
-                    />
+                label="Login Active Status"
+                status={loginActiveStatus ? "checked" : "unchecked"}
+                onPress={() => {
+                  setLoginActiveStatus(!loginActiveStatus);
+                }}
+              />
             </View>
           </ScrollView>
         );
@@ -981,49 +938,27 @@ function onPressWagesRadioButton(radioButtonsArray) {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              
-            <Dropdown label="Branch" data={branchData} onSelected={onBranchChanged} isError={errorBranch} selectedItem={branchName} 
-            reference={branchRef} />
+              <Dropdown label="Branch" data={branchData} onSelected={onBranchChanged} isError={errorBranch} selectedItem={branchName} reference={branchRef} />
 
-            <Dropdown label="Department" data={departmentData} onSelected={onDepartmentChanged} isError={errorDepartment} 
-            selectedItem={departmentName}  reference={departmentRef} />
+              <Dropdown label="Department" data={departmentData} onSelected={onDepartmentChanged} isError={errorDepartment} selectedItem={departmentName} reference={departmentRef} />
 
-            <Dropdown label="Designation" data={designationData} onSelected={onDesignationChanged} isError={errorDesignation} 
-            selectedItem={designationName} reference={designationRef} />
+              <Dropdown label="Designation" data={designationData} onSelected={onDesignationChanged} isError={errorDesignation} selectedItem={designationName} reference={designationRef} />
 
               <View style={Styles.marginTop16}>
                 <Text>Employee Type</Text>
               </View>
 
-            <RadioGroup containerStyle={[Styles.marginTop16]} layout="row"
-            radioButtons={ETRadioButtons} 
-            onPress={onPressETRadioButton} />
+              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={ETRadioButtons} onPress={onPressETRadioButton} />
 
-            <View style={[Styles.marginTop24, Styles.marginBottom8]}>
+              <View style={[Styles.marginTop24, Styles.marginBottom8]}>
                 <Text>Reporting to</Text>
               </View>
 
-              <DropDown
-              label={"Colors"}
-              mode={"outlined"}
-              visible={showMultiSelectDropDown}
-              showDropDown={() => setShowMultiSelectDropDown(true)}
-              onDismiss={() => setShowMultiSelectDropDown(false)}
-              value={colors}
-              setValue={setColors}
-              list={colorList}
-              multiSelect
-            />
+              <DropDown label={"Colors"} mode={"outlined"} visible={showMultiSelectDropDown} showDropDown={() => setShowMultiSelectDropDown(true)} onDismiss={() => setShowMultiSelectDropDown(false)} value={colors} setValue={setColors} list={colorList} multiSelect />
 
-            <View>
-                <DateTimePicker
-                    label="Last Working Date"
-                    type="date"
-                    value={lwd}
-                    onChangeDate={setLwd}
-                />
-            </View>
-
+              <View>
+                <DateTimePicker label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
+              </View>
             </View>
           </ScrollView>
         );
@@ -1031,24 +966,17 @@ function onPressWagesRadioButton(radioButtonsArray) {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-
-            <View style={Styles.marginTop16}>
+              <View style={Styles.marginTop16}>
                 <Text>Wages Type</Text>
               </View>
 
-              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row"
-            radioButtons={wagesRadioButtons} 
-            onPress={onPressWagesRadioButton} />
+              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={wagesRadioButtons} onPress={onPressWagesRadioButton} />
 
-                  <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" 
-                  onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} 
-                  error={salaryInvalid} />    
+              <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
 
-            <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} 
-            returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} 
-            style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
+              <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
 
-            <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               {/* <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
@@ -1064,7 +992,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
               {/* <HelperText type="error" visible={ifscCodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
-
             </View>
           </ScrollView>
         );
@@ -1096,7 +1023,6 @@ function onPressWagesRadioButton(radioButtonsArray) {
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
-        <Header navigation={navigation} title="Employee Basic Edit" isDrawer="false" />
         {isLoading ? (
           <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -1106,7 +1032,7 @@ function onPressWagesRadioButton(radioButtonsArray) {
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading} >
+            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               Update
             </Button>
           </Card.Content>
@@ -1118,6 +1044,5 @@ function onPressWagesRadioButton(radioButtonsArray) {
     )
   );
 };
-
 
 export default EmployeeEditScreen;
