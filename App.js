@@ -89,6 +89,9 @@ import EmployeeListScreen from "./src/screens/Contractor/Employee/EmployeeList";
 import EmployeeEditScreen from "./src/screens/Contractor/Employee/AddItems/EmployeeEdit";
 import BranchListScreen from "./src/screens/Contractor/Organization/BranchScreen";
 import BranchEditScreen from "./src/screens/Contractor/Organization/AddItem/AddBranchScreen";
+import EmployeeDlist from "./src/screens/Dealer/Employee/EmployeeDList";
+import SearchNDAdd from "./src/screens/Dealer/Employee/AddItem/SearchNDAdd";
+import EmployeeDEdit from "./src/screens/Dealer/Employee/AddItem/EmployeeDEdit";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -291,6 +294,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDepartmentScreen" component={DealerDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDesignationScreen" component={DealerDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeDlist" component={EmployeeDlist} />
             </Drawer.Navigator>
           );
       }
@@ -358,6 +362,8 @@ export default function App() {
               <Stack.Screen name="EmployeeEditScreen" component={EmployeeEditScreen} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{ headerShown: false }} />
               <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="SearchNDAdd" component={SearchNDAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EmployeeDEdit" component={EmployeeDEdit} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}
