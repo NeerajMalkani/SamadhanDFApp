@@ -279,7 +279,6 @@ export const MenuItemsDealer = [
         index: 30,
         navigation: "EmployeeDlist",
       },
-      
       {
         title: "Employee Report",
         type: "accordian",

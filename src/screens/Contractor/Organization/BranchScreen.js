@@ -9,8 +9,7 @@ import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RenderHiddenItems } from "../../../components/ListActions";
-import { RenderHiddenMultipleItems } from "../../../components/ListActions";
+import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
@@ -152,22 +151,15 @@ const BranchListScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap, buttonType) => {
 
-     if(buttonType == "otp") 
-    {
-      // setEmployeeID(data.item.id);
-      // setOTP(data.item.otp.toString());
-      // showDialog();
-    }
-    else {
-      rowMap[data.item.key].closeRow();
-      navigation.navigate("AddBranchScreen", {
-        type: "edit",
-        fetchData: FetchData,
-        data: {
-           id: data.item.id,
-        },
-      });
-    }
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddBranchScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+         id: data.item.id,
+      },
+    });
+    
   };
 
   const RenderItems = (data) => {
@@ -244,7 +236,7 @@ const BranchListScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-160}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenMultipleItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("edit", data, rowMap, [EditCallback])}
           />
         </View>
       ) : (

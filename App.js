@@ -92,7 +92,7 @@ import BranchEditScreen from "./src/screens/Contractor/Organization/AddItem/AddB
 import EmployeeDlist from "./src/screens/Dealer/Employee/EmployeeDList";
 import SearchNDAdd from "./src/screens/Dealer/Employee/AddItem/SearchNDAdd";
 import EmployeeDEdit from "./src/screens/Dealer/Employee/AddItem/EmployeeDEdit";
-
+import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -278,6 +278,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchEditScreen" component={BranchEditScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
             </Drawer.Navigator>
           );
         case 4:

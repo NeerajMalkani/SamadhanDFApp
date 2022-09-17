@@ -416,7 +416,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
                     disableRightSwipe={true}
                     rightOpenValue={-72}
                     renderItem={(data) => RenderItems(data)}
-                    renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("add-to-list", data, rowMap, [EditCallback])}
+                    renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("eye", data, rowMap, [EditCallback])}
                 />
                 </View>
             ) : (

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
+import { Image, ActivityIndicator, View, RefreshControl, LogBox, ScrollView,StyleSheet } from "react-native";
 import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -15,12 +15,13 @@ import { Styles } from "../../../styles/styles";
 import {NullOrEmpty} from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-import SearchNDAdd from "../Employee/AddItem/SearchNDAdd";
-
+import SearchNAdd from "../Employee/AddItems/SearchNAdd";
+import logo from './test.jpg'; 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
-const EmployeeDListScreen = ({ navigation }) => {
+const Enquiry_tab = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false);
+  const [visible1, setVisible1] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
   const [otp, setOTP] = React.useState("");
@@ -43,7 +44,7 @@ const EmployeeDListScreen = ({ navigation }) => {
   const [profileStatus, setProfileStatus] = React.useState("");
   const [loginStatus, setLoginStatus] = React.useState("");
   const [verifyStatus, setVerifyStatus] = React.useState("");
-
+  const [closeSheet, setcloseSheet] = React.useState(true);
   const refRBSheet = useRef();
 
   const GetUserID = async () => {
@@ -54,9 +55,21 @@ const EmployeeDListScreen = ({ navigation }) => {
     }
   };
 
-  const showDialog = () => setVisible(true);
+  const showDialog = () => {
+
+    refRBSheet.current.close();
+    setVisible(true) 
+  }
 
   const hideDialog = () => setVisible(false);
+
+  const showDialog1 = () => {
+
+    refRBSheet.current.close();
+    setVisible1(true) 
+  }
+
+  const hideDialog1 = () => setVisible1(false);
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -212,7 +225,7 @@ const EmployeeDListScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="My Employee List" />
+      {/* <Header navigation={navigation} title="My Employee List" /> */}
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -252,50 +265,133 @@ const EmployeeDListScreen = ({ navigation }) => {
         {snackbarText}
       </Snackbar>
 
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade"  customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{employeeName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
           <ScrollView style={{marginBottom: 64}}>
-            <List.Item title="Mobile No" description={mobileNo} />
-            <List.Item title="Branch" description={branch} />
-            <List.Item title="Department" description={department} />
-            <List.Item title="Designation" description={designation} />
-            <List.Item title="Profile Status" description={NullOrEmpty(profileStatus) ? "" : profileStatus ? "Complete":"Incomplete"} />
-            <List.Item title="Login Status" description={NullOrEmpty(loginStatus) ? "" : loginStatus ? "Yes":"No"} />
-            <List.Item title="Verify Status" description={NullOrEmpty(verifyStatus) ? "" : verifyStatus ? "Verified":"Not Verified"} />
+          <Image source={logo} style={{ width: 400, height: 159 }} /> 
+          <List.Item title="Labour Cost" />
+          <TextInput 
+              mode="flat"
+              value='2323jjlo'
+             
+              
+                  style={[stylesm.input]}  
+                />
+            <List.Item title="Estimate No" description="AUG00s" />
+            <List.Item title="Category" description="GYPSUM & POP" />
+            <List.Item title="Product" description={department} />
+            <List.Item title="Design Type" description={designation} />
+            <List.Item title="Design No" description={NullOrEmpty(profileStatus) ? "" : profileStatus ? "Complete":"Incomplete"} />
+            <List.Item title="Total Sq.Ft" description={NullOrEmpty(loginStatus) ? "" : loginStatus ? "Yes":"No"} />
+            <List.Item title="Actual Labour Cost" description={NullOrEmpty(verifyStatus) ? "" : verifyStatus ? "Verified":"Not Verified"} />
+            <Card.Content style={[Styles.marginTop16]}>
+            <Button mode="contained" onPress={showDialog} style={stylesm.button} >
+              Accept
+            </Button>
+            </Card.Content>
+            <Card.Content style={[Styles.marginTop16]}>
+            <Button mode="contained" onPress={showDialog1} style={stylesm.button1}>
+              Reject
+            </Button>
+            </Card.Content>
+
           </ScrollView>
         </View>
       </RBSheet>
 
         <Portal>
           <Dialog visible={visible} onDismiss={hideDialog} style={[Styles.borderRadius8]}>
-            <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>EMPLOYEE OTP NO VERIFICATION & LOGIN ACTIVATION</Dialog.Title>
+            <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>Confirm to Accept?</Dialog.Title>
             <Dialog.Content>
               <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
-                <Text >Enter OTP No:</Text>
-              <TextInput 
-              mode="flat"
-              value={otp} 
-              onChangeText={onOTPChange}
-              error={otpError}
-                  style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  
-                />
+               
+            
               </View>
               <View>
-              <HelperText type="error" visible={otpError} style={[Styles.textCenter]}>
-              {communication.InvalidOTP}
-            </HelperText> 
+            
               </View>
               <Card.Content style={[Styles.marginTop16]}>
-          <Button mode="contained" onPress={OnOTPSend}>
-          Submit & Verify
+          <Button mode="contained" >
+          Ok
           </Button>
+          
+          </Card.Content>
+          <Card.Content style={[Styles.marginTop16]}>
+          <Button mode="contained" onPress={hideDialog}>
+          Cancel
+          </Button>
+          
+          </Card.Content>
+            </Dialog.Content>
+          </Dialog>
+
+          <Dialog visible={visible1} onDismiss={hideDialog1} style={[Styles.borderRadius8]}>
+            <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>Confirm to Reject?</Dialog.Title>
+            <Dialog.Content>
+              <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
+               
+            
+              </View>
+              <View>
+            
+              </View>
+              <Card.Content style={[Styles.marginTop16]}>
+          <Button mode="contained" >
+          Ok
+          </Button>
+          
+          </Card.Content>
+          <Card.Content style={[Styles.marginTop16]}>
+          <Button mode="contained" onPress={hideDialog1}>
+          Cancel
+          </Button>
+          
           </Card.Content>
             </Dialog.Content>
           </Dialog>
         </Portal>
+        
+
+
     </View>
   );
 };
-
-export default EmployeeDListScreen;
+const stylesm = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'green',
+  },
+  button1: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'red',
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+  modalIndex: {
+    zIndex:999999999999999999
+  },
+  input: {
+    margin: 15,
+    height: 40,
+    
+    borderColor: 'grey',
+    borderWidth: 1
+ },
+});
+export default Enquiry_tab;
