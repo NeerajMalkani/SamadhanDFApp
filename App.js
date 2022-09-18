@@ -93,6 +93,7 @@ import EmployeeDlist from "./src/screens/Dealer/Employee/EmployeeDList";
 import SearchNDAdd from "./src/screens/Dealer/Employee/AddItem/SearchNDAdd";
 import EmployeeDEdit from "./src/screens/Dealer/Employee/AddItem/EmployeeDEdit";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
+import UserProfile from "./src/screens/GeneralUser/Profile Update/UserProfile";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -312,7 +313,7 @@ export default function App() {
         <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: true, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
         <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
         <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-        <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
+        <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile  : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
       </Tab.Navigator>
     );
   };
@@ -365,6 +366,7 @@ export default function App() {
               <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="SearchNDAdd" component={SearchNDAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EmployeeDEdit" component={EmployeeDEdit} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

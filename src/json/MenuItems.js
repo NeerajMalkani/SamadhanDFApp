@@ -169,7 +169,7 @@ export const MenuItemsGeneralUser = [
   //       title: "Profile Update",
   //       type: "accordian",
   //       index: 10,
-  //       navigation: "ProfileUpdateScreen",
+  //       navigation: "UserProfile",
   //     },
   //   ],
   // },
