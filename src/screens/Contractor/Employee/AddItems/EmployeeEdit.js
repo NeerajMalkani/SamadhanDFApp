@@ -22,6 +22,17 @@ import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { color } from "react-native-reanimated";
+import { PaperSelect } from 'react-native-paper-select';
+
+export const selectValidator = (value: any) => {
+  if (!value || value.length <= 0) {
+    return 'Please select a value.';
+  }
+
+  return '';
+};
+
+
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
@@ -70,42 +81,21 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const [showDropDown, setShowDropDown] = useState(false);
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
-  const [colors, setColors] = React.useState("");
+  const [selectedReportingEmployee, setSelectedReportingEmployee] = React.useState("");
 
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
   const [empType, setEmpType] = React.useState();
 
-  const [wType, setWType] = React.useState();
+  const [reporting, setReporting] = useState({
+    value: '',
+    list: [],
+    selectedList: [],
+    error: '',
+  });
 
-  const colorList = [
-    {
-      label: "White",
-      value: "white",
-      selected: true,
-    },
-    {
-      label: "Red",
-      value: "red",
-      selected: true,
-    },
-    {
-      label: "Blue",
-      value: "blue",
-      selected: false,
-    },
-    {
-      label: "Green",
-      value: "green",
-      selected: false,
-    },
-    {
-      label: "Orange",
-      value: "orange",
-      selected: false,
-    },
-  ];
+  const [wType, setWType] = React.useState();
 
   //#region Input Variables
 
@@ -385,7 +375,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           FetchBranch();
           FetchDepartments();
           FetchDesignations();
-          // FetchReportingEmployee();
+          FetchReportingEmployee();
           setIsLoading(false);
         }
       })
@@ -401,11 +391,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     let params = {
       ID: stateData
         ? stateData.find((el) => {
-            return el.stateName === stateName;
-          }).id
+          return el.stateName === stateName;
+        }).id
         : statesFullData.find((el) => {
-            return el.stateName === stateName;
-          }).id,
+          return el.stateName === stateName;
+        }).id,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -422,7 +412,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchStates = () => {
@@ -444,7 +434,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const BloodGroupDropdown = () => {
@@ -482,7 +472,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepartments = () => {
@@ -503,7 +493,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignations = () => {
@@ -524,27 +514,27 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReportingEmployee = () => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getreportingemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getreportingemployeelist?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setReportingFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+
+            const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
+
+            setReporting({...reporting, list:rd});
+
+            setReportingFullData(rd);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   //#endregion
@@ -628,6 +618,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     setDesignationName(selectedItem);
     setDesignationError(false);
   };
+
+
 
   const onReportingChanged = (selectedItem) => {
     setReportingName(selectedItem);
@@ -838,6 +830,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
+    console.log(reporting.selectedList);
     const isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {
@@ -862,7 +855,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
-      UpdateData();
+      //UpdateData();
     }
   };
 
@@ -952,7 +945,27 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 <Text>Reporting to</Text>
               </View>
 
-              <DropDown label={"Colors"} mode={"outlined"} visible={showMultiSelectDropDown} showDropDown={() => setShowMultiSelectDropDown(true)} onDismiss={() => setShowMultiSelectDropDown(false)} value={colors} setValue={setColors} list={colorList} multiSelect />
+              <PaperSelect
+                label="Reporting Employees"
+                value={reporting.value}
+                onSelection={(value: any) => {
+                  setReporting({
+                    ...reporting,
+                    value: value.text,
+                    selectedList: value.selectedList,
+                    error: '',
+                  });
+                }}
+                arrayList={[...reporting.list]}
+                selectedArrayList={reporting.selectedList}
+                errorText={reporting.error}
+                multiEnable={true}
+                textInputMode="flat"
+                searchStyle={{ iconColor: '#6c736e' }}
+                searchPlaceholder="Search Employee"
+                modalCloseButtonText="Cancel"
+                modalDoneButtonText="Done"
+              />
 
               <View>
                 <DateTimePicker label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />

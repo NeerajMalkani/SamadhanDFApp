@@ -484,7 +484,7 @@ export const MenuItemsContractor = [
         title: "App User Enquiry Wise",
         type: "accordian",
         index: 70,
-        //navigation: "CreatePurchaseOrderScreen",
+        navigation: "EnquiryWise",
       },
       {
         title: "Architect & Consultant-Boq",

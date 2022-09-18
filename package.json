@@ -47,6 +47,7 @@
     "react-native-pager-view": "5.4.24",
     "react-native-paper": "^4.12.2",
     "react-native-paper-dropdown": "^1.0.7",
+    "react-native-paper-select": "^0.3.4",
     "react-native-radio-buttons-group": "^2.2.11",
     "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-reanimated": "~2.9.1",
@@ -57,6 +58,7 @@
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
     "react-native-uuid": "^2.0.1",
+    "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.7",
     "use-state-if-mounted": "^1.0.7",
     "uuid": "^8.3.2"

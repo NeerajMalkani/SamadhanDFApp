@@ -2416,16 +2416,16 @@
   "version" "1.5.5"
 
 "@types/react-native@*":
-  "integrity" "sha512-KW5KQdg4vjG7Mo2muCTRSe3CwVNEROa4Hlh7wIkfv+be92jdFwq6tf+i1q7dD3wDnUinc/cVi/6/PJbGpbshEA=="
-  "resolved" "https://registry.npmjs.org/@types/react-native/-/react-native-0.69.8.tgz"
-  "version" "0.69.8"
+  "integrity" "sha512-yBN7qJDfs0Vwr34NyfW1SWzalHQoYtpUWf0t4UJY9C5ft58BRr46+r92I0v+l3QX4VNsSRMHVAAWqLLCbIkM+g=="
+  "resolved" "https://registry.npmjs.org/@types/react-native/-/react-native-0.70.0.tgz"
+  "version" "0.70.0"
   dependencies:
     "@types/react" "*"
 
 "@types/react@*":
-  "integrity" "sha512-BDc3Q+4Q3zsn7k9xZrKfjWyJsSlEDMs38gD1qp2eDazLCdcPqAT+vq1ND+Z8AGel/UiwzNUk8ptpywgNQcJ1MQ=="
-  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.19.tgz"
-  "version" "18.0.19"
+  "integrity" "sha512-MWul1teSPxujEHVwZl4a5HxQ9vVNsjTchVA+xRqv/VYGCuKGAU6UhfrTdF5aBefwD1BHUD8i/zq+O/vyCm/FrA=="
+  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.20.tgz"
+  "version" "18.0.20"
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4612,9 +4612,9 @@
     "css-tree" "^1.1.2"
 
 "csstype@^3.0.2":
-  "integrity" "sha512-uX1KG+x9h5hIJsaKR9xHUeUraxf8IODOwq9JLNPq6BwB04a/xgpq3rcx47l5BZu5zBPlgD342tdke3Hom/nJRA=="
-  "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.1.0.tgz"
-  "version" "3.1.0"
+  "integrity" "sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw=="
+  "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.1.1.tgz"
+  "version" "3.1.1"
 
 "cyclist@^1.0.1":
   "integrity" "sha512-NJGVKPS81XejHcLhaLJS7plab0fK3slPh11mESeeDq2W4ZI5kUKK/LRRdVDvjJseojbPB7ZwjnyOybg3Igea/A=="
@@ -10609,6 +10609,11 @@
   "resolved" "https://registry.npmjs.org/react-native-paper-dropdown/-/react-native-paper-dropdown-1.0.7.tgz"
   "version" "1.0.7"
 
+"react-native-paper-select@^0.3.4":
+  "integrity" "sha512-e5qrMf00rnhmcX8gImW5VlZrKKdFRXPnlwm+Gz6orNRQJKWeFjDdUkAKc6ln02yGI0rngOkSlFYMDwoD1u4gDw=="
+  "resolved" "https://registry.npmjs.org/react-native-paper-select/-/react-native-paper-select-0.3.4.tgz"
+  "version" "0.3.4"
+
 "react-native-paper@*", "react-native-paper@^4.12.2", "react-native-paper@>= 3.0.0", "react-native-paper@4.12.3":
   "integrity" "sha512-Rdkm9ulvAo3vGb4sQo4lrASgdYuOGZh2CbcZc5Lp9KwmGf0yHewesUqvIPWYiA1JvzEzimdtVf9w8cpa7TaIZQ=="
   "resolved" "https://registry.npmjs.org/react-native-paper/-/react-native-paper-4.12.3.tgz"
@@ -10698,7 +10703,15 @@
   "resolved" "https://registry.npmjs.org/react-native-uuid/-/react-native-uuid-2.0.1.tgz"
   "version" "2.0.1"
 
-"react-native-vector-icons@*", "react-native-vector-icons@^8.1.0", "react-native-vector-icons@>= 6.0.0", "react-native-vector-icons@>=7.0.0", "react-native-vector-icons@>6.0.0":
+"react-native-vector-icons@*", "react-native-vector-icons@^9.2.0", "react-native-vector-icons@>= 6.0.0", "react-native-vector-icons@>=7.0.0", "react-native-vector-icons@>6.0.0":
+  "integrity" "sha512-wKYLaFuQST/chH3AJRjmOLoLy3JEs1JR6zMNgTaemFpNoXs0ztRnTxcxFD9xhX7cJe1/zoN5BpQYe7kL0m5yyA=="
+  "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz"
+  "version" "9.2.0"
+  dependencies:
+    "prop-types" "^15.7.2"
+    "yargs" "^16.1.1"
+
+"react-native-vector-icons@^8.1.0":
   "integrity" "sha512-sHIdBB6Y0dHaot2fMXgy5J/hhCn5YuyN7SKDNFgPzL8KA1oF2/v7mgYMavnK7LIIs2dJoGnDANKf61dsU+TZlg=="
   "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-8.1.0.tgz"
   "version" "8.1.0"
