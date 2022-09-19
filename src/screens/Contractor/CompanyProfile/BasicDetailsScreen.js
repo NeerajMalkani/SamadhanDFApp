@@ -272,7 +272,7 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     setCNPrefix(text);
     setCNPrefixInvalid(false);
   };
-  const onQBNChanged = () => {
+  const onQBNChanged = (text) => {
     setQBNPrefix(text);
     setQBNPrefixInvalid(false);
   };
@@ -389,6 +389,7 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     };
     Provider.create("master/insertuserprofile", params)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
