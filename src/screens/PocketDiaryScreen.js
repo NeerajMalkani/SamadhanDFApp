@@ -68,10 +68,7 @@ const PocketDiaryScreen = ({ navigation }) => {
             </View>
 
             <View style={[Styles.height60per,Styles.backgroundColorWhite,Styles.flexRow,Styles.flexJustifyCenter]}>
-              
               <Image source={require("../../assets/pocketDairyHomeScreen.png")} style={[Styles.height71per,Styles.width80per]}/>
-              
-              
             </View>
             <View style={[Styles.width100per,Styles.height40,Styles.positionAbsolute,Styles.Top70,Styles.backgroundColorDarkGreen]}>
             <RadioButton.Group

@@ -248,6 +248,9 @@ export const Styles = StyleSheet.create({
     borderBottomLeftRadius: 64,
     borderBottomRightRadius: 64,
   },
+  borderTopLeftRadius:{
+    borderTopLeftRadius:20
+  },
 
   borderTopRadius0: {
     borderTopLeftRadius: 0,
