@@ -497,7 +497,7 @@ const AddClientScreen = ({ route, navigation }) => {
       <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32,Styles.primaryBgColor,Styles.padding10,Styles.flexAlignCenter]}>
         <Text style={[Styles.fontSize14,Styles.textColorWhite]}>SEARCH CLIENT</Text> 
       </TouchableOpacity>
-      <View>
+      <View >
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2,Styles.marginTop8]}>
                     <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.primaryColor]}>Client Search Result</Text>
                 </View>
