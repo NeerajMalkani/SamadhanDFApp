@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import RadioGroup from "react-native-radio-buttons-group";
 import DropDown from "react-native-paper-dropdown";
-//import moment from "moment";
+import moment from "moment";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
 import { Styles } from "../../../../styles/styles";
@@ -62,12 +62,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     {
       id: "1", // acts as primary key, should be unique and non-empty string
       label: "Daily",
-      value: "0",
+      value: "1",
     },
     {
       id: "2",
       label: "Monthly",
-      value: "1",
+      value: "2",
     },
   ]);
 
@@ -200,7 +200,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [errorReporting, setReportingError] = React.useState(false);
   const reportingRef = useRef({});
 
-  const [employeeType, setEmployeeType] = useState("");
+  const [employeeType, setEmployeeType] = useState(0);
   const [employeeTypeID, setEmployeeTypeID] = useState("");
   const [employeeTypeInvalid, setEmployeeTypeInvalid] = useState("");
   const employeeTypeRef = useRef({});
@@ -209,12 +209,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [lwdInvalid, setLwdInvalid] = useState("");
   const lwdRef = useRef({});
 
-  const [wagesType, setWagesType] = useState("");
+  const [wagesType, setWagesType] = useState(0);
   const [wagesTypeID, setWagesTypeID] = useState("");
   const [wagesTypeInvalid, setWagesTypeInvalid] = useState("");
   const wagesTypeRef = useRef({});
 
-  const [salary, setSalary] = useState("");
+  const [salary, setSalary] = useState(0);
   const [salaryInvalid, setSalaryInvalid] = useState("");
   const salaryRef = useRef({});
 
@@ -222,7 +222,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [accountHolderNameInvalid, setAccountHolderNameInvalid] = useState("");
   const accountHolderNameRef = useRef({});
 
-  const [accountNo, setAccountNo] = useState("");
+  const [accountNo, setAccountNo] = useState(0);
   const [accountNoInvalid, setAccountNoInvalid] = useState("");
   const accountNoRef = useRef({});
 
@@ -277,12 +277,14 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             let bankDetails_data = response.data.data[0].bankDetails[0];
 
             if (!NullOrEmpty(employee_data)) {
-              setEmployeeName(employee_data.employeeName ? employee_data.employeeName : "");
-              setEemployeeCode(employee_data.employeeCode ? employee_data.employeeCode : "");
-              setMobileNo(employee_data.mobileNo ? employee_data.mobileNo : "");
-              setAadharNo(employee_data.aadharNo ? employee_data.aadharNo : "");
-              setFatherName(employee_data.fatherName ? employee_data.fatherName : "");
-              setAddress(employee_data.address ? employee_data.address : "");
+
+              setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
+              setEemployeeCode(!NullOrEmpty(employee_data.employeeCode) ? employee_data.employeeCode : "");
+              setMobileNo(!NullOrEmpty(employee_data.mobileNo) ? employee_data.mobileNo : "");
+              setAadharNo(!NullOrEmpty(employee_data.aadharNo) ? employee_data.aadharNo : "");
+              setFatherName(!NullOrEmpty(employee_data.fatherName) ? employee_data.fatherName : "");
+              setAddress(!NullOrEmpty(employee_data.address) ? employee_data.address : "");
+              setPincode(NullOrEmpty(employee_data.pincode) ? "" : employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
 
               if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
@@ -295,7 +297,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 setBloodGroupID(employee_data.bloodGroup);
               }
 
-              setPincode(employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
               if (!NullOrEmpty(employee_data.dob)) {
                 setDob(new Date(employee_data.dob));
               }
@@ -312,10 +313,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 setLwd(new Date(employee_data.lastWorkDate));
               }
 
-              setEmergencyContactName(employee_data.emergencyContactName ? employee_data.emergencyContactName : "");
-              setEmergencyContactNo(employee_data.emergencyContactNo ? employee_data.emergencyContactNo : "");
+              setEmergencyContactName(!NullOrEmpty(employee_data.emergencyContactName) ? employee_data.emergencyContactName : "");
+              setEmergencyContactNo(!NullOrEmpty(employee_data.emergencyContactNo) ? employee_data.emergencyContactNo : "");
 
-              setLoginActiveStatus(employee_data.loginStatus ? employee_data.loginStatus : "");
+              setLoginActiveStatus(!NullOrEmpty(employee_data.loginStatus) ? employee_data.loginStatus : "");
 
               if (!NullOrEmpty(employee_data.branchID)) {
                 setBranchID(employee_data.branchID);
@@ -338,10 +339,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 }
 
                 onPressETRadioButton(ETRadioButtons);
-                setEmployeeTypeID(employee_data.employeeType ? employee_data.employeeType : "");
+                setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : "");
               }
               if (!NullOrEmpty(employee_data.wagesType)) {
-                setWagesTypeID(employee_data.wagesType == true ? "1" : "0");
+                setWagesTypeID(employee_data.wagesType);
                 {
                   wagesRadioButtons.map((r) => {
                     r.selected = false;
@@ -355,7 +356,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 onPressWagesRadioButton(wagesRadioButtons);
               }
 
-              setSalary(employee_data.salary ? employee_data.salary : "");
+              setSalary(!NullOrEmpty(employee_data.salary) ? employee_data.salary : 0);
 
               setLogoImage(employee_data.profilePhoto);
               setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
@@ -528,7 +529,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
             const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
 
-            setReporting({...reporting, list:rd});
+            setReporting({ ...reporting, list: rd });
 
             setReportingFullData(rd);
           }
@@ -678,109 +679,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
   };
 
-  const ProfilePhoto = () => {
-    if (!isImageReplaced) {
-      InsertData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: logoImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              InsertData();
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
 
-  const InsertData = () => {
-    const params = {
-      UserID: userID,
-      CompanyName: companyName,
-      CompanyLogo: logoImage ? logoImage : "",
-      ContactPersonName: contactName,
-      ContactPersonNumber: contactNumber,
-      AddressLine: address,
-      LocationName: location,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      GSTNumber: gstNumber,
-      PAN: panNumber,
-      AccountNumber: accountNo ? accountNo : 0,
-      BankName: bankName,
-      BranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      CompanyNamePrefix: cnPrefix,
-      QuotationBudgetPrefix: qbnPrefix,
-      EmployeeCodePrefix: ecPrefix,
-      PurchaseOrderPrefix: poPrefix,
-      SalesOrderPrefix: soPrefix,
-      ShowBrand: false,
-    };
-    Provider.create("master/insertuserprofile", params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          setSnackbarColor(theme.colors.success);
-          setSnackbarText("Data updated successfully");
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarVisible(true);
-      });
-  };
 
   const UpdateData = () => {
     const params = {
-      ID: id,
+      ID: route.params.data.id,
       MobileNo: mobileNo.trim(),
       AadharNo: aadharNo.trim(),
       FatherName: fatherName,
@@ -788,17 +691,17 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
       CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
       Pincode: pincode ? pincode : 0,
-      ProfilePhoto: profilePhoto ? profilePhoto : "",
-      BloodGroup: bloodGroup,
+      ProfilePhoto: logoImage ? logoImage : "",
+      BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).id : 0,
       DOB: dob,
       DOJ: doj,
       EmergencyContactName: emergencyContactName,
       EmergencyContactNo: emergencyContactNo,
       IDCardValidity: cardValidity,
-      LoginActiveStatus: loginActiveStatus,
-      BranchID: branchID,
-      DepartmentID: departmentID,
-      DesignationID: designationID,
+      LoginActiveStatus: true,
+      BranchID: branchName ? branchFullData.find((el) => el.locationName === branchName).id : 0,
+      DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).id : 0,
+      DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).id : 0,
       EmployeeType: employeeType,
       LastWorkDate: lwd,
       WagesType: wagesType,
@@ -830,7 +733,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    console.log(reporting.selectedList);
     const isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {
@@ -855,7 +757,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
-      //UpdateData();
+
+      UpdateData();
     }
   };
 
