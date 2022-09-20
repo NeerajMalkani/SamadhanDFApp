@@ -99,5 +99,5 @@ export const communication = {
   InvalidAadharNo: "Enter a valid Aadhar Number",
   InvalidFatherName: "Enter a valid Father Name",
   
-
+  InvalidCompanyClient :"Enter a valid Client name"
 };

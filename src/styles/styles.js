@@ -489,7 +489,9 @@ export const Styles = StyleSheet.create({
   margin16: {
     margin: 16,
   },
-
+marginValue:{
+  marginStart: -5,
+},
   marginTop0: {
     marginTop: 0,
   },
