@@ -485,7 +485,7 @@ const AddClientScreen = ({ route, navigation }) => {
     
     const design = (
     <>
-      <TextInput ref={aadharNoRef} mode="flat" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
+      <TextInput ref={aadharNoRef} mode="flat" dense label="Name / Company Name" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
         <HelperText type="error" visible={aadharNoInvalid}>
           {communication.InvalidCompanyClient}
         </HelperText>
@@ -610,6 +610,9 @@ const AddClientScreen = ({ route, navigation }) => {
 
             })}
            
+          </View>
+          <View style={{ width: 160 }}>
+            <Checkbox.Item label="Display" position="leading" style={[Styles.paddingHorizontal0]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} color={theme.colors.primary} status={checked ? "checked" : "unchecked"} onPress={() => setChecked(!checked)} />
           </View>
           <View>
           <TouchableOpacity onPress={ValidateData} style={[Styles.marginTop32,Styles.primaryBgColor,Styles.padding10,Styles.flexAlignCenter]}>
