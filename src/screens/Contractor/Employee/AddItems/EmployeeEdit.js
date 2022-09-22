@@ -32,6 +32,8 @@ export const selectValidator = (value: any) => {
   return '';
 };
 
+let st_ID = 0, ct_ID = 0, bg_ID = 0, b_ID = 0, d_ID = 0, de_ID = 0;
+let rpt = 0;
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
@@ -96,6 +98,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   });
 
   const [wType, setWType] = React.useState();
+
 
   //#region Input Variables
 
@@ -267,11 +270,14 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const FetchBasicDetails = () => {
     let params = {
       ID: route.params.data.id,
+      AddedByUserID: userID
     };
+    console.log(params);
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log(response.data.data);
             let employee_data = response.data.data[0].employee[0];
             let reporting_data = response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
@@ -288,13 +294,16 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
+                st_ID = employee_data.stateID;
               }
 
               if (!NullOrEmpty(employee_data.cityID)) {
                 setCityID(employee_data.cityID);
+                ct_ID = employee_data.cityID;
               }
               if (!NullOrEmpty(employee_data.bloodGroup)) {
                 setBloodGroupID(employee_data.bloodGroup);
+                bg_ID = employee_data.bloodGroup;
               }
 
               if (!NullOrEmpty(employee_data.dob)) {
@@ -320,12 +329,16 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               if (!NullOrEmpty(employee_data.branchID)) {
                 setBranchID(employee_data.branchID);
+                b_ID = employee_data.branchID;
+
               }
               if (!NullOrEmpty(employee_data.departmentID)) {
                 setDepartmentID(employee_data.departmentID);
+                d_ID = employee_data.departmentID;
               }
               if (!NullOrEmpty(employee_data.designationID)) {
                 setDesignationID(employee_data.designationID);
+                de_ID = employee_data.designationID;
               }
 
               if (!NullOrEmpty(employee_data.employeeType)) {
@@ -341,6 +354,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 onPressETRadioButton(ETRadioButtons);
                 setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : "");
               }
+
               if (!NullOrEmpty(employee_data.wagesType)) {
                 setWagesTypeID(employee_data.wagesType);
                 {
@@ -362,8 +376,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
               setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
             }
+            if (!NullOrEmpty(reporting_data)) {
+              setReportingID(reporting_data.reportingAuthorityID);
+              rpt = reporting_data.reportingAuthorityID;
+            }
 
             if (!NullOrEmpty(bankDetails_data)) {
+
               setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
               setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
               setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
@@ -371,6 +390,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
             }
           }
+
           FetchStates();
           BloodGroupDropdown();
           FetchBranch();
@@ -388,15 +408,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#region Dropdown Functions
 
-  const FetchCities = (stateName, stateData) => {
+  const FetchCities = (stateID) => {
     let params = {
-      ID: stateData
-        ? stateData.find((el) => {
-          return el.stateName === stateName;
-        }).id
-        : statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
+      ID: stateID
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -404,12 +418,35 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           if (response.data.data) {
             setCityFullData(response.data.data);
 
-            let ct = cityFullData.filter((el) => {
-              return el.id.toString() === cityID.toString();
-            });
+            // let ct = cityFullData.filter((el) => {
+            //   return el.id.toString() === cityID.toString();
+            // });
+
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
-            setCityName(ct[0].cityName);
+
+            const cityData: any = [];
+            response.data.data.map((data: any, i: number) => {
+              cityData.push({
+                id: data.id,
+                label: data.cityName,
+              });
+            });
+
+            if (ct_ID > 0) {
+              let a = cityData.filter((el) => {
+                return el.id === ct_ID;
+              });
+              setCityName(a[0].label);
+            }
+            else {
+              setCityNameList([]);
+              setCity("");
+              ct_ID = 0;
+              setCityID(0);
+            }
+
+            //setCityName(ct[0].cityName);
           }
         }
       })
@@ -422,15 +459,26 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setStatesFullData(response.data.data);
-            let st = statesFullData.filter((el) => {
-              return el.id.toString() === statesID.toString();
+            const stateData: any = [];
+            response.data.data.map((data: any, i: number) => {
+              stateData.push({
+                id: data.id,
+                label: data.stateName,
+              });
             });
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
-            setStateName(st[0].stateName);
-            tempStateName = st[0].stateName;
+            if (st_ID > 0) {
+              let s = stateData.filter((el) => {
+                return el.id === st_ID;
+              });
+
+              setStateName(s[0].label);
+              tempStateName = s[0].label;
+            }
+
             if (tempStateName !== "") {
-              FetchCities(tempStateName, response.data.data);
+              FetchCities(st_ID);
             }
           }
         }
@@ -529,8 +577,15 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
             const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
 
-            setReporting({ ...reporting, list: rd });
+            const ct = []; response.data.data.map((data) => {
 
+              if (data.id.toString() == rpt.toString()) {
+                ct.push({ _id: data.id.toString(), value: data.employee, });
+              }
+
+            });
+
+            setReporting({ ...reporting, list: rd, selectedList: ct });
             setReportingFullData(rd);
           }
         }
@@ -620,8 +675,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     setDesignationError(false);
   };
 
-
-
   const onReportingChanged = (selectedItem) => {
     setReportingName(selectedItem);
     setReportingError(false);
@@ -646,10 +699,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     setAccountNo(text);
     setAccountNoInvalid(false);
   };
+
   const onBankNameChanged = (text) => {
     setBankName(text);
     setBankNameInvalid(false);
   };
+
   const onBankBranchNameChanged = (text) => {
     setBankBranchName(text);
     setBankBranchNameInvalid(false);
@@ -678,8 +733,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       setIsImageReplaced(true);
     }
   };
-
-
 
   const UpdateData = () => {
     const params = {
@@ -934,6 +987,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     { key: "payDetails", title: "Pay Details" },
     { key: "photo", title: "Profile Photo" },
   ]);
+
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
