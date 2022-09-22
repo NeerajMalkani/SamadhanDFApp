@@ -428,6 +428,7 @@ export const MenuItemsContractor = [
         type: "accordian",
         index: 40,
         //navigation: "ClientListScreen",
+        navigation:"RateCardSetup"
       },
       {
         title: "Send Rate Card",

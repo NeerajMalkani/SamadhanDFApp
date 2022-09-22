@@ -116,6 +116,11 @@ export const Styles = StyleSheet.create({
     borderWidth:3,
     borderColor:"yellow"
   },
+  bordergray:{
+    borderWidth:1,
+    borderColor:"#a6a6a6",
+    borderStyle:"solid"
+  },
 
 
   borderBottom0: {
@@ -810,6 +815,9 @@ marginValue:{
   },
   width40per:{
     width:"40%"
+  },
+  width48per:{
+    width:"48%"
   },
   width50per: {
     width: "50%",

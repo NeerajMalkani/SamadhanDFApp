@@ -94,6 +94,7 @@ import SearchNDAdd from "./src/screens/Dealer/Employee/AddItem/SearchNDAdd";
 import EmployeeDEdit from "./src/screens/Dealer/Employee/AddItem/EmployeeDEdit";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
+import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -280,6 +281,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchEditScreen" component={BranchEditScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} /> */}
             </Drawer.Navigator>
           );
         case 4:
@@ -297,6 +299,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDesignationScreen" component={DealerDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeDlist" component={EmployeeDlist} />
+              
             </Drawer.Navigator>
           );
       }
@@ -367,6 +370,7 @@ export default function App() {
               <Stack.Screen name="SearchNDAdd" component={SearchNDAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EmployeeDEdit" component={EmployeeDEdit} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{headerShown:false}}/>
             </Stack.Navigator>
           </NavigationContainer>
         )}
