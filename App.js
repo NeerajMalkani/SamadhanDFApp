@@ -84,14 +84,11 @@ import AddClientScreen from "./src/screens/Common/Client/AddClientScreen";
 import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
 import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
 import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
-import SearchNAdd from "./src/screens/Contractor/Employee/AddItems/SearchNAdd";
-import EmployeeListScreen from "./src/screens/Contractor/Employee/EmployeeList";
-import EmployeeEditScreen from "./src/screens/Contractor/Employee/AddItems/EmployeeEdit";
+import SearchNAdd from "./src/screens/Common/Employee/AddItems/SearchNAdd";
+import EmployeeListScreen from "./src/screens/Common/Employee/EmployeeList";
+import EmployeeEditScreen from "./src/screens/Common/Employee/AddItems/EmployeeEdit";
 import BranchListScreen from "./src/screens/Contractor/Organization/BranchScreen";
 import BranchEditScreen from "./src/screens/Contractor/Organization/AddItem/AddBranchScreen";
-import EmployeeDlist from "./src/screens/Dealer/Employee/EmployeeDList";
-import SearchNDAdd from "./src/screens/Dealer/Employee/AddItem/SearchNDAdd";
-import EmployeeDEdit from "./src/screens/Dealer/Employee/AddItem/EmployeeDEdit";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
@@ -298,7 +295,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDepartmentScreen" component={DealerDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDesignationScreen" component={DealerDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeDlist" component={EmployeeDlist} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               
             </Drawer.Navigator>
           );
@@ -367,8 +364,6 @@ export default function App() {
               <Stack.Screen name="EmployeeEditScreen" component={EmployeeEditScreen} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{ headerShown: false }} />
               <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="SearchNDAdd" component={SearchNDAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="EmployeeDEdit" component={EmployeeDEdit} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{headerShown:false}}/>
             </Stack.Navigator>

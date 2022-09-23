@@ -9,17 +9,16 @@ import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RenderHiddenItems } from "../../../components/ListActions";
-import { RenderHiddenMultipleItems } from "../../../components/ListActions";
+import { RenderHiddenItems, RenderHiddenMultipleItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import {NullOrEmpty} from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-import SearchNDAdd from "../Employee/AddItem/SearchNDAdd";
+import SearchNAdd from "./AddItems/SearchNAdd";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
-const EmployeeDListScreen = ({ navigation }) => {
+const EmployeeListScreen = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
@@ -298,4 +297,4 @@ const EmployeeDListScreen = ({ navigation }) => {
   );
 };
 
-export default EmployeeDListScreen;
+export default EmployeeListScreen;

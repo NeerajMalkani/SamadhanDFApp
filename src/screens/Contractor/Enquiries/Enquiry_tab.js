@@ -15,7 +15,7 @@ import { Styles } from "../../../styles/styles";
 import {NullOrEmpty} from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-import SearchNAdd from "../Employee/AddItems/SearchNAdd";
+//import SearchNAdd from "../Employee/AddItems/SearchNAdd";
 import logo from './test.jpg'; 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
@@ -155,7 +155,7 @@ const Enquiry_tab = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
+    //navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
   };
 
 

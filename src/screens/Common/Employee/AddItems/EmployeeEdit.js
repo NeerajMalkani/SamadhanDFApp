@@ -75,10 +75,23 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   function onPressETRadioButton(radioButtonsArray) {
     setETRadioButtons(radioButtonsArray);
+
+    radioButtonsArray.map((r) => {
+      if (r.selected === true) {
+        setEmployeeTypeID(r.value);
+      }
+    });
   }
 
   function onPressWagesRadioButton(radioButtonsArray) {
     setWagesRadioButtons(radioButtonsArray);
+
+    radioButtonsArray.map((r) => {
+      if (r.selected === true) {
+        setWagesTypeID(r.value);
+      }
+    });
+
   }
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -98,7 +111,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   });
 
   const [wType, setWType] = React.useState();
-
 
   //#region Input Variables
 
@@ -272,16 +284,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       ID: route.params.data.id,
       AddedByUserID: userID
     };
-    console.log(params);
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             let employee_data = response.data.data[0].employee[0];
             let reporting_data = response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
-
             if (!NullOrEmpty(employee_data)) {
 
               setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
@@ -354,20 +363,19 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 onPressETRadioButton(ETRadioButtons);
                 setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : "");
               }
-
               if (!NullOrEmpty(employee_data.wagesType)) {
-                setWagesTypeID(employee_data.wagesType);
+
                 {
                   wagesRadioButtons.map((r) => {
                     r.selected = false;
-
-                    if (r.value === wagesTypeID) {
+                    if (r.value === employee_data.wagesType.toString()) {
                       r.selected = true;
                     }
                   });
                 }
 
                 onPressWagesRadioButton(wagesRadioButtons);
+                setWagesTypeID(!NullOrEmpty(employee_data.wagesType) ? employee_data.wagesType : "");
               }
 
               setSalary(!NullOrEmpty(employee_data.salary) ? employee_data.salary : 0);
@@ -418,35 +426,24 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           if (response.data.data) {
             setCityFullData(response.data.data);
 
-            // let ct = cityFullData.filter((el) => {
-            //   return el.id.toString() === cityID.toString();
-            // });
-
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
 
-            const cityData: any = [];
-            response.data.data.map((data: any, i: number) => {
-              cityData.push({
-                id: data.id,
-                label: data.cityName,
-              });
-            });
-
             if (ct_ID > 0) {
-              let a = cityData.filter((el) => {
+              let a = response.data.data.filter((el) => {
                 return el.id === ct_ID;
               });
-              setCityName(a[0].label);
+              setCityName(a[0].cityName);
+              setCityID(a[0].id);
             }
             else {
               setCityNameList([]);
+              setCityName("");
               setCity("");
               ct_ID = 0;
               setCityID(0);
             }
 
-            //setCityName(ct[0].cityName);
           }
         }
       })
@@ -458,23 +455,19 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
             setStatesFullData(response.data.data);
-            const stateData: any = [];
-            response.data.data.map((data: any, i: number) => {
-              stateData.push({
-                id: data.id,
-                label: data.stateName,
-              });
-            });
+
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
             if (st_ID > 0) {
-              let s = stateData.filter((el) => {
+              let s = response.data.data.filter((el) => {
                 return el.id === st_ID;
               });
 
-              setStateName(s[0].label);
-              tempStateName = s[0].label;
+              setStateName(s[0].stateName);
+              setStatesID(s[0].id);
+              tempStateName = s[0].stateName;
             }
 
             if (tempStateName !== "") {
@@ -487,15 +480,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const BloodGroupDropdown = () => {
-    let b = bloodGroupFullData.filter((el) => {
-      if (!NullOrEmpty(el)) {
-        if (el.ID.toString() === bloodGroupID.toString()) {
-          return el;
-        }
-      }
+    let b = BloodGroup.filter((el) => {
+      return el.ID.toString() === bg_ID.toString();
     });
 
-    const bg = bloodGroupFullData.map((data) => data.Name);
+    const bg = BloodGroup.map((data) => data.Name);
     setBloodGroupData(bg);
     if (!NullOrEmpty(b[0])) {
       setBloodGroup(b[0].Name);
@@ -508,16 +497,23 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
             setBranchFullData(response.data.data);
-            let b = branchFullData.filter((el) => {
-              return el.id.toString() === branchID.toString();
-            });
 
             const branch = response.data.data.map((data) => data.locationName);
             setBranchData(branch);
-            setBranchName(b[0].locationName);
+
+            if (b_ID > 0) {
+              let b = response.data.data.filter((el) => {
+                return el.id === b_ID;
+              });
+
+              setBranchName(b[0].locationName);
+              setBranchID(b[0].id);
+            }
           }
         }
       })
@@ -533,12 +529,18 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDepartmentFullData(response.data.data);
-            let d = departmentFullData.filter((el) => {
-              return el.departmentID.toString() === departmentID.toString();
-            });
+
             const department = response.data.data.map((data) => data.departmentName);
             setDepartmentData(department);
-            setDepartmentName(d[0].departmentName);
+
+            if (d_ID > 0) {
+              let d = response.data.data.filter((el) => {
+                return el.departmentID === d_ID;
+              });
+
+              setDepartmentName(d[0].departmentName);
+              setDepartmentID(d[0].departmentID);
+            }
           }
         }
       })
@@ -554,12 +556,18 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDesignationFullData(response.data.data);
-            let d = designationFullData.filter((el) => {
-              return el.designationID.toString() === designationID.toString();
-            });
             const designation = response.data.data.map((data) => data.designationName);
             setDesignationData(designation);
-            setDesignationName(d[0].designationName);
+
+            if (de_ID > 0) {
+              let b = response.data.data.filter((el) => {
+                return el.designationID === de_ID;
+              });
+
+              setDesignationName(b[0].designationName);
+              setDesignationID(b[0].designationID);
+            }
+
           }
         }
       })
@@ -574,7 +582,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
 
             const ct = []; response.data.data.map((data) => {
@@ -584,7 +591,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               }
 
             });
-
             setReporting({ ...reporting, list: rd, selectedList: ct });
             setReportingFullData(rd);
           }
@@ -734,6 +740,61 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
   };
 
+  const uploadFile = () => {
+    if (!isImageReplaced) {
+      UpdateData();
+    } else {
+      if (filePath.uri) {
+        if (Object.keys(filePath).length == 0) {
+          setSnackbarText(communication.NoImageSelectedError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+          return;
+        }
+        RNS3.put(
+          {
+            uri: filePath.uri,
+            name: logoImage.split(AWSImagePath)[1],
+            type: "image/*",
+          },
+          {
+            keyPrefix: "",
+            bucket: creds.awsBucket,
+            region: creds.awsRegion,
+            accessKey: creds.awsAccessKey,
+            secretKey: creds.awsSecretKey,
+            successActionStatus: 201,
+          }
+        )
+          .progress((progress) => {
+            setIsButtonLoading(true);
+            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+          })
+          .then((response) => {
+            setIsButtonLoading(false);
+            if (response.status !== 201) {
+              setSnackbarVisible(true);
+              setSnackbarColor(theme.colors.error);
+              setSnackbarText(communication.FailedUploadError);
+            } else {
+              UpdateData();
+            }
+          })
+          .catch((ex) => {
+            console.log(ex);
+            setIsButtonLoading(false);
+            setSnackbarVisible(true);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(communication.FailedUploadError);
+          });
+      } else {
+        setSnackbarText(communication.NoImageSelectedError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      }
+    }
+  };
+
   const UpdateData = () => {
     const params = {
       ID: route.params.data.id,
@@ -745,7 +806,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
       Pincode: pincode ? pincode : 0,
       ProfilePhoto: logoImage ? logoImage : "",
-      BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).id : 0,
+      BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID : 0,
       DOB: dob,
       DOJ: doj,
       EmergencyContactName: emergencyContactName,
@@ -753,11 +814,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       IDCardValidity: cardValidity,
       LoginActiveStatus: true,
       BranchID: branchName ? branchFullData.find((el) => el.locationName === branchName).id : 0,
-      DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).id : 0,
-      DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).id : 0,
-      EmployeeType: employeeType,
+      DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).departmentID : 0,
+      DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).designationID : 0,
+      EmployeeType: employeeTypeID,
       LastWorkDate: lwd,
-      WagesType: wagesType,
+      WagesType: NullOrEmpty(wagesTypeID) ? 0 : parseInt(wagesTypeID),
       Salary: salary,
       AccountHolderName: accountHolderName,
       AccountNumber: accountNo,
@@ -810,8 +871,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
-
-      UpdateData();
+      uploadFile();
     }
   };
 
@@ -855,11 +915,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               <Dropdown label="Blood Group" data={bloodGroupData} onSelected={onBloodGroupSelected} isError={errorBloodGroup} selectedItem={bloodGroup} reference={bloodGroupRef} />
 
               <View>
-                <DateTimePicker label="Date of Birth" type="date" value={dob} onChangeDate={setDob} />
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Date of Birth" type="date" value={dob} onChangeDate={setDob} />
               </View>
 
               <View>
-                <DateTimePicker label="Date of Joining" type="date" value={doj} onChangeDate={setDoj} />
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Date of Joining" type="date" value={doj} onChangeDate={setDoj} />
               </View>
 
               <TextInput ref={emergencyContactNameRef} mode="flat" dense label="Emergency Contact Name" value={emergencyContactName} returnKeyType="next" onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNameInvalid} />
@@ -867,7 +927,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               <TextInput ref={emergencyContactNoRef} mode="flat" dense label="Emergency Contact No" value={emergencyContactNo} returnKeyType="next" onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNoInvalid} />
 
               <View>
-                <DateTimePicker label="ID Card Valid Upto" type="date" value={cardValidity} onChangeDate={setCardValidity} />
+                <DateTimePicker style={Styles.backgroundColorWhite} label="ID Card Valid Upto" type="date" value={cardValidity} onChangeDate={setCardValidity} />
               </View>
 
               <Checkbox.Item
@@ -924,7 +984,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               />
 
               <View>
-                <DateTimePicker label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
               </View>
             </View>
           </ScrollView>
