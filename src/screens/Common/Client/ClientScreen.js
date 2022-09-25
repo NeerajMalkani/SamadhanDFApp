@@ -108,28 +108,13 @@ const ClientScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddClientScreen", {
-      type: "edit",
-      fetchData: FetchData,
-      data: {
-        id: data.item.id,
-        addedByUserID: data.item.addedByUserID,
-        companyName: data.item.companyName,
-        contactPerson: data.item.contactPerson,
-        contactMobileNumber: data.item.contactMobileNumber,
-        address1: data.item.address1,
-        stateID: data.item.stateID,
-        stateName: data.item.stateName,
-        cityID: data.item.cityID,
-        cityName: data.item.cityName,
-        pincode: data.item.pincode.toString(),
-        gstNumber: data.item.gstNumber,
-        pan: data.item.pan,
-        serviceType: data.item.serviceType,
-        addedBy: data.item.addedBy,
-        display: data.item.display,
-      },
-    });
+      navigation.navigate("ClientEditScreen", {
+        type: "edit",
+        fetchData: FetchData,
+        data: {
+           id: data.item.id,
+        },
+      });
   };
 
   const RenderItems = (data) => {
@@ -237,7 +222,7 @@ const ClientScreen = ({ navigation }) => {
             <List.Item title="GST" description={gstNumber} />
             <List.Item title="PAN" description={pan} />
             <List.Item title="Service Type" description={serviceType} />
-            <List.Item title="Added By" description={addedBy == 1 ? "Create" : "Add"} />
+            <List.Item title="Created Or Added" description={addedBy == 1 ? "Create" : "Add"} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>
         </View>

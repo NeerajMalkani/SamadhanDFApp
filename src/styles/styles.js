@@ -594,6 +594,9 @@ marginValue:{
   marginBottom32: {
     marginBottom: 32,
   },
+  marginBottom64: {
+    marginBottom: 64,
+  },
   marginStart32: {
     marginStart: 32,
   },

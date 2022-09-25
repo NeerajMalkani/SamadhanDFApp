@@ -80,7 +80,8 @@ import DealerDesignationScreen from "./src/screens/Dealer/Organization/Designati
 import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
 import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 import ClientScreen from "./src/screens/Common/Client/ClientScreen";
-import AddClientScreen from "./src/screens/Common/Client/AddClientScreen";
+import AddClientScreen from "./src/screens/Common/Client/AddItems/AddClientScreen";
+import ClientEditScreen from "./src/screens/Common/Client/AddItems/ClientEdit";
 import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
 import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
 import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
@@ -362,8 +363,9 @@ export default function App() {
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Search & Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EmployeeEditScreen" component={EmployeeEditScreen} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="ClientEditScreen" component={ClientEditScreen} options={{ headerTitle: "Client Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{ headerShown: false }} />
-              <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add Employee", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{headerShown:false}}/>
             </Stack.Navigator>

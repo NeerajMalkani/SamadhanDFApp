@@ -216,7 +216,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const reportingRef = useRef({});
 
   const [employeeType, setEmployeeType] = useState(0);
-  const [employeeTypeID, setEmployeeTypeID] = useState("");
+  const [employeeTypeID, setEmployeeTypeID] = useState(0);
   const [employeeTypeInvalid, setEmployeeTypeInvalid] = useState("");
   const employeeTypeRef = useRef({});
 
@@ -361,7 +361,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 }
 
                 onPressETRadioButton(ETRadioButtons);
-                setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : "");
+                setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : 0);
               }
               if (!NullOrEmpty(employee_data.wagesType)) {
 
@@ -423,12 +423,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+
           if (response.data.data) {
             setCityFullData(response.data.data);
 
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
-
             if (ct_ID > 0) {
               let a = response.data.data.filter((el) => {
                 return el.id === ct_ID;
@@ -437,14 +437,27 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               setCityID(a[0].id);
             }
             else {
-              setCityNameList([]);
               setCityName("");
-              setCity("");
-              ct_ID = 0;
               setCityID(0);
             }
 
           }
+          else {
+            setCityFullData([]);
+            setCityData([]);
+            setCityName("");
+            setCity("");
+            ct_ID = 0;
+            setCityID(0);
+          }
+        }
+        else {
+          setCityFullData([]);
+          setCityData([]);
+          setCityName("");
+          setCity("");
+          ct_ID = 0;
+          setCityID(0);
         }
       })
       .catch((e) => { });
@@ -636,7 +649,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     setSNError(false);
     cityRef.current.reset();
     setCityName("");
-    FetchCities(selectedItem);
+    setCityData([]);
+    setCityFullData([]);
+    let a = statesFullData.filter((el) => {
+      return el.stateName === selectedItem;
+    });
+    FetchCities(a[0].id);
   };
   const onCityNameSelected = (selectedItem) => {
     setCityName(selectedItem);
@@ -807,17 +825,17 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       Pincode: pincode ? pincode : 0,
       ProfilePhoto: logoImage ? logoImage : "",
       BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID : 0,
-      DOB: dob,
-      DOJ: doj,
+      DOB: moment(dob).format("YYYY-MM-DD"),
+      DOJ: moment(doj).format("YYYY-MM-DD"),
       EmergencyContactName: emergencyContactName,
       EmergencyContactNo: emergencyContactNo,
-      IDCardValidity: cardValidity,
+      IDCardValidity: moment(cardValidity).format("YYYY-MM-DD"),
       LoginActiveStatus: true,
       BranchID: branchName ? branchFullData.find((el) => el.locationName === branchName).id : 0,
       DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).departmentID : 0,
       DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).designationID : 0,
       EmployeeType: employeeTypeID,
-      LastWorkDate: lwd,
+      LastWorkDate: moment(lwd).format("YYYY-MM-DD"),
       WagesType: NullOrEmpty(wagesTypeID) ? 0 : parseInt(wagesTypeID),
       Salary: salary,
       AccountHolderName: accountHolderName,
@@ -829,6 +847,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     Provider.create("master/updateemployeedetails", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          UpdateReportingAuthority();
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
@@ -843,6 +862,40 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
+      });
+  };
+
+  const UpdateReportingAuthority = () => {
+
+    let rptId="";
+      if (!NullOrEmpty(reporting.selectedList)) {
+
+        reporting.selectedList.map((r) => {
+          rptId+= r._id+",";
+        });
+      }
+
+    const params = {
+      EmployeeID: route.params.data.id,
+      AddedByUserID: userID,
+      ReportingAuthorityID: rptId.replace(/,\s*$/, ""),
+    };
+
+    Provider.create("master/updateemployeereportingauthority", params)
+      .then((response) => {
+        debugger;
+        if (response.data && response.data.code === 200) {
+
+        }
+        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarType("error");
+        setSnackMsg(communication.NetworkError);
+        setOpen(true);
+        setButtonLoading(false);
+        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
       });
   };
 
