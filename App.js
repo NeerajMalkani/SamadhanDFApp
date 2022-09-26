@@ -93,6 +93,8 @@ import BranchEditScreen from "./src/screens/Contractor/Organization/AddItem/AddB
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
+import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";    
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -368,6 +370,7 @@ export default function App() {
               <Stack.Screen name="SearchNAdd" component={SearchNAdd} options={{ headerTitle: "Search & Add Employee", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{headerShown:false}}/>
+              <Stack.Screen name="AddRateCard" component={AddRateCard} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

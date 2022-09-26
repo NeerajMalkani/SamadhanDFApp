@@ -270,7 +270,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   //#endregion
 
   const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem("user");
+    const 
+    userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       setBloodGroupFullData(BloodGroup);

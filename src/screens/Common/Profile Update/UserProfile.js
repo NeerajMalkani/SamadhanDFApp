@@ -97,30 +97,27 @@ const UserProfile = ({ route, navigation }) => {
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
-                        setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
-                        setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
-                        setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
-                        setPANNumber(response.data.data[0].pan ? response.data.data[0].pan : "");
-                        setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
-                        setPincode(response.data.data[0].pincode !== 0 ? response.data.data[0].pincode.toString() : "");
-                        // setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
-                        // tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
-                        // setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
-                        console.log(response.data.data[0]);
-                        console.log("printing state value: " + response.data.data[0].stateID);
-                        console.log("printing state value: " + response.data.data[0].cityID);
-                        if (!NullOrEmpty(response.data.data[0].stateID)) {
-                            st_ID = response.data.data[0].stateID;
-                        }
-                        if (!NullOrEmpty(response.data.data[0].cityID)) {
-                            ct_ID = response.data.data[0].cityID;
-                        }
 
+                        if (response.data.data[0] != null) {
+                            setCompanyName(!NullOrEmpty(response.data.data[0].companyName) ? response.data.data[0].companyName : "");
+                            setContactName(!NullOrEmpty(response.data.data[0].contactPersonName) ? response.data.data[0].contactPersonName : "");
+                            setContactNumber(!NullOrEmpty(response.data.data[0].contactPersonNumber) ? response.data.data[0].contactPersonNumber : "");
+                            setGSTNumber(!NullOrEmpty(response.data.data[0].gstNumber) ? response.data.data[0].gstNumber : "");
+                            setPANNumber(!NullOrEmpty(response.data.data[0].pan) ? response.data.data[0].pan : "");
+                            setAddress(!NullOrEmpty(response.data.data[0].addressLine) ? response.data.data[0].addressLine : "");
+                            setPincode(!NullOrEmpty(response.data.data[0].pincode) ? response.data.data[0].pincode.toString() : "");
+
+                            if (!NullOrEmpty(response.data.data[0].stateID)) {
+                                st_ID = response.data.data[0].stateID;
+                            }
+                            if (!NullOrEmpty(response.data.data[0].cityID)) {
+                                ct_ID = response.data.data[0].cityID;
+                            }
+                        }
                     }
-                    FetchStates();
-                    setIsLoading(false);
                 }
+                FetchStates();
+                setIsLoading(false);
             })
             .catch((e) => {
                 setIsLoading(false);
@@ -144,7 +141,6 @@ const UserProfile = ({ route, navigation }) => {
                                 label: data.stateName,
                             });
                         });
-
                         if (st_ID > 0) {
                             let a = stateData.filter((el) => {
                                 return el.id === st_ID;
@@ -189,16 +185,16 @@ const UserProfile = ({ route, navigation }) => {
                         else {
                             setCityNameList([]);
                             setCity("");
-                            ct_ID=0;
+                            ct_ID = 0;
                             setCityID(0);
-                          }
+                        }
                     }
                     else {
                         setCityNameList([]);
-                          setCity("");
-                          ct_ID=0;
-                          setCityID(0);
-                      }
+                        setCity("");
+                        ct_ID = 0;
+                        setCityID(0);
+                    }
                 }
             })
             .catch((e) => { });
@@ -237,12 +233,18 @@ const UserProfile = ({ route, navigation }) => {
         setCityName(selectedItem);
         setCNError(false);
     };
+
     const onStateNameSelected = (selectedItem) => {
         setStateName(selectedItem);
         setSNError(false);
         cityRef.current.reset();
         setCityName("");
-        FetchCities(selectedItem);
+
+        let s = statesFullData.filter((el) => {
+            return el.stateName === selectedItem;
+        });
+
+        FetchCities(s[0].id);
     };
     const onPincodeChanged = (text) => {
         setPincode(text);

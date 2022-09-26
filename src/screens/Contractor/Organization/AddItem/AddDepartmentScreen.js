@@ -49,6 +49,8 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
   };
 
   const onDepartmentSelected = (selectedItem) => {
+    console.log("select department : " + selectedItem);
+    console.log(selectedItem);
     setDepartmentName(selectedItem);
     setDepartmentError(false);
   };

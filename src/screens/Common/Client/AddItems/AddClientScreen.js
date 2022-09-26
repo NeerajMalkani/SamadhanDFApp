@@ -275,6 +275,7 @@ const AddClientScreen = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
+
   const InsertExistingEmployee = (ID) => {
     const params = {
       AddedByUserID: userID,
@@ -305,6 +306,7 @@ const AddClientScreen = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
+  
   const UpdateData = () => {
     let arrServiceTypeRole = [];
     serviceTypeRoles.map((k, i) => {
