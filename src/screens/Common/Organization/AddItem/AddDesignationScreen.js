@@ -6,24 +6,26 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-let ContractorID = 0;
 
-const AddContractorDepartmentScreen = ({ route, navigation }) => {
-  const [departmentFullData, setDepartmentFullData] = React.useState([]);
-  const [departmentData, setDepartmentData] = React.useState([]);
-  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
-  const [departmentError, setDepartmentError] = React.useState(false);
+let ContractorID = 0;
+const AddContractorDesignationScreen = ({ route, navigation }) => {
+  const [designationFullData, setDesignationFullData] = React.useState([]);
+  const [designationData, setDesignationData] = React.useState([]);
+  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
+  const [designationError, setDesignationError] = React.useState(false);
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-  
+  const [reportingAuthority, setReportingAuthority] = React.useState(route.params.type === "edit" ? route.params.data.reportingAuthority : false);
+
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-        ContractorID = JSON.parse(userData).UserID;
-        FetchDepartments();
+      ContractorID = JSON.parse(userData).UserID;
+      FetchDesignations();
     }
   };
 
@@ -31,39 +33,39 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
     GetUserID();
   }, []);
 
-  const FetchDepartments = () => {
-    Provider.getAll("master/getdepartments")
+  const FetchDesignations = () => {
+    Provider.getAll("master/getdesignations")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
-            setDepartmentFullData(response.data.data);
-            const departments = response.data.data.map((data) => data.departmentName);
-            setDepartmentData(departments);
+            setDesignationFullData(response.data.data);
+            const designation = response.data.data.map((data) => data.designationName);
+            setDesignationData(designation);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const onDepartmentSelected = (selectedItem) => {
-    console.log("select department : " + selectedItem);
-    console.log(selectedItem);
-    setDepartmentName(selectedItem);
-    setDepartmentError(false);
+  const onDesignationSelected = (selectedItem) => {
+    setDesignationName(selectedItem);
+    setDesignationError(false);
   };
 
-  const InsertDepartment = () => {
-    Provider.create("master/insertuserdepartments", { 
-        UserType: 3,
-        UserId: ContractorID,
-        DepartmentID: departmentFullData.find((el) => {
-          return el.departmentName === departmentName;
-        }).id,
-        Display: checked 
-    })
+  const InsertDesignation = () => {
+    const params = {
+      ReportingAuthority: reportingAuthority,
+      AddedByUserID: ContractorID,
+      DesignationID: designationFullData.find((el) => {
+        return el.designationName === designationName;
+      }).id,
+      Display: checked
+    };
+
+    Provider.create("master/insertuserdesignation", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -83,16 +85,18 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateDepartment = () => {
-    Provider.create("master/updateuserdepartment", { 
-      UserType: 3,
-      UserId: ContractorID,
-      DepartmentID: departmentFullData.find((el) => {
-        return el.departmentName === departmentName;
+  const UpdateDesignation = () => {
+    const params = {
+      ID: route.params.data.id,
+      AddedByUserID: ContractorID,
+      DesignationID: designationFullData.find((el) => {
+        return el.designationName === designationName;
       }).id,
-      ID: route.params.data.id, 
-      Display: checked 
-    })
+      Display: checked,
+      ReportingAuthority: reportingAuthority
+    };
+
+    Provider.create("master/updateuserdesignation", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -112,17 +116,17 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       });
   };
 
-  const ValidateDepartmentName = () => {
+  const ValidateDesignationName = () => {
     let isValid = true;
-    if (departmentName.length === 0) {
-        setDepartmentError(true);
+    if (designationName.length === 0) {
+      setDesignationError(true);
       isValid = false;
     }
     if (isValid) {
       if (route.params.type === "edit") {
-        UpdateDepartment();
+        UpdateDesignation();
       } else {
-        InsertDepartment();
+        InsertDesignation();
       }
     }
   };
@@ -131,10 +135,22 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-        <Dropdown label="Department Name" data={departmentData} onSelected={onDepartmentSelected} isError={departmentError} selectedItem={departmentName} />
-          <HelperText type="error" visible={departmentError}>
-            {communication.InvalidDepartmentID}
+          <Dropdown label="Designation Name" data={designationData} onSelected={onDesignationSelected} isError={designationError} selectedItem={designationName} />
+          <HelperText type="error" visible={designationError}>
+            {communication.InvalidDesignationID}
           </HelperText>
+          <View style={{ width: 240 }}>
+            <Checkbox.Item
+              label="Reporting Authority"
+              color={theme.colors.primary}
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+              status={reportingAuthority ? "checked" : "unchecked"}
+              onPress={() => {
+                setReportingAuthority(!reportingAuthority);
+              }}
+            />
+          </View>
           <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -151,7 +167,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateDepartmentName}>
+          <Button mode="contained" onPress={ValidateDesignationName}>
             SAVE
           </Button>
         </Card.Content>
@@ -163,4 +179,4 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddContractorDepartmentScreen;
+export default AddContractorDesignationScreen;

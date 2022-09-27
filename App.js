@@ -69,14 +69,14 @@ import AddContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfi
 import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
 import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
-import ContractorDepartmentScreen from "./src/screens/Contractor/Organization/DepartmentScreen";
-import AddContractorDepartmentScreen from "./src/screens/Contractor/Organization/AddItem/AddDepartmentScreen";
-import ContractorDesignationScreen from "./src/screens/Contractor/Organization/DesignationScreen";
-import AddContractorDesignationScreen from "./src/screens/Contractor/Organization/AddItem/AddDesignationScreen";
-import DealerDepartmentScreen from "./src/screens/Dealer/Organization/DepartmentScreen";
-import AddDealerDepartmentScreen from "./src/screens/Dealer/Organization/AddItem/AddDepartmentScreen";
-import AddDealerDesignationScreen from "./src/screens/Dealer/Organization/AddItem/AddDesignationScreen";
-import DealerDesignationScreen from "./src/screens/Dealer/Organization/DesignationScreen";
+
+
+import CommonDepartmentScreen from "./src/screens/Common/Organization/DepartmentScreen";
+import AddCommonDepartmentScreen from "./src/screens/Common/Organization/AddItem/AddDepartmentScreen";
+import CommonDesignationScreen from "./src/screens/Common/Organization/DesignationScreen";
+import AddCommonDesignationScreen from "./src/screens/Common/Organization/AddItem/AddDesignationScreen";
+
+
 import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
 import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 import ClientScreen from "./src/screens/Common/Client/ClientScreen";
@@ -88,8 +88,8 @@ import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
 import SearchNAdd from "./src/screens/Common/Employee/AddItems/SearchNAdd";
 import EmployeeListScreen from "./src/screens/Common/Employee/EmployeeList";
 import EmployeeEditScreen from "./src/screens/Common/Employee/AddItems/EmployeeEdit";
-import BranchListScreen from "./src/screens/Contractor/Organization/BranchScreen";
-import BranchEditScreen from "./src/screens/Contractor/Organization/AddItem/AddBranchScreen";
+import BranchListScreen from "./src/screens/Common/Organization/BranchScreen";
+import BranchEditScreen from "./src/screens/Common/Organization/AddItem/AddBranchScreen";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
@@ -272,8 +272,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorBasicDetailsScreen" component={ContractorBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorMyServicesScreen" component={ContractorMyServicesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDepartmentScreen" component={ContractorDepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorDesignationScreen" component={ContractorDesignationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignWiseScreen" component={DesignWiseScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="QuotationWiseScreen" component={QuotationWiseScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
@@ -295,8 +295,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandSetupScreen" component={DealerBrandSetupScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBuyerCategoryScreen" component={DealerBuyerCategoryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerProductScreen" component={DealerProductScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDepartmentScreen" component={DealerDepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerDesignationScreen" component={DealerDesignationScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               
@@ -354,12 +354,10 @@ export default function App() {
               <Stack.Screen name="AddDealerBrandSetupScreen" component={AddDealerBrandSetupScreen} options={{ headerTitle: "Add Brand Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBuyerCategoryScreen" component={AddDealerBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerProductScreen" component={AddDealerProductScreen} options={{ headerTitle: "Add Product", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddDealerDepartmentScreen" component={AddDealerDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddDealerDesignationScreen" component={AddDealerDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMaterialSetupScreen" component={AddMaterialSetupScreen} options={{ headerTitle: "Add Material Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddContractorMyServicesScreen" component={AddContractorMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddContractorDepartmentScreen" component={AddContractorDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddContractorDesignationScreen" component={AddContractorDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddCommonDepartmentScreen" component={AddCommonDepartmentScreen} options={{ headerTitle: "Add Department", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddCommonDesignationScreen" component={AddCommonDesignationScreen} options={{ headerTitle: "Add Designation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ImageGalleryWorkLocationScreen" component={ImageGalleryWorkLocationScreen} options={{ headerTitle: "Image Gallery", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />

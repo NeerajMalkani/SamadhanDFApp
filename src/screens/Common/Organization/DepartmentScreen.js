@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let ContractorID = 0;
 
-const ContractorDesignationScreen = ({ navigation }) => {
+const ContractorDepartmentScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -39,10 +39,9 @@ const ContractorDesignationScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-        UserType: 3,
-        UserId: ContractorID
+        AddedByUserID: ContractorID
       };
-    Provider.getAll(`master/getuserdesignation?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getuserdepartments?${new URLSearchParams(params)}`)
       .then((response) => {
         debugger;
         if (response.data && response.data.code === 200) {
@@ -83,7 +82,7 @@ const ContractorDesignationScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.designationName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.departmentName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -92,25 +91,24 @@ const ContractorDesignationScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.designationName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
+        <List.Item title={data.item.departmentName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddContractorDesignationScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddCommonDepartmentScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddContractorDesignationScreen", {
+    navigation.navigate("AddCommonDepartmentScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        designationName: data.item.designationName,
+        departmentName: data.item.departmentName,
         display: data.item.display,
-        reportingAuthority: data.item.reportingAuthority,
         uid: ContractorID
       },
     });
@@ -118,7 +116,7 @@ const ContractorDesignationScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Designations" />
+      <Header navigation={navigation} title="Departments" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -159,4 +157,4 @@ const ContractorDesignationScreen = ({ navigation }) => {
   );
 };
 
-export default ContractorDesignationScreen;
+export default ContractorDepartmentScreen;

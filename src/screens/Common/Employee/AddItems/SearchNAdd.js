@@ -364,7 +364,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
         <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
             <View style={[Styles.padding16]}>
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2, Styles.marginBottom8]}>
-                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.primaryColor]}>Search Employee</Text>
+                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Search Employee</Text>
                 </View>
               <TextInput ref={aadharNoRef} mode="flat" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
               <HelperText type="error" visible={aadharNoInvalid}>
@@ -384,7 +384,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
             </View>
             <View style={[Styles.padding16]}>
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2,Styles.marginTop8]}>
-                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.primaryColor]}>Employee Search Result</Text>
+                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Employee Search Result</Text>
                 </View>
             {isLoading ? (
                 <View  style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
@@ -429,7 +429,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
             </View>
             <View style={[Styles.padding16]}>
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2, Styles.marginBottom16]}>
-                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.primaryColor]}>Add New Employee</Text>
+                    <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Add New Employee</Text>
                 </View>
               <TextInput ref={employeeNameRef} mode="flat" dense label="Employee Name" value={employeeName} returnKeyType="next" 
               onSubmitEditing={() => employeeNameRef.current.focus()} selectTextOnFocus={false} onChangeText={onEmployeeNameChanged} 

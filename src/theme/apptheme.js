@@ -19,6 +19,7 @@ export const theme = {
     textLightSecondary: "#dedede",
     border: "#ededed",
     backgroundSecondary: "#f1f1f1",
+    blueFont: "#0000FF",
   },
   multicolors: {
     red: "#C41E3A",

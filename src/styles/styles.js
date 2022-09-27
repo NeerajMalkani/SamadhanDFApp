@@ -15,6 +15,9 @@ export const Styles = StyleSheet.create({
   accentColor: {
     color: theme.colors.accent,
   },
+  blueFontColor: {
+    color: "#3232BD",
+  },
 
   textColor: {
     color: theme.colors.text,
