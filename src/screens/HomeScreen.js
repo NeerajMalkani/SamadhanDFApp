@@ -14,6 +14,10 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreateSCCards from "../components/SCCards";
+import FadingSlides from 'react-native-fading-slides';
+import { ImageBackground } from "react-native-web";
+import { Touchable } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
@@ -199,6 +203,28 @@ const HomeScreen = ({ route, navigation }) => {
       });
   };
 
+  const slides = [
+    {
+      image: require('../../assets/dreamone.jpg'),
+      imageWidth: 350,
+      imageHeight: 170,
+      imageborder:10
+      // title: 'Hello World',
+      // subtitle: 'This is a beautiful world',
+      // titleColor: '#fff',
+      // subtitleColor: '#fff',
+    },
+    {
+      image: require('../../assets/dreamtwo.jpg'),
+      imageWidth: 350,
+      imageHeight: 170,
+      imageborder:10
+      // title: 'Hello World',
+      // subtitle: 'This is a beautiful world',
+      // titleColor: '#fff',
+      // subtitleColor: '#fff',
+    }
+  ];
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
@@ -227,7 +253,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={[Styles.flexRow, Styles.padding4, Styles.flexWrap]}>
             {imageGalleryData.map((k, i) => {
               return (
-                <View key={i} style={[Styles.width50per, Styles.padding8, Styles.paddingTop0]}>
+                <View key={i} style={[Styles.width50per, Styles.padding16, Styles.paddingTop0]}>
                   <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
                 </View>
               );
@@ -277,6 +303,54 @@ const HomeScreen = ({ route, navigation }) => {
               );
             })}
           </View>
+          <View style={[Styles.width100per,Styles.padding16,]}>
+            {/* <View style={[Styles.border1,Styles.width100per,Styles.height200,Styles.backgroundColorWhite,Styles.borderRadius16]}></View> */}
+            <Card elevation={3} style={[Styles.width100per,Styles.height200,Styles.borderRadius16]}>
+              {/* <Card.Content>
+                <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular]}>Design Your Dream</Title>
+              </Card.Content> */}
+              {/* <Text>Design Your Dream</Text> */}
+              {/* <Card.Title title="Design Your Dream"/> */}
+              <FadingSlides
+                slides={slides}
+                fadeDuration={100}
+                stillDuration={1000}
+                // height={500}
+                startAnimation={true}
+                style={[Styles.width100per,Styles.borderRadius16,Styles.height100per]}
+              />
+            </Card>
+            <View style={[Styles.flexRow]}>
+              <Card style={[Styles.width48per,Styles.height250,Styles.marginTop16,Styles.borderRadius16,Styles.marginEnd16,Styles.border1,{backgroundColor:"#42c6a5"}]}>
+                {/* <Card.Content>
+                  <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular]}>User</Title>
+                </Card.Content> */}
+                {/* <Text style={[Styles.fontSize14]}>User</Text> */}
+                <Card.Title title="Users" titleStyle={[Styles.textColorWhite]}/>
+              </Card>
+              <View style={[Styles.width48per,Styles.height200,Styles.marginTop16,Styles.borderRadius16]}>
+                <Card style={[Styles.height120,Styles.width100per,Styles.borderRadius16,Styles.border1,{backgroundColor:"#55AEF7"}]}>
+                  {/* <Card.Content>
+                    <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular,Styles.fontSize14]}>Material calculator</Title>
+                  </Card.Content> */}
+                   <Text style={[Styles.fontSize16,Styles.fontBold,Styles.marginTop12,Styles.marginStart12,Styles.textColorWhite]}>Material calculator</Text> 
+                  {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
+                </Card>
+                <Card style={[Styles.height120,Styles.width100per,Styles.marginTop12,Styles.borderRadius16,Styles.border1,{backgroundColor:"#D4a311"}]}>
+                  {/* <Card.Content>
+                    <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular]}>Job Your Dream</Title>
+                  </Card.Content> */}
+                  {/* <Card.Title title="Job Your Dream"/> */}
+                  <Text style={[Styles.fontSize16,Styles.fontBold,Styles.marginTop12,Styles.marginStart12,Styles.textColorWhite]}>Looking For Job</Text>
+                  
+                  <Image source={require('../../assets/job-seeker.png')} style={[Styles.width40,Styles.height40,Styles.backgroundColorWhite]}/>
+                  
+                    
+                  
+                </Card>
+              </View>
+            </View>
+          </View>
         </ScrollView>
       )}
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
@@ -288,11 +362,12 @@ const HomeScreen = ({ route, navigation }) => {
             View
           </Button>
           <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 104, backgroundColor: "white" }} onPress={() => setCatalogueImagesZoomVisible(false)}>
-            Close
+            Close one
           </Button>
           <ImageViewer imageUrls={catalogueImagesZoom} backgroundColor="transparent" style={{ height: 1920 }} />
         </View>
       </Modal>
+      
     </View>
   );
 };

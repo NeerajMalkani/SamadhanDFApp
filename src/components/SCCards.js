@@ -22,7 +22,7 @@ const CreateSCCards = ({ image, title, id, subttitle, data, cardImageClick, card
           <Button disabled={buttonData.disabled ? buttonData.disabled : false} onPress={buttonData.click}>
             {buttonData.text}
           </Button>
-        </Card.Actions>
+        </Card.Actions>        
       )}
     </Card>
   );
