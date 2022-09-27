@@ -522,6 +522,7 @@ export const MenuItemsContractor = [
       },
     ],
   },
+<<<<<<< Updated upstream
 ];
 
 export const MenuItemsArchitect = [
@@ -701,3 +702,6 @@ export const MenuItemsArchitect = [
     ],
   },
 ];
+=======
+];  
+>>>>>>> Stashed changes

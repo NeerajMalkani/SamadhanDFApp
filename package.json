@@ -39,6 +39,7 @@
     "react-native-aws3": "0.0.9",
     "react-native-collapsible": "^1.6.0",
     "react-native-dropdown-picker": "^5.4.2",
+    "react-native-fading-slides": "^0.3.1",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-grid-image-viewer-with-caption": "^1.0.5",
     "react-native-image-slider-banner": "^1.0.2",

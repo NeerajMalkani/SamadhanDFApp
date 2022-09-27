@@ -606,6 +606,9 @@ marginValue:{
   marginEnd32: {
     marginEnd: 32,
   },
+  marginTop40: {
+    marginTop: 40,
+  },
 
   marginVertical0: {
     marginVertical: 0,
@@ -874,6 +877,9 @@ marginValue:{
   height71per: {
     height: "71%"
   },
+  height48per: {
+    height: "48%",
+  },
   height50per: {
     height: "50%",
   },
@@ -885,6 +891,15 @@ marginValue:{
   },
   height100per: {
     height: "100%",
+  },
+  height200: {
+    height: 180
+  },
+  height250: {
+    height: 250
+  },
+  height120: {
+    height: 120
   },
   /* #endregion */
 
