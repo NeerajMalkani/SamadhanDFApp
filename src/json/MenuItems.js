@@ -523,3 +523,181 @@ export const MenuItemsContractor = [
     ],
   },
 ];
+
+export const MenuItemsArchitect = [
+  {
+    title: "My Profile",
+    icon: "office-building-cog",
+    type: "accordian",
+    index: 1,
+    roleID: 5,
+    items: [
+      // {
+      //   title: "Basic Details",
+      //   type: "accordian",
+      //   index: 10,
+      //   navigation: "ContractorBasicDetailsScreen",
+      // },
+      // {
+      //   title: "My Services",
+      //   type: "accordian",
+      //   index: 10,
+      //   navigation: "ContractorMyServicesScreen",
+      // },
+    ],
+  },
+  {
+    title: "Production Unit Master",
+    icon: "newspaper-variant",
+    type: "accordian",
+    index: 6,
+    roleID: 5,
+    items: [
+      // {
+      //   title: "Design Wise",
+      //   type: "accordian",
+      //   index: 60,
+      //   navigation: "DesignWiseScreen",
+      // },
+      // {
+      //   title: "Quotation Wise",
+      //   type: "accordian",
+      //   index: 61,
+      //   navigation: "QuotationWiseScreen",
+      // },
+    ],
+  },
+  {
+    title: "Company Profile",
+    icon: "office-building-cog",
+    type: "accordian",
+    index: 1,
+    roleID: 5,
+    items: [
+      // {
+      //   title: "App User Enquiry Wise",
+      //   type: "accordian",
+      //   index: 70,
+      //   navigation: "EnquiryWise",
+      // },
+      // {
+      //   title: "Architect & Consultant-Boq",
+      //   type: "accordian",
+      //   index: 71,
+      //   //navigation: "CreatePurchaseOrderScreen",
+      // },
+    ],
+  },
+  {
+    title: "Employee",
+    icon: "account-tie",
+    type: "accordian",
+    index: 2,
+    roleID: 5,
+    items: [
+      {
+        title: "Employee New / List",
+        type: "accordian",
+        index: 20,
+        navigation: "EmployeeListScreen",
+      },
+      {
+        title: "Employee Report",
+        type: "accordian",
+        index: 21,
+        //navigation: "EmployeeReportScreen",
+      },
+    ],
+  },
+  {
+    title: "Organization",
+    icon: "town-hall",
+    type: "accordian",
+    index: 3,
+    roleID: 5,
+    items: [
+      {
+        title: "Add Department",
+        type: "accordian",
+        index: 30,
+        navigation: "CommonDepartmentScreen",
+      },
+      {
+        title: "Add Branch",
+        type: "accordian",
+        index: 31,
+        navigation: "BranchListScreen",
+      },
+      {
+        title: "Add Designation",
+        type: "accordian",
+        index: 32,
+        navigation: "CommonDesignationScreen",
+      },
+    ],
+  },
+  {
+    title: "Rate Card",
+    icon: "card-bulleted",
+    type: "accordian",
+    index: 4,
+    roleID: 5,
+    items: [
+      {
+        title: "Rate Card Setup",
+        type: "accordian",
+        index: 40,
+        //navigation: "ClientListScreen",
+        navigation:"RateCardSetup"
+      },
+      {
+        title: "Send Rate Card",
+        type: "accordian",
+        index: 41,
+        //navigation: "ClientListScreen",
+      },
+    ],
+  },
+  {
+    title: "Client",
+    icon: "tie",
+    type: "accordian",
+    index: 5,
+    roleID: 5,
+    items: [
+      {
+        title: "Clients",
+        type: "accordian",
+        index: 50,
+        navigation: "ClientScreen",
+      },
+    ],
+  },
+  {
+    title: "Budgets & BOQS",
+    icon: "head-lightbulb",
+    type: "accordian",
+    index: 8,
+    roleID: 5,
+    items: [
+      // {
+      //   title: "Yet Start",
+      //   type: "accordian",
+      //   index: 80,
+      //   //navigation: "CreatePurchaseOrderScreen",
+      // },
+      // {
+      //   title: "On Going",
+      //   type: "accordian",
+      //   index: 81,
+      //   //navigation: "CreatePurchaseOrderScreen",
+      // },
+      // {
+      //   title: "Completed",
+      //   type: "accordian",
+      //   index: 82,
+      //   //navigation: "CreatePurchaseOrderScreen",
+      // },
+    ],
+  },
+];
