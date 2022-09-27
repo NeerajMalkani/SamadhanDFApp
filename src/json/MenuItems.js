@@ -575,10 +575,10 @@ export const MenuItemsArchitect = [
     roleID: 5,
     items: [
       // {
-      //   title: "App User Enquiry Wise",
+      //   title: "Basic Details",
       //   type: "accordian",
       //   index: 70,
-      //   navigation: "EnquiryWise",
+      //   navigation: "ContractorBasicDetailsScreen",
       // },
       // {
       //   title: "Architect & Consultant-Boq",

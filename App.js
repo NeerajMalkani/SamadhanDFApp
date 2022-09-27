@@ -31,7 +31,7 @@ import FeedbackScreen from "./src/screens/FeedbackScreen";
 import UserProfileScreen from "./src/screens/UserProfile";
 import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
 import DealerMyServicesScreen from "./src/screens/Dealer/CompanyProfile/MyServicesScreen";
-import ContractorBasicDetailsScreen from "./src/screens/Contractor/CompanyProfile/BasicDetailsScreen";
+import ContractorBasicDetailsScreen from "./src/screens/Common/Company Profile/BasicDetailsScreen";
 import ContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/MyServicesScreen";
 import AddProductScreen from "./src/screens/Admin/Master/AddItems/AddProductScreen";
 import ProductScreen from "./src/screens/Admin/Master/ProductScreen";
@@ -331,7 +331,7 @@ const BottomTabs = ({ navigation }) => {
       <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: true, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
       <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
       <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-      <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
+      <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile :  parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen :parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
     </Tab.Navigator>
   );
 };
