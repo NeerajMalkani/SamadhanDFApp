@@ -952,7 +952,7 @@ export const Styles = StyleSheet.create({
 
   /*#start Top */
   Top16: {
-    top: 70
+    top: 16
   },
   Top70: {
     top: 70
