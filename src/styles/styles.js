@@ -38,8 +38,8 @@ export const Styles = StyleSheet.create({
   backgroundSecondaryColor: {
     backgroundColor: theme.colors.backgroundSecondary,
   },
-  backgroundColorred : {
-    backgroundColor:"red"
+  backgroundColorred: {
+    backgroundColor: "red"
   },
 
   redColor: {
@@ -55,7 +55,7 @@ export const Styles = StyleSheet.create({
     color: theme.colors.blue,
   },
   whiteColor: {
-    color : "white"
+    color: "white"
   },
 
   primaryBgColor: {
@@ -83,19 +83,19 @@ export const Styles = StyleSheet.create({
   blueBgColor: {
     backgroundColor: theme.multicolors.blue,
   },
-  backgroundColorYelow:{
-    backgroundColor:"#FECA0A"
+  backgroundColorYelow: {
+    backgroundColor: "#FECA0A"
   },
-  backgroundColorWhite:{
-    backgroundColor:"#FAFAFA"
+  backgroundColorWhite: {
+    backgroundColor: "#FAFAFA"
   },
-  backgroundColorDarkGreen:{
-    backgroundColor:"#286144"
+  backgroundColorDarkGreen: {
+    backgroundColor: "#286144"
   },
   /* #endregion */
 
   /* #region Borders */
-  
+
   border0: {
     borderWidth: 0,
   },
@@ -111,18 +111,18 @@ export const Styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: theme.colors.border,
   },
-  borderred:{
-    borderWidth:3,
-    borderColor:"red"
+  borderred: {
+    borderWidth: 3,
+    borderColor: "red"
   },
-  borderyellow:{
-    borderWidth:3,
-    borderColor:"yellow"
+  borderyellow: {
+    borderWidth: 3,
+    borderColor: "yellow"
   },
-  bordergray:{
-    borderWidth:1,
-    borderColor:"#a6a6a6",
-    borderStyle:"solid"
+  bordergray: {
+    borderWidth: 1,
+    borderColor: "#a6a6a6",
+    borderStyle: "solid"
   },
 
 
@@ -141,9 +141,9 @@ export const Styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderBottomColor: theme.colors.border,
   },
-  borderBottom5:{
-    borderBottomWidth:1,
-    bodorBottemColor:"1px solid black"
+  borderBottom5: {
+    borderBottomWidth: 1,
+    bodorBottemColor: "1px solid black"
   },
 
 
@@ -162,9 +162,9 @@ export const Styles = StyleSheet.create({
     borderTopWidth: 4,
     borderTopColor: theme.colors.border,
   },
-  borderTop5:{
-    borderBottomWidth:1,
-    bodorBottemColor:"1px solid black"
+  borderTop5: {
+    borderBottomWidth: 1,
+    bodorBottemColor: "1px solid black"
   },
 
   borderLeft0: {
@@ -256,8 +256,8 @@ export const Styles = StyleSheet.create({
     borderBottomLeftRadius: 64,
     borderBottomRightRadius: 64,
   },
-  borderTopLeftRadius:{
-    borderTopLeftRadius:20
+  borderTopLeftRadius: {
+    borderTopLeftRadius: 20
   },
 
   borderTopRadius0: {
@@ -426,6 +426,12 @@ export const Styles = StyleSheet.create({
   paddingEnd32: {
     paddingEnd: 32,
   },
+  paddingRight4: {
+    paddingRight: 4,
+  },
+  paddingLeft4: {
+    paddingLeft: 4,
+  }, 
 
   paddingVertical0: {
     paddingVertical: 0,
@@ -497,9 +503,9 @@ export const Styles = StyleSheet.create({
   margin16: {
     margin: 16,
   },
-marginValue:{
-  marginStart: -5,
-},
+  marginValue: {
+    marginStart: -5,
+  },
   marginTop0: {
     marginTop: 0,
   },
@@ -528,6 +534,9 @@ marginValue:{
 
   marginTop4: {
     marginTop: 4,
+  },
+  marginTop6: {
+    marginTop: 6,
   },
   marginBottom4: {
     marginBottom: 4,
@@ -747,8 +756,12 @@ marginValue:{
   flexAlignSelfEnd: {
     alignSelf: "flex-end",
   },
-  flexSpaceBetween:{
-    justifyContent:"space-between",
+  flexSpaceBetween: {
+    justifyContent: "space-between",
+  },
+
+  resizeModeContain: {
+    resizeMode: "contain",
   },
   /* #endregion */
 
@@ -822,17 +835,17 @@ marginValue:{
   width35per: {
     width: "35%"
   },
-  width40per:{
-    width:"40%"
+  width40per: {
+    width: "40%"
   },
-  width48per:{
-    width:"48%"
+  width48per: {
+    width: "48%"
   },
   width50per: {
     width: "50%",
   },
-  width80per:{
-    width:"80%"
+  width80per: {
+    width: "80%"
   },
   width100per: {
     width: "100%",
@@ -868,7 +881,20 @@ marginValue:{
   height104: {
     height: 104,
   },
-  height40per:{
+
+  height120: {
+    height: 120,
+  },
+  height150: {
+    height: 150,
+  },
+  height200: {
+    height: 200,
+  },
+  height250: {
+    height: 250,
+  },
+  height40per: {
     height: "40%"
   },
   height85per: {
@@ -886,8 +912,8 @@ marginValue:{
   height60per: {
     height: "60%",
   },
-  height90per:{
-    height:"90%"
+  height90per: {
+    height: "90%"
   },
   height100per: {
     height: "100%",
@@ -917,36 +943,54 @@ marginValue:{
 
   /*#start position */
   positionRelative: {
-    position :"relative"
+    position: "relative"
   },
   positionAbsolute: {
-    position:"absolute"
+    position: "absolute"
   },
-/*#end position*/
+  /*#end position*/
 
-/*#start Top */
-  Top70:{
+  /*#start Top */
+  Top16: {
     top: 70
   },
-  Bottom10:{
+  Top70: {
+    top: 70
+  },
+  Bottom10: {
     bottom: 10
   },
-  Bottom0:{
+  Bottom0: {
     bottom: 0
   },
-  Right0:{
-    right:0
+  Bottom5: {
+    bottom: 5
   },
-  Right75:{
-    right:75
+  Bottom_20: {
+    bottom: -20
   },
-  OverFlow:{
-    overflow:'hidden'
+  Left16: {
+    left: 16
   },
-  SpaceEvenly:{
-    justifyContent:"space-evenly"
+  Right0: {
+    right: 0
+  },
+  Right5: {
+    right: 5
+  },
+  Right_20: {
+    right: -20
+  },
+  Right75: {
+    right: 75
+  },
+  OverFlow: {
+    overflow: 'hidden'
+  },
+  SpaceEvenly: {
+    justifyContent: "space-evenly"
   }
-/*#end postion */
+  /*#end postion */
 }
 
 );
