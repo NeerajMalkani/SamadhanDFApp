@@ -17,11 +17,11 @@ import CreateSCCards from "../components/SCCards";
 import FadingSlides from 'react-native-fading-slides';
 import { Touchable, ImageBackground } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-const dreamImage = { uri: "https://samadhanerp.s3.ap-south-1.amazonaws.com/dreamone.jpg" };
-
+import InsetShadow from "react-native-inset-shadow";
+import FadeCarousel from "rn-fade-carousel";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
-
+const dreamImage = { uri: "https://samadhanerp.s3.ap-south-1.amazonaws.com/dreamone.jpg" };
 const HomeScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
@@ -41,6 +41,13 @@ const HomeScreen = ({ route, navigation }) => {
   const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+  const slidesTwo = [
+    <Image source={require('../../assets/dreamone.jpg')} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require('../../assets/dreamtwo.jpg')} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require('../../assets/dreamthree.jpg')} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require('../../assets/dreamfour.jpg')} style={Styles.flex1} resizeMode="cover" />
+  ];
 
   const LogoutUser = async () => {
     try {
@@ -203,28 +210,6 @@ const HomeScreen = ({ route, navigation }) => {
       });
   };
 
-  const slides = [
-    {
-      image: require('../../assets/dreamone.jpg'),
-      imageWidth: 350,
-      imageHeight: 170,
-      imageborder: 10
-      // title: 'Hello World',
-      // subtitle: 'This is a beautiful world',
-      // titleColor: '#fff',
-      // subtitleColor: '#fff',
-    },
-    {
-      image: require('../../assets/dreamtwo.jpg'),
-      imageWidth: 350,
-      imageHeight: 170,
-      imageborder: 10
-      // title: 'Hello World',
-      // subtitle: 'This is a beautiful world',
-      // titleColor: '#fff',
-      // subtitleColor: '#fff',
-    }
-  ];
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
@@ -259,9 +244,9 @@ const HomeScreen = ({ route, navigation }) => {
               );
             })}
           </View>
-          <View style={[Styles.margin4, Styles.marginTop0, Styles.border1,Styles.borderRadius16, { height: 180 }]}>
-            <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }} 
-            autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
+          <View style={[Styles.margin4, Styles.marginTop0, Styles.border1,Styles.borderRadius16, Styles.OverFlow, { height: 180,marginRight:18,marginLeft:18 }]}>
+            <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
+              autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
           </View>
           <View style={[Styles.margin4, Styles.height96, Styles.border1, { position: "relative" }]}>
             <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
@@ -290,44 +275,37 @@ const HomeScreen = ({ route, navigation }) => {
               </Portal>
             </View>
           ) : null}
-          {/* <Subheading style={[Styles.padding16, Styles.paddingBottom0]}>Total Users ({totalUsers})</Subheading> */}
-          {/* <View style={[Styles.flexRow, Styles.flexAlignStart]}>
-            {userCountData.map((k, i) => {
-              //
-              return (
-                <View key={i} style={[Styles.flex1, Styles.padding2, Styles.paddingBottom16]}>
-                  <Card style={[Styles.padding2, Styles.flexAlignCenter, Styles.paddingVertical16]}>
-                    <Caption style={[Styles.textCenter]}>{k.roleName}s</Caption>
-                    <Headline style={[Styles.textCenter]}>{k.roleCount}</Headline>
-                  </Card>
-                </View>
-              );
-            })}
-          </View> */}
+          
           <View style={[Styles.width100per, Styles.padding16]}>
-            <View style={Styles.flex1, Styles.width100per, Styles.height200, Styles.borderRadius16, Styles.OverFlow}>
-              <ImageBackground imageStyle={Styles.borderRadius8} source={dreamImage} resizeMode="contain"
-                style={Styles.flex1, Styles.flexJustifyCenter, Styles.width100per, Styles.height200}>
+            <View style={[Styles.flex1, Styles.width100per, Styles.height250, Styles.borderRadius16, Styles.OverFlow]}>
+              <FadeCarousel
+                elements={slidesTwo}
+                containerStyle={[Styles.flex1,Styles.flexAlignCenter, Styles.flexJustifyCenter]}
+                fadeDuration={2000}
+                stillDuration={2000}
+                start={true}
+              />
 
-                <View style={Styles.width100per, Styles.height100per, Styles.paddingVertical16, Styles.marginHorizontal16}>
-                  <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite, Styles.margin0.marginTop8, Styles.marginVertical8, { color: "white" }]}>Design Your Dream</Text>
-                </View>
-              </ImageBackground>
-              {/* <Card style={[Styles.height200, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.positionRelative]}>
-              <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite,Styles.positionAbsolute,Styles.Top16, Styles.Left16]}>Design Your Dream</Text>
-                <Image source={require('../../assets/dreamone.jpg')} style={[Styles.width100per, Styles.height200, Styles.borderRadius8]} />
-              </Card> */}
+              {/* <View style={[Styles.width100per,Styles.height250,Styles.backgroundColorYelow]}>
+              <InsetShadow
+                // containerStyle={styles.shadow}
+                top={true}
+                shadowRadius={50}
+                shadowOffset={50}
+                elevation={100}
+                shadowOpacity={0.5}
+                color="rgba(128,128,128,1)"
+                >
+                <View style={[Styles.flex1]}></View>
+              </InsetShadow>
+              </View> */}
             </View>
 
             <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop8]}>
 
 
               <View style={Styles.width50per}>
-                <Card style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1,Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
-                  {/* <Card.Content>
-                  <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular]}>User</Title>
-                </Card.Content> */}
-                  {/* <Text style={[Styles.fontSize14]}>User</Text> */}
+                <Card style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
                   <Card.Title title="Users" titleStyle={[Styles.textColorWhite]} />
 
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
@@ -347,20 +325,16 @@ const HomeScreen = ({ route, navigation }) => {
 
 
               <View style={Styles.width50per}>
-                <Card style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow,Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
-                  {/* <Card.Content>
-                    <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular,Styles.fontSize14]}>Material calculator</Title>
-                  </Card.Content> */}
+                <Card style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
+                  
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material calculator</Text>
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require('../../assets/material-calculator.png')}
                     style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
 
                 </Card>
-                <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1,Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
-                  {/* <Card.Content>
-                    <Title snumberOfLines={1} style={[Styles.fontSize20,Styles.fontRegular]}>Job Your Dream</Title>
-                  </Card.Content> */}
+                <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1, Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
+                  
                   {/* <Card.Title title="Job Your Dream"/> */}
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Looking For Job</Text>
 

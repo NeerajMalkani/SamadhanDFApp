@@ -44,6 +44,7 @@
     "react-native-grid-image-viewer-with-caption": "^1.0.5",
     "react-native-image-slider-banner": "^1.0.2",
     "react-native-image-zoom-viewer": "^3.0.1",
+    "react-native-inset-shadow": "^1.0.3",
     "react-native-multi-selectbox": "^1.5.0",
     "react-native-multiple-select": "^0.5.9",
     "react-native-pager-view": "5.4.24",
@@ -62,6 +63,7 @@
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.7",
+    "rn-fade-carousel": "^1.0.0",
     "use-state-if-mounted": "^1.0.7",
     "uuid": "^8.3.2"
   },
