@@ -92,6 +92,10 @@ export const Styles = StyleSheet.create({
   backgroundColorDarkGreen: {
     backgroundColor: "#286144"
   },
+  // backgroundGradient:{
+  //   // backgroundColor: "red",
+  //   backgroundImage: "linear-gradient(red 10%, green 85%, blue 90%)"
+  // },
   /* #endregion */
 
   /* #region Borders */

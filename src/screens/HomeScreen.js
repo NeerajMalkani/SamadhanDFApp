@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
-import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title } from "react-native-paper";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title, Divider  } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
@@ -13,12 +13,14 @@ import { communication } from "../utils/communication";
 import ImageViewer from "react-native-image-zoom-viewer";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LinearGradient from 'react-native-linear-gradient';
 import CreateSCCards from "../components/SCCards";
 import FadingSlides from 'react-native-fading-slides';
 import { Touchable, ImageBackground } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import InsetShadow from "react-native-inset-shadow";
 import FadeCarousel from "rn-fade-carousel";
+import styles from "react-native-inset-shadow/src/styles";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
 const dreamImage = { uri: "https://samadhanerp.s3.ap-south-1.amazonaws.com/dreamone.jpg" };
@@ -235,16 +237,20 @@ const HomeScreen = ({ route, navigation }) => {
         </View>
       ) : (
         <ScrollView>
-          <View style={[Styles.flexRow, Styles.padding4, Styles.flexWrap]}>
+          <View style={[Styles.flexRow,Styles.paddingHorizontal16, Styles.flexWrap]}>
             {imageGalleryData.map((k, i) => {
               return (
-                <View key={i} style={[Styles.width50per, Styles.padding16, Styles.paddingTop0]}>
+                <View key={i} style={[Styles.width50per,Styles.padding4, Styles.paddingTop0]}>
                   <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
                 </View>
               );
             })}
           </View>
-          <View style={[Styles.margin4, Styles.marginTop0, Styles.border1,Styles.borderRadius16, Styles.OverFlow, { height: 180,marginRight:18,marginLeft:18 }]}>
+          <View style={[Styles.padding16]}>
+            <Text style={[Styles.fontSize18,{color:"green",width:"100%"},Styles.paddingBottom12]}>SLIDING GALLERY</Text>
+            <Divider />
+          </View>
+          <View style={[Styles.margin16, Styles.marginTop0, Styles.border1,Styles.borderRadius8, Styles.OverFlow, { height: 180 }]}>
             <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
               autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
           </View>
@@ -276,8 +282,8 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
           ) : null}
           
-          <View style={[Styles.width100per, Styles.padding16]}>
-            <View style={[Styles.flex1, Styles.width100per, Styles.height250, Styles.borderRadius16, Styles.OverFlow]}>
+          <View style={[Styles.width100per, Styles.padding16,Styles.positionRelative]}>
+            <View style={[Styles.flex1, Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.OverFlow]}>
               <FadeCarousel
                 elements={slidesTwo}
                 containerStyle={[Styles.flex1,Styles.flexAlignCenter, Styles.flexJustifyCenter]}
@@ -285,7 +291,12 @@ const HomeScreen = ({ route, navigation }) => {
                 stillDuration={2000}
                 start={true}
               />
-
+              {/*ye main hai<View style={[Styles.width100per,Styles.height100per,Styles.backgroundColorWhite,Styles.positionAbsolute,{backgroundColor: "#fff"}]}>
+                <Card elevation={100} style={[Styles.width100per,Styles.height24,Styles.backgroundColorDarkGreen,{shadowColor:"green",shadowRadius: 5,shadowOpacity: 1}]}></Card>
+              </View> */}
+              {/* <Card elevation={100} style={[Styles.width100per,Styles.height32,Styles.positionAbsolute,{backgroundColor: "rgba(200, 200, 200, 0.9)"},{shadowColor:"red"}]}>
+                <Card elevation={100} style={[Styles.width100per,{height:"10%"},Styles.backgroundColorYelow]}></Card>
+              </Card> */}
               {/* <View style={[Styles.width100per,Styles.height250,Styles.backgroundColorYelow]}>
               <InsetShadow
                 // containerStyle={styles.shadow}
@@ -299,6 +310,7 @@ const HomeScreen = ({ route, navigation }) => {
                 <View style={[Styles.flex1]}></View>
               </InsetShadow>
               </View> */}
+
             </View>
 
             <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop8]}>
@@ -325,7 +337,7 @@ const HomeScreen = ({ route, navigation }) => {
 
 
               <View style={Styles.width50per}>
-                <Card style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
+                <Card  style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
                   
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material calculator</Text>
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
@@ -343,9 +355,11 @@ const HomeScreen = ({ route, navigation }) => {
 
                 </Card>
               </View>
-
+              
 
             </View>
+            
+            
           </View>
         </ScrollView>
       )}
