@@ -94,6 +94,7 @@ import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
+import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -314,7 +315,7 @@ export default function App() {
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
-
+      <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
     </Drawer.Navigator>
   );
 }

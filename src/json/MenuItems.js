@@ -644,18 +644,18 @@ export const MenuItemsArchitect = [
     roleID: 5,
     items: [
       {
-        title: "Rate Card Setup",
+        title: " Architect Rate Card Setup",
         type: "accordian",
         index: 40,
-        //navigation: "ClientListScreen",
-        navigation:"RateCardSetup"
+        navigation: "ArchitectRateCardSetup",
+        // navigation:"ArchitectRateCardSetup"
       },
-      {
-        title: "Send Rate Card",
-        type: "accordian",
-        index: 41,
-        //navigation: "ClientListScreen",
-      },
+      // {
+      //   title: "Send Rate Card",
+      //   type: "accordian",
+      //   index: 41,
+      //   //navigation: "ClientListScreen",
+      // },
     ],
   },
   {
