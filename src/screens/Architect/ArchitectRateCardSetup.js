@@ -128,7 +128,7 @@ const ArchitectRateCardSetup = ({ navigation }) => {
 
     return (
         <View style={[Styles.flex1]}>
-            <Header navigation={navigation} title="Service Product" />
+            <Header navigation={navigation} title="Architect Rate Card Setup" />
             {isLoading ? (
                 <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />

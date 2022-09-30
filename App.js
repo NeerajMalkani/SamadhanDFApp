@@ -385,6 +385,7 @@ return (
             <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerTitle: "Basic Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{ headerShown: false }} />
             <Stack.Screen name="AddRateCard" component={AddRateCard} />
+            <Stack.Screen name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
           </Stack.Navigator>
         </NavigationContainer>
       )}
