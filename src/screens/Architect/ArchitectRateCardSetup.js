@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
+import { FAB, List, Snackbar, Searchbar, Title, HelperText,Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../api/Provider";
@@ -11,6 +11,10 @@ import NoItems from "../../components/NoItems";
 import { Styles } from "../../styles/styles";
 import { theme } from "../../theme/apptheme";
 import { NullOrEmpty } from "../../utils/validations";
+import Dropdown from "../../components/Dropdown";
+import { communication } from "../../utils/communication";
+import { BaseButton, TouchableOpacity } from "react-native-gesture-handler";
+import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -38,7 +42,42 @@ const ArchitectRateCardSetup = ({ navigation }) => {
     const [spec, setSpec] = React.useState("");
     const [unitName, setUnitName] = React.useState("");
 
+    const [activityFullData, setActivityFullData] = React.useState([]);
+    const [activityData, setActivityData] = React.useState([]);
+    // const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+    const [activityName, setActivityName] = React.useState("");
+    const [errorAN, setANError] = React.useState(false);
+    const activityDDRef = useRef({});
+
+
+    const [servicesFullData, setServicesFullData] = React.useState([]);
+    const [servicesData, setServicesData] = React.useState([]);
+    // const [servicesName, setServicesName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+    const [servicesName, setServicesName] = React.useState("");
+    const [errorSN, setSNError] = React.useState(false);
+    const servicesDDRef = useRef({});
+
+    const [categoriesFullData, setCategoriesFullData] = React.useState([]);
+    const [categoriesData, setCategoriesData] = React.useState([]);
+    //  const [categoriesName, setCategoriesName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
+    const [categoriesName, setCategoriesName] = React.useState("");
+    const [errorCN, setCNError] = React.useState(false);
+    const categoriesDDRef = useRef({});
+
+    const [productsFullData, setProductsFullData] = React.useState([]);
+    const [productsData, setProductsData] = React.useState([]);
+    // const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName : "");
+    const [productsName, setProductsName] = React.useState("");
+    const [errorPN, setPNError] = React.useState(false);
+    const productsDDRef = useRef({});
+
     const refRBSheet = useRef();
+
+    useEffect(() => {
+        FetchData();
+        FetchActvityRoles();
+    }, []);
+
 
     const FetchData = (from) => {
         if (from === "add" || from === "update") {
@@ -75,9 +114,195 @@ const ArchitectRateCardSetup = ({ navigation }) => {
             });
     };
 
-    useEffect(() => {
-        FetchData();
-    }, []);
+    const FetchActvityRoles = () => {
+        Provider.getAll("master/getmainactivities")
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    if (response.data.data) {
+                        response.data.data = response.data.data.filter((el) => {
+                            return el.display && el.activityRoleName === "Contractor";
+                        });
+                        setActivityFullData(response.data.data);
+                        servicesDDRef.current.reset();
+                        const activities = response.data.data.map((data) => data.activityRoleName);
+                        setActivityData(activities);
+                        setActivityName("Contractor");
+                        FetchServicesFromActivity("Contractor", response.data.data);
+                    }
+                }
+            })
+            .catch((e) => { });
+    };
+
+    const FetchServicesFromActivity = (selectedItem, activityData) => {
+        let params = {
+            ID:
+                activityData.find((el) => {
+                    return el.activityRoleName === selectedItem;
+                }).id,
+        };
+        console.log(params);
+        Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+            .then((response) => {
+                console.log(response.data);
+                if (response.data && response.data.code === 200) {
+                    if (response.data.data) {
+                        setServicesFullData(response.data.data);
+                        const services = response.data.data.map((data) => data.serviceName);
+                        setServicesData(services);
+                    }
+                    FetchCategoriesFromServices("Contractor", response.data.data);
+                }
+            })
+            .catch((e) => { });
+    };
+
+    const FetchCategoriesFromServices = (selectedItem) => {
+        let params = {
+            ActivityID:
+                activityFullData.find((el) => {
+                    return el.activityRoleName === activityName;
+                }).id,
+            ServiceID:
+                servicesFullData.find((el) => {
+                    return el.serviceName === selectedItem;
+                }).id,
+        };
+        Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+            .then((response) => {
+                console.log('start category');
+                console.log(response.data);
+
+                if (response.data && response.data.code === 200) {
+                    if (response.data.data) {
+                        // response.data.data = response.data.data.filter((el) => {
+                        //     return el.display;
+                        // });
+                        setCategoriesFullData(response.data.data);
+                        const categories = response.data.data.map((data) => data.categoryName);
+                        setCategoriesData(categories);
+                    }
+                    FetchProductsFromCategory("Contractor", response.data.data);
+                }
+            })
+            .catch((e) => { });
+    };
+
+    const FetchProductsFromCategory = (selectedItem) => {
+        let params = {
+            ActivityID:
+                activityFullData.find((el) => {
+                    return el.activityRoleName === activityName;
+                }).id,
+            ServiceID:
+                servicesFullData.find((el) => {
+                    return el.serviceName === serviceName;
+                }).id,
+            CategoryID:
+                categoriesFullData.find((el) => {
+                    return el.categoryName === selectedItem;
+                }).id,
+        };
+        Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    if (response.data.data) {
+                        // response.data.data = response.data.data.filter((el) => {
+                        //     return el.display;
+                        // });
+                        setProductsFullData(response.data.data);
+                        const products = response.data.data.map((data) => data.productName);
+                        setProductsData(products);
+                    }
+                }
+            })
+            .catch((e) => { });
+    };
+
+
+    const onServiceNameSelected = (selectedItem) => {
+        setServiceName(selectedItem);
+        categoriesDDRef.current.reset();
+        productsDDRef.current.reset();
+        setCategoriesData([]);
+        setCategoriesName("");
+        setProductsName("");
+        setSNError(false);
+        FetchCategoriesFromServices(selectedItem);
+    };
+
+    const onCategoriesNameSelected = (selectedItem) => {
+        setCategoriesName(selectedItem);
+        productsDDRef.current.reset();
+        setProductsData([]);
+        setProductsName("");
+        setCNError(false);
+        FetchProductsFromCategory(selectedItem);
+
+    };
+
+
+    const onProductsNameSelected = (selectedItem) => {
+        setProductsName(selectedItem);
+        setPNError(false);
+    };
+
+    const OnSearchEmployee = () => {
+        let isValid = false;
+        if (!NullOrEmpty(aadharNo.trim()) || !NullOrEmpty(mobileNo.trim())) {
+            isValid = true;
+        }
+        else {
+
+            if (NullOrEmpty(aadharNo.trim())) {
+                setAadharNoInvalid(true);
+            }
+
+            if (NullOrEmpty(mobileNo.trim())) {
+                setMobileNoInvalid(true);
+            }
+        }
+
+        if (isValid) {
+            FetchSearchEmployee();
+        }
+    };
+
+    const SetFilters = (snText: string, cnText: string, searcText: string) => {
+        setProductListTemp(serviceProductList);
+        let ArrOfData: any = [];
+
+        if (snText === "--Select--" && cnText === "--Select--" && searcText === "") {
+            ArrOfData = serviceProductList;
+        }
+
+        if (snText !== "--Select--") {
+            ArrOfData = serviceProductList.filter((el: ProductModel) => {
+                return el.serviceName.toString().toLowerCase().includes(snText.toLowerCase());
+            });
+        }
+
+        if (cnText !== "--Select--") {
+            ArrOfData = ArrOfData.filter((el: ProductModel) => {
+                return el.categoryName.toString().toLowerCase().includes(cnText.toLowerCase());
+            });
+        }
+
+        if (searchQuery !== "") {
+            if (snText === "--Select--" || cnText === "--Select--") {
+                ArrOfData = serviceProductList.filter((el: ProductModel) => {
+                    return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
+                });
+            } else {
+                ArrOfData = ArrOfData.filter((el: ProductModel) => {
+                    return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
+                });
+            }
+        }
+
+        setProductListTemp(ArrOfData);
+    };
+
 
     const onChangeSearch = (query) => {
         setSearchQuery(query);
@@ -129,6 +354,42 @@ const ArchitectRateCardSetup = ({ navigation }) => {
     return (
         <View style={[Styles.flex1]}>
             <Header navigation={navigation} title="Architect Rate Card Setup" />
+            <View style={[Styles.padding16]}>
+                <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
+                <HelperText type="error" visible={errorSN}>
+                    {communication.InvalidServiceName}
+                </HelperText>
+                <Dropdown label="Category Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
+                <HelperText type="error" visible={errorCN}>
+                    {communication.InvalidCategoryName}
+                </HelperText>
+                <Dropdown label="Product Name" data={productsData} onSelected={onProductsNameSelected} isError={errorPN} selectedItem={productsName} reference={productsDDRef} />
+                <HelperText type="error" visible={errorPN}>
+                    {communication.InvalidProductName}
+                </HelperText>
+                <View style={[Styles.flexRow]}>
+                    <View style={[Styles.width50per, Styles.padding10]}>
+                        {/* <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
+                            <Text style={[Styles.fontSize14, Styles.textColorWhite]}> Apply Filter</Text>
+                        </TouchableOpacity> */}
+                        <Button icon="filter" mode="contained" onPress={() => console.log('Pressed')}>
+                         Apply Filter
+                        </Button>
+                    </View>
+                    <View style={[Styles.width50per, Styles.padding10]}>
+                        {/* <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
+                        <Text style={[Styles.fontSize14, Styles.textColorWhite]}> Clear Filter</Text>
+                    </TouchableOpacity> */}
+                        <Button icon="filter-remove" mode="outlined" onPress={() => console.log('Pressed')}>
+                          Clear Filter 
+                        </Button>
+                    </View>
+                </View>
+
+
+
+            </View>
+
             {isLoading ? (
                 <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
