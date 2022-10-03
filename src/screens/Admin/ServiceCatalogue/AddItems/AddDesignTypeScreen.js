@@ -1,11 +1,17 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
+import { RNS3 } from "react-native-aws3";
+import * as ImagePicker from "expo-image-picker";
+import { creds } from "../../../../utils/credentials";
+import uuid from "react-native-uuid";
+import { AWSImagePath } from "../../../../utils/paths";
+
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -32,9 +38,16 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.designTypeName : "");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [image, setImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = React.useState(route.params.type === "edit" ? { name: route.params.data.designImage } : null);
+  const [errorDI, setDIError] = React.useState(false);
+
+  const [isImageReplaced, setIsImageReplaced] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -55,7 +68,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchActvityRoles = () => {
@@ -76,6 +89,8 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
               setCategoriesData([]);
               setServicesData([]);
               setProductsData([]);
+              setImage(AWSImagePath + "placeholder-image.png");
+              setFilePath(null);
             }
             FetchServicesFromActivity("Contractor", response.data.data);
             if (route.params.type === "edit") {
@@ -85,24 +100,24 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem, activityData) => {
     let params = {
       ActivityID: activityData
         ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
+          return el.activityRoleName === "Contractor";
+        }).id
         : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
+          return el.activityRoleName === "Contractor";
+        }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
     };
     Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -117,30 +132,30 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem, activityData) => {
     let params = {
       ActivityID: activityData
         ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
+          return el.activityRoleName === "Contractor";
+        }).id
         : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
+          return el.activityRoleName === "Contractor";
+        }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
+            return el.serviceName === serviceName;
+          }).id,
       CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
     };
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -155,7 +170,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -207,6 +222,85 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
     setError(false);
   };
 
+  const chooseFile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setDIError(false);
+      const arrExt = result.uri.split(".");
+      const unique_id = uuid.v4();
+      setDesignImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setImage(result.uri);
+      setFilePath(result);
+      if (route.params.type === "edit") {
+        setIsImageReplaced(true);
+      }
+    }
+  };
+
+  const uploadFile = () => {
+    if (route.params.type === "edit" && !isImageReplaced) {
+      UpdateData();
+    } else {
+      if (filePath.uri) {
+        if (Object.keys(filePath).length == 0) {
+          setSnackbarText(communication.NoImageSelectedError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+          return;
+        }
+        RNS3.put(
+          {
+            uri: filePath.uri,
+            name: designImage.split(AWSImagePath)[1],
+            type: "image/*",
+          },
+          {
+            keyPrefix: "",
+            bucket: creds.awsBucket,
+            region: creds.awsRegion,
+            accessKey: creds.awsAccessKey,
+            secretKey: creds.awsSecretKey,
+            successActionStatus: 201,
+          }
+        )
+          .progress((progress) => {
+            setIsButtonLoading(true);
+            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+          })
+          .then((response) => {
+            setIsButtonLoading(false);
+            if (response.status !== 201) {
+              setSnackbarVisible(true);
+              setSnackbarColor(theme.colors.error);
+              setSnackbarText(communication.FailedUploadError);
+            } else {
+              if (route.params.type === "edit") {
+                UpdateData();
+              } else {
+                InsertData();
+              }
+            }
+          })
+          .catch((ex) => {
+            console.log(ex);
+            setIsButtonLoading(false);
+            setSnackbarVisible(true);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(communication.FailedUploadError);
+          });
+      } else {
+        setSnackbarText(communication.NoImageSelectedError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      }
+    }
+  };
+
   const InsertData = () => {
     Provider.create("servicecatalogue/insertdesigntype", {
       DesignTypeName: name,
@@ -220,6 +314,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         return el.productName === productsName;
       }).productID,
       Display: checked,
+      DesignImage: designImage,
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -254,6 +349,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         return el.productName === productsName;
       }).productID,
       Display: checked,
+      DesignImage: designImage,
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -301,12 +397,18 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       setPNError(true);
       isValid = false;
     }
+    if (filePath === null) {
+      setDIError(true);
+      isValid = false;
+    } 
+
+    if(designImage === null){
+      setDIError(true);
+      isValid = false;
+    }
+
     if (isValid) {
-      if (route.params.type === "edit") {
-        UpdateData();
-      } else {
-        InsertData();
-      }
+      uploadFile();
     }
   };
 
@@ -329,6 +431,15 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           <TextInput mode="flat" label="Design Type Name" value={name} returnKeyType="done" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidDesignTypeName}
+          </HelperText>
+          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+            <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+            <Button mode="text" onPress={chooseFile}>
+              {filePath !== null ? "Replace" : "Choose Image"}
+            </Button>
+          </View>
+          <HelperText type="error" visible={errorDI}>
+            {communication.InvalidDesignImage}
           </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item

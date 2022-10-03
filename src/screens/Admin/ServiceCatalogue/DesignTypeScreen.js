@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -27,6 +27,7 @@ const DesignTypeScreen = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [productName, setProductName] = React.useState("");
+  const [designImage, setDesignImage] = React.useState("");
 
   const refRBSheet = useRef();
 
@@ -89,13 +90,15 @@ const DesignTypeScreen = ({ navigation }) => {
           title={data.item.designTypeName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="brush" />}
+          //left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="brush" />}
+          left={() => <Image source={{ uri: data.item.designImage }} style={[Styles.width56, Styles.height56]} />}
           onPress={() => {
             refRBSheet.current.open();
             setSelectedDesignTypeName(data.item.designTypeName);
             setServiceName(data.item.serviceName);
             setCategoryName(data.item.categoryName);
             setProductName(data.item.productName);
+            setDesignImage(data.item.designImage);
           }}
           right={() => (
             <Icon
@@ -129,6 +132,7 @@ const DesignTypeScreen = ({ navigation }) => {
         productID: data.item.productID,
         productName: data.item.productName,
         display: data.item.display,
+        designImage: data.item.designImage,
       },
     });
   };
@@ -178,6 +182,7 @@ const DesignTypeScreen = ({ navigation }) => {
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="Product Name" description={productName} />
+            <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
           </ScrollView>
         </View>
       </RBSheet>

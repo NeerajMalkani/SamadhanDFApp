@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
-import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title, Divider  } from "react-native-paper";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title, Divider } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
@@ -23,7 +23,7 @@ import FadeCarousel from "rn-fade-carousel";
 import styles from "react-native-inset-shadow/src/styles";
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
-const dreamImage = { uri: "https://samadhanerp.s3.ap-south-1.amazonaws.com/dreamone.jpg" };
+let roleID = 0;
 const HomeScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
@@ -148,7 +148,15 @@ const HomeScreen = ({ route, navigation }) => {
     GetServiceCatalogue();
     FetchImageGalleryData();
     GetUserCount();
+    GetRoleID();
   }, []);
+
+  const GetRoleID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      roleID = JSON.parse(userData).RoleID;
+    }
+  };
 
   const showDialog = () => setIsDialogVisible(true);
 
@@ -237,20 +245,20 @@ const HomeScreen = ({ route, navigation }) => {
         </View>
       ) : (
         <ScrollView>
-          <View style={[Styles.flexRow,Styles.paddingHorizontal16, Styles.flexWrap]}>
+          <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.flexWrap]}>
             {imageGalleryData.map((k, i) => {
               return (
-                <View key={i} style={[Styles.width50per,Styles.padding4, Styles.paddingTop0]}>
+                <View key={i} style={[Styles.width50per, Styles.padding4, Styles.paddingTop0]}>
                   <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
                 </View>
               );
             })}
           </View>
           <View style={[Styles.padding16]}>
-            <Text style={[Styles.fontSize18,{color:"green",width:"100%"},Styles.paddingBottom12]}>SLIDING GALLERY</Text>
+            <Text style={[Styles.fontSize18, { color: "green", width: "100%" }, Styles.paddingBottom12]}>SLIDING GALLERY</Text>
             <Divider />
           </View>
-          <View style={[Styles.margin16, Styles.marginTop0, Styles.border1,Styles.borderRadius8, Styles.OverFlow, { height: 180 }]}>
+          <View style={[Styles.margin16, Styles.marginTop0, Styles.border1, Styles.borderRadius8, Styles.OverFlow, { height: 180 }]}>
             <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
               autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
           </View>
@@ -281,12 +289,12 @@ const HomeScreen = ({ route, navigation }) => {
               </Portal>
             </View>
           ) : null}
-          
-          <View style={[Styles.width100per, Styles.padding16,Styles.positionRelative]}>
+
+          <View style={[Styles.width100per, Styles.padding16, Styles.positionRelative]}>
             <View style={[Styles.flex1, Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.OverFlow]}>
               <FadeCarousel
                 elements={slidesTwo}
-                containerStyle={[Styles.flex1,Styles.flexAlignCenter, Styles.flexJustifyCenter]}
+                containerStyle={[Styles.flex1, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
                 fadeDuration={2000}
                 stillDuration={2000}
                 start={true}
@@ -313,11 +321,16 @@ const HomeScreen = ({ route, navigation }) => {
 
             </View>
 
-            <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop8]}>
+            <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
 
 
               <View style={Styles.width50per}>
-                <Card style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
+                <Card onPress={() => {
+                  if (roleID == 1) {
+                    navigation.navigate("ApprovedUserScreen", { type: "add" });
+                  }
+                  
+                }} style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
                   <Card.Title title="Users" titleStyle={[Styles.textColorWhite]} />
 
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
@@ -337,16 +350,24 @@ const HomeScreen = ({ route, navigation }) => {
 
 
               <View style={Styles.width50per}>
-                <Card  style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
-                  
-                  <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material calculator</Text>
+                <Card onPress={() => {
+                  if (roleID == 1) {
+                    navigation.navigate("MaterialSetupScreen", { type: "add" });
+                  }
+                  else {
+                    navigation.navigate("MaterialCalculatorScreen", { type: "add" });
+                  }
+                }}
+                  style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
+
+                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text> }
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require('../../assets/material-calculator.png')}
                     style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
 
                 </Card>
                 <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1, Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
-                  
+
                   {/* <Card.Title title="Job Your Dream"/> */}
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Looking For Job</Text>
 
@@ -355,11 +376,10 @@ const HomeScreen = ({ route, navigation }) => {
 
                 </Card>
               </View>
-              
+
 
             </View>
-            
-            
+
           </View>
         </ScrollView>
       )}

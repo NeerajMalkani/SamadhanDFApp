@@ -105,7 +105,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBrands = (activityData) => {
@@ -139,7 +139,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem, activityData) => {
@@ -147,23 +147,23 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       ActivityID:
         route.params.type === "edit"
           ? activityData.find((el) => {
-              return el.activityRoleName === "Dealer";
-            }).id
+            return el.activityRoleName === "Dealer";
+          }).id
           : activityFullData.find((el) => {
-              return el.activityRoleName === "Dealer";
-            }).id,
+            return el.activityRoleName === "Dealer";
+          }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : brandFullData.find((el) => {
-              return el.brandName + " (" + el.categoryName + ")" === selectedItem;
-            }).serviceID,
+            return el.brandName + " (" + el.categoryName + ")" === selectedItem;
+          }).serviceID,
       CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : brandFullData.find((el) => {
-              return el.brandName + " (" + el.categoryName + ")" === selectedItem;
-            }).categoryID,
+            return el.brandName + " (" + el.categoryName + ")" === selectedItem;
+          }).categoryID,
     };
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -178,7 +178,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -319,7 +319,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
     if (route.params.type === "edit" && !isImageReplaced) {
       UpdateData();
     } else {
-      if (filePath.uri) {
+      if (filePath != null && filePath.uri) {
         if (Object.keys(filePath).length == 0) {
           setSnackbarText(communication.NoImageSelectedError);
           setSnackbarColor(theme.colors.error);
@@ -367,9 +367,14 @@ const AddDealerProductScreen = ({ route, navigation }) => {
             setSnackbarText(communication.FailedUploadError);
           });
       } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
+        if (route.params.type === "edit") {
+          UpdateData();
+        } else {
+          InsertData();
+        }
+        // setSnackbarText(communication.NoImageSelectedError);
+        // setSnackbarColor(theme.colors.error);
+        // setSnackbarVisible(true);
       }
     }
   };
@@ -390,10 +395,10 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       setPNError(true);
       isValid = false;
     }
-    if (filePath === null) {
-      setPIError(true);
-      isValid = false;
-    }
+    // if (filePath === null) {
+    //   setPIError(true);
+    //   isValid = false;
+    // }
     if (price.length === 0) {
       setPError(true);
       isValid = false;

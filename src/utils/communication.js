@@ -98,6 +98,8 @@ export const communication = {
   InvalidEmployeeCode: "Enter a valid Eemployee Code",
   InvalidAadharNo: "Enter a valid Aadhar Number",
   InvalidFatherName: "Enter a valid Father Name",
-  
-  InvalidCompanyClient :"Enter a valid Client name"
+
+  InvalidCompanyClient: "Enter a valid Client name",
+  InvalidTotalArea: "Please enter valid total area",
+  NoMaterial: "No Material/Product for this Design"
 };

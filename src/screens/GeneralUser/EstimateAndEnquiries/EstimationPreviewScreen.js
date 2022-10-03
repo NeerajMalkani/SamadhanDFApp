@@ -173,6 +173,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   };
 
   const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID, labourCost) => {
+    console.log('get estimation');
     const totAm = subtotal + subtotal * (5 / 100) + parseFloat(totalSqFt) * parseFloat(labourCost);
     const params = {
       UserID: userID,
@@ -218,6 +219,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               });
             }
           } else {
+            console.log(response.data.data[0].userDesignEstimationID);
             FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
           }
         } else {
