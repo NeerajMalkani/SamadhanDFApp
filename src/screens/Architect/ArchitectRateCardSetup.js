@@ -141,10 +141,8 @@ const ArchitectRateCardSetup = ({ navigation }) => {
                     return el.activityRoleName === selectedItem;
                 }).id,
         };
-        console.log(params);
         Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
             .then((response) => {
-                console.log(response.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         setServicesFullData(response.data.data);
@@ -170,9 +168,6 @@ const ArchitectRateCardSetup = ({ navigation }) => {
         };
         Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
             .then((response) => {
-                console.log('start category');
-                console.log(response.data);
-
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         // response.data.data = response.data.data.filter((el) => {
@@ -247,62 +242,95 @@ const ArchitectRateCardSetup = ({ navigation }) => {
         setPNError(false);
     };
 
-    const OnSearchEmployee = () => {
-        let isValid = false;
-        if (!NullOrEmpty(aadharNo.trim()) || !NullOrEmpty(mobileNo.trim())) {
-            isValid = true;
-        }
-        else {
+    // const OnSearchEmployee = () => {
+    //     let isValid = false;
+    //     if (!NullOrEmpty(aadharNo.trim()) || !NullOrEmpty(mobileNo.trim())) {
+    //         isValid = true;
+    //     }
+    //     else {
 
-            if (NullOrEmpty(aadharNo.trim())) {
-                setAadharNoInvalid(true);
-            }
+    //         if (NullOrEmpty(aadharNo.trim())) {
+    //             setAadharNoInvalid(true);
+    //         }
 
-            if (NullOrEmpty(mobileNo.trim())) {
-                setMobileNoInvalid(true);
-            }
-        }
+    //         if (NullOrEmpty(mobileNo.trim())) {
+    //             setMobileNoInvalid(true);
+    //         }
+    //     }
 
-        if (isValid) {
-            FetchSearchEmployee();
+    //     if (isValid) {
+    //         FetchSearchEmployee();
+    //     }
+    // };
+
+    // const SetFilters = (snText: string, cnText: string, searcText: string) => {
+    //     setProductListTemp(serviceProductList);
+    //     let ArrOfData: any = [];
+
+    //     if (snText === "--Select--" && cnText === "--Select--" && searcText === "") {
+    //         ArrOfData = serviceProductList;
+    //     }
+
+    //     if (snText !== "--Select--") {
+    //         ArrOfData = serviceProductList.filter((el: ProductModel) => {
+    //             return el.serviceName.toString().toLowerCase().includes(snText.toLowerCase());
+    //         });
+    //     }
+
+    //     if (cnText !== "--Select--") {
+    //         ArrOfData = ArrOfData.filter((el: ProductModel) => {
+    //             return el.categoryName.toString().toLowerCase().includes(cnText.toLowerCase());
+    //         });
+    //     }
+
+    //     if (searchQuery !== "") {
+    //         if (snText === "--Select--" || cnText === "--Select--") {
+    //             ArrOfData = serviceProductList.filter((el: ProductModel) => {
+    //                 return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
+    //             });
+    //         } else {
+    //             ArrOfData = ArrOfData.filter((el: ProductModel) => {
+    //                 return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
+    //             });
+    //         }
+    //     }
+
+    //     setProductListTemp(ArrOfData);
+    // };
+    
+    const ApplyFilter = () =>{
+        let isValid = true;
+        if(serviceName.length === "selectedItem"){
+            setSNError(true);
+            isValid=(false);
         }
+        if(categoriesName.length === "selectedItem"){
+            setCNError(true);
+            isValid=(false);
+        }
+        if(productsName.length === "selectedItem"){
+            setPNError(true);
+            isValid=(false);
+        }
+        if(isValid){
+
+
+        }
+    }
+
+    const onApplyFilterClick = () =>{
+        ApplyFilter();
+    }
+
+    const ClearFilter = () =>{
+        servicesDDRef.current.reset();
+        categoriesDDRef.current.reset();
+        productsDDRef.current.reset();  
+    }
+
+    const onClearFileterClick =() =>{
+        ClearFilter();
     };
-
-    const SetFilters = (snText: string, cnText: string, searcText: string) => {
-        setProductListTemp(serviceProductList);
-        let ArrOfData: any = [];
-
-        if (snText === "--Select--" && cnText === "--Select--" && searcText === "") {
-            ArrOfData = serviceProductList;
-        }
-
-        if (snText !== "--Select--") {
-            ArrOfData = serviceProductList.filter((el: ProductModel) => {
-                return el.serviceName.toString().toLowerCase().includes(snText.toLowerCase());
-            });
-        }
-
-        if (cnText !== "--Select--") {
-            ArrOfData = ArrOfData.filter((el: ProductModel) => {
-                return el.categoryName.toString().toLowerCase().includes(cnText.toLowerCase());
-            });
-        }
-
-        if (searchQuery !== "") {
-            if (snText === "--Select--" || cnText === "--Select--") {
-                ArrOfData = serviceProductList.filter((el: ProductModel) => {
-                    return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
-                });
-            } else {
-                ArrOfData = ArrOfData.filter((el: ProductModel) => {
-                    return el.productName.toString().toLowerCase().includes(searcText.toLowerCase());
-                });
-            }
-        }
-
-        setProductListTemp(ArrOfData);
-    };
-
 
     const onChangeSearch = (query) => {
         setSearchQuery(query);
@@ -369,18 +397,12 @@ const ArchitectRateCardSetup = ({ navigation }) => {
                 </HelperText>
                 <View style={[Styles.flexRow]}>
                     <View style={[Styles.width50per, Styles.padding10]}>
-                        {/* <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
-                            <Text style={[Styles.fontSize14, Styles.textColorWhite]}> Apply Filter</Text>
-                        </TouchableOpacity> */}
-                        <Button icon="filter" mode="contained" onPress={() => console.log('Pressed')}>
+                        <Button icon="filter" mode="contained" onPress={onApplyFilterClick}>
                          Apply Filter
                         </Button>
                     </View>
                     <View style={[Styles.width50per, Styles.padding10]}>
-                        {/* <TouchableOpacity onPress={OnSearchEmployee} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
-                        <Text style={[Styles.fontSize14, Styles.textColorWhite]}> Clear Filter</Text>
-                    </TouchableOpacity> */}
-                        <Button icon="filter-remove" mode="outlined" onPress={() => console.log('Pressed')}>
+                        <Button icon="filter-remove" mode="outlined" onPress={onClearFileterClick }>
                           Clear Filter 
                         </Button>
                     </View>
