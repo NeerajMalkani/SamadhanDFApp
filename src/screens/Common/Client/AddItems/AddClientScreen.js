@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView, Text, Touchable } from "react-native";
+import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView, Text, Touchable,Animated,Easing,StyleSheet,LayoutAnimation } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, TextInput, Searchbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../../api/Provider";
@@ -480,7 +480,7 @@ const AddClientScreen = ({ route, navigation }) => {
   /*list accordian*/
   const [expanded, setExpanded] = React.useState(true);
 
-  const handlePress = () => setExpanded(!expanded);
+  const handlePress = () => {return setExpanded(!expanded),LayoutAnimation.easeInEaseOut()};
 
 
   const ListOne = () => {
@@ -639,6 +639,7 @@ const AddClientScreen = ({ route, navigation }) => {
               </List.Accordion>
               <List.Accordion
                 title="Add Client"
+                onPress={() => { LayoutAnimation.easeInEaseOut(); }}
               >
                 <List.Item title={ListTwo} />
               </List.Accordion>
