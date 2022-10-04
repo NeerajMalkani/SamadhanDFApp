@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
+import React, { useEffect, useRef,useState } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text,Animated,Easing,StyleSheet,LayoutAnimation} from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title, HelperText, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -15,6 +15,7 @@ import Dropdown from "../../components/Dropdown";
 import { communication } from "../../utils/communication";
 import { BaseButton, TouchableOpacity } from "react-native-gesture-handler";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
+import { duration } from "moment/moment";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -414,11 +415,294 @@ const ArchitectRateCardSetup = ({ navigation }) => {
     const [expanded, setExpanded] = React.useState(true);
 
     const handlePress = () => setExpanded(!expanded);
-
+    const [finish,setFinish] = React.useState(false)
+    
     const ListOne = () => {
+        useEffect(() => {
+            FetchData();
+            FetchActvityRoles();
+        }, []);
+        const FetchData = (from) => {
+            if (from === "add" || from === "update") {
+                setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+                setSnackbarColor(theme.colors.success);
+                setSnackbarVisible(true);
+            }
+            Provider.getAll("master/getserviceproducts")
+                .then((response) => {
+                    if (response.data && response.data.code === 200) {
+                        if (response.data.data) {
+                            const lisData = [...response.data.data];
+                            lisData.map((k, i) => {
+                                k.key = (parseInt(i) + 1).toString();
+                            });
+                            listData[1](response.data.data);
+                            listSearchData[1](response.data.data);
+                        }
+                    } else {
+                        listData[1]([]);
+                        setSnackbarText("No data found");
+                        setSnackbarColor(theme.colors.error);
+                        setSnackbarVisible(true);
+                    }
+                    setIsLoading(false);
+                    setRefreshing(false);
+                })
+                .catch((e) => {
+                    setIsLoading(false);
+                    setSnackbarText(e.message);
+                    setSnackbarColor(theme.colors.error);
+                    setSnackbarVisible(true);
+                    setRefreshing(false);
+                });
+        };
+    
+        const FetchActvityRoles = () => {
+            Provider.getAll("master/getmainactivities")
+                .then((response) => {
+                    if (response.data && response.data.code === 200) {
+                        if (response.data.data) {
+                            response.data.data = response.data.data.filter((el) => {
+                                return el.display && el.activityRoleName === "Contractor";
+                            });
+                            setActivityFullData(response.data.data);
+                            servicesDDRef.current.reset();
+                            const activities = response.data.data.map((data) => data.activityRoleName);
+                            setActivityData(activities);
+                            setActivityName("Contractor");
+                            FetchServicesFromActivity("Contractor", response.data.data);
+                        }
+                    }
+                })
+                .catch((e) => { });
+        };
+    
+        const FetchServicesFromActivity = (selectedItem, activityData) => {
+            let params = {
+                ID:
+                    activityData.find((el) => {
+                        return el.activityRoleName === selectedItem;
+                    }).id,
+            };
+            Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+                .then((response) => {
+                    if (response.data && response.data.code === 200) {
+                        if (response.data.data) {
+                            setServicesFullData(response.data.data);
+                            const services = response.data.data.map((data) => data.serviceName);
+                            setServicesData(services);
+                        }
+                        FetchCategoriesFromServices("Contractor", response.data.data);
+                    }
+                })
+                .catch((e) => { });
+        };
+    
+        const FetchCategoriesFromServices = (selectedItem) => {
+            let params = {
+                ActivityID:
+                    activityFullData.find((el) => {
+                        return el.activityRoleName === activityName;
+                    }).id,
+                ServiceID:
+                    servicesFullData.find((el) => {
+                        return el.serviceName === selectedItem;
+                    }).id,
+            };
+            Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+                .then((response) => {
+                    if (response.data && response.data.code === 200) {
+                        if (response.data.data) {
+                            // response.data.data = response.data.data.filter((el) => {
+                            //     return el.display;
+                            // });
+                            setCategoriesFullData(response.data.data);
+                            const categories = response.data.data.map((data) => data.categoryName);
+                            setCategoriesData(categories);
+                        }
+                        FetchProductsFromCategory("Contractor", response.data.data);
+                    }
+                })
+                .catch((e) => { });
+        };
+    
+        const FetchProductsFromCategory = (selectedItem) => {
+            let params = {
+                ActivityID:
+                    activityFullData.find((el) => {
+                        return el.activityRoleName === activityName;
+                    }).id,
+                ServiceID:
+                    servicesFullData.find((el) => {
+                        return el.serviceName === serviceName;
+                    }).id,
+                CategoryID:
+                    categoriesFullData.find((el) => {
+                        return el.categoryName === selectedItem;
+                    }).id,
+            };
+            Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+                .then((response) => {
+                    if (response.data && response.data.code === 200) {
+                        if (response.data.data) {
+                            // response.data.data = response.data.data.filter((el) => {
+                            //     return el.display;
+                            // });
+                            setProductsFullData(response.data.data);
+                            const products = response.data.data.map((data) => data.productName);
+                            setProductsData(products);
+                        }
+                    }
+                })
+                .catch((e) => { });
+        };
+    
+    
+        const onServiceNameSelected = (selectedItem) => {
+            setServiceName(selectedItem);
+            categoriesDDRef.current.reset();
+            productsDDRef.current.reset();
+            setCategoriesData([]);
+    
+            setCategoriesName("");
+            setProductsName("");
+            setSNError(false);
+            FetchCategoriesFromServices(selectedItem);
+        };
+    
+        const onCategoriesNameSelected = (selectedItem) => {
+            setCategoriesName(selectedItem);
+            productsDDRef.current.reset();
+            setProductsData([]);
+            setProductsName("");
+            setCNError(false);
+            FetchProductsFromCategory(selectedItem);
+    
+        };
+    
+    
+        const onProductsNameSelected = (selectedItem) => {
+            setProductsName(selectedItem);
+            setPNError(false);
+        };
 
+        const ApplyFilter = () => {
+            console.log('apply filter');
+            let isValid = true;
+            if (serviceName.length === "" && categoriesName.length === "" && productsName.length === "") {
+                setSNError(true);
+                setCNError(true);
+                setPNError(true);
+                isValid = (false);
+            }
+            console.log(isValid);
+            if (isValid) {
+                if (serviceName !== "") {
+                    console.log('apply service filter');
+                    console.log(serviceName);
+                    listSearchData[1](
+                        listData[0].filter((el) => {
+                            return el.serviceName.toString().toLowerCase().includes(serviceName.toLowerCase());
+                        })
+                    );
+                }
+    
+                if (categoriesName !== "") {
+                    console.log('apply category filter');
+                    console.log(categoriesName);
+                    listSearchData[1](
+                        listData[0].filter((el) => {
+                            return el.categoryName.toString().toLowerCase().includes(categoriesName.toLowerCase());
+                        })
+                    );
+                }
+    
+                if (productsName !== "") {
+                    console.log('apply product filter');
+                    console.log(productsName);
+                    listSearchData[1](
+                        listData[0].filter((el) => {
+                            return el.productName.toString().toLowerCase().includes(productsName.toLowerCase());
+                        })
+                    );
+                }
+    
+            }
+        }
+    
+        const onApplyFilterClick = () => {
+            ApplyFilter();
+        }
+    
+        const ClearFilter = () => {
+            servicesDDRef.current.reset();
+            categoriesDDRef.current.reset();
+            productsDDRef.current.reset();
+            setCategoriesData([]);
+            setProductsData([]);
+            setServiceName("");
+            setCategoriesName("");
+            setProductsName("");
+            listSearchData[1](listData[0]);
+        }
+    
+        const onClearFileterClick = () => {
+            ClearFilter();
+        };
+    
+        const onChangeSearch = (query) => {
+            setSearchQuery(query);
+            if (query === "") {
+                listSearchData[1](listData[0]);
+            } else {
+                listSearchData[1](
+                    listData[0].filter((el) => {
+                        return el.productName.toString().toLowerCase().includes(query.toLowerCase());
+                    })
+                );
+            }
+        };
+    
+        const RenderItems = (data) => {
+            return (
+                <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
+                    <List.Item
+                        title={data.item.productName}
+                        titleStyle={{ fontSize: 18 }}
+                        description={`Service Name: ${NullOrEmpty(data.item.serviceName) ? "" : data.item.serviceName}\nCategory Name: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName} `}
+                        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="bag-checked" />}
+                        onPress={() => {
+                            refRBSheet.current.open();
+                            setSelectedServiceProductName(data.item.productName);
+                            // setActivityRoleName(data.item.activityRoleName);
+                            setCategoryName(data.item.categoryName);
+                            setServiceName(data.item.serviceName);
+                            setRUM(data.item.rateWithMaterials.toFixed(2));
+                            setRUWM(data.item.rateWithoutMaterials.toFixed(2));
+                            setAUOS(data.item.conversionRate);
+                            setShortSpec(data.item.shortSpecification);
+                            setSpec(data.item.specification);
+                            // setUnitName(data.item.unit2ID === data.item.selectedUnitID ? data.item.unit2Name : data.item.unit1Name);
+                        }}
+                        right={() => (
+                            <Icon
+                                style={{ marginVertical: 12, marginRight: 12 }}
+                                size={30}
+                                color={theme.colors.textSecondary}
+                                name="eye"
+                            />
+                        )}
+                    />
+                </View>
+            );
+        };
+
+        
+        // const height = new Animated.Value(0)
+        
         const design = (
             <>
+            
                 <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
                 <HelperText type="error" visible={errorSN}>
                     {communication.InvalidServiceName}
@@ -443,25 +727,38 @@ const ArchitectRateCardSetup = ({ navigation }) => {
                         </Button>
                     </View>
                 </View>
+                
             </>
         )
         return design;
     }
+    
+    
+        
 
+       
     return (
         <View style={[Styles.flex1]}>
             <Header navigation={navigation} title="Rate Card Setup" />
-            <View style={[Styles.padding16]}>
+            <View style={[Styles.paddingHorizontal16]}>
 
                 <View>
                     <List.Section>
                         <List.Accordion
                             title="Apply Filters"
-                            expanded={expanded}
-                            onPress={handlePress}
+                            // expanded={expanded}
+                            // onPress={handlePress}
                             style={[Styles.backgroundColorWhite]}
+                            onPress={() => { LayoutAnimation.easeInEaseOut(); }}
                         >
-                            <List.Item title={ListOne} style={[Styles.borderBottom1]} />
+                            {/* <Animated.View style={[styles.bodyBackground, { height: bodyHeight }]}>
+                                <View
+                                    style={styles.bodyContainer}
+                                    onLayout={event =>setBodySectionHeight(event.nativeEvent.layout.height)}
+                                > */}
+                                <List.Item title={ListOne} style={[Styles.borderBottom1]} /> 
+                                {/* </View>
+                            </Animated.View> */}
                         </List.Accordion>
                     </List.Section>
                 </View>
@@ -525,3 +822,26 @@ const ArchitectRateCardSetup = ({ navigation }) => {
 };
 
 export default ArchitectRateCardSetup;
+const styles = StyleSheet.create({
+    bodyBackground: {
+      backgroundColor: '#EFEFEF',
+      overflow: 'hidden',
+    },
+    titleContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '1rem',
+      paddingLeft: '1.5rem',
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: '#EFEFEF',
+    },
+    bodyContainer: {
+      padding: '1rem',
+      paddingLeft: '1.5rem',
+      position: 'absolute',
+      bottom: 0,
+    },
+  });
