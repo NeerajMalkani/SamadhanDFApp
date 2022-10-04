@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, HelperText,Button } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, HelperText, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../api/Provider";
@@ -220,6 +220,7 @@ const ArchitectRateCardSetup = ({ navigation }) => {
         categoriesDDRef.current.reset();
         productsDDRef.current.reset();
         setCategoriesData([]);
+
         setCategoriesName("");
         setProductsName("");
         setSNError(false);
@@ -297,38 +298,68 @@ const ArchitectRateCardSetup = ({ navigation }) => {
 
     //     setProductListTemp(ArrOfData);
     // };
-    
-    const ApplyFilter = () =>{
-        let isValid = true;
-        if(serviceName.length === "selectedItem"){
-            setSNError(true);
-            isValid=(false);
-        }
-        if(categoriesName.length === "selectedItem"){
-            setCNError(true);
-            isValid=(false);
-        }
-        if(productsName.length === "selectedItem"){
-            setPNError(true);
-            isValid=(false);
-        }
-        if(isValid){
 
+    const ApplyFilter = () => {
+        console.log('apply filter');
+        let isValid = true;
+        if (serviceName.length === "" && categoriesName.length === "" && productsName.length === "") {
+            setSNError(true);
+            setCNError(true);
+            setPNError(true);
+            isValid = (false);
+        }
+        console.log(isValid);
+        if (isValid) {
+            if (serviceName !== "") {
+                console.log('apply service filter');
+                console.log(serviceName);
+                listSearchData[1](
+                    listData[0].filter((el) => {
+                        return el.serviceName.toString().toLowerCase().includes(serviceName.toLowerCase());
+                    })
+                );
+            }
+
+            if (categoriesName !== "") {
+                console.log('apply category filter');
+                console.log(categoriesName);
+                listSearchData[1](
+                    listData[0].filter((el) => {
+                        return el.categoryName.toString().toLowerCase().includes(categoriesName.toLowerCase());
+                    })
+                );
+            }
+
+            if (productsName !== "") {
+                console.log('apply product filter');
+                console.log(productsName);
+                listSearchData[1](
+                    listData[0].filter((el) => {
+                        return el.productName.toString().toLowerCase().includes(productsName.toLowerCase());
+                    })
+                );
+            }
 
         }
     }
 
-    const onApplyFilterClick = () =>{
+    const onApplyFilterClick = () => {
         ApplyFilter();
     }
 
-    const ClearFilter = () =>{
+    const ClearFilter = () => {
         servicesDDRef.current.reset();
         categoriesDDRef.current.reset();
-        productsDDRef.current.reset();  
+        productsDDRef.current.reset();
+        setCategoriesData([]);
+        setProductsData([]);
+        setServiceName("");
+        setCategoriesName("");
+        setProductsName("");
+        listSearchData[1](listData[0]);
     }
 
-    const onClearFileterClick =() =>{
+    const onClearFileterClick = () => {
         ClearFilter();
     };
 
@@ -379,10 +410,15 @@ const ArchitectRateCardSetup = ({ navigation }) => {
         );
     };
 
-    return (
-        <View style={[Styles.flex1]}>
-            <Header navigation={navigation} title="Architect Rate Card Setup" />
-            <View style={[Styles.padding16]}>
+    /*list accordian*/
+    const [expanded, setExpanded] = React.useState(true);
+
+    const handlePress = () => setExpanded(!expanded);
+
+    const ListOne = () => {
+
+        const design = (
+            <>
                 <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
                 <HelperText type="error" visible={errorSN}>
                     {communication.InvalidServiceName}
@@ -398,18 +434,37 @@ const ArchitectRateCardSetup = ({ navigation }) => {
                 <View style={[Styles.flexRow]}>
                     <View style={[Styles.width50per, Styles.padding10]}>
                         <Button icon="filter" mode="contained" onPress={onApplyFilterClick}>
-                         Apply Filter
+                            Apply Filter
                         </Button>
                     </View>
                     <View style={[Styles.width50per, Styles.padding10]}>
-                        <Button icon="filter-remove" mode="outlined" onPress={onClearFileterClick }>
-                          Clear Filter 
+                        <Button icon="filter-remove" mode="outlined" onPress={onClearFileterClick}>
+                            Clear Filter
                         </Button>
                     </View>
                 </View>
+            </>
+        )
+        return design;
+    }
 
+    return (
+        <View style={[Styles.flex1]}>
+            <Header navigation={navigation} title="Rate Card Setup" />
+            <View style={[Styles.padding16]}>
 
-
+                <View>
+                    <List.Section>
+                        <List.Accordion
+                            title="Apply Filters"
+                            expanded={expanded}
+                            onPress={handlePress}
+                            style={[Styles.backgroundColorWhite]}
+                        >
+                            <List.Item title={ListOne} style={[Styles.borderBottom1]} />
+                        </List.Accordion>
+                    </List.Section>
+                </View>
             </View>
 
             {isLoading ? (
