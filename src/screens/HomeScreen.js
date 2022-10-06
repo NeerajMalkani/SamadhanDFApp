@@ -301,8 +301,8 @@ const HomeScreen = ({ route, navigation }) => {
                 stillDuration={2000}
                 start={true}
               />
-              <View style={[Styles.width100per, Styles.height56, { backgroundColor: "rgba(0,0,0,0.4)", position: "absolute" }]}>
-                <Text style={[Styles.marginTop16, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite]}>Design your Dream</Text>
+              <View style={[Styles.width100per, Styles.height40, { backgroundColor: "rgba(0,0,0,0.4)", position: "absolute" }]}>
+                <Text style={[Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite,Styles.fontBold]}>Design your Dream</Text>
               </View>
             </View>
 
