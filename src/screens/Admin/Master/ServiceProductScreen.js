@@ -45,7 +45,7 @@ const ServiceProductScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getserviceproducts")
+    Provider.getAll("master/getserviceproductsv1")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -97,6 +97,8 @@ const ServiceProductScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
+    console.log('=============================');
+    console.log(data);
     navigation.navigate("AddServiceProductScreen", {
       type: "edit",
       fetchData: FetchData,
@@ -120,7 +122,6 @@ const ServiceProductScreen = ({ navigation }) => {
         gstRate: data.item.gstRate.toFixed(2),
         rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
         rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
-        alternateUnitOfSales: data.item.conversionRate.toString(),
         shortSpecification: data.item.shortSpecification,
         specification: data.item.specification,
         display: data.item.serviceDisplay,
@@ -149,7 +150,7 @@ const ServiceProductScreen = ({ navigation }) => {
             setAUOS(data.item.conversionRate);
             setShortSpec(data.item.shortSpecification);
             setSpec(data.item.specification);
-            setUnitName(data.item.unit2ID === data.item.selectedUnitID ? data.item.unit2Name : data.item.unit1Name);
+            setUnitName(data.item.selectedUnitName);
           }}
           right={() => (
             <Icon

@@ -14885,7 +14885,7 @@
   dependencies:
     "prop-types" "^15.7.2"
 
-"react-native-pager-view@*", "react-native-pager-view@5.4.24":
+"react-native-pager-view@*", "react-native-pager-view@^5.4.24":
   "integrity" "sha512-dRMB7i3B+mu4NCeIN6gqbR/kC/rr2wzqO0gisXDdJwJr78G24sWoTNpLEDFo3G8TFHY9nTMutVl5CUvkN2dp6g=="
   "resolved" "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-5.4.24.tgz"
   "version" "5.4.24"
@@ -14979,10 +14979,10 @@
   "resolved" "https://registry.npmjs.org/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.9.tgz"
   "version" "3.2.9"
 
-"react-native-tab-view@^3.1.1":
-  "integrity" "sha512-M5pRN6utQfytKWoKlKVzg5NbkYu308qNoW1khGTtEOTs1k14p2dHJ/BWOJoJYHKbPVUyZldbG9MFT7gUl4YHnw=="
-  "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz"
-  "version" "3.1.1"
+"react-native-tab-view@^3.2.1":
+  "integrity" "sha512-/3htrnDJ8hXXO6M5tDKgGPan5NhiVG4oN6SH8LgQtbAO2y+YI104sjlbPOxhLUBpbj43tOQerUtJF7ENcHEPaw=="
+  "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.2.1.tgz"
+  "version" "3.2.1"
 
 "react-native-uuid@^2.0.1":
   "integrity" "sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g=="

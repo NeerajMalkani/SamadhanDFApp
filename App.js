@@ -95,6 +95,7 @@ import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
 import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
+import Demo from "./src/screens/GeneralUser/Demo";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -268,6 +269,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
         case 3:
@@ -388,7 +390,7 @@ return (
             <Stack.Screen name="AddRateCard" component={AddRateCard} />
             <Stack.Screen name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
             <Stack.Screen name="MaterialCalculatorScreen" component={MaterialCalculatorScreen} options={{ headerTitle: "Material Calculator", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-
+            <Stack.Screen name="Demo" component={Demo} />
           </Stack.Navigator>
         </NavigationContainer>
       )}
