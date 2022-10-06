@@ -855,6 +855,10 @@ export const Styles = StyleSheet.create({
     width: "100%",
   },
 
+  height5: {
+    height: 5,
+  },
+
   height24: {
     height: 24,
   },
@@ -993,6 +997,11 @@ export const Styles = StyleSheet.create({
   },
   SpaceEvenly: {
     justifyContent: "space-evenly"
+  },
+  ShadowColor: {
+    shadowColor:"black",
+    shadowRadius: 10,
+    shadowOpacity: 1,
   }
   /*#end postion */
 }

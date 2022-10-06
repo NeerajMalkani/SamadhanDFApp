@@ -522,8 +522,7 @@ export const MenuItemsContractor = [
       },
     ],
   },
-];
-
+]
 export const MenuItemsArchitect = [
   {
     title: "My Profile",

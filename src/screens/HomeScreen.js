@@ -8,6 +8,7 @@ import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import Provider from "../api/Provider";
+import { BlurView } from "@react-native-community/blur";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
 import ImageViewer from "react-native-image-zoom-viewer";
@@ -20,7 +21,8 @@ import { Touchable, ImageBackground } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import InsetShadow from "react-native-inset-shadow";
 import FadeCarousel from "rn-fade-carousel";
-import styles from "react-native-inset-shadow/src/styles";
+// import { CustomCard } from '@tsamantanis/react-glassmorphism'
+// import '../../node_modules/@tsamantanis/react-glassmorphism/dist/index';
 export const navigationRef = createNavigationContainerRef();
 const windowWidth = Dimensions.get("window").width;
 let roleID = 0;
@@ -299,26 +301,9 @@ const HomeScreen = ({ route, navigation }) => {
                 stillDuration={2000}
                 start={true}
               />
-              {/*ye main hai<View style={[Styles.width100per,Styles.height100per,Styles.backgroundColorWhite,Styles.positionAbsolute,{backgroundColor: "#fff"}]}>
-                <Card elevation={100} style={[Styles.width100per,Styles.height24,Styles.backgroundColorDarkGreen,{shadowColor:"green",shadowRadius: 5,shadowOpacity: 1}]}></Card>
-              </View> */}
-              {/* <Card elevation={100} style={[Styles.width100per,Styles.height32,Styles.positionAbsolute,{backgroundColor: "rgba(200, 200, 200, 0.9)"},{shadowColor:"red"}]}>
-                <Card elevation={100} style={[Styles.width100per,{height:"10%"},Styles.backgroundColorYelow]}></Card>
-              </Card> */}
-              {/* <View style={[Styles.width100per,Styles.height250,Styles.backgroundColorYelow]}>
-              <InsetShadow
-                // containerStyle={styles.shadow}
-                top={true}
-                shadowRadius={50}
-                shadowOffset={50}
-                elevation={100}
-                shadowOpacity={0.5}
-                color="rgba(128,128,128,1)"
-                >
-                <View style={[Styles.flex1]}></View>
-              </InsetShadow>
-              </View> */}
-
+              <View style={[Styles.width100per, Styles.height56, { backgroundColor: "rgba(0,0,0,0.4)", position: "absolute" }]}>
+                <Text style={[Styles.marginTop16, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite]}>Design your Dream</Text>
+              </View>
             </View>
 
             <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
@@ -329,7 +314,7 @@ const HomeScreen = ({ route, navigation }) => {
                   if (roleID == 1) {
                     navigation.navigate("ApprovedUserScreen", { type: "add" });
                   }
-                  
+
                 }} style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
                   <Card.Title title="Users" titleStyle={[Styles.textColorWhite]} />
 
@@ -360,7 +345,7 @@ const HomeScreen = ({ route, navigation }) => {
                 }}
                   style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
 
-                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text> }
+                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require('../../assets/material-calculator.png')}
                     style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
@@ -378,10 +363,9 @@ const HomeScreen = ({ route, navigation }) => {
               </View>
 
 
-            </View>
-
-          </View>
-        </ScrollView>
+            </View>  
+          </View >
+        </ScrollView >
       )}
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
@@ -398,7 +382,7 @@ const HomeScreen = ({ route, navigation }) => {
         </View>
       </Modal>
 
-    </View>
+    </View >
   );
 };
 

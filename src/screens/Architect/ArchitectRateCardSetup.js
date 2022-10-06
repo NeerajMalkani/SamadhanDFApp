@@ -19,7 +19,11 @@ import { duration } from "moment/moment";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const ArchitectRateCardSetup = ({ navigation }) => {
+const ArchitectRateCardSetup = ({ route,navigation }) => {
+     let addedBy = false;
+        if (route.params.data) {
+            addedBy = !route.params.data.addedBy;
+        }
     const [searchQuery, setSearchQuery] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(true);
     const listData = React.useState([]);
@@ -376,6 +380,14 @@ const ArchitectRateCardSetup = ({ navigation }) => {
             );
         }
     };
+
+    const onStateNameSelected = (selectedItem) => {
+        setStateName(selectedItem);       
+        setSNError(false);
+        cityRef.current.reset();
+        setCityName("");
+        FetchCities(selectedItem);
+      };
 
     const RenderItems = (data) => {
         return (
@@ -738,6 +750,7 @@ const ArchitectRateCardSetup = ({ navigation }) => {
 
        
     return (
+        
         <View style={[Styles.flex1]}>
             <Header navigation={navigation} title="Rate Card Setup" />
             <View style={[Styles.paddingHorizontal16]}>
@@ -769,7 +782,20 @@ const ArchitectRateCardSetup = ({ navigation }) => {
                     <ActivityIndicator size="large" color={theme.colors.primary} />
                 </View>
             ) : listData[0].length > 0 ? (
+                
                 <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+                    <View>
+                        <List.Section>
+                            <List.Accordion
+                                title="Search Filter"
+                                // expanded={expanded}
+                                onPress={handlePress}
+                            >
+                                <List.Item title={ListOne} style={[Styles.borderBottom1]} />
+                            </List.Accordion>
+                        </List.Section>
+                        
+                    </View>
                     <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
                     <SwipeListView
                         previewDuration={1000}
