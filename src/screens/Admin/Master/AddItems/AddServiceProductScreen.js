@@ -33,7 +33,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const productsDDRef = useRef({});
 
   const [unitFullData, setUnitFullData] = React.useState([]);
-  const [unitData, setUnitsData] = React.useState([]);
+  const [unitsData, setUnitsData] = React.useState([]);
   const [selectedUnitID, setSelectedUnitID] = React.useState(0);
   const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
   const [errorUN, setUNError] = React.useState(false);
@@ -54,7 +54,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [ruwmht, setRUWMHT] = React.useState("Only Labour cost");
 
   const [errorAUOS, setErrorAUOS] = React.useState(false);
-  const [auos, setAUOS] = React.useState(route.params.type === "edit" ? route.params.data.alternateUnitOfSales : "");
+  const [auos, setAUOS] = React.useState("");
 
   const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
   const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
@@ -82,8 +82,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.activityID
           : activityData.find((el) => {
-              return el.activityRoleName === selectedItem;
-            }).id,
+            return el.activityRoleName === selectedItem;
+          }).id,
     };
     Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -98,7 +98,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchActvityRoles = () => {
@@ -136,7 +136,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem) => {
@@ -145,14 +145,14 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.activityID
           : activityFullData.find((el) => {
-              return el.activityRoleName === acivityName;
-            }).id,
+            return el.activityRoleName === acivityName;
+          }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
     };
     Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -167,7 +167,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem) => {
@@ -176,20 +176,20 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.activityID
           : activityFullData.find((el) => {
-              return el.activityRoleName === acivityName;
-            }).id,
+            return el.activityRoleName === acivityName;
+          }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
+            return el.serviceName === serviceName;
+          }).id,
       CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
     };
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -204,7 +204,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitsFromProductID = (selectedItem) => {
@@ -213,23 +213,39 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.id
           : productsFullData.find((el) => {
-              return el.productName === selectedItem;
-            }).productID,
+            return el.productName === selectedItem;
+          }).productID,
     };
-    Provider.getAll(`master/getunitbyproductid?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getproductunitbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+
             setUnitFullData(response.data.data);
-            const units = response.data.data[0].displayUnit.split(" / ");
+            const units = response.data.data.map((data) => data.unitName);
             setUnitsData(units);
+            if (route.params.type === "edit") {
+              
+              if (response.data.data[0].unitID === route.params.data.selectedUnitID) {
+                setUnitName(response.data.data[0].unitName);
+                setUnitSelected(response.data.data[0].unitName);
+                setConversionUnitSelected(response.data.data[1].unitName);
+                setSelectedUnitID(response.data.data[0].unitID);
+                setAUOS(response.data.data[0].conversionRate.toString());
+
+              } else if (response.data.data[1].unitID === route.params.data.selectedUnitID) {
+                setUnitName(response.data.data[1].unitName);
+                setUnitSelected(response.data.data[1].unitName);
+                setConversionUnitSelected(response.data.data[0].unitName);
+                setSelectedUnitID(response.data.data[1].unitID);
+                console.log(response.data.data[1].conversionRate);
+                setAUOS(response.data.data[1].conversionRate.toString());
+              }
+            }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -313,14 +329,17 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-    if (unitFullData[0].unit1Name === selectedItem) {
-      setUnitSelected(unitFullData[0].unit1Name);
-      setConversionUnitSelected(unitFullData[0].unit2Name);
-      setSelectedUnitID(unitFullData[0].unit1ID);
-    } else if (unitFullData[0].unit2Name === selectedItem) {
-      setUnitSelected(unitFullData[0].unit2Name);
-      setConversionUnitSelected(unitFullData[0].unit1Name);
-      setSelectedUnitID(unitFullData[0].unit2ID);
+    if (unitFullData[0].unitName === selectedItem) {
+      setUnitSelected(unitFullData[0].unitName);
+      setConversionUnitSelected(unitFullData[1].unitName);
+      setSelectedUnitID(unitFullData[0].unitID);
+      setAUOS(unitFullData[0].conversionRate.toString());
+    } else if (unitFullData[1].unitName === selectedItem) {
+      setUnitSelected(unitFullData[1].unitName);
+      setConversionUnitSelected(unitFullData[0].unitName);
+      setSelectedUnitID(unitFullData[1].unitID);
+      console.log(unitFullData[1].conversionRate);
+      setAUOS(unitFullData[1].conversionRate.toString());
     }
   };
 
@@ -479,7 +498,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorPN}>
             {communication.InvalidProductName}
           </HelperText>
-          <Dropdown label="Unit Name" data={unitData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
+          <Dropdown label="Unit Name" data={unitsData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
