@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, View, Dimensions, Image } from "react-native";
+import { ScrollView, Dimensions, Image, View, useWindowDimensions } from "react-native";
 import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
@@ -9,8 +9,10 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import AddMaterialSetupProducts from "../../Admin/ServiceCatalogue/AddItems/AddMaterialSetupProducts";
 import { AWSImagePath } from "../../../utils/paths";
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
+
   const arrProductData = React.useState([]);
 
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -69,6 +71,80 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
+
+  const LengthRoute = () => (
+    <>
+      <View style={[Styles.height250,Styles.border1,Styles.padding16,Styles.borderBottomRadius4]} >
+      <Subheading style={[Styles.marginTop16]}>Length</Subheading>
+
+          <View style={[Styles.flexRow, Styles.flexAlignCenter,]}>
+            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
+            </View>
+            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
+            </View>
+            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
+          </View>
+          <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
+          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
+            </View>
+            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
+            </View>
+            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
+          </View>
+         
+         
+      </View>
+
+    </>
+  );
+
+  const TotalRoute = () => (
+    <>
+      <View style={[Styles.height250,Styles.border1,Styles.padding16,Styles.borderBottomRadius4 ]} >
+      <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
+          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+            <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done"
+              onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} error={totalAreaInvalid} />
+            <HelperText type="error" visible={totalAreaInvalid}>
+              {communication.InvalidTotalArea}
+            </HelperText>
+          </View>
+
+
+          
+         
+      </View>
+    </>
+  );
+
+  const renderTabBar = props => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: theme.multicolors.yellow }}
+      style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]}
+      activeColor={{backgroundColor: theme.multicolors.red}}
+    />
+  );
+
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'length', title: 'Length / Width' },
+    { key: 'total', title: 'Total Area' },
+  ]);
+
+  const renderScene = SceneMap({
+    length: LengthRoute,
+    total: TotalRoute,
+  });
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -637,7 +713,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         }
 
         k.brandID = 0;
-        k.brandName="";
+        k.brandName = "";
       });
       arrProductData[1](arrMaterialProducts);
       if (total > 0) {
@@ -710,6 +786,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
+
+
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
@@ -738,7 +817,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
           </View>
 
+          {/* 
           <Subheading style={[Styles.marginTop16]}>Length</Subheading>
+
           <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
             <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
               <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
@@ -775,9 +856,27 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
 
           <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
+        
+            <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
+            View Materials
+          </Button> 
+          */}
+          <View style={[Styles.height325,Styles.marginTop16]}>
+            <TabView
+              renderTabBar={renderTabBar}
+              navigationState={{ index, routes }}
+              renderScene={renderScene}
+              onIndexChange={setIndex}
+              initialLayout={{ width: layout.width }}
+            />
+            
+          </View>
+          <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false}  />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
-          </Button>
+          </Button> 
+
+
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
           </HelperText>

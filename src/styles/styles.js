@@ -898,6 +898,15 @@ export const Styles = StyleSheet.create({
   height250: {
     height: 250,
   },
+  height325: {
+    height: 325,
+  },
+  height350: {
+    height: 350,
+  },
+  height400: {
+    height: 400,
+  },
   height40per: {
     height: "40%"
   },

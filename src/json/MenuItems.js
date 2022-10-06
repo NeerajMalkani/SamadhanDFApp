@@ -194,6 +194,27 @@ export const MenuItemsGeneralUser = [
       },
     ],
   },
+  {
+    title: "Demo",
+    icon: "timetable",
+    type: "accordian",
+    index: 1,
+    roleID: 2,
+    items: [
+      {
+        title: "DemoPage",
+        type: "accordian",
+        index: 10,
+        navigation: "Demo",
+      },
+      // {
+      //   title: "Your Estimations",
+      //   type: "accordian",
+      //   index: 11,
+      //   navigation: "YourEstimationsScreen",
+      // },
+    ],
+  },
 ];
 
 export const MenuItemsDealer = [
