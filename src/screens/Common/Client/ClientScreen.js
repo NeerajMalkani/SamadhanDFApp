@@ -11,7 +11,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
-
+// import Search from '../Client/AddItems/Search';
+// import Add from "../Client/AddItems/Add";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
 const ClientScreen = ({ navigation }) => {
@@ -102,8 +103,14 @@ const ClientScreen = ({ navigation }) => {
     }
   };
 
-  const AddCallback = () => {
-    navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchData });
+  // const AddCallback = () => {
+  //   navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchData });
+  // };
+  const SearchClient = () => {
+    navigation.navigate("SearchClient", { type: "add", fetchData: FetchData });
+  };
+  const AddClient = () => {
+    navigation.navigate("AddClient", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -170,6 +177,11 @@ const ClientScreen = ({ navigation }) => {
     );
   };
 
+    const [state, setState] = React.useState({ open: false });
+  
+    const onStateChange = ({ open }) => setState({ open });
+  
+    const { open } = state;
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Clients" />
@@ -205,7 +217,30 @@ const ClientScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} />
+      {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} /> */}
+      <FAB.Group
+          open={open}
+          icon={open ? 'window-minimize' : 'account-search'}
+          actions={[
+            
+            {
+              icon: 'magnify-plus',
+              label: 'Search Client',
+              onPress:SearchClient,
+            },
+            {
+              icon: 'account-plus',
+              label: 'Add Client',
+              onPress:AddClient,
+            },
+          ]}
+          onStateChange={onStateChange}
+          onPress={() => {
+            if (open) {
+              // do something if the speed dial is open
+            }
+          }}
+        />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
