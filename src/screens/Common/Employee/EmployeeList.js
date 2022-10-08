@@ -148,8 +148,12 @@ const EmployeeListScreen = ({ navigation }) => {
   const AddCallback = () => {
     navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
   };
-
-
+  const SearchEmployee = () => {
+    navigation.navigate("SearchEmployee", { type: "add", fetchData: FetchData });
+  };
+  const AddEmployee = () => {
+    navigation.navigate("AddEmployee", { type: "add", fetchData: FetchData });
+  };
   const EditCallback = (data, rowMap, buttonType) => {
 
     if(buttonType == "otp") {
@@ -214,8 +218,11 @@ const EmployeeListScreen = ({ navigation }) => {
     setOtpError(false);
   };
 
- //#endregion 
+  const [state, setState] = React.useState({ open: false });
 
+  const onStateChange = ({ open }) => setState({ open });
+
+  const { open } = state;
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="My Employee List" />
@@ -252,7 +259,29 @@ const EmployeeListScreen = ({ navigation }) => {
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
 
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} />
+      {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} /> */}
+      <FAB.Group
+          open={open}
+          icon={open ? 'window-minimize' : 'account-search'}
+          actions={[
+            {
+              icon: 'magnify-plus',
+              label: 'Search Employee',
+              onPress:SearchEmployee,
+            },
+            {
+              icon: 'account-plus',
+              label: 'Add Employee',
+              onPress:AddEmployee,
+            },
+          ]}
+          onStateChange={onStateChange}
+          onPress={() => {
+            if (open) {
+              // do something if the speed dial is open
+            }
+          }}
+      />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}

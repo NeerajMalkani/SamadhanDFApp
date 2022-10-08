@@ -76,7 +76,6 @@ import AddCommonDepartmentScreen from "./src/screens/Common/Organization/AddItem
 import CommonDesignationScreen from "./src/screens/Common/Organization/DesignationScreen";
 import AddCommonDesignationScreen from "./src/screens/Common/Organization/AddItem/AddDesignationScreen";
 
-
 import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
 import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 import ClientScreen from "./src/screens/Common/Client/ClientScreen";
@@ -96,7 +95,10 @@ import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
 import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
 import Demo from "./src/screens/GeneralUser/Demo";
-
+import SearchClient from "./src/screens/Common/Client/AddItems/Search";
+import AddClient from "./src/screens/Common/Client/AddItems/Add";
+import SearchEmployee from "./src/screens/Common/Employee/AddItems/SearchEmployee";
+import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -323,6 +325,7 @@ export default function App() {
 }
     }
   };
+  
 
 const BottomTabs = ({ navigation }) => {
   React.useEffect(() => {
@@ -330,11 +333,36 @@ const BottomTabs = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <Tab.Navigator shifting={true} initialRouteName="dashboard" activeColor={theme.colors.primary} barStyle={{ backgroundColor: theme.colors.textLight }}>
-      <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: true, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
-      <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
-      <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-      <Tab.Screen name="UserProfile" component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile :  parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen :parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} />
+    <Tab.Navigator 
+      labeled={true}
+      shifting={false} 
+      initialRouteName="dashboard" 
+      // activeColor={theme.colors.primary} 
+      activeColor="#ccf0de"
+      inactiveColor={theme.colors.primary} 
+      barStyle={{ backgroundColor: theme.colors.textLight }}
+      
+    >
+      <Tab.Screen 
+        name="Dashboard" 
+        component={DrawerNavigator} 
+        options={{unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} 
+      />
+      <Tab.Screen 
+        name="PocketDiary" 
+        component={PocketDiaryScreen} 
+        options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} 
+      />
+      <Tab.Screen 
+        name="Feedbacks" 
+        component={FeedbackScreen} 
+        options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} 
+      />
+      <Tab.Screen 
+        name="UserProfile" 
+        component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile :  parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen :parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} 
+        options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} 
+      />
     </Tab.Navigator>
   );
 };
@@ -391,6 +419,10 @@ return (
             <Stack.Screen name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
             <Stack.Screen name="MaterialCalculatorScreen" component={MaterialCalculatorScreen} options={{ headerTitle: "Material Calculator", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             <Stack.Screen name="Demo" component={Demo} />
+            <Stack.Screen name="SearchClient" component={SearchClient} options={{headerTitle:"Search Client",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight },headerTintColor: theme.colors.textLight }}/>
+            <Stack.Screen name="AddClient" component={AddClient} options={{headerTitle:"Add Client" ,headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
+            <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{headerTitle:"Search Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight },headerTintColor: theme.colors.textLight }}/>
+            <Stack.Screen name="AddEmployee" component={AddEmployee} options={{headerTitle:"Add Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
           </Stack.Navigator>
         </NavigationContainer>
       )}
