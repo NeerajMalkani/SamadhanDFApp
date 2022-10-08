@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 let DealerID = 0;
 
 const AddDealerDepartmentScreen = ({ route, navigation }) => {
+   //#region Variables
   const [departmentFullData, setDepartmentFullData] = React.useState([]);
   const [departmentData, setDepartmentData] = React.useState([]);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
@@ -18,7 +19,9 @@ const AddDealerDepartmentScreen = ({ route, navigation }) => {
   
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -124,7 +127,7 @@ const AddDealerDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

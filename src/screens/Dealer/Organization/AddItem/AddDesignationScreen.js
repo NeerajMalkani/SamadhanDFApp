@@ -9,6 +9,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 let DealerID = 0;
 const AddDealerDesignationScreen = ({ route, navigation }) => {
+   //#region Variables
+
   const [designationFullData, setDesignationFullData] = React.useState([]);
   const [designationData, setDesignationData] = React.useState([]);
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
@@ -19,7 +21,9 @@ const AddDealerDesignationScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  
+   //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -127,6 +131,7 @@ const AddDealerDesignationScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

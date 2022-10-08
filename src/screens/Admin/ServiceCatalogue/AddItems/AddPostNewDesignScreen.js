@@ -13,6 +13,8 @@ import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 
 const AddPostNewDesignScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -63,6 +65,9 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
 
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+ //#endregion 
+
+ //#region Functions
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -549,6 +554,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

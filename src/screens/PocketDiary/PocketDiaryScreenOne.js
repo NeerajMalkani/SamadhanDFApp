@@ -6,6 +6,7 @@ import { Styles } from "../../styles/styles";
 import Header from '../../components/Header';
 
 const PocketDiaryScreenOne = ({ navigation }) => {
+   //#region Variables
     const [isLoading, setIsLoading] = React.useState(true);
     const listData = React.useState([]);
     const listSearchData = React.useState([]);
@@ -16,6 +17,7 @@ const PocketDiaryScreenOne = ({ navigation }) => {
     const [value, setValue] = React.useState("");
     const [errorCAT, setErrorCAT] = React.useState(false);
     const [checked, setChecked] = useState('first');
+ //#endregion 
 
     useEffect(() => {
         //FetchData();

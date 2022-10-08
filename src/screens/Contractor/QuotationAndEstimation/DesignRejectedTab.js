@@ -10,6 +10,7 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 
 const DesignRejectedTab = ({ fetchData, listData, listSearchData, navigation }) => {
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -28,6 +29,9 @@ const DesignRejectedTab = ({ fetchData, listData, listSearchData, navigation }) 
   const [labourCost, setLabourCost] = React.useState("");
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -77,7 +81,8 @@ const DesignRejectedTab = ({ fetchData, listData, listSearchData, navigation }) 
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       {listData[0].length > 0 ? (

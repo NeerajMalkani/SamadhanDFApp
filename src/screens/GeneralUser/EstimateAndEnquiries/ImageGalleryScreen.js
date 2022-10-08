@@ -9,11 +9,15 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 
 const ImageGalleryScreen = ({ navigation }) => {
+   //#region Variables
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+ //#endregion 
+
+ //#region Functions
 
   const FetchImageGalleryData = () => {
     Provider.getAll("generaluserenquiryestimations/getimagegallery")
@@ -45,7 +49,8 @@ const ImageGalleryScreen = ({ navigation }) => {
   const SingleCardClick = (headerTitle, categoryID, data) => {
     navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data });
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <Header navigation={navigation} title="Image Gallery" />

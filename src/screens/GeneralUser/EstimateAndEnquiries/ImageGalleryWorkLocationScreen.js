@@ -10,6 +10,8 @@ import { theme } from "../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
+   //#region Variables
+
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -19,7 +21,9 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [imageToZoomData, setImageToZoomData] = React.useState([]);
   const [user, setUser] = React.useState(null);
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -68,7 +72,8 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
     setImageToZoomData(data);
     setIsZoomShow(true);
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       {isLoading ? (

@@ -14,6 +14,7 @@ import { AWSImagePath } from "../../../../utils/paths";
 
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
+   //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -48,6 +49,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+ //#endregion 
+
+ //#region Functions
 
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
@@ -411,7 +415,8 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

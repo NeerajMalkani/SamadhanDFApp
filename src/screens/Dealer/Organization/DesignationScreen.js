@@ -15,6 +15,8 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let DealerID = 0;
 
 const DealerDesignationScreen = ({ navigation }) => {
+   //#region Variables
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -23,6 +25,9 @@ const DealerDesignationScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -115,6 +120,7 @@ const DealerDesignationScreen = ({ navigation }) => {
       },
     });
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

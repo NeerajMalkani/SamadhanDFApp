@@ -19,6 +19,7 @@ const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const DealerBasicDetailsScreen = ({ route, navigation }) => {
+   //#region Variables
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
   
@@ -111,7 +112,9 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -413,6 +416,8 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
 
+ //#endregion 
+ 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "companyDetails":

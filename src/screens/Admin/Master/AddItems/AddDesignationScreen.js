@@ -7,13 +7,16 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddDesignationScreen = ({ route, navigation }) => {
+   //#region Variables
   const [designationNameError, setDesignationNameError] = React.useState(false);
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+//#endregion 
 
+ //#region Functions
   const onDesignationNameChanged = (text) => {
     setDesignationName(text);
     setDesignationNameError(false);
@@ -75,6 +78,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

@@ -14,6 +14,7 @@ import { communication } from "../../../utils/communication";
 
 let userID = 0;
 const YourEstimationsScreen = ({ navigation }) => {
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -31,6 +32,9 @@ const YourEstimationsScreen = ({ navigation }) => {
   const [status, setStatus] = React.useState(false);
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -186,6 +190,7 @@ const YourEstimationsScreen = ({ navigation }) => {
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

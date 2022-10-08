@@ -19,6 +19,7 @@ import { height } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const PocketDiaryScreen = ({ navigation }) => {
+   //#region Variables
     const [isLoading, setIsLoading] = React.useState(true);
     const listData = React.useState([]);
     const listSearchData = React.useState([]);
@@ -29,10 +30,17 @@ const PocketDiaryScreen = ({ navigation }) => {
     const [value, setValue] = React.useState("");
     const [errorCAT, setErrorCAT] = React.useState(false);
     const [checked, setChecked] = useState('first');
+ //#endregion 
+
+ //#region Functions
 
     useEffect(() => {
         //FetchData();
       }, []);
+ //#region Functions
+
+ //#endregion 
+
     return (
         <View style={[Styles.flex1]}>
           <Header navigation={navigation} title="Pocket Diary" />

@@ -7,6 +7,9 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddUnitOfSalesScreen = ({ route, navigation }) => {
+  
+  //#region Variables
+
   const [error, setError] = React.useState(false);
   const [errorC, setCError] = React.useState(false);
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
@@ -17,7 +20,9 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const ref_input2 = useRef();
+ //#endregion 
 
+ //#region Functions
   const onNameChanged = (text) => {
     setName(text);
     setError(false);
@@ -88,6 +93,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

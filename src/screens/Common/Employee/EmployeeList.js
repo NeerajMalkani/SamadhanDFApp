@@ -19,6 +19,8 @@ import SearchNAdd from "./AddItems/SearchNAdd";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
 const EmployeeListScreen = ({ navigation }) => {
+
+   //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
@@ -45,6 +47,9 @@ const EmployeeListScreen = ({ navigation }) => {
 
   const refRBSheet = useRef();
 
+ //#endregion 
+
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -208,6 +213,8 @@ const EmployeeListScreen = ({ navigation }) => {
     setOTP(text);
     setOtpError(false);
   };
+
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

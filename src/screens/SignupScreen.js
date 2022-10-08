@@ -16,6 +16,9 @@ const SignupScreen = ({ route, navigation }) => {
     });
     return unsubscribe;
   }, [navigation]);
+
+   //#region Variables
+
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
 
@@ -40,6 +43,9 @@ const SignupScreen = ({ route, navigation }) => {
 
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   const onFullNameChanged = (text) => {
     setFullName(text);
@@ -200,6 +206,7 @@ const SignupScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>

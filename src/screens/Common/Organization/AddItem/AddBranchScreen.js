@@ -103,6 +103,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   //#endregion
 
+   //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -398,6 +399,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
+   //#region Functions
   const InsertData = () => {
     const params = {
       UserID: userID,
@@ -558,6 +560,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     { key: "locationDetails", title: "Location Details" },
     { key: "bankDetails", title: "Bank Details" },
   ]);
+ //#endregion 
 
   return (
     isFocused && (

@@ -20,6 +20,8 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let userID = 0;
 
 const BranchListScreen = ({ navigation }) => {
+
+   //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
@@ -49,6 +51,9 @@ const BranchListScreen = ({ navigation }) => {
 
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -206,7 +211,8 @@ const BranchListScreen = ({ navigation }) => {
     setOTP(text);
     setOtpError(false);
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="My Branch List" />

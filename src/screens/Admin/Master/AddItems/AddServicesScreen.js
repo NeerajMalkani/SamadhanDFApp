@@ -7,13 +7,17 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddServicesScreen = ({ route, navigation }) => {
+  
+  //#region Variables
   const [servicesError, setServicesError] = React.useState(false);
   const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const onServicesChanged = (text) => {
     setServices(text);
     setServicesError(false);
@@ -75,7 +79,8 @@ const AddServicesScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

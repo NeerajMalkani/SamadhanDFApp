@@ -10,6 +10,7 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerMyServicesScreen = ({ route, navigation }) => {
+   //#region Variables
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -20,6 +21,9 @@ const AddDealerMyServicesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -152,7 +156,8 @@ const AddDealerMyServicesScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

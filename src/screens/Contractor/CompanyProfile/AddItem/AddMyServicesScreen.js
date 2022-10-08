@@ -10,6 +10,7 @@ import { communication } from "../../../../utils/communication";
 
 let contractorID = 0;
 const AddContractorMyServicesScreen = ({ route, navigation }) => {
+   //#region Variables
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -20,6 +21,9 @@ const AddContractorMyServicesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -132,6 +136,7 @@ const AddContractorMyServicesScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

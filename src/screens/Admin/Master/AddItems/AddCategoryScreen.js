@@ -8,6 +8,9 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddCategoryScreen = ({ route, navigation }) => {
+
+   //#region Variables
+
   const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
@@ -38,7 +41,9 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
+   //#endregion 
 
+ //#region Functions
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
       .then((response) => {
@@ -273,7 +278,8 @@ const AddCategoryScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

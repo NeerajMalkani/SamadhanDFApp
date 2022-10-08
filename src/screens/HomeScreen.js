@@ -24,9 +24,12 @@ import FadeCarousel from "rn-fade-carousel";
 // import { CustomCard } from '@tsamantanis/react-glassmorphism'
 // import '../../node_modules/@tsamantanis/react-glassmorphism/dist/index';
 export const navigationRef = createNavigationContainerRef();
+
 const windowWidth = Dimensions.get("window").width;
 let roleID = 0;
+
 const HomeScreen = ({ route, navigation }) => {
+   //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
@@ -45,6 +48,10 @@ const HomeScreen = ({ route, navigation }) => {
   const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+ //#endregion 
+
+ //#region Functions
 
   const slidesTwo = [
     <Image source={require('../../assets/dreamone.jpg')} style={Styles.flex1} resizeMode="cover" />,
@@ -221,7 +228,8 @@ const HomeScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>

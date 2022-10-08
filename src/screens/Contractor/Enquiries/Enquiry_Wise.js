@@ -15,6 +15,7 @@ import DesignRejectedTab from "./Enquiry_tab";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 const EnquiryWise = ({ navigation }) => {
+   //#region Variables
   const [index, setIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setDesignGalleryData] = React.useState([]);
@@ -27,7 +28,9 @@ const EnquiryWise = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -135,7 +138,8 @@ const EnquiryWise = ({ navigation }) => {
     { key: "approved", title: "Rejected" },
     /* { key: "rejected", title: "Rejected" }, */
   ]);
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <Header navigation={navigation} title="App User Enquiry Wise" />

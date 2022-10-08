@@ -9,6 +9,7 @@ import { communication } from "../utils/communication";
 import Provider from "../api/Provider";
 
 const LoginScreen = ({ route, navigation }) => {
+   //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [isUsernameInvalid, setIsUsernameInvalid] = React.useState(false);
@@ -16,6 +17,9 @@ const LoginScreen = ({ route, navigation }) => {
   const [username, setUsername] = React.useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", (e) => {
@@ -108,7 +112,8 @@ const LoginScreen = ({ route, navigation }) => {
     setIsPasswordInvalid(false);
     navigation.navigate("ForgotPassword");
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">

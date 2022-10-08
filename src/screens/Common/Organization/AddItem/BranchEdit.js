@@ -21,6 +21,8 @@ const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const BranchEditScreen = ({ route, navigation }) => {
+
+  
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
@@ -103,6 +105,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   //#endregion
 
+   //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -455,6 +458,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     }
   };
 
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "branchDetails":
@@ -558,6 +562,8 @@ const BranchEditScreen = ({ route, navigation }) => {
     { key: "locationDetails", title: "Location Details" },
     { key: "bankDetails", title: "Bank Details" },
   ]);
+
+ //#endregion 
 
   return (
     isFocused && (

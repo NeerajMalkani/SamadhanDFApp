@@ -15,6 +15,7 @@ import {NullOrEmpty} from "../../../utils/validations";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ApprovedUserScreen = ({ navigation }) => {
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -33,6 +34,9 @@ const ApprovedUserScreen = ({ navigation }) => {
   const [password, setPassword] = React.useState("");
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   useEffect(() => {
     FetchData();
@@ -133,6 +137,7 @@ const ApprovedUserScreen = ({ navigation }) => {
       </View>
     );
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

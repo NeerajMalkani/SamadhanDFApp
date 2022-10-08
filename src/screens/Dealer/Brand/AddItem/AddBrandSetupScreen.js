@@ -10,6 +10,8 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerBrandSetupScreen = ({ route, navigation }) => {
+   //#region Variables
+
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -71,6 +73,9 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const ref_input4 = useRef();
   const ref_input5 = useRef();
   const myRefs = useRef([]);
+   //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -583,6 +588,8 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       }
     }
   };
+
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

@@ -15,6 +15,8 @@ import { Styles } from "../../../styles/styles";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
 const ClientScreen = ({ navigation }) => {
+   //#region Variables
+
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -38,7 +40,9 @@ const ClientScreen = ({ navigation }) => {
   const [display, setDisplay] = React.useState(false);
 
   const refRBSheet = useRef();
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -169,7 +173,8 @@ const ClientScreen = ({ navigation }) => {
       </View>
     );
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Clients" />

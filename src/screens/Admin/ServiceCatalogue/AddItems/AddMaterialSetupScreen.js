@@ -10,6 +10,8 @@ import { communication } from "../../../../utils/communication";
 import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
+  
+  //#region Variables
   const arrProductData = React.useState([]);
 
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -64,7 +66,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
+ //#endregion 
 
+ //#region Functions
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
       .then((response) => {
@@ -589,7 +593,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       setTotalSqft(0);
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

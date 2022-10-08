@@ -8,6 +8,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddProductScreen = ({ route, navigation }) => {
+  //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
@@ -45,6 +46,9 @@ const AddProductScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+ //#endregion 
+
+ //#region Functions
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -360,7 +364,8 @@ const AddProductScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

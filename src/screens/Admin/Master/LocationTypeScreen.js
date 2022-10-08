@@ -14,6 +14,8 @@ import RBSheet from "react-native-raw-bottom-sheet";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const LocationTypeScreen = ({ navigation }) => {
+
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -28,6 +30,9 @@ const LocationTypeScreen = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -126,6 +131,7 @@ const LocationTypeScreen = ({ navigation }) => {
       },
     });
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

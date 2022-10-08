@@ -17,9 +17,12 @@ import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 //import SearchNAdd from "../Employee/AddItems/SearchNAdd";
 import logo from './test.jpg'; 
+
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+
 let userID = 0;
 const Enquiry_tab = ({ navigation }) => {
+  //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [visible1, setVisible1] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -46,6 +49,9 @@ const Enquiry_tab = ({ navigation }) => {
   const [verifyStatus, setVerifyStatus] = React.useState("");
   const [closeSheet, setcloseSheet] = React.useState(true);
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -222,6 +228,8 @@ const Enquiry_tab = ({ navigation }) => {
     setOTP(text);
     setOtpError(false);
   };
+
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

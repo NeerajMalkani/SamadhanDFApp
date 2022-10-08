@@ -9,13 +9,18 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
+
+   //#region Variables
+
   const [buyerCategoryNameError, setBuyerCategoryNameError] = React.useState(false);
   const [buyerCategoryName, setBuyerCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.buyerCategoryName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -89,6 +94,8 @@ const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
     }
   };
 
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

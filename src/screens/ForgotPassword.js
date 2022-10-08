@@ -8,6 +8,7 @@ import { communication } from "../utils/communication";
 import { ValidateMobile } from "../utils/validations";
 
 const ForgotPassword = ({ navigation }) => {
+   //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
 
@@ -30,6 +31,9 @@ const ForgotPassword = ({ navigation }) => {
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
 
+ //#endregion 
+
+ //#region Functions
   const onMobileNumberChanged = (text) => {
     setMobileNumber(text);
     setIsSnackbarVisible(false);
@@ -156,7 +160,8 @@ const ForgotPassword = ({ navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">

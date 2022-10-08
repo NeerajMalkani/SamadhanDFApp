@@ -81,6 +81,7 @@ const UserProfile = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = React.useState(true);
     //#endregion
 
+     //#region Functions
     const GetUserID = async () => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
@@ -296,8 +297,8 @@ const UserProfile = ({ route, navigation }) => {
             }
         }
     };
-
-
+ //#endregion 
+ 
     return (
         <View style={[Styles.flex1]}>
             <Header navigation={navigation} title="Update Profile" isDrawer="false" />

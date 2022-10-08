@@ -7,13 +7,17 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddWorkFloorScreen = ({ route, navigation }) => {
+   //#region Variables
+
   const [workFloorNameError, setWorkFloorNameError] = React.useState(false);
   const [workFloorName, setWorkFloorName] = React.useState(route.params.type === "edit" ? route.params.data.workFloorName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const onWorkFloorNameChanged = (text) => {
     setWorkFloorName(text);
     setWorkFloorNameError(false);
@@ -75,6 +79,7 @@ const AddWorkFloorScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

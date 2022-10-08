@@ -16,6 +16,7 @@ import { AWSImagePath } from "../../../../utils/paths";
 let dealerID = 0;
 
 const AddDealerProductScreen = ({ route, navigation }) => {
+   //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [brandFullData, setBrandFullData] = React.useState([]);
@@ -59,6 +60,9 @@ const AddDealerProductScreen = ({ route, navigation }) => {
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -419,6 +423,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

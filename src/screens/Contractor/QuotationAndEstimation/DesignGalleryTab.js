@@ -4,10 +4,11 @@ import CreateSCCards from "../../../components/SCCards";
 import { Styles } from "../../../styles/styles";
 
 const DesignGalleryTab = ({ navigation, designGalleryData, fetchData }) => {
+   //#region Functions
   const SingleCardClick = (headerTitle, categoryID, data) => {
     navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data, isContractor: true, fetchData: fetchData });
   };
-
+ //#endregion 
   return (
     <View>
       {designGalleryData.length > 0 ? (

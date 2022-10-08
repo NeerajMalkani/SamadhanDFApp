@@ -15,6 +15,7 @@ import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 
 const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) => {
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -48,7 +49,9 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const refRBSheet = useRef();
+ //#endregion 
 
+ //#region Functions
   const InsertEstimationStatusData = () => {
     const params = {
       UserEstimationID: id,
@@ -247,7 +250,8 @@ const DesignApprovedTab = ({ fetchData, listData, listSearchData, navigation }) 
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       {listData[0].length > 0 ? (

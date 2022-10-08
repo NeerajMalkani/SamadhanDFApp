@@ -8,6 +8,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddEWayBillScreen = ({ route, navigation }) => {
+   //#region Variables
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
   const [stateName, setStateName] = React.useState(route.params.type === "edit" ? route.params.data.stateName : "");
@@ -26,6 +27,9 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const ref_input2 = useRef();
+//#endregion 
+
+ //#region Functions
 
   const FetchStates = () => {
     Provider.getAll("master/getstates")
@@ -151,7 +155,8 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} contentInsetAdjustmentBehavior="automatic" keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" nestedScrollEnabled>

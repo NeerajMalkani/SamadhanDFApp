@@ -9,12 +9,17 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerBrandMasterScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [brandNameError, setBrandNameError] = React.useState(false);
   const [brandName, setBrandName] = React.useState(route.params.type === "edit" ? route.params.data.brandName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -88,6 +93,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       }
     }
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

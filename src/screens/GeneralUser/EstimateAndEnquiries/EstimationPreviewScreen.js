@@ -12,6 +12,7 @@ import { communication } from "../../../utils/communication";
 
 let userID = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
+   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
@@ -36,6 +37,9 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
 
   const refRBSheet = useRef();
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -309,7 +313,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>

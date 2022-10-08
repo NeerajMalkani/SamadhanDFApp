@@ -7,6 +7,8 @@ import NoItems from "../../../../components/NoItems";
 import { Styles } from "../../../../styles/styles";
 
 const AddMaterialSetupProducts = ({ arrProductData }) => {
+  //#region Variables
+
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -20,6 +22,9 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   const categoriesDDRef = useRef({});
 
   const [productsFullData, setProductsFullData] = React.useState([]);
+ //#endregion 
+
+ //#region Functions
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -142,6 +147,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
     setProductsFullData([]);
     FetchProductsFromCategory(selectedItem);
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

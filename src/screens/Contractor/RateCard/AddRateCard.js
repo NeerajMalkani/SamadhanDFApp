@@ -23,7 +23,7 @@ const AddRateCard = ({ route, navigation }) => {
   // const [employeeName, setEmployeeName] = useState("");
   // const [employeeNameInvalid, setEemployeeNameInvalid] = useState("");
   // const employeeNameRef = useRef({});
-
+ //#region Variables
   const [serviceName, setServiceName] = useState("--Select--");
   const [serviceNameID, setServiceNameID] = useState < number > (0);
   const [serviceNameError, setServiceNameError] = useState("");
@@ -92,6 +92,10 @@ const AddRateCard = ({ route, navigation }) => {
   const [arnID, setArnID] = useState<number>(0);
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+
+ //#endregion 
+
+ //#region Functions
 
   useEffect(() => {
     if (route.params.type !== "edit") {
@@ -391,6 +395,9 @@ const AddRateCard = ({ route, navigation }) => {
   };
   const [text, onChangeText] = React.useState("Useless Text");
   const [number, onChangeNumber] = React.useState(null);
+
+  //#endregion  
+  
   const design = (
     <View style={[Styles.flex1]}>
       <ScrollView >

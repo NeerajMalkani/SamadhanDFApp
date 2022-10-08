@@ -13,7 +13,7 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const PDDashboardScreen = ({ navigation }) => {
-
+ //#region Variables
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
@@ -22,6 +22,9 @@ const PDDashboardScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
+ //#endregion 
+
+ //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -60,6 +63,7 @@ const PDDashboardScreen = ({ navigation }) => {
   useEffect(() => {
     //FetchData();
   }, []);
+ //#endregion 
 
   
   return (

@@ -7,13 +7,17 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddActivityRolesScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [activityNameError, setActivityNameError] = React.useState(false);
   const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+   //#endregion 
 
+ //#region Functions
   const onActivityNameChanged = (text) => {
     setActivityName(text);
     setActivityNameError(false);
@@ -75,6 +79,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       }
     }
   };
+   //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

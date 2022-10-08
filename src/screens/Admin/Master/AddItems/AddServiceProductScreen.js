@@ -8,6 +8,8 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddServiceProductScreen = ({ route, navigation }) => {
+
+  //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
@@ -75,7 +77,9 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const ref_input4 = useRef();
   const ref_input5 = useRef();
   const ref_input6 = useRef();
+ //#endregion 
 
+ //#region Functions
   const FetchServicesFromActivity = (selectedItem, activityData) => {
     let params = {
       ID:
@@ -469,7 +473,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       UpdateData();
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

@@ -27,6 +27,7 @@ let userID = 0;
 
 const ClientEditScreen = ({ route, navigation }) => {
 
+   //#region Variables  
     const [index, setIndex] = useState(0);
     const [serviceTypeRoles, setServiceTypeRoles] = useState([
         {
@@ -101,7 +102,9 @@ const ClientEditScreen = ({ route, navigation }) => {
     const [snackbarText, setSnackbarText] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
     const [serviceType, setServiceType] = React.useState(0);
+ //#endregion 
 
+ //#region Functions
     useEffect(() => {
         GetUserID();
     }, []);
@@ -357,7 +360,7 @@ const ClientEditScreen = ({ route, navigation }) => {
             UpdateData();
         }
     };
-
+ //#endregion 
     return (
         isFocused && (
             <View style={[Styles.flex1]}>

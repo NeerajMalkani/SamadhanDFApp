@@ -12,7 +12,7 @@ import { AWSImagePath } from "../../../utils/paths";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
-
+ //#region Variables
   const arrProductData = React.useState([]);
 
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -71,7 +71,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
+ //#endregion 
 
+ //#region Functions
   const LengthRoute = () => (
     <>
       <View style={[Styles.height250,Styles.border1,Styles.padding16,Styles.borderBottomRadius4]} >
@@ -786,7 +788,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
-
+ //#endregion 
 
 
   return (

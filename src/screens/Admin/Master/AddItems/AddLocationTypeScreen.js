@@ -9,6 +9,7 @@ import { Button, Card, Checkbox, Chip, HelperText, List, Snackbar, Text, TextInp
 import { communication } from "../../../../utils/communication";
 
 const AddLocationTypeScreen = ({ route, navigation }) => {
+   //#region Variables
   const [branchTypeError, setBranchTypeError] = useState(false);
   const [branchType, setBranchType] = useState(route.params.type === "edit" ? route.params.data.branchType : "");
 
@@ -27,7 +28,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
 
   const refActivityRBSheet = useRef();
   const refServicesRBSheet = useRef();
+ //#endregion 
 
+ //#region Functions
   useEffect(() => {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
@@ -214,6 +217,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       }
     }
   };
+   //#endregion 
+
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>

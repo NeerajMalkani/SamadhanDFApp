@@ -7,13 +7,17 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddDepartmentScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const onDepartmentNameChanged = (text) => {
     setDepartmentName(text);
     setDepartmentNameError(false);
@@ -75,7 +79,8 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

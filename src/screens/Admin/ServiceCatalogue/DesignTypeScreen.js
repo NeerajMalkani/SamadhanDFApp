@@ -14,6 +14,7 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const DesignTypeScreen = ({ navigation }) => {
+   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -30,7 +31,9 @@ const DesignTypeScreen = ({ navigation }) => {
   const [designImage, setDesignImage] = React.useState("");
 
   const refRBSheet = useRef();
+ //#endregion 
 
+ //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -136,6 +139,7 @@ const DesignTypeScreen = ({ navigation }) => {
       },
     });
   };
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

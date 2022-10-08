@@ -10,6 +10,8 @@ import { communication } from "../../../utils/communication";
 
 let userID = 0;
 const GetEstimationScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [isLoading, setIsLoading] = React.useState(true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -27,6 +29,9 @@ const GetEstimationScreen = ({ route, navigation }) => {
   const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -247,7 +252,8 @@ const GetEstimationScreen = ({ route, navigation }) => {
       return null;
     }
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       {isLoading ? (

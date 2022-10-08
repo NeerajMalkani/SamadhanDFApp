@@ -13,12 +13,15 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 let userID = 0;
 const AddClientScreen = ({ route, navigation }) => {
   let addedBy = false;
   if (route.params.data) {
     addedBy = !route.params.data.addedBy;
   }
+
+   //#region Variables
   const [refreshing, setRefreshing] = React.useState(false);
   const [aadharNo, setAadharNo] = useState("");
   const [aadharNoInvalid, setAadharNoInvalid] = useState("");
@@ -94,7 +97,9 @@ const AddClientScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
 
+ //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -623,7 +628,8 @@ const AddClientScreen = ({ route, navigation }) => {
       </View>
     </>
   )
-  
+
+   //#endregion 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

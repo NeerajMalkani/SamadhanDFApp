@@ -7,6 +7,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddWorkLocationScreen = ({ route, navigation }) => {
+   //#region Variables
   const [workLocationNameError, setWorkLocationNameError] = React.useState(false);
   const [workLocationName, setWorkLocationName] = React.useState(route.params.type === "edit" ? route.params.data.workLocationName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
@@ -14,6 +15,9 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+ //#endregion 
+
+ //#region Functions
   const onWorkLocationNameChanged = (text) => {
     setWorkLocationName(text);
     setWorkLocationNameError(false);
@@ -75,6 +79,8 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
       }
     }
   };
+
+ //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

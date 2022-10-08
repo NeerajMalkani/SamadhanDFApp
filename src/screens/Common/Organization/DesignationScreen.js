@@ -16,6 +16,8 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let ContractorID = 0;
 
 const ContractorDesignationScreen = ({ navigation }) => {
+   //#region Variables
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -24,6 +26,9 @@ const ContractorDesignationScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -117,7 +122,8 @@ const ContractorDesignationScreen = ({ navigation }) => {
       },
     });
   };
-
+ //#endregion 
+ 
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Designations" />

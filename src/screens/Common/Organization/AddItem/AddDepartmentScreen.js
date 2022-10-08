@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 let ContractorID = 0;
 
 const AddContractorDepartmentScreen = ({ route, navigation }) => {
+   //#region Variables
   const [departmentFullData, setDepartmentFullData] = React.useState([]);
   const [departmentData, setDepartmentData] = React.useState([]);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
@@ -18,6 +19,9 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+ //#endregion 
+
+ //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -128,6 +132,9 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
+  
+ //#endregion 
+
 
   return (
     <View style={[Styles.flex1]}>

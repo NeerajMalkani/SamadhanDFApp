@@ -39,6 +39,8 @@ const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const EmployeeEditScreen = ({ route, navigation }) => {
+
+   //#region Variables
   const [ETRadioButtons, setETRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -269,6 +271,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
+  //#region Functions
   const GetUserID = async () => {
     const 
     userData = await AsyncStorage.getItem("user");
@@ -741,6 +744,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
+  
   const chooseFile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

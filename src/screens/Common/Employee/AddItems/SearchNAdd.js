@@ -18,6 +18,7 @@ let userID = 0;
 
 const SearchNAdd = ({ navigation }) => {
 
+   //#region Variables
 const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [displayLoader, setDisplayLoader] = React.useState(false);
@@ -54,7 +55,9 @@ const [searchQuery, setSearchQuery] = React.useState("");
   const [RBAadharNo, setRBAadharNo] = useState("");
   
     const refRBSheet = useRef();
-  
+  //#endregion 
+
+ //#region Functions
     const GetUserID = async () => {
       const userData = await AsyncStorage.getItem("user");
       if (userData !== null) {
@@ -359,6 +362,9 @@ const [searchQuery, setSearchQuery] = React.useState("");
       setOTP(text);
       setOtpError(false);
     };
+   
+ //#endregion 
+ 
      return (
     <View style={[Styles.flex1]}>
         <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
