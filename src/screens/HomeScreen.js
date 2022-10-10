@@ -341,7 +341,6 @@ const HomeScreen = ({ route, navigation }) => {
                 </Card>
               </View>
 
-
               <View style={Styles.width50per}>
                 <Card onPress={() => {
                   if (roleID == 1) {
@@ -370,10 +369,10 @@ const HomeScreen = ({ route, navigation }) => {
                 </Card>
               </View>
 
+            </View>
 
-            </View>  
-          </View >
-        </ScrollView >
+          </View>
+        </ScrollView>
       )}
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}

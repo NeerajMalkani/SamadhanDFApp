@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
-import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText } from "react-native-paper";
+import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText, DataTable } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems, RenderHiddenMultipleItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 // import SearchNAdd from "../../../AddItems/SearchNAdd";
@@ -37,11 +37,20 @@ const RateCardSetup = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const [serviceName, setServiceName] = React.useState("");
-  
+
   const [category, setCategory] = React.useState("");
   const [serviceProductName, setServiceProductName] = React.useState("");
   const [unit, setUnit] = React.useState("");
   const [rate, setRate] = React.useState("");
+
+  const [rateWithMaterials, setRateWithMaterials] = React.useState("");
+  const [rateWithoutMaterials, setRateWithoutMaterials] = React.useState("");
+
+  const [altRateWithMaterials, setAltRateWithMaterials] = React.useState("");
+  const [altRateWithoutMaterials, setAltRateWithoutMaterials] = React.useState("");
+
+  const [specification, setSpecification] = React.useState("");
+  const [shortSpecification, setShortSpecification] = React.useState("");
 
   const [alternativeRate, setAlternativeRate] = React.useState("");
   const [material, setMaterial] = React.useState("");
@@ -72,9 +81,9 @@ const RateCardSetup = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      AddedByUserID: userID,
+      ContractorID: userID,
     };
-    Provider.getAll(`master/getuseremployeelist?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getcontractorratecardlist?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -104,13 +113,12 @@ const RateCardSetup = ({ navigation }) => {
   };
 
   const SubmitVerify = () => {
-    Provider.create("master/updateemployeeverification", 
-    { 
-      EmployeeID: employeeID, 
-      OTP: otp
-    })
+    Provider.create("master/updateemployeeverification",
+      {
+        EmployeeID: employeeID,
+        OTP: otp
+      })
       .then((response) => {
-        console.log(response);
         if (response.data && response.data.code === 200) {
           FetchData();
           hideDialog();
@@ -152,77 +160,89 @@ const RateCardSetup = ({ navigation }) => {
   //   navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
   // };
 
+  const AddCallback = () => {
+    navigation.navigate("AddRateCard", { type: "add", fetchData: FetchData });
+  };
 
-  const EditCallback = (data, rowMap, buttonType) => {
-
-    if(buttonType == "otp") {
-      setEmployeeID(data.item.id);
-      setOTP(data.item.otp.toString());
-      showDialog();
-    }
-    else {
-      rowMap[data.item.key].closeRow();
-      navigation.navigate("AddRateCard", {
-        type: "edit",
-        fetchData: FetchData,
-        data: {
-           id: data.item.id,
-        },
-      });
-    }
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddRateCard", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        rateCardID: data.item.id,
+        id: data.item.productID,
+        activityRoleName: data.item.activityRoleName,
+        activityID: data.item.activityID,
+        serviceName: data.item.serviceName,
+        serviceID: data.item.serviceID,
+        unitName: data.item.unitName,
+        unitOfSalesID: data.item.unitOfSalesID,
+        categoryName: data.item.categoryName,
+        productName: data.item.productName,
+        categoryID: data.item.categoryID,
+        hsnsacCode: data.item.hsnsacCode,
+        unit1ID: data.item.unit1ID,
+        unit2ID: data.item.unit2ID,
+        unit1Name: data.item.unit1Name,
+        unit2Name: data.item.unit2Name,
+        selectedUnitID: data.item.selectedUnitID,
+        // gstRate: data.item.gstRate.toFixed(2),
+        rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
+        rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
+        altRateWithMaterials: data.item.altRateWithMaterials.toFixed(2),
+        altRateWithoutMaterials: data.item.altRateWithoutMaterials.toFixed(2),
+        shortSpecification: data.item.shortSpecification,
+        specification: data.item.specification,
+        display: data.item.display,
+      },
+    });
   };
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
         <List.Item
-          title={data.item.serviceName}
+          title={data.item.productName}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.category) ? "" : data.item.category}\nService Product Name/Specification: ${NullOrEmpty(data.item.serviceProductName) ? "" : data.item.serviceProductName} `}
+          description={`Service Name: ${NullOrEmpty(data.item.serviceName) ? "" : data.item.serviceName}\nCategory Name: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName} `}
           onPress={() => {
-            
+
             refRBSheet.current.open();
             setServiceName(data.item.serviceName);
-            setCategory(data.item.category);
+            setCategory(data.item.categoryName);
             setServiceProductName(data.item.serviceProductName);
-            setUnit(data.item.unit);
+
+            setSpecification(data.item.specification);
+            setShortSpecification(data.item.shortSpecification);
+
+            setUnit(data.item.selectedUnitName);
+
+            setRateWithMaterials(data.item.rateWithMaterials);
+            setRateWithoutMaterials(data.item.rateWithoutMaterials);
+            setAltRateWithMaterials(data.item.altRateWithMaterials);
+            setAltRateWithoutMaterials(data.item.altRateWithoutMaterials);
+
             setRate(data.item.rate);
             setAlternativeRate(data.item.alternativeRate);
             setMaterial(data.item.material);
-            setDispaly(data.item.setDispaly);
-            setAction(data.item.action);
+            setDispaly(data.item.display == true ? "Yes" : "No");
 
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="cards" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
-        
+
       </View>
     );
   };
 
-  const OnOTPSend = () => {
-    let isValid = true;
-    
-    if (otp.trim() === "") {
-      setOtpError(true);
-      isValid = false;
-    }
-    if (isValid) {
-      SubmitVerify();
-    }
-  };
-
-  const onOTPChange = (text) => {
-    setOTP(text);
-    setOtpError(false);
-  };
 
  //#endregion 
  
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="View Rate Card List (Contractor)" />
+      <Header navigation={navigation} title="Rate Card List" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -249,14 +269,14 @@ const RateCardSetup = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-160}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenMultipleItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
           />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
 
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" />
+      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
@@ -265,47 +285,55 @@ const RateCardSetup = ({ navigation }) => {
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
-          <ScrollView style={{marginBottom: 64}}>
+          <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category" description={category} />
             <List.Item title="Service Product Name" description={serviceProductName} />
             <List.Item title="Unit" description={unit} />
-            <List.Item title="Rate" description={rate} />
-            <List.Item title="Alternative Rate" description={alternativeRate} />
-            <List.Item title="Material" description={NullOrEmpty(material) ? "" : material ? "Yes":"No"} />
-            <List.Item title="Display" description={NullOrEmpty(display) ? "" : display ? "Yes":"No"} />
-            <List.Item title="Action" description={action} />
+            <View style={[Styles.padding16]}>
+              <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter]} >
+                <DataTable.Header>
+                  <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]}>Rate Unit</DataTable.Title>
+                  <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]} numeric>Alt Rate Unit</DataTable.Title>
+                  <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]} numeric>Material</DataTable.Title>
+                </DataTable.Header>
+
+                <DataTable.Row>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{rateWithMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric>{altRateWithMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric><Button
+                    mode="contained"
+                    labelStyle={[{ textTransform: "capitalize" }]}
+                    style={[Styles.marginStart4, Styles.greenBgColor]}
+                    icon={() => <Icon name="checkbox-marked-circle" size={18} color={theme.colors.textLight} />}
+                  >
+                    Yes
+                  </Button></DataTable.Cell>
+                </DataTable.Row>
+
+                <DataTable.Row>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{rateWithoutMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric>{altRateWithoutMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric><Button
+                    mode="contained"
+                    labelStyle={[{ textTransform: "capitalize" }]}
+                    style={[Styles.marginStart4, Styles.redBgColor]}
+                    icon={() => <Icon name="close-circle" size={18} color={theme.colors.textLight} />}
+                  >
+                    No
+                  </Button></DataTable.Cell>
+                </DataTable.Row>
+
+              </DataTable>
+            </View>
+            <List.Item title="Short Specification" description={shortSpecification} />
+            <List.Item title="Specification" description={specification} />
+            <List.Item title="Display" description={display} />
             {/* <List.Item title="Verify Status" description={NullOrEmpty(action) ? "" : verifyStatus ? "Verified":"Not Verified"} /> */}
           </ScrollView>
         </View>
       </RBSheet>
 
-        <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog} style={[Styles.borderRadius8]}>
-            <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>EMPLOYEE OTP NO VERIFICATION & LOGIN ACTIVATION</Dialog.Title>
-            <Dialog.Content>
-              <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
-                <Text >Enter OTP No:</Text>
-              <TextInput 
-              mode="flat"
-              value={otp} 
-              onChangeText={onOTPChange}
-              error={otpError}
-                  style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  
-                />
-              </View>
-              <View>
-              <HelperText type="error" visible={otpError} style={[Styles.textCenter]}>
-              {communication.InvalidOTP}
-            </HelperText> 
-              </View>
-              <Card.Content style={[Styles.marginTop16]}>
-          <Button mode="contained" onPress={OnOTPSend}>
-          Submit & Verify
-          </Button>
-          </Card.Content>
-            </Dialog.Content>
-          </Dialog>
-        </Portal>
     </View>
   );
 };
