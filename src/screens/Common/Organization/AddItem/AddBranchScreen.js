@@ -23,9 +23,9 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   //#region Input Variables
 
-  const [companyName, setComapnyName] = useState("");
-  const [comanyNameId, setComapnyNameId] = useState(0);
-  const [companyNameInvalid, setComapnyNameInvalid] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [companyNameId, setCompanyNameId] = useState(0);
+  const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
 
 
@@ -58,7 +58,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   const [display, setDisplay] = useState("");
   const [displayID, setDisplayID] = useState("");
-  const [displayInvalid, setDispalyInvalid] = useState("");
+  const [displayInvalid, setDisplayInvalid] = useState("");
   const displayRef = useRef({});
 
   const [branchLocationName, setBranchLocationName] = useState("");
@@ -110,6 +110,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const [arnID, setArnID] = useState(0);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
   //#endregion
 
   //#region Functions
@@ -192,7 +193,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           if (response.data.data) {
             setCompanyName(response.data.data.companyName);
             setPANNo(response.data.data.pan);
-            setComapnyNameId(response.data.data.companyID)
+            setCompanyNameId(response.data.data.companyID)
           }
         }
       })
@@ -236,34 +237,32 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   //#region OnChange Function
 
-  const onCompanyNameChanged = (text) => {
-    setCompanyName(text);
-    setCompanyNameInvalid(false);
-  };
+
   const onBranchTypeChanged = (text) => {
     setBranchType(text);
     setBranchTypeInvalid(false);
   };
+
   const onAssignBranchChanged = (text) => {
     setAssignBranchAdmin(text);
     setAssignBranchAdminInvalid(false);
     setContactPersonNo(contactPersonNo);
   };
-  const onContactPersonNoChanged = (text) => {
-    setContactPersonNo(text);
-    setContactPersonNoInvalid(false);
-  };
+
+
   const onGstNoChanged = (text) => {
     setGSTNo(text);
     setGSTNoInvalid(false);
   };
+
   const onPanNoChanged = (text) => {
     setPANNo(text);
     setPANNo(false);
   };
+  
   const onDispalyChanged = (selectedItem) => {
-    setDispaly(selectedItem);
-    setDispalyInvalid(false);
+    setDisplay(selectedItem);
+    setDisplayInvalid(false);
   };
   const onBranchLocationNameChanged = (text) => {
     setBranchLocationName(text);
@@ -328,7 +327,7 @@ const BranchEditScreen = ({ route, navigation }) => {
       BankBranchName: bankBranchName,
       IFSCCode: ifscCode,
       AddedByUserID: UserID,
-      RegionalOfficeID: 1
+      RegionalOfficeID: regionalOfficeID,
     };
     Provider.create("master/insertuserbranch", params)
       .then((response) => {
@@ -392,23 +391,22 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false}  style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
 
-              <TextInput ref={branchTypeRef} mode="flat" dense label="Branch Type" value={branchType} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => branchTypeRef.current.focus()} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "#cdcdcd" }} error={branchTypeInvalid} />
-
+              <TextInput ref={branchTypeRef} mode="flat" dense label="Branch Type" value={branchType} returnKeyType="next"   onSubmitEditing={() => branchTypeRef.current.focus()} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "white" }} error={branchTypeInvalid} />
               <HelperText type="error" visible={branchTypeInvalid}>
                 {communication.InvalidBranchType}
               </HelperText>
 
-              <TextInput ref={assignBranchAdminRef} mode="flat" dense keyboardType="number-pad" label="Assign Branch Admin" value={assignBranchAdmin} returnKeyType="next" onSubmitEditing={() => assignBranchAdminRef.current.focus()} onChangeText={onAssignBranchAdminChanged} style={{ backgroundColor: "white" }} error={assignBranchAdminInvalid} />
+              <TextInput ref={assignBranchAdminRef} mode="flat" dense  label="Assign Branch Admin" value={assignBranchAdmin} returnKeyType="next" onSubmitEditing={() => assignBranchAdminRef.current.focus()} onChangeText={onAssignBranchChanged} style={{ backgroundColor: "white" }} error={assignBranchAdminInvalid} />
               <HelperText type="error" visible={assignBranchAdminInvalid}>
                 {communication.InvalidAssignBranchAdmin}
               </HelperText>
 
-              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
+              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()}   style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
               <HelperText type="error" visible={contactPersonNoInvalid}>
                 {communication.InvalidContactPersonNo}
               </HelperText>
@@ -426,9 +424,9 @@ const BranchEditScreen = ({ route, navigation }) => {
               <Checkbox.Item
                 style={Styles.marginTop8}
                 label="Display"
-                status={checkedDisplay ? "checked" : "unchecked"}
+                status={checked ? "checked" : "unchecked"}
                 onPress={() => {
-                  setChecked(!checkedDisplay);
+                  setChecked(!checked);
                 }}
               />
             </View>
@@ -438,7 +436,8 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={setBranchLocationNameInvalid} />
+
+            <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={setBranchLocationNameInvalid} />
               <HelperText type="error" visible={setBranchLocationNameInvalid}>
                 {communication.InvalidBranchLocationName}
               </HelperText>
@@ -462,7 +461,7 @@ const BranchEditScreen = ({ route, navigation }) => {
             <View style={[Styles.padding16]}>
               <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               {/* <HelperText type="error" visible={accountNoInvalid}>
-                {communication.InvalidActivityName}
+                {communication.InvalidAccountNo}
               </HelperText> */}
               <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
               {/* <HelperText type="error" visible={bankNameInvalid}>
