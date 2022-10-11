@@ -105,34 +105,6 @@ const BranchListScreen = ({ navigation }) => {
       });
   };
 
-  const SubmitVerify = () => {
-    Provider.create("master/updateuserbranch", 
-    { 
-      EmployeeID: employeeID, 
-     // OTP: otp
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.data && response.data.code === 200) {
-          FetchData();
-         // hideDialog();
-          setSnackbarText(communication.UpdateSuccess);
-          setSnackbarVisible(true);
-        } else if (response.data.code === 304) {
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarVisible(true);
-      });
-  };
-
   useEffect(() => {
     GetUserID();
     
@@ -174,23 +146,22 @@ const BranchListScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
         <List.Item
-           title={data.item.branchAdmin}
+           title={data.item.locationName}
           titleStyle={{ fontSize: 18 }}
-          description={`Mob.: ${NullOrEmpty(data.item.mobileNo) ? "" : data.item.mobileNo}\nLocation Type: ${NullOrEmpty(data.item.locationType) ? "" : data.item.locationType} `}
+          description={`Location Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType}\nAdmin: ${NullOrEmpty(data.item.branchAdmin) ? "" : data.item.branchAdmin} `}
           onPress={() => {
             
             refRBSheet.current.open();
-            setLocationType(data.item.locationType);
             setLocationName(data.item.locationName);
+            setLocationType(data.item.branchType);
             setBranchAdmin(data.item.branchAdmin);
             setAddress(data.item.address);
             setGSTNo(data.item.gstNo);
             setPANNo(data.item.panNo);
-            setDispaly(data.item.display);
-            setAction(data.item.action);
+            setDispaly(data.item.display ? "Yes" : "No");
 
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="office-building" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
         
@@ -244,20 +215,17 @@ const BranchListScreen = ({ navigation }) => {
 
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{employeeName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{locationName}</Title>
           <ScrollView style={{marginBottom: 64}}>
             <List.Item title="Location Type" description={locationType} />
-            <List.Item title="Location Name" description={locationName} />
             <List.Item title="Branch Admin" description={branchAdmin} />
             <List.Item title="Address" description={address} />
             <List.Item title="GST No" description={gstNo} />
             <List.Item title="PAN No" description={panNo} />
             <List.Item title="Dispaly" description={display} />
-            <List.Item title="Action" description={action} />
           </ScrollView>
         </View>
       </RBSheet>
-
        
     </View>
   );

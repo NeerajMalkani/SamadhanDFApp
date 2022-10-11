@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
+import { View, Dimensions, ScrollView, Keyboard } from "react-native";
 import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
-import { RNS3 } from "react-native-aws3";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 //import { DatePickerModal } from 'react-native-paper-dates';
@@ -13,9 +12,7 @@ import Header from "../../../../components/Header";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
-import { AWSImagePath } from "../../../../utils/paths";
 import { NullOrEmpty } from "../../../../utils/validations";
-import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
@@ -27,7 +24,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   //#region Input Variables
 
   const [companyName, setComapnyName] = useState("");
-  const [comanyNameId,setComapnyNameId] =useState<Number>(0);
+  const [comanyNameId, setComapnyNameId] = useState(0);
   const [companyNameInvalid, setComapnyNameInvalid] = useState("");
   const companyNameRef = useRef({});
 
@@ -36,6 +33,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [branchType, setBranchType] = useState("");
   const [branchTypeID, setBranchTypeID] = React.useState([]);
   const [branchTypeName, setBranchTypeName] = React.useState("");
+  const [branchTypeInvalid, setBranchTypeInvalid] = useState("");
   const [errorBT, setBTError] = React.useState(false);
   const branchTypeRef = useRef({});
 
@@ -109,6 +107,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const [arnID, setArnID] = useState(0);
   //#endregion
@@ -119,92 +118,12 @@ const BranchEditScreen = ({ route, navigation }) => {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       FetchCompanyName();
-
+      setIsLoading(false);
     }
   };
 
+
   let tempStateName = "";
-  const FetchData = () => {
-    let params = {
-      ID: route.params.data.id,
-    };
-    Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            let employee_data = _data.employee;
-            let reporting_data = response.data.data[1].employee;
-            let bankDetails_data = response.data.data[2].employee;
-
-            setEmployeeName(employee_data.companyName ? employee_data.companyName : "");
-            setEemployeeCode(employee_data.companyName ? employee_data.companyName : "");
-            setMobileNo(employee_data.companyName ? employee_data.companyName : "");
-            setAadharNo(employee_data.companyName ? employee_data.companyName : "");
-            setFatherName(employee_data.companyName ? employee_data.companyName : "");
-            setAddress(employee_data.companyName ? employee_data.companyName : "");
-
-            if (!NullOrEmpty(employee_data.stateID)) {
-              setStatesID(employee_data.stateID);
-            }
-            if (!NullOrEmpty(employee_data.cityID)) {
-              setCityID(employee_data.cityID);
-            }
-            if (!NullOrEmpty(employee_data.bloodGroup)) {
-              setBloodGroupID(employee_data.bloodGroup);
-            }
-
-            setPincode(employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
-
-            setDob(employee_data.dob ? employee_data.dob : "");
-            setDoj(employee_data.doj ? employee_data.doj : "");
-            setCardValidity(employee_data.doj ? employee_data.doj : "");
-            setLwd(employee_data.lastWorkDate ? employee_data.lastWorkDate : "");
-
-            setEmergencyContactName(employee_data.companyName ? employee_data.companyName : "");
-            setEmergencyContactNo(employee_data.companyName ? employee_data.companyName : "");
-            setLoginActiveStatus(employee_data.companyName ? employee_data.companyName : "");
-
-            if (!NullOrEmpty(employee_data.branchID)) {
-              setBranchID(employee_data.branchID);
-            }
-            if (!NullOrEmpty(employee_data.departmentID)) {
-              setDepartmentID(employee_data.departmentID);
-            }
-            if (!NullOrEmpty(employee_data.designationID)) {
-              setDesignationID(employee_data.designationID);
-            }
-
-            setEmployeeTypeID(_data.companyName ? _data.companyName : "");
-
-            setWagesTypeID(_data.wagesType ? _data.wagesType : "");
-            setSalary(_data.salary ? _data.salary : "");
-
-            //setStateName(_data.stateName === null ? "" : _data.stateName);
-            //tempStateName = _data.stateName === null ? "" : _data.stateName;
-            //setCityName(_data.cityName === null ? "" : _data.cityName);
-            setAccountHolderName(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-            setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-            setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
-            setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
-            setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
-
-            setLogoImage(employee_data.profilePhoto);
-            setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
-            setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
-          }
-          FetchStates();
-          FetchBranch();
-          FetchDepartments();
-          FetchDesignations();
-          FetchReportingEmployee();
-          setIsLoading(false);
-        }
-      })
-      .catch((e) => {
-        console.log("abc");
-        setIsLoading(false);
-      });
-  };
 
   //#region Dropdown Functions
 
@@ -281,54 +200,38 @@ const BranchEditScreen = ({ route, navigation }) => {
   };
 
 
-  // const FetchAssignBranchAdmin = () => {
-  //   let params = {
-  //     AddedByUserID: userID,
-  //   };
-  //   Provider.getAll(`master/getbranchadmins?${new URLSearchParams(params)}`)
-  //     .then((response) => {
-  //       const admindata: any = [];
-  //       if (response.data && response.data.code === 200) {
-  //         if (response.data.data) {
-  //           setAssignBranchAdminFullData(response.data.data);
-  //           response.data.data.map((data: any, i: number)=>{
-  //             admindata.push({
-  //               id:data.id,
-  //               employeeName:data.employeeName,
-  //             });
-  //           });
-  //           setAssignBranchAdminName(admindata);
-  //         }
-  //       }
-  //     })
-  //     .catch((e) => { });
-  // };
-
-  const FetchReportingEmployee = () => {
+  const FetchAssignBranchAdmin = () => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getreportingemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getbranchadmins?${new URLSearchParams(params)}`)
       .then((response) => {
+        const admindata: any = [];
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setReportingFullData(response.data.data);
-           
+            setAssignBranchAdminFullData(response.data.data);
+            response.data.data.map((data: any, i: number) => {
+              admindata.push({
+                id: data.id,
+                employeeName: data.employeeName,
+              });
+            });
+            setAssignBranchAdminName(admindata);
           }
         }
       })
       .catch((e) => { });
   };
 
+
   //#endregion
 
   useEffect(() => {
+    console.log('start');
     GetUserID();
-    //FetchBasicDetails();
     FetchBranchType();
     FetchAssignBranchAdmin();
     FetchStates();
-    FetchCities();
   }, []);
 
   //#region OnChange Function
@@ -409,23 +312,23 @@ const BranchEditScreen = ({ route, navigation }) => {
   const InsertData = () => {
     const params = {
       CompanyID: comanyNameId,
-        BranchTypeID: branchTypeID,
-        BranchAdminID: assignBranchAdminID,
-        ContactPersonNo: contactPersonNo,
-        GSTNo: gstNo,
-        PANNo: panno,
-        Display: display,
-        LocationName:branchLocationName,
-        Address: address,
-        StateID: statesID,
-        CityID: cityID,
-        Pincode: pincode,
-        AccountNo: accountNo,
-        BankName: bankName,
-        BankBranchName: bankBranchName,
-        IFSCCode: ifscCode,
-        AddedByUserID:UserID,
-        RegionalOfficeID:1
+      BranchTypeID: branchTypeID,
+      BranchAdminID: assignBranchAdminID,
+      ContactPersonNo: contactPersonNo,
+      GSTNo: gstNo,
+      PANNo: panno,
+      Display: display,
+      LocationName: branchLocationName,
+      Address: address,
+      StateID: statesID,
+      CityID: cityID,
+      Pincode: pincode,
+      AccountNo: accountNo,
+      BankName: bankName,
+      BankBranchName: bankBranchName,
+      IFSCCode: ifscCode,
+      AddedByUserID: UserID,
+      RegionalOfficeID: 1
     };
     Provider.create("master/insertuserbranch", params)
       .then((response) => {
@@ -453,16 +356,16 @@ const BranchEditScreen = ({ route, navigation }) => {
     if (isValid) {
       if (companyName.length === 0) {
         setComapnyNameInvalid(true);
-        isvalid=false;
-      } 
+        isvalid = false;
+      }
       if (branchType.length === 0) {
         setBranchTypeInvalid(true);
-        isvalid=false;
-      } 
+        isvalid = false;
+      }
       if (assignBranchAdmin.length === 0) {
         setAssignBranchAdminInvalid(true);
-        isvalid=false;
-      } 
+        isvalid = false;
+      }
       const objState = statesFullData.find((el) => {
         return el.stateName && el.stateName === stateName;
       });
@@ -489,7 +392,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company Name" value={CompanyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
@@ -581,6 +484,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     }
   };
   const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
+
   const [routes] = React.useState([
     { key: "branchDetails", title: "Branch Details" },
     { key: "locationDetails", title: "Location Details" },
