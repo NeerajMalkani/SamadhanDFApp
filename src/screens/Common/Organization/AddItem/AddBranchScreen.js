@@ -27,14 +27,22 @@ const BranchEditScreen = ({ route, navigation }) => {
   //#region Input Variables
 
   const [companyName, setComapnyName] = useState("");
+  const [comanyNameId,setComapnyNameId] =useState<Number>(0);
   const [companyNameInvalid, setComapnyNameInvalid] = useState("");
   const companyNameRef = useRef({});
 
+
+  const [branchTypeFullData, setBranchTypeFullData] = React.useState([]);
   const [branchType, setBranchType] = useState("");
-  const [branchTypeInvalid, setBranchTypeInvalid] = useState("");
+  const [branchTypeID, setBranchTypeID] = React.useState([]);
+  const [branchTypeName, setBranchTypeName] = React.useState("");
+  const [errorBT, setBTError] = React.useState(false);
   const branchTypeRef = useRef({});
 
+  const [assignBranchAdminFullData, setAssignBranchAdminFullData] = React.useState([]);
   const [assignBranchAdmin, setAssignBranchAdmin] = useState("");
+  const [assignBranchAdminID, setAssignBranchAdminID] = React.useState([]);
+  const [assignBranchAdminName, setAssignBranchAdminName] = React.useState("");
   const [assignBranchAdminInvalid, setAssignBranchAdminInvalid] = useState("");
   const assignBranchAdminRef = useRef({});
 
@@ -101,20 +109,22 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+
+  const [arnID, setArnID] = useState(0);
   //#endregion
 
-   //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      FetchBasicDetails();
-      setBloodGroupFullData(BloodGroup);
+      FetchCompanyName();
+
     }
   };
 
   let tempStateName = "";
-  const FetchBasicDetails = () => {
+  const FetchData = () => {
     let params = {
       ID: route.params.data.id,
     };
@@ -202,11 +212,11 @@ const BranchEditScreen = ({ route, navigation }) => {
     let params = {
       ID: stateData
         ? stateData.find((el) => {
-            return el.stateName === stateName;
-          }).id
+          return el.stateName === stateName;
+        }).id
         : statesFullData.find((el) => {
-            return el.stateName === stateName;
-          }).id,
+          return el.stateName === stateName;
+        }).id,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -218,7 +228,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchStates = () => {
@@ -235,70 +245,64 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchBranch = () => {
+  const FetchBranchType = () => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getuserbranchtypes?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setBranchFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+            setBranchTypeFullData(response.data.data);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchDepartments = () => {
+  const FetchCompanyName = () => {
     let params = {
-      UserType: 3,
-      UserId: userID,
+      ActivityId: arnID,
     };
-    Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getusercompany?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setDepartmentFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+            setCompanyName(response.data.data.companyName);
+            setPANNo(response.data.data.pan);
+            setComapnyNameId(response.data.data.companyID)
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchDesignations = () => {
-    let params = {
-      UserType: 3,
-      UserId: userID,
-    };
-    Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            setDesignationFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
-          }
-        }
-      })
-      .catch((e) => {});
-  };
+
+  // const FetchAssignBranchAdmin = () => {
+  //   let params = {
+  //     AddedByUserID: userID,
+  //   };
+  //   Provider.getAll(`master/getbranchadmins?${new URLSearchParams(params)}`)
+  //     .then((response) => {
+  //       const admindata: any = [];
+  //       if (response.data && response.data.code === 200) {
+  //         if (response.data.data) {
+  //           setAssignBranchAdminFullData(response.data.data);
+  //           response.data.data.map((data: any, i: number)=>{
+  //             admindata.push({
+  //               id:data.id,
+  //               employeeName:data.employeeName,
+  //             });
+  //           });
+  //           setAssignBranchAdminName(admindata);
+  //         }
+  //       }
+  //     })
+  //     .catch((e) => { });
+  // };
 
   const FetchReportingEmployee = () => {
     let params = {
@@ -309,15 +313,11 @@ const BranchEditScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setReportingFullData(response.data.data);
-            // const states = response.data.data.map((data) => data.stateName);
-            // setStatesData(states);
-            // if (tempStateName !== "") {
-            //   FetchCities(tempStateName, response.data.data);
-            // }
+           
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   //#endregion
@@ -325,6 +325,10 @@ const BranchEditScreen = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
     //FetchBasicDetails();
+    FetchBranchType();
+    FetchAssignBranchAdmin();
+    FetchStates();
+    FetchCities();
   }, []);
 
   //#region OnChange Function
@@ -340,6 +344,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const onAssignBranchChanged = (text) => {
     setAssignBranchAdmin(text);
     setAssignBranchAdminInvalid(false);
+    setContactPersonNo(contactPersonNo);
   };
   const onContactPersonNoChanged = (text) => {
     setContactPersonNo(text);
@@ -399,33 +404,30 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
-   //#region Functions
+  //#region Functions
+
   const InsertData = () => {
     const params = {
-      UserID: userID,
-      CompanyName: companyName,
-      CompanyLogo: logoImage ? logoImage : "",
-      ContactPersonName: contactName,
-      ContactPersonNumber: contactNumber,
-      AddressLine: address,
-      LocationName: location,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      GSTNumber: gstNumber,
-      PAN: panNumber,
-      AccountNumber: accountNo ? accountNo : 0,
-      BankName: bankName,
-      BranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      CompanyNamePrefix: cnPrefix,
-      QuotationBudgetPrefix: qbnPrefix,
-      EmployeeCodePrefix: ecPrefix,
-      PurchaseOrderPrefix: poPrefix,
-      SalesOrderPrefix: soPrefix,
-      ShowBrand: false,
+      CompanyID: comanyNameId,
+        BranchTypeID: branchTypeID,
+        BranchAdminID: assignBranchAdminID,
+        ContactPersonNo: contactPersonNo,
+        GSTNo: gstNo,
+        PANNo: panno,
+        Display: display,
+        LocationName:branchLocationName,
+        Address: address,
+        StateID: statesID,
+        CityID: cityID,
+        Pincode: pincode,
+        AccountNo: accountNo,
+        BankName: bankName,
+        BankBranchName: bankBranchName,
+        IFSCCode: ifscCode,
+        AddedByUserID:UserID,
+        RegionalOfficeID:1
     };
-    Provider.create("master/insertuserprofile", params)
+    Provider.create("master/insertuserbranch", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
@@ -449,9 +451,33 @@ const BranchEditScreen = ({ route, navigation }) => {
     const isValid = true;
 
     if (isValid) {
-      if (filePath !== null) {
-        uploadFile();
-      } else {
+      if (companyName.length === 0) {
+        setComapnyNameInvalid(true);
+        isvalid=false;
+      } 
+      if (branchType.length === 0) {
+        setBranchTypeInvalid(true);
+        isvalid=false;
+      } 
+      if (assignBranchAdmin.length === 0) {
+        setAssignBranchAdminInvalid(true);
+        isvalid=false;
+      } 
+      const objState = statesFullData.find((el) => {
+        return el.stateName && el.stateName === stateName;
+      });
+      if (stateName.length === 0 || !objState) {
+        setSNError(true);
+        isValid = false;
+      }
+      const objCity = cityFullData.find((el) => {
+        return el.cityName && el.cityName === cityName;
+      });
+      if (cityName.length === 0 || !objCity) {
+        setCNError(true);
+        isValid = false;
+      }
+      else {
         InsertData();
       }
     }
@@ -560,7 +586,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     { key: "locationDetails", title: "Location Details" },
     { key: "bankDetails", title: "Bank Details" },
   ]);
- //#endregion 
+  //#endregion 
 
   return (
     isFocused && (

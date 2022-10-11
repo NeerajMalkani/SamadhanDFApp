@@ -76,7 +76,7 @@ const BranchListScreen = ({ navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuseremployeelist?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getuserbranches?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -135,6 +135,7 @@ const BranchListScreen = ({ navigation }) => {
 
   useEffect(() => {
     GetUserID();
+    
   }, []);
 
   const onChangeSearch = (query) => {
@@ -149,19 +150,21 @@ const BranchListScreen = ({ navigation }) => {
       );
     }
   };
+ 
 
   const AddCallback = () => {
-    navigation.navigate("AddBranchScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("BranchEditScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap, buttonType) => {
 
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddBranchScreen", {
+    navigation.navigate("BranchEditScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
          id: data.item.id,
+       
       },
     });
     
@@ -180,7 +183,7 @@ const BranchListScreen = ({ navigation }) => {
             setLocationType(data.item.locationType);
             setLocationName(data.item.locationName);
             setBranchAdmin(data.item.branchAdmin);
-            setAddress(data.item.address);321
+            setAddress(data.item.address);
             setGSTNo(data.item.gstNo);
             setPANNo(data.item.panNo);
             setDispaly(data.item.display);
@@ -195,22 +198,6 @@ const BranchListScreen = ({ navigation }) => {
     );
   };
 
-  const OnOTPSend = () => {
-    let isValid = true;
-    
-    if (otp.trim() === "") {
-      setOtpError(true);
-      isValid = false;
-    }
-    if (isValid) {
-      SubmitVerify();
-    }
-  };
-
-  const onOTPChange = (text) => {
-    setOTP(text);
-    setOtpError(false);
-  };
  //#endregion 
  
   return (
