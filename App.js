@@ -312,7 +312,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
-
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
             </Drawer.Navigator>
           );
       case 5:
@@ -325,6 +325,7 @@ export default function App() {
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
       <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
+      <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
     </Drawer.Navigator>
   );
 }

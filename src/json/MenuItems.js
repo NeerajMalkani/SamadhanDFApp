@@ -325,7 +325,7 @@ export const MenuItemsDealer = [
         title: "Add Branch",
         type: "accordian",
         index: 41,
-        //navigation: "AddBranchScreen",
+        navigation: "BranchListScreen",
       },
       {
         title: "Add Designation",
