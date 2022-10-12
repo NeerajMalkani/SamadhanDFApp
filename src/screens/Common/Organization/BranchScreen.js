@@ -21,11 +21,11 @@ let userID = 0;
 
 const BranchListScreen = ({ navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
- // const [otp, setOTP] = React.useState("");
+  // const [otp, setOTP] = React.useState("");
   //const [otpError, setOtpError] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -38,7 +38,7 @@ const BranchListScreen = ({ navigation }) => {
   const [employeeName, setEmployeeName] = React.useState("");
 
   const [locationType, setLocationType] = React.useState("");
-  
+
   const [locationName, setLocationName] = React.useState("");
   const [branchAdmin, setBranchAdmin] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -51,9 +51,9 @@ const BranchListScreen = ({ navigation }) => {
 
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -107,7 +107,7 @@ const BranchListScreen = ({ navigation }) => {
 
   useEffect(() => {
     GetUserID();
-    
+
   }, []);
 
   const onChangeSearch = (query) => {
@@ -122,35 +122,53 @@ const BranchListScreen = ({ navigation }) => {
       );
     }
   };
- 
+
 
   const AddCallback = () => {
     navigation.navigate("BranchEditScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap, buttonType) => {
-
     rowMap[data.item.key].closeRow();
     navigation.navigate("BranchEditScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
-         id: data.item.id,
-       
+        id: data.item.id,
+        accountNo: data.item.accountNo,
+        address: data.item.address,
+        bankBranchName: data.item.bankBranchName,
+        bankName: data.item.bankName,
+        branchAdmin: data.item.branchAdmin,
+        branchAdminID: data.item.branchAdminID,
+        branchType: data.item.branchType,
+        branchTypeID: data.item.branchTypeID,
+        cityID: data.item.cityID,
+        contactPersonNo: data.item.contactPersonNo,
+        display: data.item.display,
+        gstNo: data.item.gstNo,
+        id: data.item.id,
+        ifscCode: data.item.ifscCode,
+        key: data.item.key,
+        locationName: data.item.locationName,
+        panNo: data.item.panNo,
+        pincode: data.item.pincode,
+        regionalOfficeID: data.item.regionalOfficeID,
+        stateID: data.item.stateID,
       },
     });
-    
+
   };
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
         <List.Item
-           title={data.item.locationName}
+          title={data.item.locationName}
           titleStyle={{ fontSize: 18 }}
           description={`Location Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType}\nAdmin: ${NullOrEmpty(data.item.branchAdmin) ? "" : data.item.branchAdmin} `}
           onPress={() => {
-            
+
             refRBSheet.current.open();
             setLocationName(data.item.locationName);
             setLocationType(data.item.branchType);
@@ -164,13 +182,13 @@ const BranchListScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="office-building" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
-        
+
       </View>
     );
   };
 
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="My Branch List" />
@@ -216,7 +234,7 @@ const BranchListScreen = ({ navigation }) => {
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{locationName}</Title>
-          <ScrollView style={{marginBottom: 64}}>
+          <ScrollView style={{ marginBottom: 64 }}>
             <List.Item title="Location Type" description={locationType} />
             <List.Item title="Branch Admin" description={branchAdmin} />
             <List.Item title="Address" description={address} />
@@ -226,7 +244,7 @@ const BranchListScreen = ({ navigation }) => {
           </ScrollView>
         </View>
       </RBSheet>
-       
+
     </View>
   );
 };

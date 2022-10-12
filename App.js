@@ -293,7 +293,6 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchEditScreen" component={BranchEditScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} /> */}
             </Drawer.Navigator>
@@ -525,6 +524,7 @@ return (
             <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{headerTitle:"Search Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight },headerTintColor: theme.colors.textLight }}/>
             <Stack.Screen name="AddEmployee" component={AddEmployee} options={{headerTitle:"Add Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
+            <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{headerTitle:"Add Branch",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
           </Stack.Navigator>
         </NavigationContainer>
       )}

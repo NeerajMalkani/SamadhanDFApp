@@ -28,27 +28,35 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
 
-
   const [branchTypeFullData, setBranchTypeFullData] = React.useState([]);
-  const [branchType, setBranchType] = useState("");
+  const [branchTypeName, setBranchTypeName] = useState("");
+  const [branchTypeData, setBranchTypeData] = useState([]);
   const [branchTypeID, setBranchTypeID] = React.useState([]);
-  const [branchTypeName, setBranchTypeName] = React.useState("");
   const [branchTypeInvalid, setBranchTypeInvalid] = useState("");
   const [errorBT, setBTError] = React.useState(false);
   const branchTypeRef = useRef({});
 
+  const [regionalOfficeFullData, setRegionalOfficeFullData] = React.useState([]);
+  const [regionalOfficeName, setRegionalOfficeName] = useState("");
+  const [regionalOfficeData, setRegionalOfficeData] = useState([]);
+  const [regionalOfficeID, setRegionalOfficeID] = React.useState([]);
+  const [regionalOfficeInvalid, setRegionalOfficeInvalid] = useState("");
+  const [errorRO, setROError] = React.useState(false);
+  const regionalOfficeRef = useRef({});
+
   const [assignBranchAdminFullData, setAssignBranchAdminFullData] = React.useState([]);
-  const [assignBranchAdmin, setAssignBranchAdmin] = useState("");
-  const [assignBranchAdminID, setAssignBranchAdminID] = React.useState([]);
   const [assignBranchAdminName, setAssignBranchAdminName] = React.useState("");
+  const [assignBranchAdminID, setAssignBranchAdminID] = React.useState([]);
+  const [assignBranchAdminData, setAssignBranchAdminData] = useState([]);
   const [assignBranchAdminInvalid, setAssignBranchAdminInvalid] = useState("");
+  const [errorBA, setBAError] = React.useState(false);
   const assignBranchAdminRef = useRef({});
 
   const [contactPersonNo, setContactPersonNo] = useState("");
   const [contactPersonNoInvalid, setContactPersonNoInvalid] = useState("");
   const contactPersonNoRef = useRef({});
 
-  const [gstNo, setGSTNo] = useState("");
+  const [gstNo, setGSTNo] = useState(route.params.type === "edit" ? route.params.data.gstNo.toString() : "");
   const [gstNoInvalid, setGSTNoInvalid] = useState("");
   const gstNoRef = useRef({});
 
@@ -61,11 +69,11 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [displayInvalid, setDisplayInvalid] = useState("");
   const displayRef = useRef({});
 
-  const [branchLocationName, setBranchLocationName] = useState("");
+  const [branchLocationName, setBranchLocationName] = useState(route.params.type === "edit" ? route.params.data.locationName.toString() : "");
   const [branchLocationNameInvalid, setBranchLocationNameInvalid] = useState("");
   const branchLocationNameRef = useRef({});
 
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(route.params.type === "edit" ? route.params.data.address.toString() : "");
   const [addressInvalid, setAddressInvalid] = useState("");
   const addressRef = useRef({});
 
@@ -83,23 +91,23 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [errorCN, setCNError] = React.useState(false);
   const cityRef = useRef({});
 
-  const [pincode, setPincode] = useState("");
+  const [pincode, setPincode] = useState(route.params.type === "edit" ? route.params.data.pincode.toString() : "");
   const [pincodeInvalid, setPincodeInvalid] = useState("");
   const pincodeRef = useRef({});
 
-  const [accountNo, setAccountNo] = useState("");
+  const [accountNo, setAccountNo] = useState(route.params.type === "edit" ? route.params.data.accountNo.toString() : "");
   const [accountNoInvalid, setAccountNoInvalid] = useState("");
   const accountNoRef = useRef({});
 
-  const [bankName, setBankName] = useState("");
+  const [bankName, setBankName] = useState(route.params.type === "edit" ? route.params.data.bankName.toString() : "");
   const [bankNameInvalid, setBankNameInvalid] = useState("");
   const bankNameRef = useRef({});
 
-  const [bankBranchName, setBankBranchName] = useState("");
+  const [bankBranchName, setBankBranchName] = useState(route.params.type === "edit" ? route.params.data.bankBranchName.toString() : "");
   const [bankBranchNameInvalid, setBankBranchNameInvalid] = useState("");
   const bankBranchNameRef = useRef({});
 
-  const [ifscCode, setIfscCode] = useState("");
+  const [ifscCode, setIfscCode] = useState(route.params.type === "edit" ? route.params.data.ifscCode.toString() : "");
   const [ifscCodeInvalid, setIfscCodeInvalid] = useState("");
   const ifscCodeRef = useRef({});
 
@@ -109,6 +117,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
+  const [showRO, setShowRO] = React.useState(false);
   const [arnID, setArnID] = useState(0);
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
   //#endregion
@@ -118,15 +127,31 @@ const BranchEditScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      FetchCompanyName();
+      FetchActvityRoles();
       setIsLoading(false);
     }
   };
 
-
   let tempStateName = "";
 
   //#region Dropdown Functions
+
+  const FetchCompanyName = () => {
+    let params = {
+      AddedByUserID: userID,
+    };
+    Provider.getAll(`master/getusercompany?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setCompanyName(response.data.data[0].companyName);
+            setPANNo(response.data.data[0].pan);
+            setCompanyNameId(response.data.data[0].companyID)
+          }
+        }
+      })
+      .catch((e) => { });
+  };
 
   const FetchCities = (stateName, stateData) => {
     let params = {
@@ -145,6 +170,16 @@ const BranchEditScreen = ({ route, navigation }) => {
             setCityFullData(response.data.data);
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
+
+            if (route.params.type === "edit" && route.params.data.cityID > 0) {
+
+              setCityID(route.params.data.cityID);
+
+              let s = response.data.data.filter((el: any) => {
+                return el.id === route.params.data.cityID;
+              });
+              setCityName(s[0].cityName);
+            }
           }
         }
       })
@@ -159,6 +194,17 @@ const BranchEditScreen = ({ route, navigation }) => {
             setStatesFullData(response.data.data);
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
+            if (route.params.type === "edit" && route.params.data.stateID > 0) {
+
+              setStatesID(route.params.data.stateID);
+
+              let s = response.data.data.filter((el: any) => {
+                return el.id === route.params.data.stateID;
+              });
+              setStateName(s[0].stateName);
+              FetchCities(s[0].stateName, response.data.data);
+            }
+
             if (tempStateName !== "") {
               FetchCities(tempStateName, response.data.data);
             }
@@ -168,32 +214,67 @@ const BranchEditScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchBranchType = () => {
+  const FetchActvityRoles = () => {
+    Provider.getAll("master/getmainactivities")
+      .then((response: any) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el: any) => {
+              return el.display && el.activityRoleName === "Contractor";
+            });
+            setArnID(response.data.data[0].id);
+          }
+          FetchCompanyName();
+          FetchAssignBranchAdmin();
+          FetchStates();
+          FetchBranchType(response.data.data[0].id);
+          FetchRegionalOffice();
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchBranchType = (arnID) => {
     let params = {
-      AddedByUserID: userID,
+      ActivityID: arnID,
     };
     Provider.getAll(`master/getuserbranchtypes?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            const bt = response.data.data.map((data) => data.branchType);
+            setBranchTypeData(bt);
             setBranchTypeFullData(response.data.data);
+
+            if (route.params.type === "edit" && route.params.data.branchTypeID > 0) {
+              setBranchTypeID(route.params.data.branchTypeID);
+              setBranchTypeName(route.params.data.branchType);
+            }
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchCompanyName = () => {
+  const FetchRegionalOffice = () => {
     let params = {
-      ActivityId: arnID,
+      AddedByUserID: userID,
     };
-    Provider.getAll(`master/getusercompany?${new URLSearchParams(params)}`)
+    Provider.getAll(`master/getbranchregionalofficelists?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setCompanyName(response.data.data.companyName);
-            setPANNo(response.data.data.pan);
-            setCompanyNameId(response.data.data.companyID)
+            const ro = response.data.data.map((data) => data.locationName);
+            setRegionalOfficeData(ro);
+            setRegionalOfficeFullData(response.data.data);
+            if (route.params.type === "edit" && route.params.data.regionalOfficeID > 0) {
+              setShowRO(true);
+              setRegionalOfficeID(route.params.data.cityID);
+              let s = response.data.data.filter((el: any) => {
+                return el.id === route.params.data.regionalOfficeID;
+              });
+              setRegionalOfficeName(s[0].locationName);
+            }
           }
         }
       })
@@ -202,22 +283,25 @@ const BranchEditScreen = ({ route, navigation }) => {
 
 
   const FetchAssignBranchAdmin = () => {
+
     let params = {
       AddedByUserID: userID,
     };
     Provider.getAll(`master/getbranchadmins?${new URLSearchParams(params)}`)
       .then((response) => {
-        const admindata: any = [];
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setAssignBranchAdminFullData(response.data.data);
-            response.data.data.map((data: any, i: number) => {
-              admindata.push({
-                id: data.id,
-                employeeName: data.employeeName,
+            const ba = response.data.data.map((data) => data.employeeName);
+            setAssignBranchAdminData(ba);
+            if (route.params.type === "edit" && route.params.data.branchAdminID > 0) {
+              setAssignBranchAdminID(route.params.data.branchAdminID);
+              let e = response.data.data.filter((el: any) => {
+                return el.id === route.params.data.branchAdminID;
               });
-            });
-            setAssignBranchAdminName(admindata);
+              setAssignBranchAdminName(e[0].employeeName);
+              setContactPersonNo(e[0].mobileNo);
+            }
           }
         }
       })
@@ -228,11 +312,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   //#endregion
 
   useEffect(() => {
-    console.log('start');
     GetUserID();
-    FetchBranchType();
-    FetchAssignBranchAdmin();
-    FetchStates();
   }, []);
 
   //#region OnChange Function
@@ -259,19 +339,61 @@ const BranchEditScreen = ({ route, navigation }) => {
     setPANNo(text);
     setPANNo(false);
   };
-  
+
   const onDispalyChanged = (selectedItem) => {
     setDisplay(selectedItem);
     setDisplayInvalid(false);
   };
+
   const onBranchLocationNameChanged = (text) => {
     setBranchLocationName(text);
-    setBranchLocationNameInvalid(false);
+    setBranchLocationNameInvalid("");
   };
+
   const onAddressChanged = (text) => {
     setAddress(text);
     setAddressInvalid(false);
   };
+
+  const onBranchTypeSelected = (selectedItem) => {
+    setBranchTypeName(selectedItem);
+    setBTError(false);
+
+    let bt = branchTypeFullData.filter((el: any) => {
+      return el.branchType === selectedItem;
+    });
+
+    setRegionalOfficeInvalid("");
+    setROError(false);
+
+    if (bt[0].id == 3) {
+      setShowRO(true);
+    }
+    else {
+      setShowRO(false);
+    }
+
+  };
+
+  const onRegionalOfficeSelected = (selectedItem) => {
+    setRegionalOfficeName(selectedItem);
+    setROError(false);
+    //cityRef.current.reset();
+    //setCityName("");
+    //FetchCities(selectedItem);
+  };
+
+  const onBranchAdminSelected = (selectedItem) => {
+    setAssignBranchAdminName(selectedItem);
+    setBAError(false);
+
+    let e = assignBranchAdminFullData.filter((el: any) => {
+      return el.employeeName === selectedItem;
+    });
+    setContactPersonNo(e[0].mobileNo);
+  };
+
+
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
     setSNError(false);
@@ -309,35 +431,109 @@ const BranchEditScreen = ({ route, navigation }) => {
   //#region Functions
 
   const InsertData = () => {
+
+    let roID = 0;
+    if (showRO) {
+      roID = regionalOfficeFullData.find((el) => {
+        return el.locationName && el.locationName === regionalOfficeName;
+      }).id;
+    }
+
     const params = {
-      CompanyID: comanyNameId,
-      BranchTypeID: branchTypeID,
-      BranchAdminID: assignBranchAdminID,
+      CompanyID: companyNameId,
+      BranchTypeID: branchTypeFullData.filter((el: any) => {
+        return el.branchType === branchTypeName;
+      })[0].id,
+      BranchAdminID: assignBranchAdminFullData.filter((el: any) => {
+        return el.employeeName === assignBranchAdminName;
+      })[0].id,
       ContactPersonNo: contactPersonNo,
       GSTNo: gstNo,
-      PANNo: panno,
-      Display: display,
+      PANNo: panNo,
+      Display: checked,
       LocationName: branchLocationName,
       Address: address,
-      StateID: statesID,
-      CityID: cityID,
-      Pincode: pincode,
+      StateID: statesFullData.find((el) => {
+        return el.stateName && el.stateName === stateName;
+      }).id,
+      CityID: cityFullData.find((el) => {
+        return el.cityName && el.cityName === cityName;
+      }).id,
+      Pincode: pincode == "" ? 0 : pincode,
       AccountNo: accountNo,
       BankName: bankName,
       BankBranchName: bankBranchName,
       IFSCCode: ifscCode,
-      AddedByUserID: UserID,
-      RegionalOfficeID: regionalOfficeID,
+      AddedByUserID: userID,
+      RegionalOfficeID: roID,
+
     };
     Provider.create("master/insertuserbranch", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          setSnackbarColor(theme.colors.success);
-          setSnackbarText("Data updated successfully");
-          setSnackbarVisible(true);
+          route.params.fetchData("add");
+          navigation.goBack();
         } else {
           setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
+          setSnackbarText(response.data.message);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
+  };
+
+  const UpdateData = () => {
+
+    let roID = 0;
+    if (showRO) {
+      roID = regionalOfficeFullData.find((el) => {
+        return el.locationName && el.locationName === regionalOfficeName;
+      }).id;
+    }
+
+    const params = {
+      CompanyID: companyNameId,
+      BranchTypeID: branchTypeFullData.filter((el: any) => {
+        return el.branchType === branchTypeName;
+      })[0].id,
+      BranchAdminID: assignBranchAdminFullData.filter((el: any) => {
+        return el.employeeName === assignBranchAdminName;
+      })[0].id,
+      ContactPersonNo: contactPersonNo,
+      GSTNo: gstNo,
+      PANNo: panNo,
+      Display: checked,
+      LocationName: branchLocationName,
+      Address: address,
+      StateID: statesFullData.find((el) => {
+        return el.stateName && el.stateName === stateName;
+      }).id,
+      CityID: cityFullData.find((el) => {
+        return el.cityName && el.cityName === cityName;
+      }).id,
+      Pincode: pincode == "" ? 0 : pincode,
+      AccountNo: accountNo,
+      BankName: bankName,
+      BankBranchName: bankBranchName,
+      IFSCCode: ifscCode,
+      AddedByUserID: userID,
+      RegionalOfficeID: roID,
+      ID: route.params.data.id
+
+    };
+    Provider.create("master/updateuserbranch", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("update");
+          navigation.goBack();
+        } else {
+          setSnackbarColor(theme.colors.error);
+          setSnackbarText(response.data.message);
           setSnackbarVisible(true);
         }
       })
@@ -353,18 +549,24 @@ const BranchEditScreen = ({ route, navigation }) => {
     const isValid = true;
 
     if (isValid) {
-      if (companyName.length === 0) {
+      if (companyName.trim() === "") {
         setComapnyNameInvalid(true);
-        isvalid = false;
+        isValid = false;
       }
-      if (branchType.length === 0) {
+      if (branchTypeName.length === 0) {
         setBranchTypeInvalid(true);
-        isvalid = false;
+        isValid = false;
       }
-      if (assignBranchAdmin.length === 0) {
-        setAssignBranchAdminInvalid(true);
-        isvalid = false;
+      if (showRO && regionalOfficeName.length === 0) {
+        setRegionalOfficeInvalid(true);
+        isValid = false;
       }
+
+      if (branchLocationName.trim() === "") {
+        setBranchLocationNameInvalid(true);
+        isValid = false;
+      }
+
       const objState = statesFullData.find((el) => {
         return el.stateName && el.stateName === stateName;
       });
@@ -379,8 +581,14 @@ const BranchEditScreen = ({ route, navigation }) => {
         setCNError(true);
         isValid = false;
       }
-      else {
-        InsertData();
+      if (isValid) {
+
+        if (route.params.type === "edit") {
+          UpdateData();
+        }
+        else {
+          InsertData();
+        }
       }
     }
   };
@@ -391,25 +599,18 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false}  style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
 
-              <TextInput ref={branchTypeRef} mode="flat" dense label="Branch Type" value={branchType} returnKeyType="next"   onSubmitEditing={() => branchTypeRef.current.focus()} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "white" }} error={branchTypeInvalid} />
-              <HelperText type="error" visible={branchTypeInvalid}>
-                {communication.InvalidBranchType}
-              </HelperText>
+              <Dropdown label="Branch Type" data={branchTypeData} onSelected={onBranchTypeSelected} isError={errorBT} selectedItem={branchTypeName} />
+              {showRO &&
+                <Dropdown label="Select Regional Office" data={regionalOfficeData} onSelected={onRegionalOfficeSelected} isError={errorRO} selectedItem={regionalOfficeName} />
+              }
+              <Dropdown label="Assign Branch Admin" data={assignBranchAdminData} onSelected={onBranchAdminSelected} isError={errorBA} selectedItem={assignBranchAdminName} />
 
-              <TextInput ref={assignBranchAdminRef} mode="flat" dense  label="Assign Branch Admin" value={assignBranchAdmin} returnKeyType="next" onSubmitEditing={() => assignBranchAdminRef.current.focus()} onChangeText={onAssignBranchChanged} style={{ backgroundColor: "white" }} error={assignBranchAdminInvalid} />
-              <HelperText type="error" visible={assignBranchAdminInvalid}>
-                {communication.InvalidAssignBranchAdmin}
-              </HelperText>
-
-              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()}   style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
-              <HelperText type="error" visible={contactPersonNoInvalid}>
-                {communication.InvalidContactPersonNo}
-              </HelperText>
+              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()} style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
 
               <TextInput ref={gstNoRef} mode="flat" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
               <HelperText type="error" visible={gstNoInvalid}>
@@ -437,15 +638,12 @@ const BranchEditScreen = ({ route, navigation }) => {
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
 
-            <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={setBranchLocationNameInvalid} />
+              <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={branchLocationNameInvalid} />
               <HelperText type="error" visible={setBranchLocationNameInvalid}>
                 {communication.InvalidBranchLocationName}
               </HelperText>
 
-              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={setAddressInvalid} />
-              <HelperText type="error" visible={setAddressInvalid}>
-                {communication.InvalidAddress}
-              </HelperText>
+              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
 
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
 
@@ -460,21 +658,13 @@ const BranchEditScreen = ({ route, navigation }) => {
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
               <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
-              {/* <HelperText type="error" visible={accountNoInvalid}>
-                {communication.InvalidAccountNo}
-              </HelperText> */}
+
               <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
-              {/* <HelperText type="error" visible={bankNameInvalid}>
-                {communication.InvalidActivityName}
-              </HelperText> */}
+
               <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
-              {/* <HelperText type="error" visible={bankBranchNameInvalid}>
-                {communication.InvalidActivityName}
-              </HelperText> */}
+
               <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
-              {/* <HelperText type="error" visible={ifscCodeInvalid}>
-                {communication.InvalidActivityName}
-              </HelperText> */}
+
             </View>
           </ScrollView>
         );
@@ -482,7 +672,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return null;
     }
   };
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
+  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 3 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
 
   const [routes] = React.useState([
     { key: "branchDetails", title: "Branch Details" },
@@ -494,7 +684,6 @@ const BranchEditScreen = ({ route, navigation }) => {
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
-        <Header navigation={navigation} title="Add Branch" isDrawer="false" />
         {isLoading ? (
           <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
