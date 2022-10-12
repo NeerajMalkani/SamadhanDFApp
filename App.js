@@ -103,6 +103,7 @@ import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BlurView} from "@react-native-community/blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -408,33 +409,37 @@ export default function App() {
 const BottomTabs = () =>{
   const screenOptions = ({route}) =>({
     tabBarStyle:{
-      height:60
-    }
+      height:70
+    },
+    tabBarItemStyle:{
+      marginVertical:13,
+      marginHorizontal:23
+    },
+    tabBarButton:(props)=><TouchableOpacity {...props}/>
   })
   return(
     <Tabs.Navigator screenOptions={screenOptions}>
         <Tabs.Screen 
           name="Dashboard" 
           component={DrawerNavigator} 
-          
           options={{
             headerShown:false,
             tabBarActiveTintColor:"white" ,
-            tabBarInactiveTintColor:"green",
+            tabBarInactiveTintColor:"gray",
             // tabBarLabelPosition:"below-icon",
-            tabBarIcon: ({focused}) => <Icon name='view-dashboard' color="green" size={focused ? 30 : 25} /> ,
+            tabBarIcon: ({focused}) => <Icon name='view-dashboard' color={focused?"#45916B":"gray"} size={focused ? 30 : 25} /> ,
             //tabBarButton:(props)=><TouchableOpacity {...props}/>
             // tabBarLabelStyle:({focused})=><Text>{focused? one : two}</Text>
           }}
         />
         <Tabs.Screen 
-          name="PocketDiary" 
+          name="Pocket Diary" 
           component={PocketDiaryScreen} 
           options={{
             headerShown:false,
             tabBarActiveTintColor:"white" ,
-            tabBarInactiveTintColor:"green",
-            tabBarIcon:({focused})=><Icon name="calculator-variant" color="green" size={focused ? 30 : 24} /> ,
+            tabBarInactiveTintColor:"gray",
+            tabBarIcon:({focused})=><Icon name="calculator-variant" color={focused?"#45916B":"gray"} size={focused ? 30 : 24} /> ,
             //tabBarButton:(props)=><TouchableOpacity {...props}/>
           }}
         />
@@ -444,19 +449,19 @@ const BottomTabs = () =>{
           options={{
             headerShown:false,
             tabBarActiveTintColor:"white" ,
-            tabBarInactiveTintColor:"green",
-            tabBarIcon:({focused})=><Icon name="comment-alert" color="green" size={focused ? 30 : 25}/>,
+            tabBarInactiveTintColor:"gray",
+            tabBarIcon:({focused})=><Icon name="comment-alert" color={focused?"#45916B":"gray"} size={focused ? 30 : 25}/>,
             //tabBarButton:(props)=><TouchableOpacity {...props}/>
           }}
         />
         <Tabs.Screen 
-          name="UserProfile" 
+          name="User Profile" 
           component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile :  parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen :parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} 
           options={{
             headerShown:false,
             tabBarActiveTintColor:"white" ,
-            tabBarInactiveTintColor:"green",
-            tabBarIcon:({focused})=><Icon name="account" color="green" size={focused ? 30 : 24} />,
+            tabBarInactiveTintColor:"gray",
+            tabBarIcon:({focused})=><Icon name="account" color={focused?"#45916B":"gray"} size={focused ? 30 : 24} />,
             // tabBarButton:(props)=><TouchableOpacity {...props}/>
           }}
         />
@@ -519,6 +524,7 @@ return (
             <Stack.Screen name="AddClient" component={AddClient} options={{headerTitle:"Add Client" ,headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{headerTitle:"Search Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight },headerTintColor: theme.colors.textLight }}/>
             <Stack.Screen name="AddEmployee" component={AddEmployee} options={{headerTitle:"Add Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
+            <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
           </Stack.Navigator>
         </NavigationContainer>
       )}

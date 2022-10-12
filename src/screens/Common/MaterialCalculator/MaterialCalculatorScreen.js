@@ -379,6 +379,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             });
             setTotal(totalTemp);
             arrProductData[1](tempArr);
+
+            
             setBrandsData([]);
             setBrandsFullData([]);
             CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
