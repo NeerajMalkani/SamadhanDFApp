@@ -786,18 +786,7 @@ const ArchitectRateCardSetup = ({ navigation }) => {
             ) : listData[0].length > 0 ? (
                 
                 <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-                    <View>
-                        <List.Section>
-                            <List.Accordion
-                                title="Search Filter"
-                                // expanded={expanded}
-                                onPress={handlePress}
-                            >
-                                <List.Item title={ListOne} style={[Styles.borderBottom1]} />
-                            </List.Accordion>
-                        </List.Section>
-                        
-                    </View>
+              
                     <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
                     <SwipeListView
                         previewDuration={1000}

@@ -104,6 +104,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BlurView} from "@react-native-community/blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
+import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -526,6 +528,7 @@ return (
             <Stack.Screen name="AddEmployee" component={AddEmployee} options={{headerTitle:"Add Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
             <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{headerTitle:"Add Branch",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
+            <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} />
           </Stack.Navigator>
         </NavigationContainer>
       )}

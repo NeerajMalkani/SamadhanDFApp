@@ -8,6 +8,7 @@ import { communication } from "../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Provider from "../../../api/Provider";
 import { theme } from "../../../theme/apptheme";
+import {NullOrEmpty} from "../../../utils/validations";
 
 let s_ID = 0, c_ID = 0, p_ID = 0, u_ID = 0;
 let userID = 0;
@@ -202,6 +203,7 @@ const AddRateCard = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getproductunitbyid?${new URLSearchParams(params)}`)
       .then((response) => {
+     
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setUnitFullData(response.data.data);
@@ -366,7 +368,7 @@ const AddRateCard = ({ route, navigation }) => {
     let product = productsFullData.filter((el: any) => {
       return el.productName === productsName;
     });
-
+  
     if (unit[0].unitID == unitFullData[0].unitID) {
 
       setRUM(product[0].rateWithMaterials.toString());
