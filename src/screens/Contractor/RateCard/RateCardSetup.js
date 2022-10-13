@@ -21,8 +21,6 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let userID = 0;
 
 const RateCardSetup = ({ navigation }) => {
-   //#region Variables
-
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
@@ -58,9 +56,6 @@ const RateCardSetup = ({ navigation }) => {
   const [action, setAction] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
-
- //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -238,8 +233,6 @@ const RateCardSetup = ({ navigation }) => {
   };
 
 
- //#endregion 
- 
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Rate Card List" />

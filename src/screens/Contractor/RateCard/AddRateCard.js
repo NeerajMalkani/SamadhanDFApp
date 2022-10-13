@@ -12,93 +12,78 @@ import { theme } from "../../../theme/apptheme";
 let s_ID = 0, c_ID = 0, p_ID = 0, u_ID = 0;
 let userID = 0;
 const AddRateCard = ({ route, navigation }) => {
-  // const [statesData, setStatesData] = React.useState([]);
 
-  // const [stateName, setStateName] = React.useState("");
-  // const [errorSN, setSNError] = React.useState(false);
-  // const [cityName, setCityName] = React.useState("");
+  const [acivityName, setActivityName] = React.useState("Contractor");
 
-  // const [cityData, setCityData] = React.useState([]);
-  // const [cityID, setCityID] = React.useState([]);
-  // const [errorCN, setCNError] = React.useState(false);
-  // const cityRef = useRef({});
+  const [servicesFullData, setServicesFullData] = React.useState([]);
+  const [servicesData, setServicesData] = React.useState([]);
+  const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+  const [serviceID, setServicID] = React.useState(route.params.type === "edit" ? route.params.data.serviceID : 0);
+  const [errorSN, setSNError] = React.useState(false);
+  const servicesDDRef = useRef({});
 
-  // const [employeeName, setEmployeeName] = useState("");
-  // const [employeeNameInvalid, setEemployeeNameInvalid] = useState("");
-  // const employeeNameRef = useRef({});
- //#region Variables
-  const [serviceName, setServiceName] = useState("--Select--");
-  const [serviceNameID, setServiceNameID] = useState < number > (0);
-  const [serviceNameError, setServiceNameError] = useState("");
-  const [selectedServiceName, setSelectedServiceName] = useState("");
-  const [isServiceNameError, isSetServiceNameError] = useState(false);
-  const [serviceNameErrorText, setServiceNameErrorText] = useState("");
-  const [serviceNameFullData, setServiceNameFullData] = useState([]);
+  const [categoriesFullData, setCategoriesFullData] = React.useState([]);
+  const [categoriesData, setCategoriesData] = React.useState([]);
+  const [categoriesName, setCategoriesName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
+  const [categoryID, setCategoryID] = React.useState(route.params.type === "edit" ? route.params.data.categoryID : 0);
+  const [errorCN, setCNError] = React.useState(false);
+  const categoriesDDRef = useRef({});
 
-  const [category, setCategory] = useState("--Select--");
-  const [categoryID, setCategoryID] = useState < number > (0);
-  const [categoryError, setCategoryError] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [isCategoryError, isSetCategoryError] = useState(false);
-  const [categoryErrorText, setCategoryErrorText] = useState("");
-  const [categoryFullData, setCategoryFullData] = useState([]);
+  const [productsFullData, setProductsFullData] = React.useState([]);
+  const [productsData, setProductsData] = React.useState([]);
+  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName : "");
+  const [errorPN, setPNError] = React.useState(false);
+  const productsDDRef = useRef({});
 
-  const [hsn, setHSN] = React.useState("");
-  const [hsnErrorText, setHSNErrorText] = useState("");
-  const [isHsnError, isSetHSNError] = useState(false);
+  const [unitFullData, setUnitFullData] = React.useState([]);
+  const [unitsData, setUnitsData] = React.useState([]);
+  const [selectedUnitID, setSelectedUnitID] = React.useState(0);
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
+  const [errorUN, setUNError] = React.useState(false);
+  const unitDDRef = useRef({});
 
-  const [gstRate, setGstRate] = React.useState("");
-  const [gstRateErrorText, setGstRateErrorText] = useState("");
-  const [isGstRateError, isSetGstRateError] = useState(false);
+  const [hsnError, setHSNError] = React.useState(false);
+  const [hsn, setHSN] = React.useState(route.params.type === "edit" ? route.params.data.hsnsacCode : "");
 
-  const [serviceProductName, setServiceProductName] = useState("--Select--");
-  const [serviceProductNameID, setServiceProductNameID] = useState < number > (0);
-  const [serviceProductNameError, setServiceProductNameError] = useState("");
-  const [selectedServiceProductName, setSelectedServiceProductName] = useState("");
-  const [isServiceProductNameError, isSetServiceProductNameError] = useState(false);
-  const [serviceProductNameErrorText, setServiceProductNameErrorText] = useState("");
-  const [serviceProductNameFullData, setServiceProductNameFullData] = useState([]);
+  const [gstError, setGSTError] = React.useState(false);
+  const [gst, setGST] = React.useState("");
 
-  const [unitOfSales, setUnitOfSales] = useState("--Select--");
-  const [unitOfSalesID, setUnitOfSalesID] = useState < number > (0);
-  const [unitOfSalesError, setUnitOfSalesError] = useState("");
-  const [selectedUnitOfSales, setSelectedUnitOfSales] = useState("");
-  const [isUnitOfSalesError, isSetUnitOfSalesError] = useState(false);
-  const [unitOfSalesErrorText, setUnitOfSalesErrorText] = useState("");
-  const [unitOfSalesFullData, setUnitOfSalesFullData] = useState([]);
+  const [errorRUM, setErrorRUM] = React.useState(false);
+  const [rum, setRUM] = React.useState(route.params.type === "edit" ? route.params.data.rateWithMaterials : "");
+  const [rumht, setRUMHT] = React.useState("Materials + Labour cost");
 
-  const [materialRate, setMaterialRate] = React.useState("");
-  const [materialRateErrorText, setMaterialRateErrorText] = useState("");
-  const [isMaterialRateError, isSetMaterialRateError] = useState(false);
+  const [errorRUWM, setErrorRUWM] = React.useState(false);
+  const [ruwm, setRUWM] = React.useState(route.params.type === "edit" ? route.params.data.rateWithoutMaterials : "");
+  const [ruwmht, setRUWMHT] = React.useState("Only Labour cost");
 
-  const [alternativeRate, setAlternativeRate] = React.useState("");
-  const [alternativeRateErrorText, setAlternativeRateErrorText] = useState("");
-  const [isAlternativeRateError, isSetAlternativeRateError] = useState(false);
 
-  const [withoutMaterialRate, setWithoutMaterialRate] = React.useState("");
-  const [withoutMaterialRateErrorText, setWithoutMaterialRateErrorText] = useState("");
-  const [isWithoutMaterialRateError, isSetWithoutMaterialRateError] = useState(false);
+  const [arum, setARUM] = React.useState(route.params.type === "edit" ? route.params.data.altRateWithMaterials : "");
 
-  const [alternativeUnit, setAlternativeUnit] = React.useState("");
-  const [alternativeUnitErrorText, setAlternativeUnitErrorText] = useState("");
-  const [isAlternativeUnitError, isSetAlternativeUnitError] = useState(false);
+  const [aruwm, setARUWM] = React.useState(route.params.type === "edit" ? route.params.data.altRateWithoutMaterials : "");
 
-  const [shortSpecification, setShortSpecification] = React.useState("");
-  const [shortSpecificationErrorText, setShortSpecificationErrorText] = useState("");
-  const [isShortSpecificationError, isSetShortSpecificationError] = useState(false);
 
-  const [specificationSP, setSpecificationSP] = React.useState("");
-  const [specificationSPErrorText, setSpecificationSPErrorText] = useState("");
-  const [isSpecificationSPError, isSetSpecificationSPError] = useState(false);
+  const [errorAUOS, setErrorAUOS] = React.useState(false);
+  const [auos, setAUOS] = React.useState("");
+
+  const [unitSelected, setUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
+  const [conversionUnitSelected, setConversionUnitSelected] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
+
+  const [errorSS, setErrorSS] = React.useState(false);
+  const [shortSpec, setShortSpec] = React.useState(route.params.type === "edit" ? route.params.data.shortSpecification : "");
+
+  const [errorS, setErrorS] = React.useState(false);
+  const [spec, setSpec] = React.useState(route.params.type === "edit" ? route.params.data.specification : "");
 
   const [display, setDisplay] = React.useState("Yes");
   const [arnID, setArnID] = useState(0);
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
- //#endregion 
-
- //#region Functions
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     GetUserID();
@@ -608,15 +593,6 @@ const AddRateCard = ({ route, navigation }) => {
 
 
 
-  const onEmployeeNameChanged = (text) => {
-    setEmployeeName(text);
-    setEemployeeNameInvalid(false);
-  };
-  const [text, onChangeText] = React.useState("Useless Text");
-  const [number, onChangeNumber] = React.useState(null);
-
-  //#endregion  
-  
   const design = (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" >
