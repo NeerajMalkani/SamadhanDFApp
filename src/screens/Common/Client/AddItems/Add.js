@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView, Text, Touchable,Animated,Easing,StyleSheet,LayoutAnimation } from "react-native";
+import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView, Text, Touchable, Animated, Easing, StyleSheet, LayoutAnimation } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, TextInput, Searchbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../../api/Provider";
@@ -15,7 +15,7 @@ import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../../componen
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 let userID = 0;
 const Search = ({ route, navigation }) => {
-    let addedBy = false;
+  let addedBy = false;
   if (route.params.data) {
     addedBy = !route.params.data.addedBy;
   }
@@ -85,7 +85,7 @@ const Search = ({ route, navigation }) => {
     },
     {
       title: "Client",
-      isChecked: route.params.type === "edit" && route.params.data.serviceType && route.params.data.serviceType.toString().includes("3") ? true : false,
+      isChecked: route.params.type === "edit" && route.params.data.serviceType && route.params.data.serviceType.toString().includes("3") ? true : route.params.type === "client" ? true : false,
     },
   ]);
   const [serviceTypeInvalid, setServiceTypeInvalid] = useState(false);
@@ -232,6 +232,7 @@ const Search = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    console.log('inser begin');
     let arrServiceTypeRole = [];
     serviceTypeRoles.map((k, i) => {
       if (k.isChecked) {
@@ -258,8 +259,9 @@ const Search = ({ route, navigation }) => {
     };
     Provider.create("contractorquotationestimation/insertclient", params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
+          route.params.fetchData("client");
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.ExistsError);
@@ -270,6 +272,7 @@ const Search = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        console.log('message printing');
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -306,7 +309,7 @@ const Search = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
-  
+
   const UpdateData = () => {
     let arrServiceTypeRole = [];
     serviceTypeRoles.map((k, i) => {
@@ -353,6 +356,7 @@ const Search = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
+    console.log("start");
     let isValid = true;
     if (companyName.length === 0) {
       setCompanyNameInvalid(true);
@@ -388,9 +392,10 @@ const Search = ({ route, navigation }) => {
       setServiceTypeInvalid(true);
       isValid = false;
     }
-
+    console.log(isValid);
     if (isValid) {
-      if (route.params.type === "edit") {
+      if (route.params.type === "edit" || route.params.type === "client") {
+        console.log('insert start');
         InsertData();
       }
     }
@@ -480,92 +485,92 @@ const Search = ({ route, navigation }) => {
   /*list accordian*/
   const [expanded, setExpanded] = React.useState(true);
 
-  const handlePress = () => {return setExpanded(!expanded),LayoutAnimation.easeInEaseOut()};
+  const handlePress = () => { return setExpanded(!expanded), LayoutAnimation.easeInEaseOut() };
 
-    const design = (
-      <>
-      <View style={[Styles.flex1,Styles.marginBottom16]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
-      <View style={[Styles.paddingHorizontal16,Styles.paddingTop16]}>
+  const design = (
+    <>
+      <View style={[Styles.flex1, Styles.marginBottom16]}>
+        <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
+          <View style={[Styles.paddingHorizontal16, Styles.paddingTop16]}>
             <TextInput ref={companyNameRef} disabled={addedBy} mode="flat" dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
             <HelperText type="error" visible={companyNameInvalid}>
-                {communication.InvalidCompanyName}
+              {communication.InvalidCompanyName}
             </HelperText>
             <TextInput ref={contactNameRef} disabled={addedBy} mode="flat" dense label="Contact Person" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
             <HelperText type="error" visible={contactNameInvalid}>
-                {communication.InvalidContactPerson}
+              {communication.InvalidContactPerson}
             </HelperText>
             <TextInput ref={contactNumberRef} disabled={addedBy} mode="flat" dense keyboardType="number-pad" label="Contact Mobile No." value={contactNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
             <HelperText type="error" visible={contactNumberInvalid}>
-                {communication.InvalidContactMobileNo}
+              {communication.InvalidContactMobileNo}
             </HelperText>
             <TextInput ref={addressRef} disabled={addedBy} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
             <HelperText type="error" visible={addressInvalid}>
-                {communication.InvalidAddress}
+              {communication.InvalidAddress}
             </HelperText>
             <Dropdown label="State" data={statesData} forceDisable={addedBy} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
             <HelperText type="error" visible={errorSN}>
-                {communication.InvalidState}
+              {communication.InvalidState}
             </HelperText>
             <Dropdown label="City" data={cityData} forceDisable={addedBy} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
             <HelperText type="error" visible={errorCN}>
-                {communication.InvalidCity}
+              {communication.InvalidCity}
             </HelperText>
             <TextInput ref={pincodenRef} mode="flat" disabled={addedBy} dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
             <HelperText type="error" visible={pincodeInvalid}>
-                {communication.InvalidPincode}
+              {communication.InvalidPincode}
             </HelperText>
             <TextInput ref={gstNumberRef} mode="flat" disabled={addedBy} dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
             <HelperText type="error" visible={gstNumberInvalid}>
-                {communication.InvalidGSTNo}
+              {communication.InvalidGSTNo}
             </HelperText>
             <TextInput ref={panNumberRef} mode="flat" disabled={addedBy} dense label="PAN No." value={panNumber} returnKeyType="done" onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
             <HelperText type="error" visible={panNumberInvalid}>
-                {communication.InvalidPANNo}
+              {communication.InvalidPANNo}
             </HelperText>
             <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Service Provider Roles</Subheading>
             <View style={[Styles.flexRow]}>
-                {serviceTypeRoles.map((k, i) => {
+              {serviceTypeRoles.map((k, i) => {
                 return (
-                    <View key={i} style={[Styles.flex1]}>
+                  <View key={i} style={[Styles.flex1]}>
                     <Checkbox.Item
-                        label={k.title}
-                        position="leading"
-                        style={[Styles.paddingHorizontal0]}
-                        labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
-                        color={theme.colors.primary}
-                        status={k.isChecked ? "checked" : "unchecked"}
-                        onPress={() => {
+                      label={k.title}
+                      position="leading"
+                      style={[Styles.paddingHorizontal0]}
+                      labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
+                      color={theme.colors.primary}
+                      status={k.isChecked ? "checked" : "unchecked"}
+                      onPress={() => {
                         let temp = serviceTypeRoles.map((u) => {
-                            if (k.title === u.title) {
+                          if (k.title === u.title) {
                             return { ...u, isChecked: !u.isChecked };
-                            }
-                            return u;
+                          }
+                          return u;
                         });
                         setServiceTypeInvalid(false);
                         setServiceTypeRoles(temp);
-                        }}
+                      }}
                     />
-                    </View>
+                  </View>
 
                 );
 
-                })}
+              })}
 
             </View>
             <View style={{ width: 160 }}>
-                <Checkbox.Item label="Display" position="leading" style={[Styles.paddingHorizontal0]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} color={theme.colors.primary} status={checked ? "checked" : "unchecked"} onPress={() => setChecked(!checked)} />
+              <Checkbox.Item label="Display" position="leading" style={[Styles.paddingHorizontal0]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} color={theme.colors.primary} status={checked ? "checked" : "unchecked"} onPress={() => setChecked(!checked)} />
             </View>
             <View>
-                <TouchableOpacity onPress={ValidateData} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
+              <TouchableOpacity onPress={ValidateData} style={[Styles.marginTop32, Styles.primaryBgColor, Styles.padding10, Styles.flexAlignCenter]}>
                 <Text style={[Styles.fontSize14, Styles.textColorWhite]}>Save</Text>
-                </TouchableOpacity>
+              </TouchableOpacity>
             </View>
-        </View>   
+          </View>
         </ScrollView>
       </View>
-      </>
-    )
-    return design;
-  }
-  export default Search;
+    </>
+  )
+  return design;
+}
+export default Search;

@@ -12,7 +12,7 @@ import { communication } from "../../../utils/communication";
 
 let userID = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
@@ -37,9 +37,9 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -158,7 +158,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchEstimationData = (userDesignEstimationID, from) => {
@@ -173,7 +173,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID, labourCost) => {
@@ -217,8 +217,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 fetchData: route.params.fetchData,
                 clientID: route.params.isContractor
                   ? clientsFullData.find((el) => {
-                      return el.companyName === clientName;
-                    }).id
+                    return el.companyName === clientName;
+                  }).id
                   : 0,
               });
             }
@@ -313,8 +313,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
@@ -351,7 +351,10 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 <Button
                   mode="contained"
                   onPress={() => {
-                    navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchClients });
+                    navigation.navigate("AddClient", {
+                      type: "client",
+                      fetchData: FetchClients
+                    });
                   }}
                 >
                   Create New
