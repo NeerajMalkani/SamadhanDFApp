@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, Dimensions, Image, View, useWindowDimensions } from "react-native";
-import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
+import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors  } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -10,9 +10,13 @@ import { communication } from "../../../utils/communication";
 import AddMaterialSetupProducts from "../../Admin/ServiceCatalogue/AddItems/AddMaterialSetupProducts";
 import { AWSImagePath } from "../../../utils/paths";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import styles from "react-native-inset-shadow/src/styles";
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
- //#region Variables
+
+
+
+  //#region Variables
   const arrProductData = React.useState([]);
 
   const [activityFullData, setActivityFullData] = React.useState([]);
@@ -52,7 +56,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? (((parseInt(route.params.data.lengthFeet.toString()) * 12 + parseInt(route.params.data.lengthInches.toString())) * (parseInt(route.params.data.widthFeet.toString()) * 12 + parseInt(route.params.data.widthInches.toString()))) / 144).toFixed(4) : "1.0000");
 
   const [totalArea, setTotalArea] = React.useState("");
-  const [totalAreaInvalid, setTotalAreaInvalid] = React.useState(false);
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -71,13 +74,21 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const LengthRoute = () => (
     <>
-      <View style={[Styles.height250,Styles.border1,Styles.padding16,Styles.borderBottomRadius4]} >
-      <Subheading style={[Styles.marginTop16]}>Length</Subheading>
+      <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
+        <View style={[Styles.flexAlignSelfStart]}>
+          <IconButton
+            icon="gesture-swipe-left"
+            color={theme.colors.textfield}
+            size={22}
+          />
+        </View>
+        <View style={Styles.paddingHorizontal16}>
+          <Subheading>Length</Subheading>
 
           <View style={[Styles.flexRow, Styles.flexAlignCenter,]}>
             <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
@@ -100,8 +111,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             </View>
             <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
           </View>
-         
-         
+        </View>
+
+
       </View>
 
     </>
@@ -109,19 +121,23 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const TotalRoute = () => (
     <>
-      <View style={[Styles.height250,Styles.border1,Styles.padding16,Styles.borderBottomRadius4 ]} >
-      <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
+      <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
+        <View style={[Styles.flexAlignSelfEnd]}>
+          <IconButton
+            icon="gesture-swipe-right"
+            color={theme.colors.textfield}
+            size={22}
+            
+          />
+        </View>
+        <View style={Styles.paddingHorizontal16}>
+          <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-            <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done"
-              onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} error={totalAreaInvalid} />
-            <HelperText type="error" visible={totalAreaInvalid}>
-              {communication.InvalidTotalArea}
-            </HelperText>
+            <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea}
+              returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]}
+            />
           </View>
-
-
-          
-         
+        </View>
       </View>
     </>
   );
@@ -129,9 +145,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const renderTabBar = props => (
     <TabBar
       {...props}
-      indicatorStyle={{ backgroundColor: theme.multicolors.yellow }}
+
+      indicatorStyle={{ backgroundColor: '#FFF89A' }}
       style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]}
-      activeColor={{backgroundColor: theme.multicolors.red}}
+      activeColor={'#F5CB44'}
+      inactiveColor={'#F4F4F4'}
     />
   );
 
@@ -380,7 +398,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             setTotal(totalTemp);
             arrProductData[1](tempArr);
 
-            
+
             setBrandsData([]);
             setBrandsFullData([]);
             CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
@@ -687,7 +705,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const ResetTotalArea = () => {
     setTotalArea("");
-    setTotalAreaInvalid(false);
   }
 
   const ResetLengthWidth = () => {
@@ -790,8 +807,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
- //#endregion 
-
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
@@ -821,64 +837,23 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
           </View>
 
-          {/* 
-          <Subheading style={[Styles.marginTop16]}>Length</Subheading>
-
-          <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
-            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
-            </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
-            </View>
-            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-          </View>
-          <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-            <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-              <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
-            </View>
-            <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-            <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-              <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
-            </View>
-            <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-          </View>
-          <View style={[Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-            <Text style={[Styles.fontSize20, Styles.SpaceEvenly, Styles.flexRow, Styles.textSecondaryColor]}>- - - - - - - - - - - - - - - OR - - - - - - - - - - - - - - - </Text>
-          </View>
-
-          <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-            <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done"
-              onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} error={totalAreaInvalid} />
-            <HelperText type="error" visible={totalAreaInvalid}>
-              {communication.InvalidTotalArea}
-            </HelperText>
-          </View>
-
-
-          <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
-        
-            <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
-            View Materials
-          </Button> 
-          */}
-          <View style={[Styles.height325,Styles.marginTop16]}>
+          <View style={[Styles.height325, Styles.marginTop16]}>
             <TabView
               renderTabBar={renderTabBar}
               navigationState={{ index, routes }}
               renderScene={renderScene}
               onIndexChange={setIndex}
               initialLayout={{ width: layout.width }}
+
             />
-            
+
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false}  />
+          <TextInput mode="flat" label="Total (Sq.Ft.)"
+            onChangeText={onTotalSqFtChange} value={totalSqFt}
+            editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
-          </Button> 
+          </Button>
 
 
           <HelperText type="error" visible={errorPL}>
@@ -895,18 +870,27 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
                   </View>
-                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                    <Text style={[Styles.flex1]}>Select Product Brand</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
-                  </View>
+                  {k.brandName != "" ?
+                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                      <Text style={[Styles.flex1]}>Select Product Brand</Text>
+                      <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
+                    </View> : null
+
+                  }
+
+
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
                     <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
                   </View>
-                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                    <Text style={[Styles.flex1]}>Rate</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
-                  </View>
+                  {
+                    k.price ?
+                      <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                        <Text style={[Styles.flex1]}>Rate</Text>
+                        <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                      </View> : null
+                  }
+
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Amount</Text>
                     <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.amount} />

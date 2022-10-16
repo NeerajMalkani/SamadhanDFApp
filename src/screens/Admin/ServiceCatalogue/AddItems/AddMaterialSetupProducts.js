@@ -96,6 +96,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   };
 
   const FetchProductsFromCategory = (selectedItem) => {
+    console.log('start prod');
     let params = {
       ActivityID: activityFullData.find((el) => {
         return el.activityRoleName === "Dealer";
@@ -107,8 +108,10 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
         return el.categoryName === selectedItem;
       }).id,
     };
+    console.log(params);
     Provider.getAll(`master/getproductsbycategoryidforbrands?${new URLSearchParams(params)}`)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {

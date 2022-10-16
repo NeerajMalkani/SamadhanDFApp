@@ -103,8 +103,8 @@ import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BlurView} from "@react-native-community/blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
-import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
+// import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
+// import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -526,7 +526,7 @@ return (
             <Stack.Screen name="AddClient" component={AddClient} options={{headerTitle:"Add Client" ,headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{headerTitle:"Search Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight },headerTintColor: theme.colors.textLight }}/>
             <Stack.Screen name="AddEmployee" component={AddEmployee} options={{headerTitle:"Add Employee",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
-            <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
+            {/* <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/> */}
             <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{headerTitle:"Add Branch",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{headerTitle:"Add Send Rate card ",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
           </Stack.Navigator>

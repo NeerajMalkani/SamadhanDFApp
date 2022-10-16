@@ -184,6 +184,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               return el.categoryName === selectedItem;
             }).id,
     };
+
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -321,6 +322,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const onCategoriesNameSelected = (selectedItem) => {
+    console.log('start');
     setCategoriesName(selectedItem);
     if (route.params.type === "edit") {
       route.params.data.categoryID = categoriesFullData.find((el) => {
