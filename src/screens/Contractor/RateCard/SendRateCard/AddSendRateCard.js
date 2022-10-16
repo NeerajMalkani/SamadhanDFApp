@@ -35,7 +35,7 @@ const AddSendRateCard = ({ route, navigation }) => {
 
   const onClientNameSelected = (selectedItem) => {
     setClientName(selectedItem);
-    setANError(false);
+    setCNError(false);
   };
 
   const onUnitSaleSelected = (selectedItem) => {
@@ -84,7 +84,7 @@ const AddSendRateCard = ({ route, navigation }) => {
                 </View>
                 <Dropdown label="Unit Of Sales" data={unitSalesData} onSelected={onUnitSaleSelected} isError={errorUS} selectedItem={unitSalesName} />
               <HelperText type="error" visible={errorUS}>
-                {communication.InvalidClientName}
+                {communication.InvalidSalesUnit}
               </HelperText>
               <View >
             <Checkbox.Item
