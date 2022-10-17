@@ -13,6 +13,9 @@ import DesignApprovedTab from "./DesignApprovedTab";
 import DesignRejectedTab from "./DesignRejectedTab";
 import QuotationAddEditTab from "./QuotationAddEdit";
 import QuotationSendPendingList from "./QuotationSendPendingList";
+import QuotationApprovedList from "./QuotationApprovedList";
+import QuotationApprovePendingList from "./QuotationApprovePendingList";
+import QuotationRejected from "./QuotationRejected";
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
@@ -23,6 +26,9 @@ const QuotationWiseScreen = ({ navigation }) => {
   // const [imageGalleryData, setDesignGalleryData] = React.useState([]);
   const [quotattionAddEdit, setQuotationAddEdit] = React.useState([]);
   const [quotattionSendPending, setQuotationSendPending] = React.useState([]);
+  const [quotationApprovedList,setQutationApprovedList] = React.useState([]);
+  const [quotationApprovePendingList,setQutationApprovedPendingList] = React.useState([]);
+  const [quotationRejected,setQutationRejected] = React.useState([]);
   const pendingData = React.useState([]);
   const pendingSearchData = React.useState([]);
   const approvedData = React.useState([]);
@@ -124,19 +130,22 @@ const QuotationWiseScreen = ({ navigation }) => {
       case "quotationapprovependinglist":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignApprovedTab navigation={navigation} listData={approvedData} listSearchData={approvedSearchData} fetchData={FetchData} />
+             <QuotationApprovePendingList navigation={navigation} designGalleryData={quotationApprovePendingList} fetchData={FetchData} />
+            {/* <DesignApprovedTab navigation={navigation} listData={approvedData} listSearchData={approvedSearchData} fetchData={FetchData} /> */}
           </ScrollView>
         );
       case "quotationapprovedlist":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} />
+             <QuotationApprovedList navigation={navigation} designGalleryData={quotationApprovedList} fetchData={FetchData} />
+            {/* <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} /> */}
           </ScrollView>
         );
         case "rejected":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} />
+            <QuotationRejected navigation={navigation} designGalleryData={quotationRejected} fetchData={FetchData} />
+            {/* <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} /> */}
           </ScrollView>
         );
     }

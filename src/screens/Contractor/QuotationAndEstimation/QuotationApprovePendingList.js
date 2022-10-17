@@ -18,7 +18,7 @@ import { communication } from "../../../utils/communication";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const QuotationSendPendingList = ({ navigation }) => {
+const QuotationApprovePendingList = ({ navigation }) => {
 
    //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -36,7 +36,8 @@ const QuotationSendPendingList = ({ navigation }) => {
   const [clientContactNumber, setClientContactNumber] = React.useState("");
   const [quotationUnit,setQuotationUnit] = React.useState("");
   const [material,setMaterial]=React.useState("");
-  const [status,setStatus]=React.useState("");
+  const [clientStatus,setClientStatus]=React.useState("");
+  const [quotationStatus,setQuotationStatus]=React.useState("");
   const [action, setAction] = React.useState("");
   const refRBSheet = useRef();
 
@@ -98,9 +99,9 @@ const QuotationSendPendingList = ({ navigation }) => {
     }
   };
 
-  const AddCallback = () => {
-    navigation.navigate("AddSendRateCard", { type: "add", fetchData: FetchData });
-  };
+//   const AddCallback = () => {
+//     navigation.navigate("AddSendRateCard", { type: "add", fetchData: FetchData });
+//   };
 
   const RenderItems = (data) => {
     return (
@@ -118,7 +119,8 @@ const QuotationSendPendingList = ({ navigation }) => {
           setClientContactNumber(data.item.clientContactNumber);
           setQuotationUnit(data.item.quotationUnit);
           setMaterial(data.item.material);
-          setStatus(data.item.status);
+          setClientStatus(data.item.clientStatus);
+          setQuotationStatus(data.item.quotationStatus);
           setAction(data.item.action);
 
         }}
@@ -142,6 +144,7 @@ const QuotationSendPendingList = ({ navigation }) => {
       },
     });
   };
+
  //#endregion 
  
   return (
@@ -177,6 +180,7 @@ const QuotationSendPendingList = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
+      {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} /> */}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
@@ -240,7 +244,8 @@ const QuotationSendPendingList = ({ navigation }) => {
             <List.Item title="Client Contact Number" description={clientContactNumber} />
             <List.Item title="Quotation Unit" description={quotationUnit} />
             <List.Item title="Material" description={material} />
-            <List.Item title="Status" description={status} />
+            <List.Item title="Client Status" description={clientStatus} />
+            <List.Item title="Quotation Status" description={quotationStatus} />
             <List.Item title="Action" description={action} />
           </ScrollView>
         </View>
@@ -250,4 +255,4 @@ const QuotationSendPendingList = ({ navigation }) => {
   );
 };
 
-export default QuotationSendPendingList;
+export default QuotationApprovePendingList;
