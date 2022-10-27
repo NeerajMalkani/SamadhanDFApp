@@ -17,6 +17,7 @@ import { communication } from "../../../../utils/communication";
 // import SearchNAdd from "../../../AddItems/SearchNAdd";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+let userID = 0;
 
 const SendRateCard = ({ navigation }) => {
 
@@ -35,7 +36,6 @@ const SendRateCard = ({ navigation }) => {
   const [unit,setUnit] = React.useState("");
   const [material,setMaterial]=React.useState("");
   const [status,setStatus]=React.useState("");
-  const [action, setAction] = React.useState("");
   const refRBSheet = useRef();
 
 
@@ -44,13 +44,26 @@ const SendRateCard = ({ navigation }) => {
 
  //#region Functions
 
+ const GetUserID = async () => {
+  const 
+  userData = await AsyncStorage.getItem("user");
+  if (userData !== null) {
+    userID = JSON.parse(userData).UserID;
+    FetchData("");
+  }
+};
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getactivityroles")
+    let params = {
+      AddedByUserID: userID
+    };
+
+    Provider.getAll(`master/getcontractorratecardsentlist?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -80,7 +93,7 @@ const SendRateCard = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {
@@ -106,16 +119,15 @@ const SendRateCard = ({ navigation }) => {
       <List.Item
         title={data.item.clientName}
         titleStyle={{ fontSize: 18 }}
-        description={`Client Number: ${NullOrEmpty(data.item.clientNumber) ? "" : data.item.clientNumber}\nUnit: ${NullOrEmpty(data.item.unit) ? "" : data.item.unit} `}
+        description={`Client Number: ${NullOrEmpty(data.item.contactNo) ? "" : data.item.contactNo}\nUnit: ${NullOrEmpty(data.item.unit) ? "" : data.item.unit} `}
         onPress={() => {
 
           refRBSheet.current.open(); 
           setClientName(data.item.clientName);
-          setClientNumber(data.item.clientNumber);
-          setUnit(data.item.selectedUnitName);
-          setMaterial(data.item.material);
-          setStatus(data.item.status);
-          setAction(data.item.action);
+          setClientNumber(data.item.contactNo);
+          setUnit(data.item.unit);
+          setMaterial(data.item.inclusiveMaterials ? "Yes": "No");
+          setStatus(data.item.sendStatus ? "Yes": "No");
 
         }}
         left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="cards" />}
@@ -133,8 +145,6 @@ const SendRateCard = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        display: data.item.display,
       },
     });
   };
@@ -160,7 +170,7 @@ const SendRateCard = ({ navigation }) => {
                 colors={[theme.colors.primary]}
                 refreshing={refreshing}
                 onRefresh={() => {
-                  FetchData();
+                  FetchData("");
                 }}
               />
             }
@@ -180,20 +190,17 @@ const SendRateCard = ({ navigation }) => {
         {snackbarText}
       </Snackbar>
 
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={380} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{clientName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <List.Item title="Client Name" description={clientName} />
             <List.Item title="Client Number" description={clientNumber} />
             <List.Item title="Unit" description={unit} />
             <List.Item title="Material" description={material} />
             <List.Item title="Status" description={status} />
-            <List.Item title="Action" description={action} />
           </ScrollView>
         </View>
       </RBSheet>
-
     </View>
   );
 };

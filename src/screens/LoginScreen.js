@@ -52,6 +52,7 @@ const LoginScreen = ({ route, navigation }) => {
   };
 
   const CheckLogin = () => {
+    console.log('check login');
     setIsButtonLoading(true);
     let params = {
       Username: username,
@@ -59,6 +60,7 @@ const LoginScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`registration/login?${new URLSearchParams(params)}`)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           const user = {
             UserID: response.data.data[0].userID,

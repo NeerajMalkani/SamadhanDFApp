@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, Dimensions, Image, View, useWindowDimensions } from "react-native";
-import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors  } from "react-native-paper";
+import { ScrollView, Dimensions, Image, View, useWindowDimensions, InteractionManager } from "react-native";
+import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -11,14 +11,17 @@ import AddMaterialSetupProducts from "../../Admin/ServiceCatalogue/AddItems/AddM
 import { AWSImagePath } from "../../../utils/paths";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import styles from "react-native-inset-shadow/src/styles";
+import { scrollTo } from "react-native-reanimated/lib/reanimated2/NativeMethods";
+
+
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
 
 
+  const scrollRef = useRef();
 
   //#region Variables
   const arrProductData = React.useState([]);
-
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -127,7 +130,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             icon="gesture-swipe-right"
             color={theme.colors.textfield}
             size={22}
-            
+
           />
         </View>
         <View style={Styles.paddingHorizontal16}>
@@ -404,6 +407,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
             FirstCalculationSqFt(totalSqFt, response.data.data);
             FetchBrandsFromProductIds(tempArr);
+            scrollRef.current?.scrollTo({
+              y: 0,
+              animated: true,
+            });
           }
         }
         else {
@@ -807,6 +814,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
+
+
   //#endregion 
 
   return (
@@ -854,7 +863,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
           </Button>
-
 
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
@@ -914,7 +922,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
         <View style={[Styles.flex1]}>
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView ref={scrollRef}
+            style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
             <View style={[Styles.flex1]}>
               <AddMaterialSetupProducts arrProductData={arrProductData} />
             </View>

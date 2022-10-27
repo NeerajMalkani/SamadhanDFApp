@@ -56,6 +56,7 @@
     "react-native-pager-view": "^5.4.24",
     "react-native-paper": "^4.12.2",
     "react-native-paper-dropdown": "^1.0.7",
+    "react-native-paper-grid": "^0.1.12",
     "react-native-paper-select": "^0.3.4",
     "react-native-radio-buttons-group": "^2.2.11",
     "react-native-raw-bottom-sheet": "^2.2.0",

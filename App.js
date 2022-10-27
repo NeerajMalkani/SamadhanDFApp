@@ -526,9 +526,9 @@ export default function App() {
               <Stack.Screen name="AddClient" component={AddClient} options={{ headerTitle: "Add Client", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{ headerTitle: "Search Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddEmployee" component={AddEmployee} options={{ headerTitle: "Add Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              {/* <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/> */}
-              <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{ headerTitle: "Add Branch", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{ headerTitle: "Add Send Rate card ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
+            <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{headerTitle:"Add Branch",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
+            <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{headerTitle:"Send Rate card ",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
             </Stack.Navigator>
           </NavigationContainer>
         )}
