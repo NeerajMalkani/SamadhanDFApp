@@ -337,18 +337,20 @@ const AddSendRateCard = ({ route, navigation }) => {
                 {communication.InvalidClientName}
               </HelperText>
             </View>
-            <View style={[Styles.width20per, Styles.flexAlignSelfCenter, Styles.flexJustifyEnd, Styles.marginStart8]}>
+            <View style={[Styles.width20per, Styles.flexAlignSelfCenter, Styles.flexJustifyEnd, Styles.marginStart16, Styles.marginBottom24]}>
+              {/* <Button icon={'account-multiple-plus'} style={[Styles.width48,Styles.textCenter]} mode="contained" /> */}
+              {/* <IconButton 
+              icon={'account-multiple-plus'}
+              mode="contained"
+              backgroundColor="#000"
+              
+              ></IconButton> */}
               <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]}
                 icon={'account-multiple-plus'}
                 size={35}
-                color="#198754"
-                onPress={() => {
-                  navigation.navigate("AddClient", {
-                    type: "client",
-                    fetchData: FetchCompanyName
-                  });
-                }}
-              ></IconButton>
+                color="#198754"></IconButton>
+
+
             </View>
           </View>
           <TextInput mode="flat" dense label="Client Name" value={cName} disabled></TextInput>
@@ -378,20 +380,13 @@ const AddSendRateCard = ({ route, navigation }) => {
               }}
             />
           </View>
-          {arrProductData[0].length > 0 &&
-            <View style={[Styles.width100per, Styles.marginBottom16]}>
-              <Text style={[Styles.fontSize12, Styles.marginBottom4, { color: '#D70040' }]}>
-                Note:- Once product added you can't change Inclusive Materials option. If you want to change the Inclusive Materials check box tick option, please remove all product and try again!
-              </Text>
-            </View>
-          }
-          <Button mode="contained" style={{ marginTop: 20 }} icon="plus" onPress={OpenProductDialog}>
+          <Button mode="contained" style={{ marginTop: 20 }} icon="plus">
             Add Product
           </Button>
         </View>
 
         <View style={[Styles.padding16]}>
-          <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2]}>
+          <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginBottom16]}>
             <Text style={[Styles.fontSize20, Styles.fontBold, Styles.marginBottom4, Styles.blueFontColor]}>Product Details</Text>
           </View>
         </View>
@@ -399,87 +394,44 @@ const AddSendRateCard = ({ route, navigation }) => {
         <View style={[Styles.padding16]}>
 
           {arrProductData[0].map((k, i) => {
-
             return (
               <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
-                  <IconButton
-                    icon="close"
-                    iconColor={theme.colors.text}
-                    size={20}
-                    onPress={() => {
-                      let arrProductsTemp = [...arrProductData[0]];
-                      arrProductsTemp.splice(arrProductsTemp.indexOf(k), 1);
-                      arrProductData[1](arrProductsTemp);
-                    }}
-                  />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Service Name</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.serviceName} />
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Category Name</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.categoryName} />
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                </View>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                  <Text style={[Styles.flex1]}>Product Name</Text>
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Unit</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.unit} />
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Rate</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.rate.toString()} />
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                </View>
+                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                  <Text style={[Styles.flex1]}>Action</Text>
+                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
               </View>
             );
           })}
         </View>
       </ScrollView>
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-        <Card.Content>
-          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading} >
-            {selectedID == 0 ? "Submit" : "Update"}
-          </Button>
-        </Card.Content>
-      </View>
+
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
-        <View style={[Styles.flex1]}>
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
-            <View style={[Styles.flex1]}>
-              <AddRateCardProducts unitSalesName={unitSalesName} inclusiveMaterial={checked} arrProductData={arrProductData} />
-            </View>
-          </ScrollView>
-          <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-            <Button
-              mode="contained"
-              onPress={() => {
-                if (arrProductData[0].length > 0) {
-                  setPLError(false);
-                }
-                refRBSheet.current.close();
-              }}
-            >
-              Done
-            </Button>
-          </View>
-        </View>
-      </RBSheet>
-      <Portal>
-        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-          <Dialog.Title>Confirmation</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>Do you confirm to change the Unit Of Sales? If OK, then your already added all products values automatically changed.</Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={updateProducts}>Ok</Button>
-            <Button onPress={resetProducts}>Cancel</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </View>
   );
 

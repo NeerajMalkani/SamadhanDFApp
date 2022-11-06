@@ -105,6 +105,18 @@ import { BlurView } from "@react-native-community/blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
+import CategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/CategoryName";
+import AddCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddCategoryName";
+import SubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/SubCategoryName";
+import AddSubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddSubCategoryName";
+import BudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/BudgetSetup";
+import AddBudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddBudgetSetup";
+import AddExpensesList from "./src/screens/GeneralUser/PocketDairy/AddExpensesList";
+import AddExpenses from "./src/screens/GeneralUser/PocketDairy/AddItems/AddExpenses";
+import AddSourceList from "./src/screens/GeneralUser/PocketDairy/AddSourceList";
+import AddSource from "./src/screens/GeneralUser/PocketDairy/AddItems/AddSource";
+// import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -279,6 +291,12 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryName" component={CategoryName} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SubCategoryName" component={SubCategoryName} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Inbox" component={Inbox} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
@@ -527,8 +545,19 @@ export default function App() {
               <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{ headerTitle: "Search Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddEmployee" component={AddEmployee} options={{ headerTitle: "Add Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="SendRateCard" component={SendRateCard} options={{headerShown:false}}/>
-            <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{headerTitle:"Add Branch",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
-            <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{headerTitle:"Send Rate card ",headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight}}/>
+              <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{ headerTitle: "Add Branch", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{ headerTitle: "Add Send Rate card ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="CategoryName" component={CategoryName} options={{ headerTitle: "Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddCategoryName" component={AddCategoryName} options={{ headerTitle: "Add Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="SubCategoryName" component={SubCategoryName} options={{ headerTitle: "Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddSubCategoryName" component={AddSubCategoryName} options={{ headerTitle: "Add Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="BudgetSetup" component={BudgetSetup} options={{ headerTitle: "Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddBudgetSetup" component={AddBudgetSetup} options={{ headerTitle: " Add Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddExpensesList" component={AddExpensesList} options={{ headerTitle: " Add Expenses List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddExpenses" component={AddExpenses} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddSourceList" component={AddSourceList} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddSource" component={AddSource} options={{ headerTitle: " Add Source ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              {/* <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
             </Stack.Navigator>
           </NavigationContainer>
         )}

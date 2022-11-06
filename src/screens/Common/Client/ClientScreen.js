@@ -110,6 +110,7 @@ const ClientScreen = ({ navigation }) => {
   // const AddCallback = () => {
   //   navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchData });
   // };
+
   const SearchClient = () => {
     navigation.navigate("SearchClient", { type: "add", fetchData: FetchData });
   };

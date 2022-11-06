@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Image, ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { Button, Dialog, Checkbox, HelperText, List, Portal, RadioButton, Searchbar, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
+import { Button, Dialog, Checkbox, IconButton,HelperText, List, Portal, RadioButton, Searchbar, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
@@ -208,14 +208,18 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                             </HelperText>
 
                         </View>
-                        <View style={[Styles.width20per, Styles.flexAlignSelfCenter, Styles.flexJustifyEnd, Styles.marginStart16]}>
-                            <Button icon={'account-multiple-plus'} style={[Styles.width48, Styles.textCenter]} mode="contained" />
+                        <View style={[Styles.width20per, Styles.flexAlignSelfCenter, Styles.flexJustifyEnd, Styles.marginStart16, Styles.marginBottom24]}>
+                            {/* <Button icon={'account-multiple-plus'} style={[Styles.width48, Styles.textCenter]} mode="contained" /> */}
                             {/* <IconButton 
               icon={'account-multiple-plus'}
               mode="contained"
               backgroundColor="#000"
               
               ></IconButton> */}
+                <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]}
+                icon={'account-multiple-plus'}
+                size={35}
+                color="#198754"></IconButton>
                         </View>
                     </View>
 

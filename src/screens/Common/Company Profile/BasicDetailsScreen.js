@@ -216,6 +216,7 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     setCompanyName(text);
     setCompanyNameInvalid(false);
   };
+  
   const onContactNameChanged = (text) => {
     setContactName(text);
     setContactNameInvalid(false);

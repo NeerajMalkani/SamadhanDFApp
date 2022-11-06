@@ -195,6 +195,57 @@ export const MenuItemsGeneralUser = [
     ],
   },
   {
+    title: "Pocket Dairy",
+    icon: "timetable",
+    type: "accordian",
+    index: 1,
+    roleID: 2,
+    items: [
+      {
+        title: "Setting",
+        type: "accordian",
+        index: 10,
+        navigation: "Demo",
+      },
+      {
+        title: "CategoryName",
+        type: "accordian",
+        index: 11,
+        navigation: "CategoryName",
+      },
+      {
+        title: "SubCategoryName",
+        type: "accordian",
+        index: 11,
+        navigation: "SubCategoryName",
+      },
+      {
+        title: "BudgetSetup",
+        type: "accordian",
+        index: 11,
+        navigation: "BudgetSetup",
+      },
+      {
+        title: "AddExpensesList",
+        type: "accordian",
+        index: 11,
+        navigation: "AddExpensesList",
+      },
+      {
+        title: "AddSourceList",
+        type: "accordian",
+        index: 11,
+        navigation: "AddSourceList",
+      },
+      {
+        title: "Inbox",
+        type: "accordian",
+        index: 11,
+        navigation: "Inbox",
+      },
+    ],
+  },
+  {
     title: "Demo",
     icon: "timetable",
     type: "accordian",
