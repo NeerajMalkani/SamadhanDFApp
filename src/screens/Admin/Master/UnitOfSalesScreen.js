@@ -31,8 +31,20 @@ const UnitOfSalesScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getunitofsales")
+    
+    // Provider.getAll("master/getunitofsales")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        unit_category_refno: 'all',
+      },
+    };
+    Provider.createDF(
+      'apiappadmin/spawu7S4urax/tYjD/unitcategoryrefnocheck/',
+      params
+    )
       .then((response) => {
+        // console.log(response.data.data)
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -71,7 +83,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.unit1Name.toString().toLowerCase().includes(query.toLowerCase()) || el.unit2Name.toString().toLowerCase().includes(query.toLowerCase());
+          return el.unit_name_text.toString().toLowerCase().includes(query.toLowerCase()) || el.unit2Name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -80,7 +92,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.displayUnit} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="scale" />} />
+        <List.Item title={data.item.unit_name_text} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="scale" />} />
       </View>
     );
   };
@@ -89,18 +101,26 @@ const UnitOfSalesScreen = ({ navigation }) => {
     navigation.navigate("AddUnitOfSalesScreen", { type: "add", fetchData: FetchData });
   };
 
-  const EditCallback = (data, rowMap) => {
+  const EditCallback = (data, rowMap)=> {
+    // console.log(data.item)
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddUnitOfSalesScreen", {
       type: "edit",
       fetchData: FetchData,
+      // data: {
+      //   // id: data.item.id,
+      //   // unit1Name: data.item.unit1Name,
+      //   // unit2Name: data.item.unit2Name,
+      //   // unit1ID: data.item.unit1ID,
+      //   // unit2ID: data.item.unit2ID,
+      //   // display: data.item.display,
+        
+      // },
       data: {
-        id: data.item.id,
-        unit1Name: data.item.unit1Name,
-        unit2Name: data.item.unit2Name,
-        unit1ID: data.item.unit1ID,
-        unit2ID: data.item.unit2ID,
-        display: data.item.display,
+        id:data.item.unit_category_refno,
+        unit_name_text: data.item.unit_name,
+        convert_unit_name: data.item.convert_unit_name,
+        view_status: data.item.view_status,
       },
     });
   };

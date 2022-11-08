@@ -16,7 +16,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LinearGradient from 'react-native-linear-gradient';
 import CreateSCCards from "../components/SCCards";
-import FadingSlides from 'react-native-fading-slides';
+// import FadingSlides from 'react-native-fading-slides';
 import { Touchable, ImageBackground } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import InsetShadow from "react-native-inset-shadow";

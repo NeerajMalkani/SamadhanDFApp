@@ -15,7 +15,6 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
   const [conversion, setConversion] = React.useState(route.params.type === "edit" ? route.params.data.unit2Name : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
@@ -34,8 +33,18 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    Provider.create("master/insertunitofsales", { Unit1Name: name, Unit2Name: conversion, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/unitnamecreate/", { 
+      // Unit1Name: name, Unit2Name: conversion, Display: checked 
+      data:{
+        Sess_UserRefno: "2",
+        unit_name: name,
+        convert_unit_name: conversion,
+        view_status: checked ? 1 : 0 ,
+      }
+    }
+    )
       .then((response) => {
+        console.log(response.data)
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -48,15 +57,27 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-    Provider.create("master/updateunitofsales", { Unit1ID: parseInt(route.params.data.unit1ID), Unit2ID: parseInt(route.params.data.unit2ID), Unit1Name: name, Unit2Name: conversion, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/unitnameupdate/", 
+    // { Unit1ID: parseInt(route.params.data.unit1ID), Unit2ID: parseInt(route.params.data.unit2ID), Unit1Name: name, Unit2Name: conversion, Display: checked }
+    {
+      data:{
+        "Sess_UserRefno": "2",
+        "unit_category_refno": route.params.data.id,
+        "unit_name": name,
+        "convert_unit_name": conversion,
+        "view_status": checked ? 1 : 0,
+      }
+    }
+    )
       .then((response) => {
+        console.log(response.data)
         if (response.data && (response.data.code === 200 || response.data.code === 204)) {
           route.params.fetchData("update");
           navigation.goBack();
