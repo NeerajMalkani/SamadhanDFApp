@@ -7,24 +7,34 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddServicesScreen = ({ route, navigation }) => {
-  
+
   //#region Variables
   const [servicesError, setServicesError] = React.useState(false);
-  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.service_name : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status == "1" ? true : false : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const onServicesChanged = (text) => {
     setServices(text);
     setServicesError(false);
   };
 
   const InsertServices = () => {
-    Provider.create("master/insertservices", { ServiceName: services, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicenamecreate/", {
+      // ServiceName: services,
+      // Display: checked 
+       data: {
+        Sess_UserRefno: "2",
+        service_name: services,
+        production_unit: "1",
+        view_status: checked ? 1 : 0
+      }
+
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -45,7 +55,20 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const UpdateServices = () => {
-    Provider.create("master/updateservices", { ID: route.params.data.id, ServiceName: services, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicenameupdate/", { 
+      // ID: route.params.data.service_refno, 
+      // ServiceName: services, 
+      // Display: checked 
+
+      data: {
+        Sess_UserRefno: "2",
+        service_refno: route.params.data.service_refno,
+        service_name: services,
+        production_unit: "1",
+        view_status: checked ? 1 : 0
+      }
+
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -79,8 +102,8 @@ const AddServicesScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

@@ -44,7 +44,7 @@ const LoginScreen = ({ route, navigation }) => {
     }
   };
 
-  StoreUserData = async (user) => {
+  const StoreUserData = async (user) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack"));
@@ -55,18 +55,73 @@ const LoginScreen = ({ route, navigation }) => {
     console.log('check login');
     setIsButtonLoading(true);
     let params = {
-      Username: username,
-      Password: password,
+      // Username: username,
+      // Password: password,
+      data: {
+        uname: username,
+        auth: password,
+      }
     };
-    Provider.getAll(`registration/login?${new URLSearchParams(params)}`)
+    Provider.createDF("apicommon/spawu7S4urax/tYjD/logincheck/", params)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          // const user = {
+          //   UserID: response.data.data[0].userID,
+          //   FullName: response.data.data[0].fullName,
+          //   RoleID: response.data.data[0].roleID,
+          //   RoleName: response.data.data[0].roleName,
+          // };
+          
+          // StoreUserData(user, navigation);
+          GetUserDetails(response.data.data.user_refno);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const GetUserDetails = (user_refno) => {
+    console.log('check login');
+    setIsButtonLoading(true);
+    let params = {
+      // Username: username,
+      // Password: password,
+      data: {
+        user_refno: user_refno
+      }
+    };
+    Provider.createDF("apicommon/spawu7S4urax/tYjD/userrefnocheck/", params)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
           const user = {
-            UserID: response.data.data[0].userID,
-            FullName: response.data.data[0].fullName,
-            RoleID: response.data.data[0].roleID,
-            RoleName: response.data.data[0].roleName,
+            UserID: user_refno,
+            FullName: response.data.data.Sess_FName,
+            RoleID: response.data.data.Sess_group_refno,
+            RoleName: response.data.data.Sess_Username,
+            Sess_FName:response.data.data.Sess_FName,
+            Sess_MobileNo:response.data.data.Sess_MobileNo,
+            Sess_Username:response.data.data.Sess_Username,
+            Sess_role_refno:response.data.data.Sess_role_refno,
+            Sess_group_refno:response.data.data.Sess_group_refno,
+            Sess_designation_refno:response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno:response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1:response.data.data.Sess_group_refno_extra_1,
+            Sess_User_All_GroupRefnos:response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno:response.data.data.Sess_branch_refno,
+            Sess_company_refno:response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno:response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno:response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno:response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list:response.data.data.Sess_menu_refno_list
           };
           
           StoreUserData(user, navigation);

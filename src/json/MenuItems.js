@@ -4,7 +4,7 @@ export const MenuItemsAdmin = [
     icon: "diamond-stone",
     type: "accordian",
     index: 1,
-    roleID: 1,
+    roleID: 2,
     items: [
       {
         title: "Activity",
@@ -73,7 +73,7 @@ export const MenuItemsAdmin = [
     icon: "account-group-outline",
     type: "accordian",
     index: 2,
-    roleID: 1,
+    roleID: 2,
     items: [
       {
         title: "Pending",
@@ -100,7 +100,7 @@ export const MenuItemsAdmin = [
     icon: "tag-outline",
     type: "accordian",
     index: 3,
-    roleID: 1,
+    roleID: 2,
     items: [
       {
         title: "Work Floor",
@@ -139,7 +139,7 @@ export const MenuItemsAdmin = [
     icon: "format-list-bulleted",
     type: "accordian",
     index: 4,
-    roleID: 1,
+    roleID: 2,
     items: [
       {
         title: "General Enquiry",

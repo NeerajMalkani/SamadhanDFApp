@@ -31,7 +31,14 @@ const ServicesScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getservices")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        service_refno: "all"
+      }
+    };
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicerefnocheck/", params)
+    //Provider.getAll("master/getservices")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -71,7 +78,7 @@ const ServicesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.serviceName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.service_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -80,7 +87,7 @@ const ServicesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.serviceName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="cog" />} />
+        <List.Item title={data.item.service_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="cog" />} />
       </View>
     );
   };
@@ -95,9 +102,9 @@ const ServicesScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        serviceName: data.item.serviceName,
-        display: data.item.display,
+        service_refno: data.item.service_refno,
+        service_name: data.item.service_name,
+        view_status: data.item.view_status,
       },
     });
   };

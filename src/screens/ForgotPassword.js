@@ -8,7 +8,7 @@ import { communication } from "../utils/communication";
 import { ValidateMobile } from "../utils/validations";
 
 const ForgotPassword = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
 
@@ -31,9 +31,9 @@ const ForgotPassword = ({ navigation }) => {
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
 
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const onMobileNumberChanged = (text) => {
     setMobileNumber(text);
     setIsSnackbarVisible(false);
@@ -107,14 +107,84 @@ const ForgotPassword = ({ navigation }) => {
     }
   };
 
-  const UpdateUser = () => {
+  const GETOTP = () => {
     setIsButtonLoading(true);
     const params = {
-      Username: mobileNumber,
-      Password: password,
-      OTP: parseInt(otp1 + otp2 + otp3 + otp4),
+      // Username: mobileNumber,
+      // Password: password,
+      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
+      data: {
+        Mobileno: mobileNumber
+      }
     };
-    Provider.create("registration/updateuserpassword", params)
+    Provider.create("apicommon/spawu7S4urax/tYjD/forgotmobilenocheck/", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          let otp = response.data.data.OTP_No;
+
+          setOTP1(otp.toString().substring(0, 1));
+          setOTP2(otp.toString().substring(1, 2));
+          setOTP3(otp.toString().substring(2, 3));
+          setOTP4(otp.toString().substring(3, 4));
+          setIsOTPInvalid(false);
+          setOTPButtonDisabled(true);
+          setIsSnackbarVisible(false);
+
+        } else {
+          setSnackbarText(communication.InvalidMobileNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const VerifyUser = () => {
+    setIsButtonLoading(true);
+    const params = {
+      // Username: mobileNumber,
+      // Password: password,
+      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
+      data: {
+        "Mobileno": mobileNumber,
+        "otpno": parseInt(otp1 + otp2 + otp3 + otp4)
+      }
+    };
+    Provider.create("apicommon/spawu7S4urax/tYjD/forgotpasswordcheck/", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          UpdateUser(response.data.data.user_refno);
+        } else {
+          setSnackbarText(communication.InvalidMobileNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const UpdateUser = (userid) => {
+    setIsButtonLoading(true);
+    const params = {
+      // Username: mobileNumber,
+      // Password: password,
+      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
+      data: {
+        "user_refno": userid,
+        "Mobileno": mobileNumber,
+        "auth": password,
+        "confirm_password": password
+      }
+    };
+    Provider.create("apicommon/spawu7S4urax/tYjD/alterpasswordcheck/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           navigation.goBack();
@@ -156,12 +226,12 @@ const ForgotPassword = ({ navigation }) => {
         setSnackbarText(communication.InvalidPasswordsMatch);
         setIsSnackbarVisible(true);
       } else {
-        UpdateUser();
+        VerifyUser();
       }
     }
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">
@@ -176,7 +246,7 @@ const ForgotPassword = ({ navigation }) => {
             <TextInput mode="outlined" dense disabled value={otp2} onChangeText={onOTP2Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
             <TextInput mode="outlined" dense disabled value={otp3} onChangeText={onOTP3Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
             <TextInput mode="outlined" dense disabled value={otp4} onChangeText={onOTP4Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
-            <Button mode="text" uppercase={false} disabled={otpButtonDisabled} style={[Styles.flexAlignEnd, Styles.flexGrow]} onPress={() => ValidateOTP()}>
+            <Button mode="text" uppercase={false} disabled={otpButtonDisabled} style={[Styles.flexAlignEnd, Styles.flexGrow]} onPress={() => GETOTP()}>
               Get OTP
             </Button>
           </View>

@@ -14,7 +14,7 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 
 const ActivityRolesScreen = ({ navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -23,9 +23,9 @@ const ActivityRolesScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -33,7 +33,13 @@ const ActivityRolesScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getactivityroles")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: "all"
+      }
+    };
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/grouprefnocheck/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -73,7 +79,7 @@ const ActivityRolesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.group_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -82,7 +88,7 @@ const ActivityRolesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.activityRoleName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
+        <List.Item title={data.item.group_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
       </View>
     );
   };
@@ -97,14 +103,14 @@ const ActivityRolesScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        display: data.item.display,
+        group_refno: data.item.group_refno,
+        group_name: data.item.group_name,
+        view_status: data.item.view_status,
       },
     });
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Activity Roles" />

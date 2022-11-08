@@ -12,6 +12,7 @@ import { AWSImagePath } from "../../../utils/paths";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import styles from "react-native-inset-shadow/src/styles";
 import { scrollTo } from "react-native-reanimated/lib/reanimated2/NativeMethods";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 
 
@@ -867,43 +868,45 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
           </HelperText>
-          <View style={[Styles.padding16]}>
+          <View>
             <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
             <HelperText type="error" visible={errorBN}>
               {communication.InvalidBrnadSelected}
             </HelperText>
             {arrProductData[0].map((k, i) => {
               return (
-                <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
-                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                    <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
-                  </View>
-                  {k.brandName != "" ?
-                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                      <Text style={[Styles.flex1]}>Select Product Brand</Text>
-                      <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
-                    </View> : null
 
-                  }
+                <Card key={i} elevation={3} style={[Styles.marginTop16]}>
+                  <Card.Content>
+                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.marginBottom4, Styles.paddingHorizontal4, Styles.flexAlignStart]}>
+                      <Subheading style={[Styles.flex2, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
+                      <Subheading style={[Styles.flex1, Styles.bFontColor, Styles.fontBold, { textAlign: "right" }]}>{k.brandName === "" ? "" : k.brandName}</Subheading>
+                    </View>
+                    <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+                      <View style={[Styles.width48per]}>
+                        <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Quantity"
+                          value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                      </View>
+                      <View style={[Styles.width48per]}>
+                        {
+                          k.price > 0 ? <TextInput mode="outlined" dense style={[Styles.flex1]}  disabled={true} label="Rate" value={k.price ? parseFloat(k.price).toFixed(4) : ""} /> : null
+                        }
+                      </View>
 
+                    </View>
+                    {
+                      k.brandName != "" ?
+                        <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+                          <View style={[Styles.width100per]}>
+                            <TextInput mode="outlined"  dense style={[Styles.flex1]} disabled={true} label="Product Amount"
+                              value={k.amount} />
+                          </View>
+                        </View> : null
+                    }
+                  </Card.Content>
+                </Card>
 
-                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                    <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
-                  </View>
-                  {
-                    k.price ?
-                      <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                        <Text style={[Styles.flex1]}>Rate</Text>
-                        <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
-                      </View> : null
-                  }
-
-                  <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                    <Text style={[Styles.flex1]}>Amount</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.amount} />
-                  </View>
-                </View>
+                // removed from here
               );
             })}
           </View>

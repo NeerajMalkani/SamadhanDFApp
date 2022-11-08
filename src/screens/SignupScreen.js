@@ -5,9 +5,10 @@ import React from "react";
 import { communication } from "../utils/communication";
 import { theme } from "../theme/apptheme";
 import Provider from "../api/Provider";
-import { StackActions } from "@react-navigation/native";
+import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ValidateFullName, ValidateMobile } from "../utils/validations";
+export const navigationRef = createNavigationContainerRef();
 
 const SignupScreen = ({ route, navigation }) => {
   React.useEffect(() => {
@@ -17,7 +18,7 @@ const SignupScreen = ({ route, navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-   //#region Variables
+  //#region Variables
 
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
@@ -43,9 +44,9 @@ const SignupScreen = ({ route, navigation }) => {
 
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const onFullNameChanged = (text) => {
     setFullName(text);
@@ -128,35 +129,76 @@ const SignupScreen = ({ route, navigation }) => {
     }
   };
 
+  const GETOTP = () => {
+    console.log('start otp');
+    const params = {
+      data: {
+        Mobileno: mobileNumber,
+        EntryFrom: 1
+      }
+    };
+    Provider.createDF("apicommon/spawu7S4urax/tYjD/mobilenocheck/", params)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+
+          let otp = response.data.data.OTP_No;
+          if (otp !== "") {
+            setOTP1(otp.toString().substring(0, 1));
+            setOTP2(otp.toString().substring(1, 2));
+            setOTP3(otp.toString().substring(2, 3));
+            setOTP4(otp.toString().substring(3, 4));
+          }
+
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setIsSnackbarVisible(true);
+
+        } else {
+          setSnackbarText(response.data.message);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
   const StoreUserData = async (user) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack", "Signup"));
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const InsertNewUser = () => {
     setIsButtonLoading(true);
     const params = {
-      FullName: fullName,
-      Password: password,
-      RoleID: 2,
-      OTP: parseInt(otp1 + otp2 + otp3 + otp4),
-      IsVerified: true,
-      IsActive: true,
-      Username: mobileNumber,
-      Status: 1,
+      // FullName: fullName,
+      // Password: password,
+      // RoleID: 2,
+      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
+      // IsVerified: true,
+      // IsActive: true,
+      // Username: mobileNumber,
+      // Status: 1,
+
+      data: {
+        Mobileno: mobileNumber,
+        firstname: fullName,
+        auth: password,
+        confirm_password: password,
+        EntryFrom: "App"
+      }
+
     };
-    Provider.create("registration/insertuser", params)
+    Provider.createDF("apicommon/spawu7S4urax/tYjD/newuserprofilecreate/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          const user = {
-            UserID: response.data.data[0].userID,
-            FullName: response.data.data[0].fullName,
-            RoleID: response.data.data[0].roleID,
-            RoleName: response.data.data[0].roleID == 1 ? "Admin" : "General User", //TBC
-          };
-          StoreUserData(user);
+          navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setIsSnackbarVisible(true);
@@ -206,7 +248,7 @@ const SignupScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
@@ -226,7 +268,7 @@ const SignupScreen = ({ route, navigation }) => {
             <TextInput mode="outlined" dense disabled value={otp2} onChangeText={onOTP2Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
             <TextInput mode="outlined" dense disabled value={otp3} onChangeText={onOTP3Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
             <TextInput mode="outlined" dense disabled value={otp4} onChangeText={onOTP4Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
-            <Button mode="text" uppercase={false} disabled={otpButtonDisabled} style={[Styles.flexAlignEnd, Styles.flexGrow]} onPress={() => ValidateOTP()}>
+            <Button mode="text" uppercase={false} disabled={otpButtonDisabled} style={[Styles.flexAlignEnd, Styles.flexGrow]} onPress={() => GETOTP()}>
               Get OTP
             </Button>
           </View>

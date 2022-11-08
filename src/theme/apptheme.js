@@ -20,6 +20,7 @@ export const theme = {
     border: "#ededed",
     backgroundSecondary: "#f1f1f1",
     blueFont: "#0000FF",
+    greenBorder: "#45916bb5",
   },
   multicolors: {
     red: "#C41E3A",

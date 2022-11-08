@@ -8,23 +8,29 @@ import { communication } from "../../../../utils/communication";
 
 const AddActivityRolesScreen = ({ route, navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [activityNameError, setActivityNameError] = React.useState(false);
-  const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.group_name : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-   //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const onActivityNameChanged = (text) => {
     setActivityName(text);
     setActivityNameError(false);
   };
 
   const InsertActivityName = () => {
-    Provider.create("master/insertactivityroles", { ActivityRoleName: activityName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnamecreate/", {
+      data: {
+        Sess_UserRefno: "2",
+        group_name: activityName,
+        view_status: checked ? 1 : 0
+      }
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -45,7 +51,19 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
-    Provider.create("master/updateactivityroles", { ID: route.params.data.id, ActivityRoleName: activityName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnameupdate/",
+     { 
+      // ID: route.params.data.id, 
+      // ActivityRoleName: activityName, 
+      // Display: checked 
+
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: route.params.data.group_refno,
+        group_name: activityName,
+        view_status: checked ? 1 : 0,
+      }
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -79,7 +97,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       }
     }
   };
-   //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
