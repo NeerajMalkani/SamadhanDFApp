@@ -11,18 +11,17 @@ const AddEWayBillScreen = ({ route, navigation }) => {
    //#region Variables
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
-  const [stateName, setStateName] = React.useState(route.params.type === "edit" ? route.params.data.stateName : "");
+  const [stateName, setStateName] = React.useState(route.params.type === "edit" ? route.params.data.state_name : "");
   const [stateSelectedID, setStateSelectedID] = React.useState("");
   const [errorSN, setSNError] = React.useState(false);
 
   const [inStateLimitError, setInStateLimitError] = React.useState(false);
-  const [inStateLimit, setInStateLimit] = React.useState(route.params.type === "edit" ? route.params.data.inStateLimit : "");
+  const [inStateLimit, setInStateLimit] = React.useState(route.params.type === "edit" ? route.params.data.in_state_limit : "");
 
   const [interStateLimitError, setInterStateLimitError] = React.useState(false);
-  const [interStateLimit, setInterStateLimit] = React.useState(route.params.type === "edit" ? route.params.data.interStateLimit : "");
+  const [interStateLimit, setInterStateLimit] = React.useState(route.params.type === "edit" ? route.params.data.inter_state_limit : "");
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
@@ -74,13 +73,23 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   };
 
   const InsertEWayBill = () => {
-    Provider.create("master/insertewaybill", {
-      StateID: statesFullData.find((el) => {
-        return el.stateName === stateName;
-      }).id,
-      InStateLimit: inStateLimit,
-      InterStateLimit: interStateLimit,
-      Display: checked,
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillcreate/", {
+      // StateID: statesFullData.find((el) => {
+      //   return el.stateName === stateName;
+      // }).id,
+      // InStateLimit: inStateLimit,
+      // InterStateLimit: interStateLimit,
+      // Display: checked,
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: "2",
+        state_refno: statesFullData.find((el) => {
+          return el.stateName === stateName;
+        }).id,
+        in_state_limit: inStateLimit,
+        inter_state_limit: interStateLimit,
+        view_status: checked ? 1 : 0
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -102,14 +111,25 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   };
 
   const UpdateEWayBill = () => {
-    Provider.create("master/updateewaybill", {
-      ID: route.params.data.id,
-      StateID: statesFullData.find((el) => {
-        return el.stateName === stateName;
-      }).id,
-      InStateLimit: inStateLimit,
-      InterStateLimit: interStateLimit,
-      Display: checked,
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillupdate/", {
+      // ID: route.params.data.id,
+      // StateID: statesFullData.find((el) => {
+      //   return el.stateName === stateName;
+      // }).id,
+      // InStateLimit: inStateLimit,
+      // InterStateLimit: interStateLimit,
+      // Display: checked,
+      data: {
+        Sess_UserRefno: "2",
+        ewaybill_refno: route.params.data.ewaybill_refno,
+        group_refno: "2",
+        state_refno: statesFullData.find((el) => {
+          return el.stateName === stateName;
+        }).id,
+        in_state_limit: inStateLimit,
+        inter_state_limit: interStateLimit,
+        view_status: checked ? 1 : 0
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {

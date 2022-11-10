@@ -41,7 +41,13 @@ const EWayBillScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getewaybills")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        ewaybill_refno: "all"
+      },
+    };
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillrefnocheck/",params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -81,7 +87,7 @@ const EWayBillScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.stateName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.state_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -91,15 +97,15 @@ const EWayBillScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.stateName}
+          title={data.item.state_name}
           titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          description={"Display: " + (data.item.view_status ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="newspaper-variant" />}
           onPress={() => {
             refRBSheet.current.open();
-            setSelectedStateName(data.item.stateName);
-            setSelectedInStateLimit(data.item.inStateLimit.toFixed(2));
-            setSelectedInterStateLimit(data.item.interStateLimit.toFixed(2));
+            setSelectedStateName(data.item.state_name);
+            setSelectedInStateLimit(data.item.in_state_limit.toFixed(2));
+            setSelectedInterStateLimit(data.item.inter_state_limit.toFixed(2));
           }}
           right={() => (
             <Icon
@@ -125,10 +131,10 @@ const EWayBillScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        stateName: data.item.stateName,
-        inStateLimit: data.item.inStateLimit.toString(),
-        interStateLimit: data.item.interStateLimit.toString(),
-        display: data.item.display,
+        state_name: data.item.state_name,
+        in_state_limit: data.item.in_state_limit.toString(),
+        in_state_limit: data.item.in_state_limit.toString(),
+        view_status: data.item.view_status,
       },
     });
   };

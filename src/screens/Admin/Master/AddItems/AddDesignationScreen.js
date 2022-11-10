@@ -9,8 +9,8 @@ import { communication } from "../../../../utils/communication";
 const AddDesignationScreen = ({ route, navigation }) => {
    //#region Variables
   const [designationNameError, setDesignationNameError] = React.useState(false);
-  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designation_name : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -23,7 +23,14 @@ const AddDesignationScreen = ({ route, navigation }) => {
   };
 
   const InsertDesignationName = () => {
-    Provider.create("master/insertdesignation", { DesignationName: designationName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/designationnamecreate/", { 
+      // DesignationName: designationName, Display: checked 
+      data: {
+        Sess_UserRefno: "2",
+        designation_name: designationName,
+        view_status: checked ? 1 : 0
+    }
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -44,7 +51,15 @@ const AddDesignationScreen = ({ route, navigation }) => {
   };
 
   const UpdateDesignationName = () => {
-    Provider.create("master/updatedesignation", { ID: route.params.data.id, DesignationName: designationName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/designationnameupdate/", { 
+      // ID: route.params.data.id, DesignationName: designationName, Display: checked 
+      data: {
+        Sess_UserRefno: "2",
+        designation_refno: route.params.data.designation_refno,
+        designation_name: designationName,
+        view_status: checked ? 1 : 0
+    },
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");

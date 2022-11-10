@@ -13,7 +13,7 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const DepartmentScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -22,18 +22,26 @@ const DepartmentScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getdepartments")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        department_refno: "all"
+      },
+    };
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentrefnocheck/", params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
+
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -71,7 +79,7 @@ const DepartmentScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.departmentName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.department_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -80,7 +88,7 @@ const DepartmentScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.departmentName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item title={data.item.department_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status=== "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
       </View>
     );
   };
@@ -95,14 +103,14 @@ const DepartmentScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        departmentName: data.item.departmentName,
-        display: data.item.display,
+        department_refno: data.item.department_refno,
+        department_name: data.item.department_name,
+        view_status: data.item.view_status,
       },
     });
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Department" />

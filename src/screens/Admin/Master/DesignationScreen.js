@@ -31,7 +31,13 @@ const DesignationScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getdesignations")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        designation_refno: "all"
+      },
+    };
+    Provider.createDF("	apiappadmin/spawu7S4urax/tYjD/designationrefnocheck/",params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -71,7 +77,7 @@ const DesignationScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.designationName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.designation_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -80,7 +86,7 @@ const DesignationScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.designationName} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.display ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-star" />} />
+        <List.Item title={data.item.designation_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-star" />} />
       </View>
     );
   };
@@ -95,9 +101,9 @@ const DesignationScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        designationName: data.item.designationName,
-        display: data.item.display,
+        designation_refno: data.item.designation_refno,
+        designation_name: data.item.designation_name,
+        view_status: data.item.view_status,
       },
     });
   };

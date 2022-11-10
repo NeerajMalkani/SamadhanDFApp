@@ -8,23 +8,31 @@ import { communication } from "../../../../utils/communication";
 
 const AddDepartmentScreen = ({ route, navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
-  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.department_name : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const onDepartmentNameChanged = (text) => {
     setDepartmentName(text);
     setDepartmentNameError(false);
   };
 
   const InsertDepartmentName = () => {
-    Provider.create("master/insertdepartment", { DepartmentName: departmentName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentnamecreate/", {
+      //  DepartmentName: departmentName,
+      //   Display: checked 
+      data: {
+        Sess_UserRefno: "2",
+        department_name: departmentName,
+        view_status: checked ? 1 : 0,
+      }
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -45,7 +53,15 @@ const AddDepartmentScreen = ({ route, navigation }) => {
   };
 
   const UpdateDepartmentName = () => {
-    Provider.create("master/updatedepartment", { ID: route.params.data.id, DepartmentName: departmentName, Display: checked })
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentnameupdate/", {
+      // ID: route.params.data.id, DepartmentName: departmentName, Display: checked
+      data: {
+        Sess_UserRefno: "2",
+        department_refno: route.params.data.department_refno,
+        department_name: departmentName,
+        view_status: checked ? 1 : 0
+      },
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -79,8 +95,8 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

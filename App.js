@@ -106,17 +106,18 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
-// import CategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/CategoryName";
-// import AddCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddCategoryName";
-// import SubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/SubCategoryName";
-// import AddSubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddSubCategoryName";
-// import BudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/BudgetSetup";
-// import AddBudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddBudgetSetup";
-// import AddExpensesList from "./src/screens/GeneralUser/PocketDairy/AddExpensesList";
-// import AddExpenses from "./src/screens/GeneralUser/PocketDairy/AddItems/AddExpenses";
-// import AddSourceList from "./src/screens/GeneralUser/PocketDairy/AddSourceList";
-// import AddSource from "./src/screens/GeneralUser/PocketDairy/AddItems/AddSource";
-// import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
+import CategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/CategoryName";
+import AddCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddCategoryName";
+import SubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/SubCategoryName";
+import AddSubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddSubCategoryName";
+import BudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/BudgetSetup";
+import AddBudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddBudgetSetup";
+import AddExpensesList from "./src/screens/GeneralUser/PocketDairy/AddExpensesList";
+import AddExpenses from "./src/screens/GeneralUser/PocketDairy/AddItems/AddExpenses";
+import AddSourceList from "./src/screens/GeneralUser/PocketDairy/AddSourceList";
+import AddSource from "./src/screens/GeneralUser/PocketDairy/AddItems/AddSource";
+import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
+
 
 
 const Stack = createStackNavigator();
@@ -315,7 +316,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} /> */}
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} />
             </Drawer.Navigator>
           );
         case 5:
@@ -548,7 +549,7 @@ export default function App() {
               <Stack.Screen name="SendRateCard" component={SendRateCard} options={{ headerShown: false }} />
               <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{ headerTitle: "Add Branch", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{ headerTitle: "Add Send Rate card ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              {/* <Stack.Screen name="CategoryName" component={CategoryName} options={{ headerTitle: "Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="CategoryName" component={CategoryName} options={{ headerTitle: "Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddCategoryName" component={AddCategoryName} options={{ headerTitle: "Add Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="SubCategoryName" component={SubCategoryName} options={{ headerTitle: "Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddSubCategoryName" component={AddSubCategoryName} options={{ headerTitle: "Add Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -557,16 +558,14 @@ export default function App() {
               <Stack.Screen name="AddExpensesList" component={AddExpensesList} options={{ headerTitle: " Add Expenses List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddExpenses" component={AddExpenses} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddSourceList" component={AddSourceList} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddSource" component={AddSource} options={{ headerTitle: " Add Source ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
-              {/* <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
-              {/* <Stack.Screen name="SendRateCard" component={SendRateCard} options={{ headerShown: false }} />
-              <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{ headerTitle: "Add Branch", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{ headerTitle: "Send Rate card ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
-            </Stack.Navigator >
-          </NavigationContainer >
-        )
-        }
-      </PaperProvider >
-    </SafeAreaView >
+
+              <Stack.Screen name="AddSource" component={AddSource} options={{ headerTitle: " Add Source ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        )}
+      </PaperProvider>
+    </SafeAreaView>
+
   );
 }
