@@ -104,8 +104,8 @@ const EWayBillScreen = ({ navigation }) => {
           onPress={() => {
             refRBSheet.current.open();
             setSelectedStateName(data.item.state_name);
-            setSelectedInStateLimit(data.item.in_state_limit.toFixed(2));
-            setSelectedInterStateLimit(data.item.inter_state_limit.toFixed(2));
+            setSelectedInStateLimit(data.item.in_state_limit);
+            setSelectedInterStateLimit(data.item.inter_state_limit);
           }}
           right={() => (
             <Icon
@@ -130,10 +130,10 @@ const EWayBillScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
+        id: data.item.ewaybill_refno,
         state_name: data.item.state_name,
         in_state_limit: data.item.in_state_limit.toString(),
-        in_state_limit: data.item.in_state_limit.toString(),
+        inter_state_limit: data.item.inter_state_limit.toString(),
         view_status: data.item.view_status,
       },
     });

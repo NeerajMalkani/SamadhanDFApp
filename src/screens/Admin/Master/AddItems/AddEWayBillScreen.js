@@ -31,19 +31,21 @@ const AddEWayBillScreen = ({ route, navigation }) => {
  //#region Functions
 
   const FetchStates = () => {
-    Provider.getAll("master/getstates")
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getstateewaybillform/", null)
       .then((response) => {
+       console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
             setStatesFullData(response.data.data);
             const stateData = [];
             response.data.data.map((data, i) => {
-              if (data.stateName === stateName) {
+              if (data.state_name === stateName) {
                 setStateSelectedID(i.toString());
               }
               stateData.push({
-                id: i.toString(),
-                title: data.stateName,
+                id: data.state_refno.toString(),
+                title: data.state_name,
               });
             });
             setStatesData(stateData);
@@ -84,8 +86,8 @@ const AddEWayBillScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         group_refno: "2",
         state_refno: statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
+          return el.state_name === stateName;
+        }).state_refno,
         in_state_limit: inStateLimit,
         inter_state_limit: interStateLimit,
         view_status: checked ? 1 : 0
@@ -121,11 +123,11 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       // Display: checked,
       data: {
         Sess_UserRefno: "2",
-        ewaybill_refno: route.params.data.ewaybill_refno,
+        ewaybill_refno: route.params.data.id,
         group_refno: "2",
         state_refno: statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
+          return el.state_name === stateName;
+        }).state_refno,
         in_state_limit: inStateLimit,
         inter_state_limit: interStateLimit,
         view_status: checked ? 1 : 0
@@ -153,7 +155,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   const ValidateEWayBillName = () => {
     let isValid = true;
     const objStates = statesFullData.find((el) => {
-      return el.stateName === stateName;
+      return el.state_name === stateName;
     });
     if (stateName.length === 0 || !objStates) {
       setSNError(true);
