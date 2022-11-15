@@ -36,7 +36,6 @@ const AddEWayBillScreen = ({ route, navigation }) => {
        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
             setStatesFullData(response.data.data);
             const stateData = [];
             response.data.data.map((data, i) => {

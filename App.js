@@ -9,7 +9,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@rea
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView, Platform, StatusBar, LayoutAnimation, View } from "react-native";
-import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser, MenuItemsArchitect } from "./src/json/MenuItems";
+import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser, MenuItemsArchitect, MenuItemsManufacture } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
@@ -117,7 +117,10 @@ import AddExpenses from "./src/screens/GeneralUser/PocketDairy/AddItems/AddExpen
 import AddSourceList from "./src/screens/GeneralUser/PocketDairy/AddSourceList";
 import AddSource from "./src/screens/GeneralUser/PocketDairy/AddItems/AddSource";
 import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
-
+import BrandConversionValue from "./src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue";
+import OpeningStockList from "./src/screens/Manufacture/ProductionUnitMaster/OpeningStockList";
+import ApiMaster from "./src/screens/Admin/Master/ApiMaster";
+import AddApiMaster from "./src/screens/Admin/Master/AddItems/AddApiMaster";
 
 
 const Stack = createStackNavigator();
@@ -148,6 +151,9 @@ export default function App() {
           break;
         case 6:
           menuItems = [...MenuItemsArchitect];
+          break;
+        case 7:
+          menuItems = [...MenuItemsManufacture];
           break;
       }
       userDetails[1](ud);
@@ -285,6 +291,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApprovedUserScreen" component={ApprovedUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DeclinedUserScreen" component={DeclinedUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PendingUserScreen" component={PendingUserScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApiMaster" component={ApiMaster} />
+             
             </Drawer.Navigator>
           );
         case 3:
@@ -348,6 +356,16 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
+            </Drawer.Navigator>
+          );
+          case 7:
+          return (
+            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} /> */}
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandMasterScreen" component={DealerBrandMasterScreen} initialParams={{ activeIndex: activeIndex }} /> */}
             </Drawer.Navigator>
           );
       }
@@ -505,6 +523,7 @@ export default function App() {
               <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerTitle: "", headerTintColor: theme.colors.primary, headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} /> }} />
               <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
               <Stack.Screen name="AddActivityRolesScreen" component={AddActivityRolesScreen} options={{ headerTitle: "Add Activity Roles", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddApiMaster" component={AddApiMaster} options={{ headerTitle: "Add Api Master", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddServicesScreen" component={AddServicesScreen} options={{ headerTitle: "Add Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddUnitOfSalesScreen" component={AddUnitOfSalesScreen} options={{ headerTitle: "Add Unit of Sales", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddCategoryScreen" component={AddCategoryScreen} options={{ headerTitle: "Add Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -561,6 +580,10 @@ export default function App() {
 
               <Stack.Screen name="AddSource" component={AddSource} options={{ headerTitle: " Add Source ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="BrandConversionValue" component={BrandConversionValue} options={{ headerTitle: "Brand Conversion Value ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="OpeningStockList" component={OpeningStockList} options={{ headerTitle: "Opening Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="ApiMaster" component={ApiMaster} options={{ headerTitle: "Api Master", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              {/* <Stack.Screen name="AddApiMaster" component={AddApiMaster} options={{ headerTitle: "Add Api Master ", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
             </Stack.Navigator>
           </NavigationContainer>
         )}
