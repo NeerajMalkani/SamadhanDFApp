@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
 
-const PendingUserScreen = ({ navigation }) => {
+const DeclinedUserScreen = ({ navigation }) => {
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -122,6 +122,9 @@ const PendingUserScreen = ({ navigation }) => {
             setCompanyName(data.item.company_name);
             //setFirstName(data.item.firstname);
             setMobileNo(data.item.mobile_no);
+            console.log("++++++++++++++++++++");
+            console.log(data.item.group_name);
+
             setGroupName(data.item.group_name);
             // setPassword(data.item.password);
 
@@ -142,7 +145,7 @@ const PendingUserScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="PENDING USERS" />
+      <Header navigation={navigation} title="DECLINED USERS" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -178,29 +181,25 @@ const PendingUserScreen = ({ navigation }) => {
         {snackbarText}
       </Snackbar>
 
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
           <ScrollView>
             <List.Item title="Company Name" description={company} />
-            {/* <List.Item title="First Name" description={firstname} /> */}
             <List.Item title="Mobile No" description={mobile} />
             <List.Item title="Activity Name" description={groupname} />
-            {/* <List.Item title="Password" description={password} /> */}
-
-            <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-              <Card.Content>
-                <Button mode="contained">
-                  Approve
-                </Button>
-              </Card.Content>
-            </View>
-
           </ScrollView>
+        </View>
+        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+          <Card.Content>
+            <Button mode="contained">
+              Approve
+            </Button>
+          </Card.Content>
         </View>
       </RBSheet>
     </View>
   );
 };
 
-export default PendingUserScreen;
+export default DeclinedUserScreen;
