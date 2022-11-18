@@ -5,14 +5,15 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import {NullOrEmpty} from "../../../utils/validations";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+let userID = 0;
 
 const PendingUserScreen = ({ navigation }) => {
    //#region Variables
@@ -27,7 +28,7 @@ const PendingUserScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [companyDetails, setCompanyDetails] = React.useState("");
-  const [activityRole, setActivityRole] = React.useState("");
+  const [groupname, setGroupName] = React.useState("");
   const [department, setDepartment] = React.useState("");
   const [designation, setDesignation] = React.useState("");
   const [username, setUsername] = React.useState("");
@@ -38,8 +39,16 @@ const PendingUserScreen = ({ navigation }) => {
 
  //#region Functions
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -47,8 +56,14 @@ const PendingUserScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        group_refno: "all"
+      }
+    };
     
-    Provider.getAll("master/getpendingusers")
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/",params)
       .then((response) => {
         console.log(response.data.data);
         if (response.data && response.data.code === 200) {
@@ -95,19 +110,19 @@ const PendingUserScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
         <List.Item
-          title={NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[0] }
+          title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(',')[0] }
           titleStyle={{ fontSize: 18 }}
-          description={`${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[1]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[2]}`}
+          description={`Department: ${data.item.departmentname}\n'Designation: '${data.item.designationname}`}
           
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
 
             setCompanyDetails(`${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[0]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[1]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[2]}`);
-            setActivityRole(data.item.activityRoleName);
-            setDepartment(data.item.department);
-            setDesignation(data.item.designation);
-            setUsername(data.item.username);
+            setGroupName(data.item.group_name);
+            setDepartment(data.item.departmentname);
+            setDesignation(data.item.designationname);
+            setUsername(data.item.user_name);
             setPassword(data.item.password);
             
           }}
@@ -167,7 +182,7 @@ const PendingUserScreen = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
           <ScrollView>
-            <List.Item title="Activity Role Name" description={activityRole} />
+            <List.Item title="Group Name" description={groupname} />
             <List.Item title="Department" description={department} />
             <List.Item title="Designation" description={designation} />
             <List.Item title="Username" description={username} />
