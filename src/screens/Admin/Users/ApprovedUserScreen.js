@@ -1,21 +1,22 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card, Button } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+let userID = 0;
 
-const ApprovedUserScreen = ({ navigation }) => {
-   //#region Variables
+const DeclinedUserScreen = ({ navigation }) => {
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -27,29 +28,47 @@ const ApprovedUserScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [companyDetails, setCompanyDetails] = React.useState("");
-  const [activityRole, setActivityRole] = React.useState("");
-  const [department, setDepartment] = React.useState("");
-  const [designation, setDesignation] = React.useState("");
-  const [username, setUsername] = React.useState("");
+  const [company, setCompanyName] = React.useState("");
+  const [firstname, setFirstName] = React.useState("");
+  const [mobile, setMobileNo] = React.useState("");
+  const [groupname, setGroupName] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [selectedID, setSelectedID] = React.useState(0);
+
+
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion 
 
- //#region Functions
-
+  //#region Functions
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+
   const FetchData = (from) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+    if (from === "add" || from === "decline") {
+      setSnackbarText("Item " + (from === "add" ? "added" : "decline") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        group_refno: "all"
+      }
+    };
+
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -85,59 +104,82 @@ const ApprovedUserScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.username.toString().toLowerCase().includes(query.toLowerCase());
+          return el.group_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
   };
 
-  const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddActivityRolesScreen", {
-      type: "edit",
-      fetchData: FetchData,
+
+  //update
+  const hideDialog = () => setIsDialogVisible(false);
+
+  const declineUserStatus = () => {
+    hideDialog();
+    setIsButtonLoading(true);
+    const params = {
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        display: data.item.display,
-      },
-    });
+        Sess_UserRefno: userID,
+        user_refno: selectedID
+      }
+    };
+    // console.log(params);
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          FetchData("Decline");
+        } else {
+          setSnackbarText(communication.NoData);
+          setSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
   };
+
+
+  //approveModel
+  const openDeclineModel = () => {
+    refRBSheet.current.close();
+    setIsDialogVisible(true);
+  }
+
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
         <List.Item
-          title={data.item.firstname}
+          title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(',')[0]}
           titleStyle={{ fontSize: 18 }}
-          description={`Department: ${NullOrEmpty(data.item.departmentname) ? "" : data.item.departmentname}\nDesignation: ${NullOrEmpty(data.item.designationname) ? "": data.item.designationname}`}
-          
+          description={`Activity Role: ${NullOrEmpty(data.item.group_name) ? "" : data.item.group_name}\nCompany: ${NullOrEmpty(data.item.company_name) ? "" : data.item.company_name}`}
+
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
-
+            setSelectedID(data.item.user_refno);
             setCompanyDetails(data.item.firstname);
-            setActivityRole(data.item.group_name);
-            setDepartment(data.item.departmentname);
-            setDesignation(data.item.designationname);
-            setUsername(data.item.user_name);
-            setPassword(data.item.password);
-            
+            setCompanyName(data.item.company_name);
+            setMobileNo(data.item.mobile_no);
+            setGroupName(data.item.group_name);
+
           }}
           right={() => (
             <Icon
-              style={{ marginVertical: 12, marginRight: 18 }}
+              style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
               name="eye"
             />
           )}
         />
-      
       </View>
     );
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
@@ -147,11 +189,11 @@ const ApprovedUserScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0].length > 0 ? (
-          <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+        <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
-            previewOpenValue={-84}
+            previewOpenValue={-72}
             previewRowKey="1"
             previewOpenDelay={1000}
             refreshControl={
@@ -165,40 +207,50 @@ const ApprovedUserScreen = ({ navigation }) => {
             }
             data={listSearchData[0]}
             disableRightSwipe={true}
-            rightOpenValue={-84}
+            rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
           />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found." />
       )}
-      
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
           <ScrollView>
-            <List.Item title="Activity Role Name" description={activityRole} />
-            <List.Item title="Department" description={department} />
-            <List.Item title="Designation" description={designation} />
-            <List.Item title="Username" description={username} />
-            <List.Item title="Password" description={password} />
+            <List.Item title="Activity Name" description={groupname} />
+            <List.Item title="Company Name" description={company} />
+            <List.Item title="Mobile No" description={mobile} />
+
           </ScrollView>
         </View>
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button color={theme.colors.error} mode="contained">
+            <Button color={theme.colors.error} mode="contained" onPress={openDeclineModel} >
               Decline
             </Button>
           </Card.Content>
+
         </View>
       </RBSheet>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Decline ? </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={declineUserStatus}>Ok</Button>
+            <Button onPress={hideDialog}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
+
   );
 };
 
-export default ApprovedUserScreen;
+export default DeclinedUserScreen;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card, Button } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -35,6 +35,10 @@ const PendingUserScreen = ({ navigation }) => {
   const [designation, setDesignation] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [selectedID, setSelectedID] = React.useState(0);
+
 
   const refRBSheet = useRef();
   //#endregion 
@@ -118,7 +122,7 @@ const PendingUserScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
-
+            // setSelectedID(data.item.user_refno);
             setCompanyDetails(data.item.firstname);
             setGroupName(data.item.group_name);
             setCompanyName(NullOrEmpty(data.item.company_name) ? "" : data.item.company_name);
@@ -137,6 +141,77 @@ const PendingUserScreen = ({ navigation }) => {
       </View>
     );
   };
+
+    //approveModel
+    const hideDialog = () => setIsDialogVisible(false);
+
+
+    const approveUserStatus = () => {
+      hideDialog();
+      setIsButtonLoading(true);
+      const params = {
+        data: {
+          Sess_UserRefno: userID,
+          user_refno: selectedID
+        }
+      };
+      console.log(params);
+      Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
+        .then((response) => {
+          console.log(response.data)
+          if (response.data && response.data.code === 200) {
+            FetchData("update");
+          } else {
+            setSnackbarText(communication.NoData);
+            setSnackbarVisible(true);
+          }
+          setIsButtonLoading(false);
+        })
+        .catch((e) => {
+          setSnackbarText(e.message);
+          setSnackbarVisible(true);
+          setIsButtonLoading(false);
+        });
+    };
+
+  const openApproveModel = () => {
+    refRBSheet.current.close();
+    setIsDialogVisible(true);
+  }
+
+  const declineUserStatus = () => {
+    hideDialog();
+    setIsButtonLoading(true);
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        user_refno: selectedID
+      }
+    };
+    console.log(params);
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+      .then((response) => {
+        console.log(response.data)
+        if (response.data && response.data.code === 200) {
+          FetchData("Decline");
+        } else {
+          setSnackbarText(communication.NoData);
+          setSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+const openDeclineModel = () => {
+  refRBSheet.current.close();
+  setIsDialogVisible(true);
+}
+
   //#endregion 
 
   return (
@@ -189,21 +264,45 @@ const PendingUserScreen = ({ navigation }) => {
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.flexSpaceBetween,Styles.flexRow, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <View style={[Styles.backgroundColor, Styles.width48per]}>
             <Card.Content>
-              <Button color={theme.colors.success} mode="contained">
+              <Button color={theme.colors.success} mode="contained" onPress={openApproveModel}>
                 Approve
               </Button>
             </Card.Content>
           </View>
           <View style={[Styles.backgroundColor, Styles.width48per]}>
             <Card.Content>
-              <Button color={theme.colors.error} mode="contained">
+              <Button color={theme.colors.error} mode="contained" onPress={openDeclineModel}>
                 Decline
               </Button>
             </Card.Content>
           </View>
-
+               
         </View>
       </RBSheet>
+      <Portal>
+                <Dialog visible={isDialogVisible} onDismiss={hideDialog} >
+                  <Dialog.Title>Confirmation</Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph>Confirm to Approve ? </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+            <Button onPress={approveUserStatus}>Ok</Button>
+            <Button onPress={hideDialog}>Cancel</Button>
+          </Dialog.Actions>
+                </Dialog>
+              </Portal>
+              <Portal>
+                <Dialog visible={isDialogVisible} onDismiss={hideDialog} >
+                  <Dialog.Title>Confirmation</Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph>Confirm to Decline ? </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+            <Button onPress={declineUserStatus}>Ok</Button>
+            <Button onPress={hideDialog}>Cancel</Button>
+          </Dialog.Actions>
+                </Dialog>
+              </Portal>
     </View>
   );
 };

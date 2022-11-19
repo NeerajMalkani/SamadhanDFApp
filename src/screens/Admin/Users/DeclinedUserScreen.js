@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -33,6 +33,11 @@ const DeclinedUserScreen = ({ navigation }) => {
   const [mobile, setMobileNo] = React.useState("");
   const [groupname, setGroupName] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [selectedID, setSelectedID] = React.useState(0);
+
+
 
   const refRBSheet = useRef();
   //#endregion 
@@ -109,44 +114,40 @@ const DeclinedUserScreen = ({ navigation }) => {
   //update
   const hideDialog = () => setIsDialogVisible(false);
 
-  const UpdateUserRole = () => {
+  const approveUserStatus = () => {
     hideDialog();
     setIsButtonLoading(true);
     const params = {
-     data:{
-      Sess_UserRefno: userID,
-        user_refno: "all"
-     }
+      data: {
+        Sess_UserRefno: userID,
+        user_refno: selectedID
+      }
     };
-    Provider.createDF("apipostformat/spawu7S4urax/vpLCwg/postuserapprovestatus/", params)
+    console.log(params);
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          setUserRoleName(roleName);
-          GetUserCount();
-          const user = {
-            UserID: route.params.userDetails[0].UserID,
-            FullName: route.params.userDetails[0].FullName,
-            RoleID: userCountData.filter((el) => {
-              return el.roleName === roleName;
-            })[0].roleID,
-            RoleName: roleName, //TBC
-          };
-          StoreUserData(user);
+          FetchData("update");
         } else {
           setSnackbarText(communication.NoData);
-          setIsSnackbarVisible(true);
+          setSnackbarVisible(true);
         }
         setIsButtonLoading(false);
       })
       .catch((e) => {
         setSnackbarText(e.message);
-        setIsSnackbarVisible(true);
+        setSnackbarVisible(true);
         setIsButtonLoading(false);
       });
   };
 
 
-  
+  //approveModel
+  const openApproveModel = () => {
+    refRBSheet.current.close();
+    setIsDialogVisible(true);
+  }
+
 
   const RenderItems = (data) => {
     return (
@@ -159,12 +160,10 @@ const DeclinedUserScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
-
+            setSelectedID(data.item.user_refno);
             setCompanyDetails(data.item.firstname);
             setCompanyName(data.item.company_name);
             setMobileNo(data.item.mobile_no);
-            // console.log("++++++++++++++++++++");
-            console.log(data.item.group_name);
             setGroupName(data.item.group_name);
 
           }}
@@ -222,33 +221,35 @@ const DeclinedUserScreen = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
           <ScrollView>
-          <List.Item title="Activity Name" description={groupname} />
+            <List.Item title="Activity Name" description={groupname} />
             <List.Item title="Company Name" description={company} />
             <List.Item title="Mobile No" description={mobile} />
-            
+
           </ScrollView>
         </View>
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained">
+            <Button mode="contained" onPress={openApproveModel} >
               Approve
             </Button>
           </Card.Content>
-          <Portal>
-                <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-                  <Dialog.Title>Confirmation</Dialog.Title>
-                  <Dialog.Content>
-                    <Paragraph>Do you really want to switch your role to {roleName}? If OK, then your active role will get automatically changed</Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions>
-                    <Button onPress={UpdateUserRole}>Ok</Button>
-                    <Button onPress={hideDialog}>Cancel</Button>
-                  </Dialog.Actions>
-                </Dialog>
-              </Portal>
+
         </View>
       </RBSheet>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Approve ? </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={approveUserStatus}>Ok</Button>
+            <Button onPress={hideDialog}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
+
   );
 };
 
