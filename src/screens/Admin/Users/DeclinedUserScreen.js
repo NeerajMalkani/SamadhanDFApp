@@ -63,9 +63,8 @@ const DeclinedUserScreen = ({ navigation }) => {
       }
     };
 
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/", params)
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserdeclinedlist/", params)
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -112,7 +111,7 @@ const DeclinedUserScreen = ({ navigation }) => {
         <List.Item
           title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(',')[0]}
           titleStyle={{ fontSize: 18 }}
-          description={`Department: ${data.item.departmentname}\n'Mobile: '${data.item.mobile_no}`}
+          description={`Activity Role: ${NullOrEmpty(data.item.group_name) ? "" : data.item.group_name}\nCompany: ${NullOrEmpty(data.item.company_name) ? "" : data.item.company_name}`}
 
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
@@ -120,13 +119,8 @@ const DeclinedUserScreen = ({ navigation }) => {
 
             setCompanyDetails(data.item.firstname);
             setCompanyName(data.item.company_name);
-            //setFirstName(data.item.firstname);
             setMobileNo(data.item.mobile_no);
-            console.log("++++++++++++++++++++");
-            console.log(data.item.group_name);
-
             setGroupName(data.item.group_name);
-            // setPassword(data.item.password);
 
           }}
           right={() => (
@@ -185,9 +179,10 @@ const DeclinedUserScreen = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
           <ScrollView>
+          <List.Item title="Activity Name" description={groupname} />
             <List.Item title="Company Name" description={company} />
             <List.Item title="Mobile No" description={mobile} />
-            <List.Item title="Activity Name" description={groupname} />
+            
           </ScrollView>
         </View>
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>

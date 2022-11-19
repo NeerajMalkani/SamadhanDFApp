@@ -89,7 +89,7 @@ const LoginScreen = ({ route, navigation }) => {
   };
 
   const GetUserDetails = (user_refno) => {
-    console.log('check login');
+    console.log('=======================GetUserDetails=======================');
     setIsButtonLoading(true);
     let params = {
       // Username: username,

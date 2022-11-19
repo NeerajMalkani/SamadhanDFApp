@@ -14,7 +14,7 @@ import {NullOrEmpty} from "../../../../utils/validations";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const SubCategoryName = ({ navigation }) => {
+const SubCategoryScreen = ({ navigation }) => {
    //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -186,4 +186,4 @@ const SubCategoryName = ({ navigation }) => {
   );
 };
 
-export default SubCategoryName;
+export default SubCategoryScreen;

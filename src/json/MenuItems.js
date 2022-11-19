@@ -184,7 +184,7 @@ export const MenuItemsGeneralUser = [
     icon: "timetable",
     type: "accordian",
     index: 1,
-    roleID: 2,
+    roleID: 3,
     items: [
       {
         title: "Image Gallery",
@@ -205,40 +205,40 @@ export const MenuItemsGeneralUser = [
     icon: "timetable",
     type: "accordian",
     index: 1,
-    roleID: 2,
+    roleID: 3,
     items: [
+      // {
+      //   title: "Setting",
+      //   type: "accordian",
+      //   index: 10,
+      //   navigation: "Demo",
+      // },
       {
-        title: "Setting",
-        type: "accordian",
-        index: 10,
-        navigation: "Demo",
-      },
-      {
-        title: "CategoryName",
-        type: "accordian",
-        index: 11,
-        navigation: "CategoryName",
-      },
-      {
-        title: "SubCategoryName",
+        title: "Category Name",
         type: "accordian",
         index: 11,
-        navigation: "SubCategoryName",
+        navigation: "CategoryNameScreen",
       },
       {
-        title: "BudgetSetup",
+        title: "Sub Category Name",
+        type: "accordian",
+        index: 11,
+        navigation: "SubCategoryScreen",
+      },
+      {
+        title: "Budget Setup",
         type: "accordian",
         index: 11,
         navigation: "BudgetSetup",
       },
       {
-        title: "AddExpensesList",
+        title: "Add Expenses",
         type: "accordian",
         index: 11,
         navigation: "AddExpensesList",
       },
       {
-        title: "AddSourceList",
+        title: "Add Source",
         type: "accordian",
         index: 11,
         navigation: "AddSourceList",
@@ -251,27 +251,27 @@ export const MenuItemsGeneralUser = [
       },
     ],
   },
-  {
-    title: "Demo",
-    icon: "timetable",
-    type: "accordian",
-    index: 1,
-    roleID: 2,
-    items: [
-      {
-        title: "DemoPage",
-        type: "accordian",
-        index: 10,
-        navigation: "Demo",
-      },
-      // {
-      //   title: "Your Estimations",
-      //   type: "accordian",
-      //   index: 11,
-      //   navigation: "YourEstimationsScreen",
-      // },
-    ],
-  },
+  // {
+  //   title: "Demo",
+  //   icon: "timetable",
+  //   type: "accordian",
+  //   index: 1,
+  //   roleID: 3,
+  //   items: [
+  //     {
+  //       title: "DemoPage",
+  //       type: "accordian",
+  //       index: 10,
+  //       navigation: "Demo",
+  //     },
+  //     // {
+  //     //   title: "Your Estimations",
+  //     //   type: "accordian",
+  //     //   index: 11,
+  //     //   navigation: "YourEstimationsScreen",
+  //     // },
+  //   ],
+  // },
 ];
 
 export const MenuItemsDealer = [
@@ -430,7 +430,7 @@ export const MenuItemsContractor = [
     icon: "office-building-cog",
     type: "accordian",
     index: 1,
-    roleID: 3,
+    roleID: 5,
     items: [
       // {
       //   title: "Basic Details",
@@ -451,7 +451,7 @@ export const MenuItemsContractor = [
     icon: "account-tie",
     type: "accordian",
     index: 2,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Employee New / List",
@@ -472,7 +472,7 @@ export const MenuItemsContractor = [
     icon: "town-hall",
     type: "accordian",
     index: 3,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Add Department",
@@ -499,7 +499,7 @@ export const MenuItemsContractor = [
     icon: "card-bulleted",
     type: "accordian",
     index: 4,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Rate Card Setup",
@@ -521,7 +521,7 @@ export const MenuItemsContractor = [
     icon: "tie",
     type: "accordian",
     index: 5,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Clients",
@@ -536,7 +536,7 @@ export const MenuItemsContractor = [
     icon: "newspaper-variant",
     type: "accordian",
     index: 6,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Design Wise",
@@ -557,7 +557,7 @@ export const MenuItemsContractor = [
     icon: "information",
     type: "accordian",
     index: 7,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "App User Enquiry Wise",
@@ -578,7 +578,7 @@ export const MenuItemsContractor = [
     icon: "head-lightbulb",
     type: "accordian",
     index: 8,
-    roleID: 3,
+    roleID: 5,
     items: [
       {
         title: "Yet Start",

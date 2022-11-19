@@ -41,14 +41,10 @@ const ApiMaster = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    let params = {
-      data: {
-        Sess_UserRefno: "2",
-        group_refno: "all"
-      }
-    };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/grouprefnocheck/", params)
+    
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getapilist/", null)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -98,9 +94,8 @@ const ApiMaster = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.apiName}
+          title={data.item.api_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Api Base name.: ${NullOrEmpty(data.item.apiBaseName) ? "" : data.item.apiBaseName} `}
           onPress={() => {
             refRBSheet.current.open();
             setApiName(data.item.apiBaseName);
@@ -108,7 +103,7 @@ const ApiMaster = ({ navigation }) => {
             setApiPostUrl(data.item.apiPostUrl);
             setApiGetUrl(data.item.apiGetUrl);
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="api" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>

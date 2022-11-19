@@ -39,7 +39,6 @@ const DepartmentScreen = ({ navigation }) => {
     };
     Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentrefnocheck/", params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
 
           if (response.data.data) {

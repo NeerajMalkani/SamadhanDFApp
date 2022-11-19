@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -49,7 +49,7 @@ const ApprovedUserScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     
-    Provider.getAll("master/getapprovedusers")
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/")
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -108,19 +108,19 @@ const ApprovedUserScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
         <List.Item
-          title={NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[0] }
+          title={data.item.firstname}
           titleStyle={{ fontSize: 18 }}
-          description={`${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[1]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[2]}`}
+          description={`Department: ${NullOrEmpty(data.item.departmentname) ? "" : data.item.departmentname}\nDesignation: ${NullOrEmpty(data.item.designationname) ? "": data.item.designationname}`}
           
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
 
-            setCompanyDetails(`${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[0]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[1]}\n${NullOrEmpty(data.item.company) ? "" : data.item.company.split(',')[2]}`);
-            setActivityRole(data.item.activityRoleName);
-            setDepartment(data.item.department);
-            setDesignation(data.item.designation);
-            setUsername(data.item.username);
+            setCompanyDetails(data.item.firstname);
+            setActivityRole(data.item.group_name);
+            setDepartment(data.item.departmentname);
+            setDesignation(data.item.designationname);
+            setUsername(data.item.user_name);
             setPassword(data.item.password);
             
           }}
@@ -189,6 +189,13 @@ const ApprovedUserScreen = ({ navigation }) => {
             <List.Item title="Username" description={username} />
             <List.Item title="Password" description={password} />
           </ScrollView>
+        </View>
+        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+          <Card.Content>
+            <Button color={theme.colors.error} mode="contained">
+              Decline
+            </Button>
+          </Card.Content>
         </View>
       </RBSheet>
     </View>

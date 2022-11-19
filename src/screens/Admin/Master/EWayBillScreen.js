@@ -99,7 +99,7 @@ const EWayBillScreen = ({ navigation }) => {
         <List.Item
           title={data.item.state_name}
           titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.view_status ? "Yes" : "No")}
+          description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="newspaper-variant" />}
           onPress={() => {
             refRBSheet.current.open();
