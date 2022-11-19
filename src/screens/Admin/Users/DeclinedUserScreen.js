@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card, Button } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -105,6 +105,49 @@ const DeclinedUserScreen = ({ navigation }) => {
     }
   };
 
+
+  //update
+  const hideDialog = () => setIsDialogVisible(false);
+
+  const UpdateUserRole = () => {
+    hideDialog();
+    setIsButtonLoading(true);
+    const params = {
+     data:{
+      Sess_UserRefno: userID,
+        user_refno: "all"
+     }
+    };
+    Provider.createDF("apipostformat/spawu7S4urax/vpLCwg/postuserapprovestatus/", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setUserRoleName(roleName);
+          GetUserCount();
+          const user = {
+            UserID: route.params.userDetails[0].UserID,
+            FullName: route.params.userDetails[0].FullName,
+            RoleID: userCountData.filter((el) => {
+              return el.roleName === roleName;
+            })[0].roleID,
+            RoleName: roleName, //TBC
+          };
+          StoreUserData(user);
+        } else {
+          setSnackbarText(communication.NoData);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+
+  
+
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
@@ -120,6 +163,8 @@ const DeclinedUserScreen = ({ navigation }) => {
             setCompanyDetails(data.item.firstname);
             setCompanyName(data.item.company_name);
             setMobileNo(data.item.mobile_no);
+            // console.log("++++++++++++++++++++");
+            console.log(data.item.group_name);
             setGroupName(data.item.group_name);
 
           }}
@@ -170,11 +215,9 @@ const DeclinedUserScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found." />
       )}
-
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
@@ -191,6 +234,18 @@ const DeclinedUserScreen = ({ navigation }) => {
               Approve
             </Button>
           </Card.Content>
+          <Portal>
+                <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                  <Dialog.Title>Confirmation</Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph>Do you really want to switch your role to {roleName}? If OK, then your active role will get automatically changed</Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
+                    <Button onPress={UpdateUserRole}>Ok</Button>
+                    <Button onPress={hideDialog}>Cancel</Button>
+                  </Dialog.Actions>
+                </Dialog>
+              </Portal>
         </View>
       </RBSheet>
     </View>

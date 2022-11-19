@@ -133,7 +133,7 @@ const ApprovedUserScreen = ({ navigation }) => {
             />
           )}
         />
-       
+      
       </View>
     );
   };
@@ -147,7 +147,7 @@ const ApprovedUserScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0].length > 0 ? (
-        <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+          <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
@@ -168,7 +168,6 @@ const ApprovedUserScreen = ({ navigation }) => {
             rightOpenValue={-84}
             renderItem={(data) => RenderItems(data)}
             renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
-
           />
         </View>
       ) : (
