@@ -9,7 +9,7 @@ import { communication } from "../utils/communication";
 import Provider from "../api/Provider";
 
 const LoginScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState(false);
   const [isUsernameInvalid, setIsUsernameInvalid] = React.useState(false);
@@ -17,9 +17,7 @@ const LoginScreen = ({ route, navigation }) => {
   const [username, setUsername] = React.useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
- //#endregion 
-
- //#region Functions
+  //#endregion
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("blur", (e) => {
@@ -28,6 +26,7 @@ const LoginScreen = ({ route, navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
+  //#region Events
   const onUsernameChanged = (text) => {
     setUsername(text);
     setIsSnackbarVisible(false);
@@ -35,7 +34,6 @@ const LoginScreen = ({ route, navigation }) => {
       setIsUsernameInvalid(false);
     }
   };
-
   const onPasswordChanged = (text) => {
     setPassword(text);
     setIsSnackbarVisible(false);
@@ -43,37 +41,26 @@ const LoginScreen = ({ route, navigation }) => {
       setIsPasswordInvalid(false);
     }
   };
-
+  //#endregion
+  
+  //#region Api calling
   const StoreUserData = async (user) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack"));
     } catch (error) {}
   };
-
   const CheckLogin = () => {
-    console.log('check login');
     setIsButtonLoading(true);
     let params = {
-      // Username: username,
-      // Password: password,
       data: {
         uname: username,
         auth: password,
-      }
+      },
     };
-    Provider.createDF("apicommon/spawu7S4urax/tYjD/logincheck/", params)
+    Provider.createDF(Provider.API_URLS.LoginCheck, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
-          // const user = {
-          //   UserID: response.data.data[0].userID,
-          //   FullName: response.data.data[0].fullName,
-          //   RoleID: response.data.data[0].roleID,
-          //   RoleName: response.data.data[0].roleName,
-          // };
-          
-          // StoreUserData(user, navigation);
           GetUserDetails(response.data.data.user_refno);
         } else {
           setSnackbarText(communication.InvalidUserNotExists);
@@ -87,43 +74,38 @@ const LoginScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const GetUserDetails = (user_refno) => {
-    console.log('=======================GetUserDetails=======================');
     setIsButtonLoading(true);
     let params = {
-      // Username: username,
-      // Password: password,
       data: {
-        user_refno: user_refno
-      }
+        user_refno: user_refno,
+      },
     };
-    Provider.createDF("apicommon/spawu7S4urax/tYjD/userrefnocheck/", params)
+    Provider.createDF(Provider.API_URLS.UserFromRefNo, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           const user = {
             UserID: user_refno,
             FullName: response.data.data.Sess_FName,
             RoleID: response.data.data.Sess_group_refno,
             RoleName: response.data.data.Sess_Username,
-            Sess_FName:response.data.data.Sess_FName,
-            Sess_MobileNo:response.data.data.Sess_MobileNo,
-            Sess_Username:response.data.data.Sess_Username,
-            Sess_role_refno:response.data.data.Sess_role_refno,
-            Sess_group_refno:response.data.data.Sess_group_refno,
-            Sess_designation_refno:response.data.data.Sess_designation_refno,
-            Sess_locationtype_refno:response.data.data.Sess_locationtype_refno,
-            Sess_group_refno_extra_1:response.data.data.Sess_group_refno_extra_1,
-            Sess_User_All_GroupRefnos:response.data.data.Sess_User_All_GroupRefnos,
-            Sess_branch_refno:response.data.data.Sess_branch_refno,
-            Sess_company_refno:response.data.data.Sess_company_refno,
-            Sess_CompanyAdmin_UserRefno:response.data.data.Sess_CompanyAdmin_UserRefno,
-            Sess_CompanyAdmin_group_refno:response.data.data.Sess_CompanyAdmin_group_refno,
-            Sess_RegionalOffice_Branch_Refno:response.data.data.Sess_RegionalOffice_Branch_Refno,
-            Sess_menu_refno_list:response.data.data.Sess_menu_refno_list
+            Sess_FName: response.data.data.Sess_FName,
+            Sess_MobileNo: response.data.data.Sess_MobileNo,
+            Sess_Username: response.data.data.Sess_Username,
+            Sess_role_refno: response.data.data.Sess_role_refno,
+            Sess_group_refno: response.data.data.Sess_group_refno,
+            Sess_designation_refno: response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno: response.data.data.Sess_branch_refno,
+            Sess_company_refno: response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
           };
-          
+
           StoreUserData(user, navigation);
         } else {
           setSnackbarText(communication.InvalidUserNotExists);
@@ -137,7 +119,6 @@ const LoginScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const ValidateLogin = () => {
     Keyboard.dismiss();
     let isValid = true;
@@ -153,7 +134,6 @@ const LoginScreen = ({ route, navigation }) => {
       CheckLogin();
     }
   };
-
   const NewUser = () => {
     setUsername("");
     setPassword("");
@@ -161,7 +141,6 @@ const LoginScreen = ({ route, navigation }) => {
     setIsPasswordInvalid(false);
     navigation.navigate("Signup");
   };
-
   const ForgotPassword = () => {
     setUsername("");
     setPassword("");
@@ -169,8 +148,8 @@ const LoginScreen = ({ route, navigation }) => {
     setIsPasswordInvalid(false);
     navigation.navigate("ForgotPassword");
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">

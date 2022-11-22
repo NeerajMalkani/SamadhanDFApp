@@ -30,10 +30,9 @@ const ForgotPassword = ({ navigation }) => {
 
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
-
   //#endregion 
 
-  //#region Functions
+  //#region Events
   const onMobileNumberChanged = (text) => {
     setMobileNumber(text);
     setIsSnackbarVisible(false);
@@ -47,7 +46,6 @@ const ForgotPassword = ({ navigation }) => {
       setOTPButtonDisabled(false);
     }
   };
-
   const onOTP1Changed = (text) => {
     setOTP1(text);
     if (text.length > 0) {
@@ -72,7 +70,6 @@ const ForgotPassword = ({ navigation }) => {
       setIsOTPInvalid(false);
     }
   };
-
   const onPasswordChanged = (text) => {
     setPassword(text);
     setIsSnackbarVisible(false);
@@ -80,7 +77,6 @@ const ForgotPassword = ({ navigation }) => {
       setIsPasswordInvalid(false);
     }
   };
-
   const onConfirmPasswordChanged = (text) => {
     setConfirmPassword(text);
     setIsSnackbarVisible(false);
@@ -88,36 +84,17 @@ const ForgotPassword = ({ navigation }) => {
       setIsConfirmPasswordInvalid(false);
     }
   };
+  //#endregion 
 
-  const ValidateOTP = () => {
-    if (mobileNumber.length === 0) {
-      setIsMobileNumberInvalid(true);
-      setIsOTPInvalid(true);
-      setSnackbarText(communication.InvalidMobileBeforeOTP);
-      setIsSnackbarVisible(true);
-    } else {
-      const random4Digits = Math.floor(1000 + Math.random() * 9000);
-      setOTP1(random4Digits.toString().substring(0, 1));
-      setOTP2(random4Digits.toString().substring(1, 2));
-      setOTP3(random4Digits.toString().substring(2, 3));
-      setOTP4(random4Digits.toString().substring(3, 4));
-      setIsOTPInvalid(false);
-      setOTPButtonDisabled(true);
-      setIsSnackbarVisible(false);
-    }
-  };
-
+  //#region API calling
   const GETOTP = () => {
     setIsButtonLoading(true);
     const params = {
-      // Username: mobileNumber,
-      // Password: password,
-      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
       data: {
         Mobileno: mobileNumber
       }
     };
-    Provider.create("apicommon/spawu7S4urax/tYjD/forgotmobilenocheck/", params)
+    Provider.create(Provider.API_URLS.ForgotMobileNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           let otp = response.data.data.OTP_No;
@@ -142,19 +119,15 @@ const ForgotPassword = ({ navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const VerifyUser = () => {
     setIsButtonLoading(true);
     const params = {
-      // Username: mobileNumber,
-      // Password: password,
-      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
       data: {
-        "Mobileno": mobileNumber,
-        "otpno": parseInt(otp1 + otp2 + otp3 + otp4)
+        Mobileno: mobileNumber,
+        otpno: parseInt(otp1 + otp2 + otp3 + otp4)
       }
     };
-    Provider.create("apicommon/spawu7S4urax/tYjD/forgotpasswordcheck/", params)
+    Provider.create(Provider.API_URLS.ForgotPasswordCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           UpdateUser(response.data.data.user_refno);
@@ -170,21 +143,17 @@ const ForgotPassword = ({ navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const UpdateUser = (userid) => {
     setIsButtonLoading(true);
     const params = {
-      // Username: mobileNumber,
-      // Password: password,
-      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
       data: {
-        "user_refno": userid,
-        "Mobileno": mobileNumber,
-        "auth": password,
-        "confirm_password": password
+        user_refno: userid,
+        Mobileno: mobileNumber,
+        auth: password,
+        confirm_password: password
       }
     };
-    Provider.create("apicommon/spawu7S4urax/tYjD/alterpasswordcheck/", params)
+    Provider.create(Provider.API_URLS.AlterPasswordCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           navigation.goBack();
@@ -200,7 +169,6 @@ const ForgotPassword = ({ navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const ValidateForgotPassword = () => {
     Keyboard.dismiss();
     let isValid = true;

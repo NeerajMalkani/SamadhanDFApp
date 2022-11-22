@@ -5,8 +5,7 @@ import React from "react";
 import { communication } from "../utils/communication";
 import { theme } from "../theme/apptheme";
 import Provider from "../api/Provider";
-import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createNavigationContainerRef } from "@react-navigation/native";
 import { ValidateFullName, ValidateMobile } from "../utils/validations";
 export const navigationRef = createNavigationContainerRef();
 
@@ -44,10 +43,9 @@ const SignupScreen = ({ route, navigation }) => {
 
   const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  //#endregion 
+  //#endregion
 
-  //#region Functions
-
+  //#region Events
   const onFullNameChanged = (text) => {
     setFullName(text);
     setIsSnackbarVisible(false);
@@ -55,7 +53,6 @@ const SignupScreen = ({ route, navigation }) => {
       setIsFullNameInvalid(false);
     }
   };
-
   const onMobileNumberChanged = (text) => {
     setMobileNumber(text);
     setIsSnackbarVisible(false);
@@ -69,7 +66,6 @@ const SignupScreen = ({ route, navigation }) => {
       setOTPButtonDisabled(false);
     }
   };
-
   const onOTP1Changed = (text) => {
     setOTP1(text);
     if (text.length > 0) {
@@ -94,7 +90,6 @@ const SignupScreen = ({ route, navigation }) => {
       setIsOTPInvalid(false);
     }
   };
-
   const onPasswordChanged = (text) => {
     setPassword(text);
     setIsSnackbarVisible(false);
@@ -102,7 +97,6 @@ const SignupScreen = ({ route, navigation }) => {
       setIsPasswordInvalid(false);
     }
   };
-
   const onConfirmPasswordChanged = (text) => {
     setConfirmPassword(text);
     setIsSnackbarVisible(false);
@@ -110,38 +104,19 @@ const SignupScreen = ({ route, navigation }) => {
       setIsConfirmPasswordInvalid(false);
     }
   };
+  //#endregion
 
-  const ValidateOTP = () => {
-    if (mobileNumber.length === 0) {
-      setIsMobileNumberInvalid(true);
-      setIsOTPInvalid(true);
-      setSnackbarText(communication.InvalidMobileBeforeOTP);
-      setIsSnackbarVisible(true);
-    } else {
-      const random4Digits = Math.floor(1000 + Math.random() * 9000);
-      setOTP1(random4Digits.toString().substring(0, 1));
-      setOTP2(random4Digits.toString().substring(1, 2));
-      setOTP3(random4Digits.toString().substring(2, 3));
-      setOTP4(random4Digits.toString().substring(3, 4));
-      setIsOTPInvalid(false);
-      setOTPButtonDisabled(true);
-      setIsSnackbarVisible(false);
-    }
-  };
-
+  //#region API calling
   const GETOTP = () => {
-    console.log('start otp');
     const params = {
       data: {
         Mobileno: mobileNumber,
-        EntryFrom: 1
-      }
+        EntryFrom: 1,
+      },
     };
-    Provider.createDF("apicommon/spawu7S4urax/tYjD/mobilenocheck/", params)
+    Provider.createDF(Provider.API_URLS.MobileCheck, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
-
           let otp = response.data.data.OTP_No;
           if (otp !== "") {
             setOTP1(otp.toString().substring(0, 1));
@@ -149,11 +124,9 @@ const SignupScreen = ({ route, navigation }) => {
             setOTP3(otp.toString().substring(2, 3));
             setOTP4(otp.toString().substring(3, 4));
           }
-
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setIsSnackbarVisible(true);
-
         } else {
           setSnackbarText(response.data.message);
           setIsSnackbarVisible(true);
@@ -166,36 +139,18 @@ const SignupScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
-  const StoreUserData = async (user) => {
-    try {
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.dispatch(StackActions.replace("HomeStack", "Signup"));
-    } catch (error) { }
-  };
-
   const InsertNewUser = () => {
     setIsButtonLoading(true);
     const params = {
-      // FullName: fullName,
-      // Password: password,
-      // RoleID: 2,
-      // OTP: parseInt(otp1 + otp2 + otp3 + otp4),
-      // IsVerified: true,
-      // IsActive: true,
-      // Username: mobileNumber,
-      // Status: 1,
-
       data: {
         Mobileno: mobileNumber,
         firstname: fullName,
         auth: password,
         confirm_password: password,
-        EntryFrom: "App"
-      }
-
+        EntryFrom: "App",
+      },
     };
-    Provider.createDF("apicommon/spawu7S4urax/tYjD/newuserprofilecreate/", params)
+    Provider.createDF(Provider.API_URLS.NewUserProfile, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           navigation.goBack();
@@ -214,7 +169,6 @@ const SignupScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-
   const ValidateSignup = () => {
     Keyboard.dismiss();
     let isValid = true;
@@ -248,7 +202,7 @@ const SignupScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
