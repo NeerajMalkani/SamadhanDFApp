@@ -37,8 +37,7 @@ const ServicesScreen = ({ navigation }) => {
         service_refno: "all"
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicerefnocheck/", params)
-    //Provider.getAll("master/getservices")
+    Provider.createDF(Provider.API_URLS.ServiceFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

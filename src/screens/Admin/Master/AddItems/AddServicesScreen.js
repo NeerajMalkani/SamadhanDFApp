@@ -24,9 +24,7 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const InsertServices = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicenamecreate/", {
-      // ServiceName: services,
-      // Display: checked 
+    Provider.createDF(Provider.API_URLS.ServiceNameCreate, {
        data: {
         Sess_UserRefno: "2",
         service_name: services,
@@ -55,11 +53,7 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const UpdateServices = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/servicenameupdate/", { 
-      // ID: route.params.data.service_refno, 
-      // ServiceName: services, 
-      // Display: checked 
-
+    Provider.createDF(Provider.API_URLS.ServiceNameUpdate, { 
       data: {
         Sess_UserRefno: "2",
         service_refno: route.params.data.service_refno,

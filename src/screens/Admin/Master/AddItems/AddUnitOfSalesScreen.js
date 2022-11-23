@@ -7,7 +7,6 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddUnitOfSalesScreen = ({ route, navigation }) => {
-  
   //#region Variables
 
   const [error, setError] = React.useState(false);
@@ -19,9 +18,9 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const ref_input2 = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const onNameChanged = (text) => {
     setName(text);
     setError(false);
@@ -33,18 +32,16 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/unitnamecreate/", { 
-      // Unit1Name: name, Unit2Name: conversion, Display: checked 
-      data:{
+    Provider.createDF(Provider.API_URLS.UnitNameCreate, {
+      data: {
         Sess_UserRefno: "2",
         unit_name: name,
         convert_unit_name: conversion,
-        view_status: checked ? 1 : 0 ,
-      }
-    }
-    )
+        view_status: checked ? 1 : 0,
+      },
+    })
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -57,27 +54,22 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        // console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/unitnameupdate/", 
-    // { Unit1ID: parseInt(route.params.data.unit1ID), Unit2ID: parseInt(route.params.data.unit2ID), Unit1Name: name, Unit2Name: conversion, Display: checked }
-    {
-      data:{
-        "Sess_UserRefno": "2",
-        "unit_category_refno": route.params.data.id,
-        "unit_name": name,
-        "convert_unit_name": conversion,
-        "view_status": checked ? 1 : 0,
-      }
-    }
-    )
+    Provider.createDF(Provider.API_URLS.UnitNameUpdate, {
+      data: {
+        Sess_UserRefno: "2",
+        unit_category_refno: route.params.data.id,
+        unit_name: name,
+        convert_unit_name: conversion,
+        view_status: checked ? 1 : 0,
+      },
+    })
       .then((response) => {
-        console.log(response.data)
         if (response.data && (response.data.code === 200 || response.data.code === 204)) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -90,7 +82,6 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -114,7 +105,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

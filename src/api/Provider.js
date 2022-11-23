@@ -91,6 +91,12 @@ class Provider {
     GroupFromRefNo: "grouprefnocheck/",
     GroupNameCreate: "groupnamecreate/",
     GroupNameUpdate: "groupnameupdate/",
+    ServiceFromRefNo: "servicerefnocheck/",
+    ServiceNameCreate: "servicenamecreate/",
+    ServiceNameUpdate: "servicenameupdate/",
+    UnitCategoryFromRefNo: "unitcategoryrefnocheck/",
+    UnitNameCreate: "unitnamecreate/",
+    UnitNameUpdate: "unitnameupdate/"
   };
 
   createDF(resource, params) {

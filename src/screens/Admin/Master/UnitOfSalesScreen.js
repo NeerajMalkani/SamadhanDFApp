@@ -32,19 +32,14 @@ const UnitOfSalesScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     
-    // Provider.getAll("master/getunitofsales")
     let params = {
       data: {
         Sess_UserRefno: "2",
         unit_category_refno: 'all',
       },
     };
-    Provider.createDF(
-      'apiappadmin/spawu7S4urax/tYjD/unitcategoryrefnocheck/',
-      params
-    )
+    Provider.createDF(Provider.API_URLS.UnitCategoryFromRefNo, params)
       .then((response) => {
-        // console.log(response.data.data)
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -102,20 +97,10 @@ const UnitOfSalesScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap)=> {
-    // console.log(data.item)
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddUnitOfSalesScreen", {
       type: "edit",
       fetchData: FetchData,
-      // data: {
-      //   // id: data.item.id,
-      //   // unit1Name: data.item.unit1Name,
-      //   // unit2Name: data.item.unit2Name,
-      //   // unit1ID: data.item.unit1ID,
-      //   // unit2ID: data.item.unit2ID,
-      //   // display: data.item.display,
-        
-      // },
       data: {
         id:data.item.unit_category_refno,
         unit_name_text: data.item.unit_name,
