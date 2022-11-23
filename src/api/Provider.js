@@ -70,7 +70,7 @@ class Provider {
     });
   }
   //#endregion
-  
+
   //#region New API's
 
   API_URLS = {
@@ -85,9 +85,12 @@ class Provider {
     MobileCheck: "mobilenocheck/",
     ForgotMobileNoCheck: "forgotmobilenocheck/",
     ForgotPasswordCheck: "forgotpasswordcheck/",
-    AlterPasswordCheck: "alterpasswordcheck/"
+    AlterPasswordCheck: "alterpasswordcheck/",
 
-    
+    /******************************Admin Master************************************/
+    GroupFromRefNo: "grouprefnocheck/",
+    GroupNameCreate: "groupnamecreate/",
+    GroupNameUpdate: "groupnameupdate/",
   };
 
   createDF(resource, params) {

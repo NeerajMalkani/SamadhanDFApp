@@ -13,7 +13,6 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ActivityRolesScreen = ({ navigation }) => {
-
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -23,10 +22,9 @@ const ActivityRolesScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-  //#endregion 
+  //#endregion
 
   //#region Functions
-
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -36,10 +34,10 @@ const ActivityRolesScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        group_refno: "all"
-      }
+        group_refno: "all",
+      },
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/grouprefnocheck/", params)
+    Provider.createDF(Provider.API_URLS.GroupFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -109,7 +107,7 @@ const ActivityRolesScreen = ({ navigation }) => {
       },
     });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -126,15 +124,7 @@ const ActivityRolesScreen = ({ navigation }) => {
             previewOpenValue={-72}
             previewRowKey="1"
             previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
+            refreshControl={<RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => FetchData()} />}
             data={listSearchData[0]}
             useFlatList={true}
             disableRightSwipe={true}

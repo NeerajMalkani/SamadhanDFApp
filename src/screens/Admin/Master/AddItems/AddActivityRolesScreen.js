@@ -7,15 +7,14 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddActivityRolesScreen = ({ route, navigation }) => {
-
   //#region Variables
   const [activityNameError, setActivityNameError] = React.useState(false);
   const [activityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.group_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status === "1" ? true : false) : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const onActivityNameChanged = (text) => {
@@ -24,12 +23,12 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   };
 
   const InsertActivityName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnamecreate/", {
+    Provider.createDF(Provider.API_URLS.GroupNameCreate, {
       data: {
         Sess_UserRefno: "2",
         group_name: activityName,
-        view_status: checked ? 1 : 0
-      }
+        view_status: checked ? 1 : 0,
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -51,18 +50,13 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnameupdate/",
-     { 
-      // ID: route.params.data.id, 
-      // ActivityRoleName: activityName, 
-      // Display: checked 
-
+    Provider.createDF(Provider.API_URLS.GroupNameUpdate, {
       data: {
         Sess_UserRefno: "2",
         group_refno: route.params.data.group_refno,
         group_name: activityName,
         view_status: checked ? 1 : 0,
-      }
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -97,7 +91,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
