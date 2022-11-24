@@ -57,7 +57,7 @@ const DeclinedUserScreen = ({ navigation }) => {
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarText("User " + (from === "add" ? "added" : "approved") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -123,7 +123,6 @@ const DeclinedUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    console.log(params);
     Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

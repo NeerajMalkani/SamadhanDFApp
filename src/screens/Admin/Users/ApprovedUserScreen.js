@@ -57,7 +57,7 @@ const DeclinedUserScreen = ({ navigation }) => {
 
   const FetchData = (from) => {
     if (from === "add" || from === "decline") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "decline") + " successfully");
+      setSnackbarText("User " + (from === "add" ? "added" : "decline") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -123,11 +123,10 @@ const DeclinedUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    // console.log(params);
     Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          FetchData("Decline");
+          FetchData("decline");
         } else {
           setSnackbarText(communication.NoData);
           setSnackbarVisible(true);

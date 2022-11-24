@@ -36,6 +36,7 @@ const PendingUserScreen = ({ navigation }) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [isDisableDialogVisible, setIsDisableDialogVisible] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [selectedID, setSelectedID] = React.useState(0);
 
@@ -57,8 +58,8 @@ const PendingUserScreen = ({ navigation }) => {
   };
 
   const FetchData = (from) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+    if (from === "approve" || from === "decline") {
+      setSnackbarText("User " + (from === "approve" ? "approved" : "declined") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -122,7 +123,7 @@ const PendingUserScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
-            // setSelectedID(data.item.user_refno);
+            setSelectedID(data.item.user_refno);
             setCompanyDetails(data.item.firstname);
             setGroupName(data.item.group_name);
             setCompanyName(NullOrEmpty(data.item.company_name) ? "" : data.item.company_name);
@@ -142,44 +143,11 @@ const PendingUserScreen = ({ navigation }) => {
     );
   };
 
-    //approveModel
-    const hideDialog = () => setIsDialogVisible(false);
+  //approveModel
+  const hideDialog = () => setIsDialogVisible(false);
+  const hideDisableDialog = () => setIsDisableDialogVisible(false);
 
-
-    const approveUserStatus = () => {
-      hideDialog();
-      setIsButtonLoading(true);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          user_refno: selectedID
-        }
-      };
-      console.log(params);
-      Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
-        .then((response) => {
-          console.log(response.data)
-          if (response.data && response.data.code === 200) {
-            FetchData("update");
-          } else {
-            setSnackbarText(communication.NoData);
-            setSnackbarVisible(true);
-          }
-          setIsButtonLoading(false);
-        })
-        .catch((e) => {
-          setSnackbarText(e.message);
-          setSnackbarVisible(true);
-          setIsButtonLoading(false);
-        });
-    };
-
-  const openApproveModel = () => {
-    refRBSheet.current.close();
-    setIsDialogVisible(true);
-  }
-
-  const declineUserStatus = () => {
+  const approveUserStatus = () => {
     hideDialog();
     setIsButtonLoading(true);
     const params = {
@@ -188,12 +156,10 @@ const PendingUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    console.log(params);
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
       .then((response) => {
-        console.log(response.data)
         if (response.data && response.data.code === 200) {
-          FetchData("Decline");
+          FetchData("approve");
         } else {
           setSnackbarText(communication.NoData);
           setSnackbarVisible(true);
@@ -207,10 +173,41 @@ const PendingUserScreen = ({ navigation }) => {
       });
   };
 
-const openDeclineModel = () => {
-  refRBSheet.current.close();
-  setIsDialogVisible(true);
-}
+  const declineUserStatus = () => {
+    hideDisableDialog();
+    setIsButtonLoading(true);
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        user_refno: selectedID
+      }
+    };
+    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          FetchData("decline");
+        } else {
+          setSnackbarText(communication.NoData);
+          setSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const openApproveModel = () => {
+    refRBSheet.current.close();
+    setIsDialogVisible(true);
+  }
+
+  const openDeclineModel = () => {
+    refRBSheet.current.close();
+    setIsDisableDialogVisible(true);
+  }
 
   //#endregion 
 
@@ -261,7 +258,7 @@ const openDeclineModel = () => {
             <List.Item title="Mobile No" description={mobileNo} />
           </ScrollView>
         </View>
-        <View style={[Styles.backgroundColor, Styles.width100per, Styles.flexSpaceBetween,Styles.flexRow, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <View style={[Styles.backgroundColor, Styles.width100per, Styles.flexSpaceBetween, Styles.flexRow, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <View style={[Styles.backgroundColor, Styles.width48per]}>
             <Card.Content>
               <Button color={theme.colors.success} mode="contained" onPress={openApproveModel}>
@@ -276,33 +273,33 @@ const openDeclineModel = () => {
               </Button>
             </Card.Content>
           </View>
-               
+
         </View>
       </RBSheet>
       <Portal>
-                <Dialog visible={isDialogVisible} onDismiss={hideDialog} >
-                  <Dialog.Title>Confirmation</Dialog.Title>
-                  <Dialog.Content>
-                    <Paragraph>Confirm to Approve ? </Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog} >
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Approve ? </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
             <Button onPress={approveUserStatus}>Ok</Button>
             <Button onPress={hideDialog}>Cancel</Button>
           </Dialog.Actions>
-                </Dialog>
-              </Portal>
-              <Portal>
-                <Dialog visible={isDialogVisible} onDismiss={hideDialog} >
-                  <Dialog.Title>Confirmation</Dialog.Title>
-                  <Dialog.Content>
-                    <Paragraph>Confirm to Decline ? </Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog visible={isDisableDialogVisible} onDismiss={hideDisableDialog} >
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Decline ? </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
             <Button onPress={declineUserStatus}>Ok</Button>
-            <Button onPress={hideDialog}>Cancel</Button>
+            <Button onPress={hideDisableDialog}>Cancel</Button>
           </Dialog.Actions>
-                </Dialog>
-              </Portal>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
