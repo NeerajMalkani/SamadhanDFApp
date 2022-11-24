@@ -786,20 +786,26 @@ export const MenuItemsManufacture = [
     icon: "office-building-cog",
     type: "accordian",
     index: 1,
-    roleID: 5,
+    roleID: 7,
     items: [
-      // {
-      //   title: "Basic Details",
-      //   type: "accordian",
-      //   index: 10,
-      //   navigation: "ContractorBasicDetailsScreen",
-      // },
-      // {
-      //   title: "My Services",
-      //   type: "accordian",
-      //   index: 10,
-      //   navigation: "ContractorMyServicesScreen",
-      // },
+      {
+        title: "Brand Conversion Value",
+        type: "accordian",
+        index: 10,
+        navigation: "BrandConversionValue",
+      },
+      {
+        title: "Opening Stock",
+        type: "accordian",
+        index: 10,
+        navigation: "OpeningStockList",
+      },
+      {
+        title: "Opening Stock Scrap",
+        type: "accordian",
+        index: 10,
+        navigation: "OpeningStockScrap",
+      },
     ],
   },
   {
@@ -807,7 +813,7 @@ export const MenuItemsManufacture = [
     icon: "newspaper-variant",
     type: "accordian",
     index: 6,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Design Wise",
@@ -828,20 +834,20 @@ export const MenuItemsManufacture = [
     icon: "office-building-cog",
     type: "accordian",
     index: 1,
-    roleID: 5,
+    roleID: 7,
     items: [
-      // {
-      //   title: "Basic Details",
-      //   type: "accordian",
-      //   index: 70,
-      //   navigation: "ContractorBasicDetailsScreen",
-      // },
-      // {
-      //   title: "Architect & Consultant-Boq",
-      //   type: "accordian",
-      //   index: 71,
-      //   //navigation: "CreatePurchaseOrderScreen",
-      // },
+      {
+        title: "Brand Conversion Value",
+        type: "accordian",
+        index: 70,
+        navigation: "BrandConversionValue",
+      },
+      {
+        title: "Opening Stock",
+        type: "accordian",
+        index: 71,
+        navigation: "OpeningStockList",
+      },
     ],
   },
   {
@@ -849,7 +855,7 @@ export const MenuItemsManufacture = [
     icon: "account-tie",
     type: "accordian",
     index: 2,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Employee New / List",
@@ -870,7 +876,7 @@ export const MenuItemsManufacture = [
     icon: "town-hall",
     type: "accordian",
     index: 3,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Add Department",
@@ -897,7 +903,7 @@ export const MenuItemsManufacture = [
     icon: "card-bulleted",
     type: "accordian",
     index: 4,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: " Architect Rate Card Setup",
@@ -919,7 +925,7 @@ export const MenuItemsManufacture = [
     icon: "tie",
     type: "accordian",
     index: 5,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Clients",
@@ -934,7 +940,7 @@ export const MenuItemsManufacture = [
     icon: "head-lightbulb",
     type: "accordian",
     index: 8,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Yet Start",
@@ -957,4 +963,5 @@ export const MenuItemsManufacture = [
     ],
   },
 ];
+
 

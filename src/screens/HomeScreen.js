@@ -322,7 +322,6 @@ const HomeScreen = ({ route, navigation }) => {
                   if (roleID == 1) {
                     navigation.navigate("ApprovedUserScreen", { type: "add" });
                   }
-
                 }} style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
                   <Card.Title title="Users" titleStyle={[Styles.textColorWhite]} />
 
@@ -352,7 +351,7 @@ const HomeScreen = ({ route, navigation }) => {
                 }}
                   style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
 
-                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
+                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite,]}>Material Calculator</Text>}
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require('../../assets/material-calculator.png')}
                     style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
@@ -377,7 +376,7 @@ const HomeScreen = ({ route, navigation }) => {
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
-      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)} transparent={true}>
+      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)}  transparent={true}>
         <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
           <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => { }}>
             View
@@ -388,7 +387,6 @@ const HomeScreen = ({ route, navigation }) => {
           <ImageViewer imageUrls={catalogueImagesZoom} backgroundColor="transparent" style={{ height: 1920 }} />
         </View>
       </Modal>
-
     </View >
   );
 };
