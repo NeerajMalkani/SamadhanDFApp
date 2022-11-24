@@ -8,7 +8,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddEWayBillScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
   const [stateName, setStateName] = React.useState(route.params.type === "edit" ? route.params.data.state_name : "");
@@ -21,19 +21,18 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   const [interStateLimitError, setInterStateLimitError] = React.useState(false);
   const [interStateLimit, setInterStateLimit] = React.useState(route.params.type === "edit" ? route.params.data.inter_state_limit : "");
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status === "1" ? true : false) : true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const ref_input2 = useRef();
-//#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
 
   const FetchStates = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getstateewaybillform/", null)
+    Provider.createDFAdmin(Provider.API_URLS.GetStateEWayBillForm, null)
       .then((response) => {
-       console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setStatesFullData(response.data.data);
@@ -74,13 +73,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   };
 
   const InsertEWayBill = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillcreate/", {
-      // StateID: statesFullData.find((el) => {
-      //   return el.stateName === stateName;
-      // }).id,
-      // InStateLimit: inStateLimit,
-      // InterStateLimit: interStateLimit,
-      // Display: checked,
+    Provider.createDFAdmin(Provider.API_URLS.EWayBillCreate, {
       data: {
         Sess_UserRefno: "2",
         group_refno: "2",
@@ -89,7 +82,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
         }).state_refno,
         in_state_limit: inStateLimit,
         inter_state_limit: interStateLimit,
-        view_status: checked ? 1 : 0
+        view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
@@ -112,14 +105,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   };
 
   const UpdateEWayBill = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillupdate/", {
-      // ID: route.params.data.id,
-      // StateID: statesFullData.find((el) => {
-      //   return el.stateName === stateName;
-      // }).id,
-      // InStateLimit: inStateLimit,
-      // InterStateLimit: interStateLimit,
-      // Display: checked,
+    Provider.createDFAdmin(Provider.API_URLS.EWayBillUpdate, {
       data: {
         Sess_UserRefno: "2",
         ewaybill_refno: route.params.data.id,
@@ -129,7 +115,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
         }).state_refno,
         in_state_limit: inStateLimit,
         inter_state_limit: interStateLimit,
-        view_status: checked ? 1 : 0
+        view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
@@ -176,8 +162,8 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} contentInsetAdjustmentBehavior="automatic" keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" nestedScrollEnabled>

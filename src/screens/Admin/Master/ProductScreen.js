@@ -10,11 +10,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ProductScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -29,24 +30,29 @@ const ProductScreen = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
   const [activityRoleName, setActivityRoleName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  const [hsnsacCode, setHsnsacCode] = React.useState("");
-  const [gstRate, setGstRate] = React.useState("");
-  const [unitName, setUnitName] = React.useState("");
+  const [productCode, setProductCode] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getproducts")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        product_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ProductFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -101,16 +107,9 @@ const ProductScreen = ({ navigation }) => {
       data: {
         id: data.item.productID,
         activityRoleName: data.item.activityRoleName,
-        activityID: data.item.activityID,
         serviceName: data.item.serviceName,
-        serviceID: data.item.serviceID,
-        unitName: data.item.unitName,
-        unitOfSalesID: data.item.unitOfSalesID,
         productName: data.item.productName,
         categoryName: data.item.categoryName,
-        categoryID: data.item.categoryID,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
         display: data.item.display,
       },
     });
@@ -130,24 +129,15 @@ const ProductScreen = ({ navigation }) => {
             setActivityRoleName(data.item.activityRoleName);
             setCategoryName(data.item.categoryName);
             setServiceName(data.item.serviceName);
-            setHsnsacCode(data.item.hsnsacCode);
-            setGstRate(data.item.gstRate.toFixed(2) + "%");
-            setUnitName(data.item.unitName);
+            setProductCode(data.item.productCode);
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Product" />
@@ -190,12 +180,10 @@ const ProductScreen = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{selectedProductName}</Title>
           <ScrollView>
+            <List.Item title="Product Code" description={productCode} />
             <List.Item title="Activity Role Name" description={activityRoleName} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
-            <List.Item title="HSN / SAC Code" description={hsnsacCode} />
-            <List.Item title="GST Rate" description={gstRate} />
-            <List.Item title="Unit name" description={unitName} />
           </ScrollView>
         </View>
       </RBSheet>

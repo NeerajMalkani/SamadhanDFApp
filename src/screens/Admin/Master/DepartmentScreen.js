@@ -22,7 +22,7 @@ const DepartmentScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const FetchData = (from) => {
@@ -34,13 +34,12 @@ const DepartmentScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        department_refno: "all"
+        department_refno: "all",
       },
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentrefnocheck/", params)
+    Provider.createDFAdmin(Provider.API_URLS.DepartmentRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -87,7 +86,7 @@ const DepartmentScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.department_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status=== "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
+        <List.Item title={data.item.department_name} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />} />
       </View>
     );
   };
@@ -108,7 +107,7 @@ const DepartmentScreen = ({ navigation }) => {
       },
     });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

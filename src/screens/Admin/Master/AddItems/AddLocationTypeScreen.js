@@ -7,9 +7,10 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Button, Card, Checkbox, Chip, HelperText, List, Snackbar, Text, TextInput } from "react-native-paper";
 import { communication } from "../../../../utils/communication";
+import { APIConverter } from "../../../../utils/apiconverter";
 
 const AddLocationTypeScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [branchTypeError, setBranchTypeError] = useState(false);
   const [branchType, setBranchType] = useState(route.params.type === "edit" ? route.params.data.branchType : "");
 
@@ -28,33 +29,38 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
 
   const refActivityRBSheet = useRef();
   const refServicesRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   useEffect(() => {
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
 
   const FetchActivities = () => {
-    Provider.getAll("master/getactivityroles")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             let listData = [];
             let selectedData = [];
             response.data.data.map((k) => {
               listData.push({
                 id: k.id,
                 name: k.activityRoleName,
-                isChecked: route.params && route.params.type === "edit" && route.params.data && route.params.data.activityName.split(",").indexOf(k.activityRoleName) !== -1 ? true : false,
+                isChecked: route.params && route.params.type === "edit" && route.params.data && route.params.data.activityName.indexOf(k.activityRoleName) !== -1 ? true : false,
               });
-              if (route.params && route.params.type === "edit" && route.params.data && route.params.data.activityName.split(",").indexOf(k.activityRoleName) !== -1) {
+              if (route.params && route.params.type === "edit" && route.params.data && route.params.data.activityName.indexOf(k.activityRoleName) !== -1) {
                 selectedData.push(k.id);
               }
             });
+
             if (route.params.type === "edit") {
               setActivitySelectedValue(selectedData);
             }
@@ -66,10 +72,17 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
   };
 
   const FetchServices = () => {
-    Provider.getAll("master/getservices")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        service_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ServiceFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
@@ -79,9 +92,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
               listData.push({
                 id: k.id,
                 name: k.serviceName,
-                isChecked: route.params && route.params.type === "edit" && route.params.data && route.params.data.serviceName.split(",").indexOf(k.serviceName) !== -1 ? true : false,
+                isChecked: route.params && route.params.type === "edit" && route.params.data && route.params.data.serviceName.indexOf(k.serviceName) !== -1 ? true : false,
               });
-              if (route.params && route.params.type === "edit" && route.params.data && route.params.data.serviceName.split(",").indexOf(k.serviceName) !== -1) {
+              if (route.params && route.params.type === "edit" && route.params.data && route.params.data.serviceName.indexOf(k.serviceName) !== -1) {
                 selectedData.push(k.id);
               }
             });
@@ -142,12 +155,17 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
   };
 
   const InsertLocationType = () => {
-    Provider.create("master/insertlocationtype", {
-      BranchType: branchType,
-      ActivityID: activitySelectedValue.toString(),
-      ServiceID: serviceSelectedValue.toString(),
-      Display: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        locationtype_name: branchType,
+        group_refno: activitySelectedValue,
+        service_refno: serviceSelectedValue,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    console.log(params);
+    Provider.createDFAdmin(Provider.API_URLS.LocationTypeCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -168,13 +186,17 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
   };
 
   const UpdateLocationType = () => {
-    Provider.create("master/updatelocationtype", {
-      ID: route.params.data.id,
-      BranchType: branchType,
-      ActivityID: activitySelectedValue.toString(),
-      ServiceID: serviceSelectedValue.toString(),
-      Display: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        locationtype_refno: route.params.data.id,
+        locationtype_name: branchType,
+        group_refno: activitySelectedValue,
+        service_refno: serviceSelectedValue,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.LocationTypeUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -217,8 +239,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       }
     }
   };
-   //#endregion 
-
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

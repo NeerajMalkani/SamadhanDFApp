@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const BASE_URL_OLD = "https://api.starselector.com/api";
-const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD/";
+const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
+const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
 
 class Provider {
   //#region Old API's
@@ -91,16 +92,65 @@ class Provider {
     GroupFromRefNo: "grouprefnocheck/",
     GroupNameCreate: "groupnamecreate/",
     GroupNameUpdate: "groupnameupdate/",
+
     ServiceFromRefNo: "servicerefnocheck/",
     ServiceNameCreate: "servicenamecreate/",
     ServiceNameUpdate: "servicenameupdate/",
+
     UnitCategoryFromRefNo: "unitcategoryrefnocheck/",
     UnitNameCreate: "unitnamecreate/",
-    UnitNameUpdate: "unitnameupdate/"
+    UnitNameUpdate: "unitnameupdate/",
+
+    CategoryFromRefNo: "categoryrefnocheck/",
+    CategoryNameCreate: "categorynamecreate/",
+    CategoryNameUpdate: "categorynameupdate/",
+
+    ProductFromRefNo: "productrefnocheck/",
+    ActivityRoleForProduct: "getactivityroleproductform/",
+    ServiceForProduct: "getservicenameproductform/",
+    CategoryForProduct: "getcategorynameproductform/",
+    CategoryDataForProduct: "getcategorydataproductform/",
+    UnitNameSelectedForProduct: "getunitnameserviceproductform/",
+    UnitNameForProduct: "getunitnameproductform/",
+    ProductNameCreate: "productnamecreate/",
+    ProductNameUpdate: "productnameupdate/",
+
+    ServiceProductFilter: "serviceproductfilter/",
+    ActivityRoleServiceProduct: "getactivityroleserviceproductform/",
+    ServiceNameServiceProduct: "getservicenameserviceproductform/",
+    CategoryNameServiceProduct: "getcategorynameserviceproductform/",
+    CategoryDataServiceProduct: "getcategorydataserviceproductform/",
+    ProductServiceProduct: "getproductnameserviceproductform/",
+    ServiceProductCreate: "serviceproductcreate/",
+    ServiceProductUpdate: "serviceproductupdate/",
+
+    DepartmentRefNoCheck: "departmentrefnocheck/",
+    DepartmentNameCreate: "departmentnamecreate/",
+    DepartmentNameUpdate: "departmentnameupdate/",
+
+    LocationTypeRefNoCheck: "locationtyperefnocheck/",
+    LocationTypeCreate: "locationtypecreate/",
+    LocationTypeUpdate: "locationtypeupdate/",
+
+    DesignationRefNoCheck: "designationrefnocheck/",
+    DesignationNameCreate: "designationnamecreate/",
+    DesignationNameUpdate: "designationnameupdate/",
+
+    EWayBillRefNoCheck: "ewaybillrefnocheck/",
+    GetStateEWayBillForm: "getstateewaybillform/",
+    EWayBillCreate: "ewaybillcreate/",
+    EWayBillUpdate: "ewaybillupdate/",
   };
 
   createDF(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
+  }
+  createDFAdmin(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Admin}/${resource}`, params);
+    } else {
+      return axios.post(`${BASE_URL_Admin}/${resource}`);
+    }
   }
   //#endregion
 }

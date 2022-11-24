@@ -10,12 +10,12 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const LocationTypeScreen = ({ navigation }) => {
-
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -26,13 +26,13 @@ const LocationTypeScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [selectedBranchType, setSelectedBranchType] = React.useState("");
-  const [activityName, setActivityName] = React.useState("");
-  const [serviceName, setServiceName] = React.useState("");
+  const [activityName, setActivityName] = React.useState([]);
+  const [serviceName, setServiceName] = React.useState([]);
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -40,10 +40,18 @@ const LocationTypeScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getlocationtypes")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        locationtype_refno: "all",
+      },
+    };
+
+    Provider.createDFAdmin(Provider.API_URLS.LocationTypeRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -97,17 +105,10 @@ const LocationTypeScreen = ({ navigation }) => {
           onPress={() => {
             refRBSheet.current.open();
             setSelectedBranchType(data.item.branchType);
-            setActivityName(data.item.activityName);
-            setServiceName(data.item.serviceName);
+            setActivityName(data.item.activityRoleName.join(", "));
+            setServiceName(data.item.serviceName.join(", "));
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
@@ -125,13 +126,13 @@ const LocationTypeScreen = ({ navigation }) => {
       data: {
         id: data.item.id,
         branchType: data.item.branchType,
-        activityName: data.item.activityName,
+        activityName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
         display: data.item.display,
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

@@ -23,7 +23,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   };
 
   const InsertActivityName = () => {
-    Provider.createDF(Provider.API_URLS.GroupNameCreate, {
+    Provider.createDFAdmin(Provider.API_URLS.GroupNameCreate, {
       data: {
         Sess_UserRefno: "2",
         group_name: activityName,
@@ -50,7 +50,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
-    Provider.createDF(Provider.API_URLS.GroupNameUpdate, {
+    Provider.createDFAdmin(Provider.API_URLS.GroupNameUpdate, {
       data: {
         Sess_UserRefno: "2",
         group_refno: route.params.data.group_refno,

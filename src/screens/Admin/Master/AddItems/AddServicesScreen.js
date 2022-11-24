@@ -7,15 +7,14 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddServicesScreen = ({ route, navigation }) => {
-
   //#region Variables
   const [servicesError, setServicesError] = React.useState(false);
   const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.service_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status == "1" ? true : false : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status == "1" ? true : false) : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const onServicesChanged = (text) => {
@@ -24,14 +23,13 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const InsertServices = () => {
-    Provider.createDF(Provider.API_URLS.ServiceNameCreate, {
-       data: {
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameCreate, {
+      data: {
         Sess_UserRefno: "2",
         service_name: services,
         production_unit: "1",
-        view_status: checked ? 1 : 0
-      }
-
+        view_status: checked ? 1 : 0,
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -53,15 +51,14 @@ const AddServicesScreen = ({ route, navigation }) => {
   };
 
   const UpdateServices = () => {
-    Provider.createDF(Provider.API_URLS.ServiceNameUpdate, { 
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameUpdate, {
       data: {
         Sess_UserRefno: "2",
         service_refno: route.params.data.service_refno,
         service_name: services,
         production_unit: "1",
-        view_status: checked ? 1 : 0
-      }
-
+        view_status: checked ? 1 : 0,
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -96,7 +93,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

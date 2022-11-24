@@ -7,15 +7,14 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddDepartmentScreen = ({ route, navigation }) => {
-
   //#region Variables
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.department_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status === "1" ? true : false : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status === "1" ? true : false) : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const onDepartmentNameChanged = (text) => {
@@ -24,14 +23,12 @@ const AddDepartmentScreen = ({ route, navigation }) => {
   };
 
   const InsertDepartmentName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentnamecreate/", {
-      //  DepartmentName: departmentName,
-      //   Display: checked 
+    Provider.createDFAdmin(Provider.API_URLS.DepartmentNameCreate, {
       data: {
         Sess_UserRefno: "2",
         department_name: departmentName,
         view_status: checked ? 1 : 0,
-      }
+      },
     })
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -53,13 +50,12 @@ const AddDepartmentScreen = ({ route, navigation }) => {
   };
 
   const UpdateDepartmentName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/departmentnameupdate/", {
-      // ID: route.params.data.id, DepartmentName: departmentName, Display: checked
+    Provider.createDFAdmin(Provider.API_URLS.DepartmentNameUpdate, {
       data: {
         Sess_UserRefno: "2",
         department_refno: route.params.data.department_refno,
         department_name: departmentName,
-        view_status: checked ? 1 : 0
+        view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
@@ -95,7 +91,7 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

@@ -13,7 +13,7 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ServicesScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -22,9 +22,9 @@ const ServicesScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-//#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -34,10 +34,10 @@ const ServicesScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        service_refno: "all"
-      }
+        service_refno: "all",
+      },
     };
-    Provider.createDF(Provider.API_URLS.ServiceFromRefNo, params)
+    Provider.createDFAdmin(Provider.API_URLS.ServiceFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -107,8 +107,8 @@ const ServicesScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Services" />

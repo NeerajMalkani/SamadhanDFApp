@@ -14,7 +14,6 @@ import { theme } from "../../../theme/apptheme";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const EWayBillScreen = ({ navigation }) => {
-  
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -31,9 +30,9 @@ const EWayBillScreen = ({ navigation }) => {
 
   const refRBSheet = useRef();
 
-  //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -44,10 +43,10 @@ const EWayBillScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        ewaybill_refno: "all"
+        ewaybill_refno: "all",
       },
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/ewaybillrefnocheck/",params)
+    Provider.createDFAdmin(Provider.API_URLS.EWayBillRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -107,14 +106,7 @@ const EWayBillScreen = ({ navigation }) => {
             setSelectedInStateLimit(data.item.in_state_limit);
             setSelectedInterStateLimit(data.item.inter_state_limit);
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
@@ -138,8 +130,8 @@ const EWayBillScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="E-Way Bill" />

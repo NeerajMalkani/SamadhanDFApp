@@ -32,7 +32,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    Provider.createDF(Provider.API_URLS.UnitNameCreate, {
+    Provider.createDFAdmin(Provider.API_URLS.UnitNameCreate, {
       data: {
         Sess_UserRefno: "2",
         unit_name: name,
@@ -60,7 +60,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.createDF(Provider.API_URLS.UnitNameUpdate, {
+    Provider.createDFAdmin(Provider.API_URLS.UnitNameUpdate, {
       data: {
         Sess_UserRefno: "2",
         unit_category_refno: route.params.data.id,

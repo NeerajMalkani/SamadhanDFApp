@@ -10,11 +10,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const CategoryScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -32,19 +33,26 @@ const CategoryScreen = ({ navigation }) => {
   const [unitName, setUnitName] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -100,8 +108,8 @@ const CategoryScreen = ({ navigation }) => {
             setSelectedCategoryName(data.item.categoryName);
             setServiceName(data.item.serviceName);
             setHsnsacCode(data.item.hsnsacCode);
-            setGstRate(data.item.gstRate.toFixed(2) + "%");
-            setUnitName(data.item.unitName);
+            setGstRate(data.item.gstRate + "%");
+            setUnitName(data.item.unitName.replace(/<br>/g, ","));
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -123,15 +131,15 @@ const CategoryScreen = ({ navigation }) => {
         id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
+        unitName: data.item.unitName.replace(/<br>/g, ","),
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
+        gstRate: data.item.gstRate,
         display: data.item.display,
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

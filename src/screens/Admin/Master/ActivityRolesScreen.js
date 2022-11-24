@@ -37,7 +37,7 @@ const ActivityRolesScreen = ({ navigation }) => {
         group_refno: "all",
       },
     };
-    Provider.createDF(Provider.API_URLS.GroupFromRefNo, params)
+    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

@@ -5,14 +5,15 @@ import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 
 const AddServiceProductScreen = ({ route, navigation }) => {
-
   //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  const [activityID, setActivityID] = React.useState("");
   const [errorAN, setANError] = React.useState(false);
   const activityDDRef = useRef({});
 
@@ -37,15 +38,15 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitsData, setUnitsData] = React.useState([]);
   const [selectedUnitID, setSelectedUnitID] = React.useState(0);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
   const [hsnError, setHSNError] = React.useState(false);
-  const [hsn, setHSN] = React.useState(route.params.type === "edit" ? route.params.data.hsnsacCode : "");
+  const [hsn, setHSN] = React.useState("");
 
   const [gstError, setGSTError] = React.useState(false);
-  const [gst, setGST] = React.useState(route.params.type === "edit" ? route.params.data.gstRate.toString() : "");
+  const [gst, setGST] = React.useState("");
 
   const [errorRUM, setErrorRUM] = React.useState(false);
   const [rum, setRUM] = React.useState(route.params.type === "edit" ? route.params.data.rateWithMaterials : "");
@@ -76,48 +77,20 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const ref_input3 = useRef();
   const ref_input4 = useRef();
   const ref_input5 = useRef();
-  const ref_input6 = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
-    let params = {
-      ID:
-        route.params.type === "edit"
-          ? route.params.data.activityID
-          : activityData.find((el) => {
-            return el.activityRoleName === selectedItem;
-          }).id,
-    };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
-
+  //#region Functions
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+    Provider.createDFAdmin(Provider.API_URLS.ActivityRoleServiceProduct)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
+            response.data.data = APIConverter(response.data.data);
             setActivityFullData(response.data.data);
             servicesDDRef.current.reset();
             const activities = response.data.data.map((data) => data.activityRoleName);
             setActivityData(activities);
-            setActivityName("Contractor");
+            setActivityName(response.data.data[0].activityRoleName);
             if (route.params.type !== "edit") {
               setServiceName("");
               setCategoriesFullData([]);
@@ -136,138 +109,175 @@ const AddServiceProductScreen = ({ route, navigation }) => {
               setShortSpec("");
               setSpec("");
             }
-            FetchServicesFromActivity("Contractor", response.data.data);
+            setActivityID(response.data.data[0].id);
+            FetchServicesFromActivity(response.data.data[0].id);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchCategoriesFromServices = (selectedItem) => {
+  const FetchServicesFromActivity = (actID) => {
     let params = {
-      ActivityID:
-        route.params.type === "edit"
-          ? route.params.data.activityID
-          : activityFullData.find((el) => {
-            return el.activityRoleName === acivityName;
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-            return el.serviceName === selectedItem;
-          }).id,
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameServiceProduct, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoriesFromServices(route.params.data.serviceName, response.data.data, actID);
+            }
+            setServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        service_refno: servicesDataParam
+          ? servicesDataParam.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id
+          : servicesFullData.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameServiceProduct, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoryDataFromCategory(route.params.data.categoryName, response.data.data);
+              FetchProductsFromCategory(route.params.data.categoryName, response.data.data, actID);
+            }
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchProductsFromCategory = (selectedItem) => {
+  const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
     let params = {
-      ActivityID:
-        route.params.type === "edit"
-          ? route.params.data.activityID
-          : activityFullData.find((el) => {
-            return el.activityRoleName === acivityName;
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-            return el.serviceName === serviceName;
-          }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
           : categoriesFullData.find((el) => {
-            return el.categoryName === selectedItem;
-          }).id,
+              return el.categoryName === selectedItem;
+            }).id,
+      },
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryDataServiceProduct, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
+            setHSN(response.data.data[0].hsnsacCode);
+            setGST(response.data.data[0].gstRate);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
+          : categoriesFullData.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ProductServiceProduct, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            if (route.params.type === "edit") {
+              FetchUnitsFromProductID(route.params.data.productName, response.data.data);
+            }
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchUnitsFromProductID = (selectedItem) => {
+  const FetchUnitsFromProductID = (selectedItem, productDataParam) => {
     let params = {
-      ProductID:
-        route.params.type === "edit"
-          ? route.params.data.id
+      data: {
+        Sess_UserRefno: "2",
+        product_refno: productDataParam
+          ? productDataParam.find((el) => {
+              return el.productName === selectedItem;
+            }).productID
           : productsFullData.find((el) => {
-            return el.productName === selectedItem;
-          }).productID,
+              return el.productName === selectedItem;
+            }).productID,
+      },
     };
-    Provider.getAll(`master/getproductunitbyid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.UnitNameSelectedForProduct, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
+            response.data.data = APIConverter(response.data.data);
             setUnitFullData(response.data.data);
-            const units = response.data.data.map((data) => data.unitName);
+            const units = response.data.data.map((data) => data.displayUnit);
             setUnitsData(units);
-            if (route.params.type === "edit") {
-              
-              if (response.data.data[0].unitID === route.params.data.selectedUnitID) {
-                setUnitName(response.data.data[0].unitName);
-                setUnitSelected(response.data.data[0].unitName);
-                setConversionUnitSelected(response.data.data[1].unitName);
-                setSelectedUnitID(response.data.data[0].unitID);
-                setAUOS(response.data.data[0].conversionRate.toString());
-
-              } else if (response.data.data[1].unitID === route.params.data.selectedUnitID) {
-                setUnitName(response.data.data[1].unitName);
-                setUnitSelected(response.data.data[1].unitName);
-                setConversionUnitSelected(response.data.data[0].unitName);
-                setSelectedUnitID(response.data.data[1].unitID);
-                console.log(response.data.data[1].conversionRate);
-                setAUOS(response.data.data[1].conversionRate.toString());
-              }
-            }
+            // if (route.params.type === "edit") {
+            //   if (response.data.data[0].unitID === route.params.data.selectedUnitID) {
+            //     setUnitName(response.data.data[0].unitName);
+            //     setUnitSelected(response.data.data[0].unitName);
+            //     setConversionUnitSelected(response.data.data[1].unitName);
+            //     setSelectedUnitID(response.data.data[0].unitID);
+            //     setAUOS(response.data.data[0].conversionRate.toString());
+            //   } else if (response.data.data[1].unitID === route.params.data.selectedUnitID) {
+            //     setUnitName(response.data.data[1].unitName);
+            //     setUnitSelected(response.data.data[1].unitName);
+            //     setConversionUnitSelected(response.data.data[0].unitName);
+            //     setSelectedUnitID(response.data.data[1].unitID);
+            //     setAUOS(response.data.data[1].conversionRate.toString());
+            //   }
+            // }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
     FetchActvityRoles();
-    if (route.params.type === "edit") {
-      FetchCategoriesFromServices();
-      FetchProductsFromCategory();
-      FetchUnitsFromProductID();
-    }
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setUnitsData([]);
@@ -285,24 +295,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.categoryID = categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id;
-    }
     productsDDRef.current.reset();
-    setHSN(
-      categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).hsnsacCode
-    );
-    setGST(
-      categoriesFullData
-        .find((el) => {
-          return el.categoryName === selectedItem;
-        })
-        .gstRate.toFixed(2)
-    );
     setCNError(false);
     setHSNError(false);
     setGSTError(false);
@@ -311,40 +304,33 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setUnitSelected("");
     setConversionUnitSelected("");
     setAUOS("");
-    FetchProductsFromCategory(selectedItem);
+    if (route.params.type !== "edit") {
+      FetchCategoryDataFromCategory(selectedItem, categoriesFullData);
+      FetchProductsFromCategory(selectedItem);
+    }
   };
 
   const onProductsNameSelected = (selectedItem) => {
     setProductsName(selectedItem);
     unitDDRef.current.reset();
-    if (route.params.type === "edit") {
-      route.params.data.productID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).productID;
-    }
     setPNError(false);
     setUnitName("");
     setUnitSelected("");
     setConversionUnitSelected("");
     setAUOS("");
-    FetchUnitsFromProductID(selectedItem);
+    if (route.params.type !== "edit") {
+      FetchUnitsFromProductID(selectedItem);
+    }
   };
 
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-    if (unitFullData[0].unitName === selectedItem) {
-      setUnitSelected(unitFullData[0].unitName);
-      setConversionUnitSelected(unitFullData[1].unitName);
-      setSelectedUnitID(unitFullData[0].unitID);
-      setAUOS(unitFullData[0].conversionRate.toString());
-    } else if (unitFullData[1].unitName === selectedItem) {
-      setUnitSelected(unitFullData[1].unitName);
-      setConversionUnitSelected(unitFullData[0].unitName);
-      setSelectedUnitID(unitFullData[1].unitID);
-      console.log(unitFullData[1].conversionRate);
-      setAUOS(unitFullData[1].conversionRate.toString());
-    }
+    setSelectedUnitID(
+      unitFullData.find((el) => {
+        return el.displayUnit === selectedItem;
+      }).id
+    );
   };
 
   const onHSNChanged = (text) => {
@@ -385,18 +371,32 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("master/updateproduct", {
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      SelectedUnitID: selectedUnitID,
-      RateWithMaterials: rum,
-      RateWithoutMaterials: ruwm,
-      AlternateUnitOfSales: auos,
-      ShortSpecification: shortSpec,
-      Specification: spec,
-      ServiceDisplay: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: activityID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        unitcategoryrefno_unitrefno: selectedUnitID,
+        with_material_rate: rum,
+        without_material_rate: ruwm,
+        unit_conversion_value: auos,
+        short_desc: shortSpec,
+        specification: spec,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    if (route.params.type === "edit") {
+      params.data.service_product_refno = route.params.data.id;
+    }
+    Provider.createDFAdmin(route.params.type === "edit" ? Provider.API_URLS.ServiceProductUpdate : Provider.API_URLS.ServiceProductCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData(route.params.type === "edit" ? "update" : "add");
@@ -473,8 +473,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       UpdateData();
     }
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

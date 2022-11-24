@@ -5,11 +5,11 @@ import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 
 const AddCategoryScreen = ({ route, navigation }) => {
-
-   //#region Variables
+  //#region Variables
 
   const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
@@ -41,14 +41,21 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
-   //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
@@ -62,9 +69,16 @@ const AddCategoryScreen = ({ route, navigation }) => {
   };
 
   const FetchServices = () => {
-    Provider.getAll("master/getservices")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        service_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ServiceFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          response.data.data = APIConverter(response.data.data);
           if (response.data.data) {
             response.data.data = response.data.data.filter((el) => {
               return el.display;
@@ -79,10 +93,17 @@ const AddCategoryScreen = ({ route, navigation }) => {
   };
 
   const FetchUnitOfSales = () => {
-    Provider.getAll("master/getunitofsales")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        unit_category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.UnitCategoryFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
@@ -143,25 +164,29 @@ const AddCategoryScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    let arrunitOfSalesName = [];
+    let str = "";
     unitOfSalesData.map((o) => {
       if (o.isChecked) {
-        arrunitOfSalesName.push(o.id);
+        str += str.length === 0 ? o.id : "," + o.id;
       }
     });
-    Provider.create("master/insertcategory", {
-      CategoryName: name,
-      RoleID: activityFullData.find((el) => {
-        return el.activityRoleName === acivityName;
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      HSNSACCode: hsn,
-      GSTRate: parseFloat(gst),
-      UnitID: arrunitOfSalesName.join(","),
-      Display: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        category_name: name,
+        group_refno: activityFullData.find((el) => {
+          return el.activityRoleName === acivityName;
+        }).id,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        hsn_sac_code: hsn,
+        gst_rate: parseFloat(gst),
+        unit_category_refno: str,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -182,40 +207,30 @@ const AddCategoryScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    let arrunitOfSalesName = [];
+    let str = "";
     unitOfSalesData.map((o) => {
       if (o.isChecked) {
-        arrunitOfSalesName.push(o.id);
+        str += str.length === 0 ? o.id : "," + o.id;
       }
     });
     const params = {
-      ID: route.params.data.id,
-      CategoryName: name,
-      RoleID: activityFullData.find((el) => {
-        return el.activityRoleName === acivityName;
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      HSNSACCode: hsn,
-      GSTRate: parseFloat(gst),
-      UnitID: arrunitOfSalesName.join(","),
-      Display: checked,
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: route.params.data.id,
+        category_name: name,
+        group_refno: activityFullData.find((el) => {
+          return el.activityRoleName === acivityName;
+        }).id,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        hsn_sac_code: hsn,
+        gst_rate: parseFloat(gst),
+        unit_category_refno: str,
+        view_status: checked ? 1 : 0,
+      },
     };
-    Provider.create("master/updatecategory", {
-      ID: route.params.data.id,
-      CategoryName: name,
-      RoleID: activityFullData.find((el) => {
-        return el.activityRoleName === acivityName;
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      HSNSACCode: hsn,
-      GSTRate: parseFloat(gst),
-      UnitID: arrunitOfSalesName.join(","),
-      Display: checked,
-    })
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -278,8 +293,8 @@ const AddCategoryScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
