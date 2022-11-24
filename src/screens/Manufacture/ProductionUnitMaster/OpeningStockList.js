@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { NullOrEmpty } from "../../../utils/validations";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -136,7 +137,7 @@ const OpeningStockList = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Brand Coversion Value" />
+      <Header navigation={navigation} title="Opening Stock List" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />

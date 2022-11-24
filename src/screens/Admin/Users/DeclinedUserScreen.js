@@ -29,10 +29,10 @@ const DeclinedUserScreen = ({ navigation }) => {
 
   const [companyDetails, setCompanyDetails] = React.useState("");
   const [company, setCompanyName] = React.useState("");
-  const [firstname, setFirstName] = React.useState("");
+  // const [firstname, setFirstName] = React.useState("");
   const [mobile, setMobileNo] = React.useState("");
   const [groupname, setGroupName] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  // const [password, setPassword] = React.useState("");
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [selectedID, setSelectedID] = React.useState(0);
@@ -223,16 +223,14 @@ const DeclinedUserScreen = ({ navigation }) => {
             <List.Item title="Activity Name" description={groupname} />
             <List.Item title="Company Name" description={company} />
             <List.Item title="Mobile No" description={mobile} />
-
           </ScrollView>
         </View>
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={openApproveModel} >
+            <Button mode="contained" onPress={openApproveModel}>
               Approve
             </Button>
           </Card.Content>
-
         </View>
       </RBSheet>
       <Portal>

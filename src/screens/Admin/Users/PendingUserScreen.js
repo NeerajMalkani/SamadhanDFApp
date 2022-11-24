@@ -31,10 +31,10 @@ const PendingUserScreen = ({ navigation }) => {
   const [companyName, setCompanyName] = React.useState("");
   const [mobileNo, setMobileNo] = React.useState("");
   const [groupname, setGroupName] = React.useState("");
-  const [department, setDepartment] = React.useState("");
-  const [designation, setDesignation] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  // const [department, setDepartment] = React.useState("");
+  // const [designation, setDesignation] = React.useState("");
+  // const [username, setUsername] = React.useState("");
+  // const [password, setPassword] = React.useState("");
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
   const [isDisableDialogVisible, setIsDisableDialogVisible] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
@@ -76,7 +76,7 @@ const PendingUserScreen = ({ navigation }) => {
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
+              k.key = (parseInt(i) + 1).toString(); 
             });
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
@@ -114,7 +114,7 @@ const PendingUserScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84, }]}>
         <List.Item
           title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(',')[0]}
           titleStyle={{ fontSize: 18 }}
@@ -128,7 +128,6 @@ const PendingUserScreen = ({ navigation }) => {
             setGroupName(data.item.group_name);
             setCompanyName(NullOrEmpty(data.item.company_name) ? "" : data.item.company_name);
             setMobileNo(NullOrEmpty(data.item.mobile_no) ? "" : data.item.mobile_no);
-
           }}
           right={() => (
             <Icon
@@ -248,7 +247,6 @@ const PendingUserScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={360} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyDetails}</Title>
@@ -294,7 +292,16 @@ const PendingUserScreen = ({ navigation }) => {
           <Dialog.Content>
             <Paragraph>Confirm to Decline ? </Paragraph>
           </Dialog.Content>
-          <Dialog.Actions>
+          {/* <Dialog.Actions> */}
+                </Dialog>
+              </Portal>
+              <Portal>
+                <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                  <Dialog.Title>Confirmation</Dialog.Title>
+                  <Dialog.Content>
+                    <Paragraph>Confirm to Decline ? </Paragraph>
+                  </Dialog.Content>
+                  <Dialog.Actions>
             <Button onPress={declineUserStatus}>Ok</Button>
             <Button onPress={hideDisableDialog}>Cancel</Button>
           </Dialog.Actions>

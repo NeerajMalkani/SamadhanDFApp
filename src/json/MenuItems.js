@@ -788,18 +788,24 @@ export const MenuItemsManufacture = [
     index: 1,
     roleID: 7,
     items: [
-      // {
-      //   title: "Basic Details",
-      //   type: "accordian",
-      //   index: 10,
-      //   navigation: "ContractorBasicDetailsScreen",
-      // },
-      // {
-      //   title: "My Services",
-      //   type: "accordian",
-      //   index: 10,
-      //   navigation: "ContractorMyServicesScreen",
-      // },
+      {
+        title: "Brand Conversion Value",
+        type: "accordian",
+        index: 10,
+        navigation: "BrandConversionValue",
+      },
+      {
+        title: "Opening Stock",
+        type: "accordian",
+        index: 10,
+        navigation: "OpeningStockList",
+      },
+      {
+        title: "Opening Stock Scrap",
+        type: "accordian",
+        index: 10,
+        navigation: "OpeningStockScrap",
+      },
     ],
   },
   {
@@ -830,18 +836,18 @@ export const MenuItemsManufacture = [
     index: 1,
     roleID: 7,
     items: [
-      // {
-      //   title: "Basic Details",
-      //   type: "accordian",
-      //   index: 70,
-      //   navigation: "ContractorBasicDetailsScreen",
-      // },
-      // {
-      //   title: "Architect & Consultant-Boq",
-      //   type: "accordian",
-      //   index: 71,
-      //   //navigation: "CreatePurchaseOrderScreen",
-      // },
+      {
+        title: "Brand Conversion Value",
+        type: "accordian",
+        index: 70,
+        navigation: "BrandConversionValue",
+      },
+      {
+        title: "Opening Stock",
+        type: "accordian",
+        index: 71,
+        navigation: "OpeningStockList",
+      },
     ],
   },
   {
@@ -957,4 +963,5 @@ export const MenuItemsManufacture = [
     ],
   },
 ];
+
 
