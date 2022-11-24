@@ -37,7 +37,7 @@ const DesignationScreen = ({ navigation }) => {
         designation_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.DepartmentRefNoCheck, params)
+    Provider.createDFAdmin(Provider.API_URLS.DesignationRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
