@@ -786,7 +786,7 @@ export const MenuItemsManufacture = [
     icon: "office-building-cog",
     type: "accordian",
     index: 1,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Basic Details",
@@ -807,7 +807,7 @@ export const MenuItemsManufacture = [
     icon: "newspaper-variant",
     type: "accordian",
     index: 6,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Design Wise",
@@ -828,7 +828,7 @@ export const MenuItemsManufacture = [
     icon: "office-building-cog",
     type: "accordian",
     index: 1,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Basic Details",
@@ -849,7 +849,7 @@ export const MenuItemsManufacture = [
     icon: "account-tie",
     type: "accordian",
     index: 2,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Employee New / List",
@@ -870,7 +870,7 @@ export const MenuItemsManufacture = [
     icon: "town-hall",
     type: "accordian",
     index: 3,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Add Department",
@@ -897,7 +897,7 @@ export const MenuItemsManufacture = [
     icon: "card-bulleted",
     type: "accordian",
     index: 4,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: " Architect Rate Card Setup",
@@ -919,7 +919,7 @@ export const MenuItemsManufacture = [
     icon: "tie",
     type: "accordian",
     index: 5,
-    roleID: 5,
+    roleID: 7,
     items: [
       {
         title: "Clients",
@@ -934,7 +934,7 @@ export const MenuItemsManufacture = [
     icon: "head-lightbulb",
     type: "accordian",
     index: 8,
-    roleID: 5,
+    roleID: 7,
     items: [
       // {
       //   title: "Yet Start",
