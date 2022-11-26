@@ -67,9 +67,10 @@ const DeclinedUserScreen = ({ navigation }) => {
         group_refno: "all"
       }
     };
-
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserapprovelist/", params)
+    console.log(params);
+    Provider.createDFAdmin("getuserapprovelist/", params)
       .then((response) => {
+        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -123,7 +124,7 @@ const DeclinedUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+    Provider.createDFAdmin("userdeclinestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           FetchData("decline");

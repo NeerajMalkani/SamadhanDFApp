@@ -69,14 +69,13 @@ const PendingUserScreen = ({ navigation }) => {
         group_refno: "all"
       }
     };
-
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserpendinglist/", params)
+    Provider.createDFAdmin("getuserpendinglist/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString(); 
+              k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
@@ -155,7 +154,7 @@ const PendingUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
+    Provider.createDFAdmin("userapprovestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           FetchData("approve");
@@ -181,7 +180,7 @@ const PendingUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+    Provider.createDFAdmin("userdeclinestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           FetchData("decline");
@@ -293,15 +292,15 @@ const PendingUserScreen = ({ navigation }) => {
             <Paragraph>Confirm to Decline ? </Paragraph>
           </Dialog.Content>
           {/* <Dialog.Actions> */}
-                </Dialog>
-              </Portal>
-              <Portal>
-                <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-                  <Dialog.Title>Confirmation</Dialog.Title>
-                  <Dialog.Content>
-                    <Paragraph>Confirm to Decline ? </Paragraph>
-                  </Dialog.Content>
-                  <Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Decline ? </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
             <Button onPress={declineUserStatus}>Ok</Button>
             <Button onPress={hideDisableDialog}>Cancel</Button>
           </Dialog.Actions>
