@@ -67,8 +67,7 @@ const DeclinedUserScreen = ({ navigation }) => {
         group_refno: "all"
       }
     };
-
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getuserdeclinedlist/", params)
+    Provider.createDFAdmin("getuserdeclinedlist/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -123,7 +122,7 @@ const DeclinedUserScreen = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userapprovestatus/", params)
+    Provider.createDFAdmin("userapprovestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           FetchData("update");
