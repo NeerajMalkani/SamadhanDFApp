@@ -113,12 +113,12 @@ const OpeningStockList = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddCategoryScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddStockList", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddCategoryScreen", {
+    navigation.navigate("EditStockList", {
       type: "edit",
       fetchData: FetchData,
       data: {

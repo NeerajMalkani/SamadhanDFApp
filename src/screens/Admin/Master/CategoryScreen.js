@@ -54,7 +54,10 @@ const CategoryScreen = ({ navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
+// console.log(lisData)
             lisData.map((k, i) => {
+              // console.log(k)
+
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);

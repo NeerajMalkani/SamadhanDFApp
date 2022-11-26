@@ -116,7 +116,7 @@ function OpeningStockScrap({navigation}) {
   
     const EditCallback = (data, rowMap) => {
       rowMap[data.item.key].closeRow();
-      navigation.navigate("AddCategoryScreen", {
+      navigation.navigate("EditStockScrap", {
         type: "edit",
         fetchData: FetchData,
         data: {

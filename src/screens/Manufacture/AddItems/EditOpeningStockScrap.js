@@ -9,7 +9,7 @@ import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 
 
 
-const AddOpeningStockScrap = ({ route, navigation }) => {
+const EditStockScrap = ({ route, navigation }) => {
   const [dob, setDob] = useState(new Date());
   const [dobInvalid, setDobInvalid] = useState("");
   const dobRef = useRef({});
@@ -148,4 +148,4 @@ const AddOpeningStockScrap = ({ route, navigation }) => {
   );
 };
 
-export default AddOpeningStockScrap;
+export default EditStockScrap;

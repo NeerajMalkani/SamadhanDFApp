@@ -10,12 +10,14 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@date-io/date-fns": "^2.16.0",
     "@eliav2/react-native-collapsible-view": "^1.4.0",
     "@expo/vector-icons": "^13.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
     "@hashiprobr/react-native-paper-datetimepicker": "^1.0.20",
+    "@material-ui/core": "^4.11.4",
     "@parse/react-native": "0.0.1-alpha.18",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/blur": "^4.2.0",

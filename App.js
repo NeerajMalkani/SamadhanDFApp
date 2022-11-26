@@ -124,6 +124,9 @@ import AddApiMaster from "./src/screens/Admin/Master/AddItems/AddApiMaster";
 import openingStockScrap from "./src/screens/Manufacture/openingStockScrap";
 import OpeningStockScrap from "./src/screens/Manufacture/openingStockScrap";
 import AddOpeningStockScrap from "./src/screens/Manufacture/AddItems/AddOpeningStockScrap";
+import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
+import EditStockList from "./src/screens/Manufacture/AddItems/EditStockList";
+import EditStockScrap from "./src/screens/Manufacture/AddItems/EditOpeningStockScrap";
 
 
 const Stack = createStackNavigator();
@@ -590,8 +593,11 @@ export default function App() {
               <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="BrandConversionValue" component={BrandConversionValue} options={{ headerTitle: "Brand Conversion Value ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="OpeningStockList" component={OpeningStockList} options={{ headerTitle: "Opening Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddStockList" component={AddStockList} options={{ headerTitle: "Add Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EditStockList" component={EditStockList} options={{ headerTitle: "Edit Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="OpeningStockScrap" component={openingStockScrap} options={{ headerTitle: "Opening Stock Scrap ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddOpeningStockScrap" component={AddOpeningStockScrap} options={{ headerTitle: "Add Opening Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EditStockScrap" component={EditStockScrap} options={{ headerTitle: "Edit  Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ApiMaster" component={ApiMaster} options={{ headerTitle: "Api Master", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               {/* <Stack.Screen name="AddApiMaster" component={AddApiMaster} options={{ headerTitle: "Add Api Master ", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
             </Stack.Navigator>
