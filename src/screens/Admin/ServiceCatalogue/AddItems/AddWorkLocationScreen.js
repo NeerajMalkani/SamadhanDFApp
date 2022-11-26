@@ -7,7 +7,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddWorkLocationScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [workLocationNameError, setWorkLocationNameError] = React.useState(false);
   const [workLocationName, setWorkLocationName] = React.useState(route.params.type === "edit" ? route.params.data.workLocationName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
@@ -15,16 +15,23 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const onWorkLocationNameChanged = (text) => {
     setWorkLocationName(text);
     setWorkLocationNameError(false);
   };
 
   const InsertWorkLocationName = () => {
-    Provider.create("servicecatalogue/insertworklocation", { WorkLocationName: workLocationName, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        worklocation_name: workLocationName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkLocationCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -45,7 +52,15 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
   };
 
   const UpdateWorkLocationName = () => {
-    Provider.create("servicecatalogue/updateworkLocation", { ID: route.params.data.id, WorkLocationName: workLocationName, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        worklocation_refno: route.params.data.id,
+        worklocation_name: workLocationName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkLocationUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -80,7 +95,7 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
     }
   };
 
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

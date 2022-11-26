@@ -7,7 +7,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
 const AddWorkFloorScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
 
   const [workFloorNameError, setWorkFloorNameError] = React.useState(false);
   const [workFloorName, setWorkFloorName] = React.useState(route.params.type === "edit" ? route.params.data.workFloorName : "");
@@ -15,16 +15,23 @@ const AddWorkFloorScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const onWorkFloorNameChanged = (text) => {
     setWorkFloorName(text);
     setWorkFloorNameError(false);
   };
 
   const InsertWorkFloorName = () => {
-    Provider.create("servicecatalogue/insertworkfloor", { WorkFloorName: workFloorName, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        workfloor_name: workFloorName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkFloorCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -45,7 +52,15 @@ const AddWorkFloorScreen = ({ route, navigation }) => {
   };
 
   const UpdateWorkFloorName = () => {
-    Provider.create("servicecatalogue/updateworkfloor", { ID: route.params.data.id, WorkFloorName: workFloorName, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        workfloor_refno: route.params.data.id,
+        workfloor_name: workFloorName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkFloorUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -79,7 +94,7 @@ const AddWorkFloorScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

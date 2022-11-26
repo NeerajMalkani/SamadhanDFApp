@@ -10,11 +10,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const DesignTypeScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -31,19 +32,26 @@ const DesignTypeScreen = ({ navigation }) => {
   const [designImage, setDesignImage] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("servicecatalogue/getdesigntypes")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        postdesigntyperefno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.DesignTypeRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -103,14 +111,7 @@ const DesignTypeScreen = ({ navigation }) => {
             setProductName(data.item.productName);
             setDesignImage(data.item.designImage);
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
@@ -139,7 +140,7 @@ const DesignTypeScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

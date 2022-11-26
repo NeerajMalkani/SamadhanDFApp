@@ -38,6 +38,13 @@ export const APIConverter = (response) => {
     renameKey(obj, "locationtype_refno", "id");
     renameKey(obj, "service_refno_name", "serviceName");
     renameKey(obj, "locationtype_name", "branchType");
+    renameKey(obj, "workfloor_refno", "id");
+    renameKey(obj, "workfloor_name", "workFloorName");
+    renameKey(obj, "worklocation_refno", "id");
+    renameKey(obj, "worklocation_name", "workLocationName");
+    renameKey(obj, "designtype_refno", "id");
+    renameKey(obj, "designtype_name", "designTypeName");
+    renameKey(obj, "designtype_image_url", "designImage");
   });
 
   return response;

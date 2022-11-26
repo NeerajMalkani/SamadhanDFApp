@@ -140,6 +140,23 @@ class Provider {
     GetStateEWayBillForm: "getstateewaybillform/",
     EWayBillCreate: "ewaybillcreate/",
     EWayBillUpdate: "ewaybillupdate/",
+
+    /******************************Admin Service Catalogue************************************/
+    WorkFloorRefNoCheck: "workfloorrefnocheck/",
+    WorkFloorCreate: "workfloornamecreate/",
+    WorkFloorUpdate: "workfloornameupdate/",
+
+    WorkLocationRefNoCheck: "worklocationrefnocheck/",
+    WorkLocationCreate: "worklocationnamecreate/",
+    WorkLocationUpdate: "worklocationnameupdate/",
+
+    ActivityRolesDesignType: "getgroupnamedesigntypeform",
+    ServiceNameDesignType: "getservicenamedesigntypeform",
+    CategoryNameDesignType: "getcategorynamedesigntypeform",
+    ProductNameDesignType: "getproductnamedesigntypeform",
+    DesignTypeRefNoCheck: "designtyperefnocheck/",
+    DesignTypeCreate: "designtypecreate/",
+    DesignTypeUpdate: "designtypeupdate/",
   };
 
   createDF(resource, params) {

@@ -12,9 +12,8 @@ import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 
-
 const AddDesignTypeScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -49,31 +48,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
- //#endregion 
+  //#endregion
 
- //#region Functions
-
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
-    let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
-    };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
+  //#region Functions
 
   const FetchActvityRoles = () => {
     Provider.getAll("master/getmainactivities")
@@ -104,24 +81,46 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
+  };
+
+  const FetchServicesFromActivity = (selectedItem, activityData) => {
+    let params = {
+      ID: activityData.find((el) => {
+        return el.activityRoleName === selectedItem;
+      }).id,
+    };
+    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = response.data.data.filter((el) => {
+              return el.display;
+            });
+            setServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
+          }
+        }
+      })
+      .catch((e) => {});
   };
 
   const FetchCategoriesFromServices = (selectedItem, activityData) => {
     let params = {
       ActivityID: activityData
         ? activityData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id
+            return el.activityRoleName === "Contractor";
+          }).id
         : activityFullData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id,
+            return el.activityRoleName === "Contractor";
+          }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-            return el.serviceName === selectedItem;
-          }).id,
+              return el.serviceName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -136,30 +135,30 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProductsFromCategory = (selectedItem, activityData) => {
     let params = {
       ActivityID: activityData
         ? activityData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id
+            return el.activityRoleName === "Contractor";
+          }).id
         : activityFullData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id,
+            return el.activityRoleName === "Contractor";
+          }).id,
       ServiceID:
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-            return el.serviceName === serviceName;
-          }).id,
+              return el.serviceName === serviceName;
+            }).id,
       CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : categoriesFullData.find((el) => {
-            return el.categoryName === selectedItem;
-          }).id,
+              return el.categoryName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -174,7 +173,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -404,9 +403,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
     if (filePath === null) {
       setDIError(true);
       isValid = false;
-    } 
+    }
 
-    if(designImage === null){
+    if (designImage === null) {
       setDIError(true);
       isValid = false;
     }
@@ -415,8 +414,8 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

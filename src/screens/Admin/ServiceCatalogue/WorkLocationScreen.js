@@ -9,11 +9,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const WorkLocationScreen = ({ navigation }) => {
-  
   //#region Variables
 
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -24,19 +24,26 @@ const WorkLocationScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("servicecatalogue/getworklocations")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        worklocation_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkLocationRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -103,8 +110,8 @@ const WorkLocationScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Work Location" />
