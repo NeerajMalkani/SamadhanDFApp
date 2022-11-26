@@ -10,7 +10,7 @@ const AddDepartmentScreen = ({ route, navigation }) => {
   //#region Variables
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.department_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status === "1" ? true : false) : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

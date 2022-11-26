@@ -2,6 +2,9 @@ export const APIConverter = (response) => {
   function renameKey(obj, oldKey, newKey) {
     if (obj.hasOwnProperty(oldKey)) {
       obj[newKey] = obj[oldKey];
+      if (newKey === "display") {
+        obj[newKey] = obj[newKey] === "1" ? true : false;
+      }
       delete obj[oldKey];
     }
   }

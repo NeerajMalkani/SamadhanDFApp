@@ -44,7 +44,7 @@ const DesignTypeScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        postdesigntyperefno: "all",
+        designtype_refno: "all",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.DesignTypeRefNoCheck, params)
@@ -129,11 +129,8 @@ const DesignTypeScreen = ({ navigation }) => {
       data: {
         id: data.item.id,
         designTypeName: data.item.designTypeName,
-        serviceID: data.item.serviceID,
         serviceName: data.item.serviceName,
-        categoryID: data.item.categoryID,
         categoryName: data.item.categoryName,
-        productID: data.item.productID,
         productName: data.item.productName,
         display: data.item.display,
         designImage: data.item.designImage,

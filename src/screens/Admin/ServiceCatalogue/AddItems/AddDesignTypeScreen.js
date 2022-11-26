@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Image, ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -15,6 +15,7 @@ import { AWSImagePath } from "../../../../utils/paths";
 const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
+  const [activityID, setActivityID] = React.useState("");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);
@@ -53,13 +54,11 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Functions
 
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+    Provider.createDFAdmin(Provider.API_URLS.ActivityRolesDesignType)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
+            response.data.data = APIConverter(response.data.data);
             setActivityFullData(response.data.data);
             if (route.params.type !== "edit") {
               servicesDDRef.current.reset();
@@ -73,30 +72,26 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
               setImage(AWSImagePath + "placeholder-image.png");
               setFilePath(null);
             }
-            FetchServicesFromActivity("Contractor", response.data.data);
-            if (route.params.type === "edit") {
-              FetchCategoriesFromServices("Contractor", response.data.data);
-              FetchProductsFromCategory("Contractor", response.data.data);
-            }
+            setActivityID(response.data.data[0].id);
+            FetchServicesFromActivity(response.data.data[0].id);
           }
         }
       })
       .catch((e) => {});
   };
 
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
+  const FetchServicesFromActivity = (actID) => {
     let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID,
+      },
     };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameDesignType, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
@@ -305,6 +300,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    //filePath.uri
     Provider.create("servicecatalogue/insertdesigntype", {
       DesignTypeName: name,
       ServiceID: servicesFullData.find((el) => {
@@ -411,7 +407,12 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
-      uploadFile();
+      if (route.params.type === "edit") {
+        UpdateData();
+      } else {
+        InsertData();
+      }
+      //uploadFile();
     }
   };
   //#endregion

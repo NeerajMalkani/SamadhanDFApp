@@ -10,7 +10,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
   //#region Variables
   const [designationNameError, setDesignationNameError] = React.useState(false);
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designation_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status === "1" ? true : false) : true);
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");

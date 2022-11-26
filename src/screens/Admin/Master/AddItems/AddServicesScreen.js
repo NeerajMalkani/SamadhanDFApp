@@ -9,8 +9,8 @@ import { communication } from "../../../../utils/communication";
 const AddServicesScreen = ({ route, navigation }) => {
   //#region Variables
   const [servicesError, setServicesError] = React.useState(false);
-  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.service_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? (route.params.data.view_status == "1" ? true : false) : true);
+  const [services, setServices] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
