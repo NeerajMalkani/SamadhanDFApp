@@ -251,21 +251,6 @@ const AddServiceProductScreen = ({ route, navigation }) => {
             setUnitFullData(response.data.data);
             const units = response.data.data.map((data) => data.displayUnit);
             setUnitsData(units);
-            // if (route.params.type === "edit") {
-            //   if (response.data.data[0].unitID === route.params.data.selectedUnitID) {
-            //     setUnitName(response.data.data[0].unitName);
-            //     setUnitSelected(response.data.data[0].unitName);
-            //     setConversionUnitSelected(response.data.data[1].unitName);
-            //     setSelectedUnitID(response.data.data[0].unitID);
-            //     setAUOS(response.data.data[0].conversionRate.toString());
-            //   } else if (response.data.data[1].unitID === route.params.data.selectedUnitID) {
-            //     setUnitName(response.data.data[1].unitName);
-            //     setUnitSelected(response.data.data[1].unitName);
-            //     setConversionUnitSelected(response.data.data[0].unitName);
-            //     setSelectedUnitID(response.data.data[1].unitID);
-            //     setAUOS(response.data.data[1].conversionRate.toString());
-            //   }
-            // }
           }
         }
       })

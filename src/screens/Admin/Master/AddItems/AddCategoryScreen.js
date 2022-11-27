@@ -45,13 +45,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
 
   //#region Functions
   const FetchActvityRoles = () => {
-    let params = {
-      data: {
-        Sess_UserRefno: "2",
-        group_refno: "all",
-      },
-    };
-    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
+    Provider.createDFAdmin(Provider.API_URLS.ActivityRoleCategory)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

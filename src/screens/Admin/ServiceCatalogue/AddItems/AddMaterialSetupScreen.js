@@ -6,15 +6,15 @@ import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
-  
   //#region Variables
   const arrProductData = React.useState([]);
 
-  const [activityFullData, setActivityFullData] = React.useState([]);
+  const [activityID, setActivityID] = React.useState("");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);
@@ -42,13 +42,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
-  const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet.toString() : "1");
-  const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches.toString() : "0");
+  const [lengthFeet, setLengthFeet] = React.useState("1");
+  const [lengthInches, setLengthInches] = React.useState("0");
 
-  const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
-  const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
+  const [widthFeet, setWidthFeet] = React.useState("1");
+  const [widthInches, setWidthInches] = React.useState("0");
 
-  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? (((parseInt(route.params.data.lengthFeet.toString()) * 12 + parseInt(route.params.data.lengthInches.toString())) * (parseInt(route.params.data.widthFeet.toString()) * 12 + parseInt(route.params.data.widthInches.toString()))) / 144).toFixed(4) : "1.0000");
+  const [totalSqFt, setTotalSqft] = React.useState("1.0000");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -66,19 +66,15 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+    Provider.createDFAdmin(Provider.API_URLS.ActivityRolesMaterialSetup)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
-            setActivityFullData(response.data.data);
-
+            response.data.data = APIConverter(response.data.data);
             if (route.params.type !== "edit") {
               servicesDDRef.current.reset();
               setServiceName("");
@@ -96,31 +92,29 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
               setPLError(false);
               setBNError(false);
             }
-            FetchServicesFromActivity("Contractor", response.data.data);
-            if (route.params.type === "edit") {
-              FetchCategoriesFromServices("Contractor", response.data.data);
-              FetchProductsFromCategory("Contractor", response.data.data);
-              FetchDesignTypeFromProduct("Contractor", response.data.data);
-            }
+            setActivityID(response.data.data[0].id);
+            FetchServicesFromActivity(response.data.data[0].id);
           }
         }
       })
       .catch((e) => {});
   };
 
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
+  const FetchServicesFromActivity = (actID) => {
     let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID,
+      },
     };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoriesFromServices(route.params.data.serviceName, response.data.data, actID);
+            }
             setServicesFullData(response.data.data);
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
@@ -130,30 +124,29 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchCategoriesFromServices = (selectedItem, activityData) => {
+  const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        service_refno: servicesDataParam
+          ? servicesDataParam.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id
           : servicesFullData.find((el) => {
               return el.serviceName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchProductsFromCategory(route.params.data.categoryName, response.data.data, actID);
+            }
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
           }
@@ -162,37 +155,29 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchProductsFromCategory = (selectedItem, activityData) => {
+  const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
           : categoriesFullData.find((el) => {
               return el.categoryName === selectedItem;
             }).id,
+      },
     };
-
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductNameMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchDesignTypeFromProduct(route.params.data.productName, response.data.data);
+            }
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
           }
@@ -201,34 +186,24 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchDesignTypeFromProduct = (selectedItem) => {
+  const FetchDesignTypeFromProduct = (selectedItem, productDataParams) => {
     let params = {
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : categoriesFullData.find((el) => {
-              return el.categoryName === categoriesName;
-            }).id,
-      ProductID:
-        route.params.type === "edit"
-          ? route.params.data.productID
+      data: {
+        Sess_UserRefno: "2",
+        product_refno: productDataParams
+          ? productDataParams.find((el) => {
+              return el.productName === selectedItem;
+            }).productID
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
             }).productID,
+      },
     };
-    Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductDesignTypeMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setDesignTypeFullData(response.data.data);
             const designTypes = response.data.data.map((data) => data.designTypeName);
             setDesignTypeData(designTypes);
@@ -238,21 +213,70 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchBrandsFromProductIds = (productData) => {
-    const productids = productData ? productData.map((data) => data.productID) : arrProductData[0].map((data) => data.productID);
+  const FetchBrandsFromProductIds = () => {
+    const productids = arrProductData[0].map((data) => data.productID);
     let params = {
-      ProductID: productids.join(","),
+      data: {
+        Sess_UserRefno: "2",
+        product_refno_Array: productids.join(","),
+      },
     };
-    Provider.getAll(`servicecatalogue/getbrandsbyproductids?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.BrandNamelistPopupMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setBrandsFullData(response.data.data);
-            const key = "brandID";
-            const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
-            setUniqueBrandsData(uniqueBrands);
-            const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
+            setUniqueBrandsData(response.data.data);
+            const formattedData = response.data.data.map((data) => data.brandName + " (" + data.categoryName + ")");
             setBrandsData(formattedData);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const GetProductRateFromMaterialSetup = (index) => {
+    const productids = arrProductData[0].map((data) => data.productID);
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        dealer_brand_refno: uniqueBrandsData[parseInt(index)].brandID,
+        product_refno_Array: productids.join(","),
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ProductRateBrandRefNoMaterialSetup, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            const appliedProducts = response.data.data;
+            const newData = [...arrProductData[0]];
+            newData.map((k) => {
+              const foundProduct = appliedProducts.find((el) => el.productID == k.productID);
+              if (foundProduct) {
+                k.brandID = foundProduct.brandID;
+                k.brandName = foundProduct.brandName;
+                k.price = parseFloat(foundProduct.price).toFixed(4);
+                if (k.formula) {
+                  const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+                  k.quantity = quants.toFixed(4);
+                  if (k.price) {
+                    k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+                  } else {
+                    k.amount = "0.0000";
+                  }
+                } else {
+                  k.quantity = "";
+                  k.amount = "0.0000";
+                }
+              }
+            });
+            console.log("Hi");
+            console.log(newData);
+            const amounts = appliedProducts.map((data) => data.amount);
+            setTotal(amounts.reduce((a, b) => (a ? a : 0 + parseFloat(b ? b : 0)), 0).toFixed(4));
+            arrProductData[1](newData);
           }
         }
       })
@@ -298,18 +322,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     FetchActvityRoles();
-    if (route.params.type === "edit") {
-      FetchProductsFromMaterialSetup();
-    }
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setProductsData([]);
@@ -322,13 +338,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const onCategoriesNameSelected = (selectedItem) => {
-    console.log('start');
     setCategoriesName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.categoryID = categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id;
-    }
     productsDDRef.current.reset();
     setCNError(false);
     setProductsData([]);
@@ -342,22 +352,12 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     setProductsName(selectedItem);
     setDesignTypeData([]);
     setDesignType("");
-    if (route.params.type === "edit") {
-      route.params.data.productID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).productID;
-    }
     setPNError(false);
     FetchDesignTypeFromProduct(selectedItem);
   };
 
   const onDesignTypeSelected = (selectedItem) => {
     setDesignType(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.designType = designTypeFullData.find((el) => {
-        return el.designTypeName === selectedItem;
-      }).id;
-    }
     setDTError(false);
   };
 
@@ -384,34 +384,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const onBrandNameSelected = (selectedItem, index) => {
     setBrandName(selectedItem);
     setBNError(false);
-    const selecedBrand = uniqueBrandsData[parseInt(index)];
-    const appliedProducts = brandsFullData.filter((el) => {
-      return el.brandID === selecedBrand.brandID;
-    });
-    const newData = [...arrProductData[0]];
-    newData.map((k) => {
-      const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
-      if (foundProduct) {
-        k.brandID = foundProduct.brandID;
-        k.brandName = foundProduct.brandName;
-        k.price = foundProduct.price.toFixed(4);
-        if (k.formula) {
-          const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
-          k.quantity = quants.toFixed(4);
-          if (k.price) {
-            k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-          } else {
-            k.amount = "0.0000";
-          }
-        } else {
-          k.quantity = "";
-          k.amount = "0.0000";
-        }
-      }
-    });
-    const amounts = newData.map((data) => data.amount);
-    setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
-    arrProductData[1](newData);
+    GetProductRateFromMaterialSetup(index);
   };
 
   const InsertData = () => {
@@ -595,8 +568,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       setTotalSqft(0);
     }
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

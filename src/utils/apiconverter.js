@@ -48,6 +48,16 @@ export const APIConverter = (response) => {
     renameKey(obj, "designtype_refno", "id");
     renameKey(obj, "designtype_name", "designTypeName");
     renameKey(obj, "designtype_image_url", "designImage");
+    renameKey(obj, "materials_setup_refno", "id");
+    renameKey(obj, "service_product_name", "productName");
+    renameKey(obj, "matrails_cost", "materialCost");
+    renameKey(obj, "dealer_product_refno", "productID");
+    renameKey(obj, "brand_refno", "brandID");
+    renameKey(obj, "brand_name", "brandName");
+    renameKey(obj, "company_product_refno", "productID");
+    renameKey(obj, "company_product_price", "price");
+    renameKey(obj, "company_brand_refno", "brandID");
+    renameKey(obj, "company_brand_name", "brandName");
   });
 
   return response;

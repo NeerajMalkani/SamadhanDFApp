@@ -5,12 +5,10 @@ import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import NoItems from "../../../../components/NoItems";
 import { Styles } from "../../../../styles/styles";
+import { APIConverter } from "../../../../utils/apiconverter";
 
 const AddMaterialSetupProducts = ({ arrProductData }) => {
   //#region Variables
-
-  const [activityFullData, setActivityFullData] = React.useState([]);
-
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState("");
@@ -22,45 +20,15 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   const categoriesDDRef = useRef({});
 
   const [productsFullData, setProductsFullData] = React.useState([]);
- //#endregion 
+  //#endregion
 
- //#region Functions
-
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+  //#region Functions
+  const FetchServices = () => {
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNamePopupMaterialSetup)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Dealer";
-            });
-            setActivityFullData(response.data.data);
-            servicesDDRef.current.reset();
-            setServiceName("");
-            setCategoriesName("");
-            setCategoriesData([]);
-            setServicesData([]);
-            setProductsFullData([]);
-            FetchServicesFromActivity("Dealer", response.data.data);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
-    let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
-    };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
@@ -72,20 +40,18 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
 
   const FetchCategoriesFromServices = (selectedItem) => {
     let params = {
-      ActivityID: activityFullData.find((el) => {
-        return el.activityRoleName === "Dealer";
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id,
+      data: {
+        Sess_UserRefno: "2",
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === selectedItem;
+        }).id,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNamePopupMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
@@ -96,27 +62,19 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   };
 
   const FetchProductsFromCategory = (selectedItem) => {
-    console.log('start prod');
     let params = {
-      ActivityID: activityFullData.find((el) => {
-        return el.activityRoleName === "Dealer";
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id,
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === selectedItem;
+        }).id,
+      },
     };
-    console.log(params);
-    Provider.getAll(`master/getproductsbycategoryidforbrands?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductListPopupMaterialSetup, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             const fullData = response.data.data.map((o) => ({
               ...o,
               isChecked: arrProductData[0].find((el) => {
@@ -125,6 +83,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
                 ? true
                 : false,
             }));
+            console.log(response.data.data);
             setProductsFullData(fullData);
           }
         }
@@ -133,7 +92,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
   };
 
   useEffect(() => {
-    FetchActvityRoles();
+    FetchServices();
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
@@ -150,7 +109,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
     setProductsFullData([]);
     FetchProductsFromCategory(selectedItem);
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

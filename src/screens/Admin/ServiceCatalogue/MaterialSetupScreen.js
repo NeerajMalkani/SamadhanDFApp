@@ -10,11 +10,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const MaterialSetupScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -28,24 +29,29 @@ const MaterialSetupScreen = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [productName, setProductName] = React.useState("");
-  const [length, setLength] = React.useState("");
-  const [width, setWidth] = React.useState("");
   const [subtotal, setSubtotal] = React.useState("");
 
   const refRBSheet = useRef();
-//#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("servicecatalogue/getmaterialsetup")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        materials_setup_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -102,9 +108,7 @@ const MaterialSetupScreen = ({ navigation }) => {
             setServiceName(data.item.serviceName);
             setCategoryName(data.item.categoryName);
             setProductName(data.item.productName);
-            setLength(data.item.length);
-            setWidth(data.item.width);
-            setSubtotal((parseFloat(data.item.subtotal) / (parseFloat(data.item.length) * parseFloat(data.item.width))).toFixed(4));
+            setSubtotal(data.item.materialCost);
           }}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
@@ -123,24 +127,17 @@ const MaterialSetupScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        serviceID: data.item.serviceID,
         serviceName: data.item.serviceName,
-        categoryID: data.item.categoryID,
         categoryName: data.item.categoryName,
-        productID: data.item.productID,
         productName: data.item.productName,
-        designTypeID: data.item.designTypeID,
         designTypeName: data.item.designTypeName,
-        lengthFeet: data.item["length"].toString().includes(".") ? data.item["length"].toString().split(".")[0] : data.item["length"].toString(),
-        lengthInches: data.item["length"].toString().includes(".") ? (data.item["length"].toString().split(".").length > 0 ? data.item["length"].toString().split(".")[1] : "0") : "0",
-        widthFeet: data.item.width.toString().includes(".") ? data.item.width.toString().split(".")[0] : data.item.width.toString(),
-        widthInches: data.item.width.toString().includes(".") ? (data.item.width.toString().split(".").length > 0 ? data.item.width.toString().split(".")[1] : "0") : "0",
+        materialCost: data.item.materialCost,
         display: data.item.display,
       },
     });
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Material Setup" />
@@ -186,8 +183,6 @@ const MaterialSetupScreen = ({ navigation }) => {
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="Product Name" description={productName} />
-            <List.Item title="Length" description={length} />
-            <List.Item title="Width" description={width} />
             <List.Item title="Material Cost (per Sq.Ft)" description={subtotal} />
           </ScrollView>
         </View>

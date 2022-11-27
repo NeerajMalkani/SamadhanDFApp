@@ -11,6 +11,7 @@ import * as ImagePicker from "expo-image-picker";
 import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
+import { APIConverter } from "../../../../utils/apiconverter";
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -93,6 +94,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoriesFromServices(route.params.data.serviceName, response.data.data, actID);
+            }
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
           }
@@ -101,30 +105,29 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchCategoriesFromServices = (selectedItem, activityData) => {
+  const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        service_refno: servicesDataParam
+          ? servicesDataParam.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id
           : servicesFullData.find((el) => {
               return el.serviceName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameDesignType, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchProductsFromCategory(route.params.data.categoryName, response.data.data, actID);
+            }
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
           }
@@ -133,35 +136,25 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchProductsFromCategory = (selectedItem, activityData) => {
+  const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
           : categoriesFullData.find((el) => {
               return el.categoryName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductNameDesignType, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
@@ -177,11 +170,6 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setProductsData([]);
@@ -193,11 +181,6 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.categoryID = categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id;
-    }
     productsDDRef.current.reset();
     setCNError(false);
     setProductsData([]);
@@ -207,11 +190,6 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const onProductsNameSelected = (selectedItem) => {
     setProductsName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.productID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).productID;
-    }
     setPNError(false);
   };
 
@@ -301,20 +279,25 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const InsertData = () => {
     //filePath.uri
-    Provider.create("servicecatalogue/insertdesigntype", {
-      DesignTypeName: name,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      Display: checked,
-      DesignImage: designImage,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        designtype_name: name,
+        group_refno: activityID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        view_status: checked ? 1 : 0,
+      },
+      designtype_image: filePath.uri,
+    };
+    Provider.createDFAdmin(Provider.API_URLS.DesignTypeCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -335,21 +318,26 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("servicecatalogue/updatedesigntype", {
-      ID: route.params.data.id,
-      DesignTypeName: name,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      Display: checked,
-      DesignImage: designImage,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        designtype_refno: route.params.data.id,
+        designtype_name: name,
+        group_refno: activityID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        view_status: checked ? 1 : 0,
+      },
+      designtype_image: filePath.uri,
+    };
+    Provider.createDFAdmin(Provider.API_URLS.DesignTypeUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
