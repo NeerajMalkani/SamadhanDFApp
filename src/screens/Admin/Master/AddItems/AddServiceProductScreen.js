@@ -289,10 +289,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setUnitSelected("");
     setConversionUnitSelected("");
     setAUOS("");
-    if (route.params.type !== "edit") {
-      FetchCategoryDataFromCategory(selectedItem, categoriesFullData);
-      FetchProductsFromCategory(selectedItem);
-    }
+    FetchCategoryDataFromCategory(selectedItem, categoriesFullData);
+    FetchProductsFromCategory(selectedItem);
   };
 
   const onProductsNameSelected = (selectedItem) => {
@@ -303,9 +301,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     setUnitSelected("");
     setConversionUnitSelected("");
     setAUOS("");
-    if (route.params.type !== "edit") {
-      FetchUnitsFromProductID(selectedItem);
-    }
+    FetchUnitsFromProductID(selectedItem);
   };
 
   const onUnitNameSelected = (selectedItem) => {

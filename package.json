@@ -30,7 +30,7 @@
     "@tsamantanis/react-glassmorphism": "^1.1.2",
     "axios": "^0.27.2",
     "expo": "^46.0.9",
-    "expo-cli": "^6.0.8",
+    "expo-cli": "^4.3.0",
     "expo-image-picker": "~13.3.1",
     "expo-notifications": "~0.16.1",
     "expo-permissions": "~13.2.0",

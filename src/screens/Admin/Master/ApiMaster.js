@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -10,12 +10,10 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ApiMaster = ({ navigation }) => {
-
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -28,23 +26,26 @@ const ApiMaster = ({ navigation }) => {
 
   const [apiName, setApiName] = React.useState("");
   const [apiBaseName, setApiBaseName] = React.useState("");
-  const [apiPostUrl, setApiPostUrl ]= React.useState("");
+  const [apiPostUrl, setApiPostUrl] = React.useState("");
   const [apiGetUrl, setApiGetUrl] = React.useState("");
   const refRBSheet = useRef();
-  //#endregion 
+  //#endregion
 
   //#region Functions
-
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/getapilist/", null)
+
+    const params = {
+      data: {
+        api_id: "all"
+      }
+    };
+    Provider.createDFAPI(Provider.API_URLS.APIURL, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -83,25 +84,25 @@ const ApiMaster = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.group_name.toString().toLowerCase().includes(query.toLowerCase());
+          return el.api_name.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
   };
 
-  
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
           title={data.item.api_name}
           titleStyle={{ fontSize: 18 }}
+          description={data.item.api_post_url}
           onPress={() => {
             refRBSheet.current.open();
-            setApiName(data.item.apiBaseName);
-            setApiBaseName(data.item.apiBaseName);
-            setApiPostUrl(data.item.apiPostUrl);
-            setApiGetUrl(data.item.apiGetUrl);
+            setApiName(data.item.api_name);
+            setApiBaseName(data.item.api_base_name);
+            setApiPostUrl(data.item.api_post_url);
+            setApiGetUrl(data.item.api_get_url);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="api" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -109,7 +110,7 @@ const ApiMaster = ({ navigation }) => {
       </View>
     );
   };
- 
+
   const AddCallback = () => {
     navigation.navigate("AddApiMaster", { type: "add", fetchData: FetchData });
   };
@@ -126,7 +127,7 @@ const ApiMaster = ({ navigation }) => {
       },
     });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

@@ -1,4 +1,3 @@
-
 import "./src/components/ignoreWarnings";
 import { Provider as PaperProvider, Text, List } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
@@ -100,9 +99,6 @@ import SearchClient from "./src/screens/Common/Client/AddItems/Search";
 import AddClient from "./src/screens/Common/Client/AddItems/Add";
 import SearchEmployee from "./src/screens/Common/Employee/AddItems/SearchEmployee";
 import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { BlurView } from "@react-native-community/blur";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
@@ -128,16 +124,14 @@ import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
 import EditStockList from "./src/screens/Manufacture/AddItems/EditStockList";
 import EditStockScrap from "./src/screens/Manufacture/AddItems/EditOpeningStockScrap";
 
-
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
-const Tabs = createBottomTabNavigator()
 let menuItems = [];
 
 export default function App() {
   const userDetails = React.useState(null);
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useState(false);
   const SetUser = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -298,7 +292,6 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DeclinedUserScreen" component={DeclinedUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PendingUserScreen" component={PendingUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApiMaster" component={ApiMaster} />
-             
             </Drawer.Navigator>
           );
         case 3:
@@ -312,12 +305,6 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryName" component={CategoryName} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SubCategoryName" component={SubCategoryName} />
-              
-              
-              */}
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Inbox" component={Inbox} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
@@ -325,7 +312,6 @@ export default function App() {
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorBasicDetailsScreen" component={ContractorBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ContractorMyServicesScreen" component={ContractorMyServicesScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
@@ -342,7 +328,6 @@ export default function App() {
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerMyServicesScreen" component={DealerMyServicesScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerPresentationScreen" component={DealerPresentationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandMasterScreen" component={DealerBrandMasterScreen} initialParams={{ activeIndex: activeIndex }} />
@@ -360,7 +345,6 @@ export default function App() {
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
@@ -369,157 +353,38 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
             </Drawer.Navigator>
           );
-          case 7:
+        case 7:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBasicDetailsScreen" component={DealerBasicDetailsScreen} /> */}
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockScrap" component={OpeningStockScrap} />
-              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandMasterScreen" component={DealerBrandMasterScreen} initialParams={{ activeIndex: activeIndex }} /> */}
             </Drawer.Navigator>
           );
       }
     }
   };
 
-  // const BottomTabs = ({ navigation }) => {
-  //   React.useEffect(() => {
-  //     const unsubscribe = navigation.addListener("focus", () => { });
-  //     return unsubscribe;
-  //   }, [navigation]);
-  //   return (
-  //     <Tab.Navigator 
-
-  //       shifting={activeMotion} 
-  //       initialRouteName="dashboard" 
-  //       // activeColor={theme.colors.primary} 
-  //       activeColor={theme.colors.primary} 
-  //       inactiveColor={theme.colors.text} 
-  //       barStyle={{ backgroundColor: theme.colors.textLight }}
-
-  //     >
-  //       <Tab.Screen 
-  //         listeners={{
-  //           tabPress:(e)=>{
-  //             const target = e.target;
-  //             return setActive(false)
-  //           }
-  //         }}
-  //         name="Dashboard" 
-  //         component={DrawerNavigator} 
-  //         options={{unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }}
-
-  //       />
-  //       <Tab.Screen 
-  //         name="PocketDiary" 
-  //         component={PocketDiaryScreen} 
-  //         options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} 
-  //         // listeners={{
-  //         //   tabPress: e => {
-  //         //     // Prevent default action
-  //         //     e.preventDefault();
-
-  //         //     //Any custom code here
-  //         //     console.log(1234);
-  //         //   },
-  //         // }}
-  //       />
-  //       <Tab.Screen 
-  //         name="Feedbacks" 
-  //         component={FeedbackScreen} 
-  //         options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} 
-  //         // listeners={{
-  //         //   tabPress: e => {
-  //         //     // Prevent default action
-  //         //     e.preventDefault();
-
-  //         //     //Any custom code here
-  //         //     console.log(12345);
-  //         //   },
-  //         // }}
-  //       />
-  //       <Tab.Screen 
-  //         name="UserProfile" 
-  //         component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile :  parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen :parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen} 
-  //         options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }} 
-  //         // listeners={{
-  //         //   tabPress: e => {
-  //         //     // Prevent default action
-  //         //     e.preventDefault();
-
-  //         //     //Any custom code here
-  //         //     console.log(123456);
-  //         //   },
-  //         // }}
-  //       />
-  //     </Tab.Navigator>
-  //   );
-  // };
-
-  const BottomTabs = () => {
-    const screenOptions = ({ route }) => ({
-      tabBarStyle: {
-        height: 70
-      },
-      tabBarItemStyle: {
-        marginVertical: 13,
-        marginHorizontal: 23
-      },
-      tabBarButton: (props) => <TouchableOpacity {...props} />
-    })
+  const BottomTabs = ({ navigation }) => {
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener("focus", () => {});
+      return unsubscribe;
+    }, [navigation]);
     return (
-      <Tabs.Navigator screenOptions={screenOptions}>
-        <Tabs.Screen
-          name="Dashboard"
-          component={DrawerNavigator}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "gray",
-            // tabBarLabelPosition:"below-icon",
-            tabBarIcon: ({ focused }) => <Icon name='view-dashboard' color={focused ? "#45916B" : "gray"} size={focused ? 30 : 25} />,
-            //tabBarButton:(props)=><TouchableOpacity {...props}/>
-            // tabBarLabelStyle:({focused})=><Text>{focused? one : two}</Text>
-          }}
+      <Tab.Navigator shifting={false} initialRouteName="dashboard" activeColor={theme.colors.primary} inactiveColor="#696969" barStyle={{ backgroundColor: theme.colors.textLight, height: 70, paddingTop: 8 }}>
+        <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
+        <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
+        <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
+        <Tab.Screen
+          name="UserProfile"
+          component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
+          options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
         />
-        <Tabs.Screen
-          name="Pocket Diary"
-          component={PocketDiaryScreen}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "gray",
-            tabBarIcon: ({ focused }) => <Icon name="calculator-variant" color={focused ? "#45916B" : "gray"} size={focused ? 30 : 24} />,
-            //tabBarButton:(props)=><TouchableOpacity {...props}/>
-          }}
-        />
-        <Tabs.Screen
-          name="Feedbacks"
-          component={FeedbackScreen}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "gray",
-            tabBarIcon: ({ focused }) => <Icon name="comment-alert" color={focused ? "#45916B" : "gray"} size={focused ? 30 : 25} />,
-            //tabBarButton:(props)=><TouchableOpacity {...props}/>
-          }}
-        />
-        <Tabs.Screen
-          name="User Profile"
-          component={parseInt(userDetails[0].RoleID) === 5 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 4 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 6 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 7 ? UserProfile : UserProfileScreen}
-          options={{
-            headerShown: false,
-            tabBarActiveTintColor: "white",
-            tabBarInactiveTintColor: "gray",
-            tabBarIcon: ({ focused }) => <Icon name="account" color={focused ? "#45916B" : "gray"} size={focused ? 30 : 24} />,
-            // tabBarButton:(props)=><TouchableOpacity {...props}/>
-          }}
-        />
-      </Tabs.Navigator>
-    )
-  }
+      </Tab.Navigator>
+    );
+  };
+
   return (
     <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
       <PaperProvider theme={theme}>
@@ -599,12 +464,10 @@ export default function App() {
               <Stack.Screen name="AddOpeningStockScrap" component={AddOpeningStockScrap} options={{ headerTitle: "Add Opening Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EditStockScrap" component={EditStockScrap} options={{ headerTitle: "Edit  Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ApiMaster" component={ApiMaster} options={{ headerTitle: "Api Master", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              {/* <Stack.Screen name="AddApiMaster" component={AddApiMaster} options={{ headerTitle: "Add Api Master ", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
             </Stack.Navigator>
           </NavigationContainer>
         )}
       </PaperProvider>
     </SafeAreaView>
-
   );
 }

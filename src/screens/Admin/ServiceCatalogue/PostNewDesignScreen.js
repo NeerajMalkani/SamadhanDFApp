@@ -10,11 +10,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const PostNewDesignScreen = ({ navigation }) => {
-  
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -35,19 +35,26 @@ const PostNewDesignScreen = ({ navigation }) => {
   const [labourCost, setLabourCost] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("servicecatalogue/getpostnewdesigntypes")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        designgallery_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.DesignGalleryRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -126,26 +133,20 @@ const PostNewDesignScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        serviceID: data.item.serviceID,
         serviceName: data.item.serviceName,
-        categoryID: data.item.categoryID,
         categoryName: data.item.categoryName,
-        productID: data.item.productID,
         productName: data.item.productName,
-        designTypeID: data.item.designTypeID,
         designTypeName: data.item.designTypeName,
-        workLocationID: data.item.workLocationID,
         workLocationName: data.item.workLocationName,
         designNumber: data.item.designNumber,
         designImage: data.item.designImage,
         labourCost: data.item.labourCost,
         display: data.item.display,
-        count: listData[0].length,
       },
     });
   };
 
- //#endregion 
+  //#endregion
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Post New Design" />
@@ -184,10 +185,10 @@ const PostNewDesignScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={520} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
-          <ScrollView style={{ paddingBottom: 64 }}>
+          <ScrollView>
             <List.Item title="Labour Cost" description={labourCost} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
@@ -195,7 +196,7 @@ const PostNewDesignScreen = ({ navigation }) => {
             <List.Item title="Work Location Name" description={workLocationName} />
             <List.Item title="Design Number" description={designNumber} />
             <List.Item title="Design Image" />
-            <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16, { marginBottom: 88 }]} />
           </ScrollView>
         </View>
       </RBSheet>

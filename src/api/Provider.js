@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const BASE_URL_OLD = "https://api.starselector.com/api";
+const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
 const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
 const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
 
@@ -93,6 +94,8 @@ class Provider {
     GroupNameCreate: "groupnamecreate/",
     GroupNameUpdate: "groupnameupdate/",
 
+    APIURL: "getapiurl/",
+
     ServiceFromRefNo: "servicerefnocheck/",
     ServiceNameCreate: "servicenamecreate/",
     ServiceNameUpdate: "servicenameupdate/",
@@ -173,6 +176,19 @@ class Provider {
     MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
     MaterialsSetupCreate: "materialsetupcreate/",
     MaterialsSetupList: "materialssetuplist/",
+
+    DesignGalleryRefNoCheck: "designgalleryrefnocheck/",
+    NewDesignCreate: "newdesigncreate/",
+    NewDesignUpdate: "newdesignupdate/",
+    AutoDesignNoNewDesign: "getautodesignnonewdesignform/",
+    ActivityRoleNameNewDesign:"getgroupnamenewdesignform/",
+    ServiceNameNewDesign: "getservicenamenewdesignform/",
+    CategoryNameNewDesign: "getcategorynamenewdesignform/",
+    ProductNameNewDesign: "getproductnamenewdesignform/",
+    ProductDesignTypeNewDesign: "getproductdesigntypenewdesignform/",
+    ProductDataNewDesign: "getproductdatanewdesignform/",
+    WorkLocationNameNewDesign: "getworklocationnamenewdesignform/",
+
   };
 
   createDF(resource, params) {
@@ -183,6 +199,13 @@ class Provider {
       return axios.post(`${BASE_URL_Admin}/${resource}`, params);
     } else {
       return axios.post(`${BASE_URL_Admin}/${resource}`);
+    }
+  }
+  createDFAPI(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_API}/${resource}`, params);
+    } else {
+      return axios.post(`${BASE_URL_API}/${resource}`);
     }
   }
   //#endregion

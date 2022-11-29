@@ -44,7 +44,6 @@ const MaterialSetupScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        //materials_setup_refno: "all",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupList, params)
@@ -176,7 +175,7 @@ const MaterialSetupScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={380} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View style={{ paddingBottom: 64 }}>
           <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
           <ScrollView>

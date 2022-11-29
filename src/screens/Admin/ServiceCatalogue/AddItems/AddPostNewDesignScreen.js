@@ -11,11 +11,12 @@ import * as ImagePicker from "expo-image-picker";
 import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
+import { APIConverter } from "../../../../utils/apiconverter";
 
 const AddPostNewDesignScreen = ({ route, navigation }) => {
-
-   //#region Variables
+  //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
+  const [activityID, setActivityID] = React.useState("");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);
@@ -50,7 +51,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   const [error, setError] = React.useState(false);
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.labourCost.toString() : "");
 
-  const designNumber = React.useState("DC-" + (parseInt(route.params.data.count) + 1).toString());
+  const [designNumber, setDesignNumber] = React.useState(route.params.type === "edit" ?  route.params.data.designNumber : "");
   const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
@@ -65,26 +66,35 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
 
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
- //#endregion 
+  //#endregion
 
- //#region Functions
-
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
-    let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
-    };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+  //#region Functions
+  const FetchDesignNumber = () => {
+    Provider.createDFAdmin(Provider.API_URLS.AutoDesignNoNewDesign)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
+            setDesignNumber("DC-" + response.data.data[0].autoincrement_design_no.toString().padStart(4, '0'));
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchWorkLocation = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.WorkLocationNameNewDesign, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setWorkLocationFullData(response.data.data);
+            const workLocations = response.data.data.map((data) => data.workLocationName);
+            setWorkLocationData(workLocations);
           }
         }
       })
@@ -92,13 +102,11 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   };
 
   const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+    Provider.createDFAdmin(Provider.API_URLS.ActivityRoleNameNewDesign)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
+            response.data.data = APIConverter(response.data.data);
             setActivityFullData(response.data.data);
             if (route.params.type !== "edit") {
               servicesDDRef.current.reset();
@@ -121,59 +129,61 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
               setWLError(false);
               setDIError(false);
             }
-            FetchServicesFromActivity("Contractor", response.data.data);
-            if (route.params.type === "edit") {
-              FetchCategoriesFromServices("Contractor", response.data.data);
-              FetchProductsFromCategory("Contractor", response.data.data);
-              FetchDesignTypeFromProductID();
-            }
+            setActivityID(response.data.data[0].id);
+            FetchServicesFromActivity(response.data.data[0].id);
           }
         }
       })
       .catch((e) => {});
   };
 
-  const FetchWorkLocation = () => {
-    Provider.getAll("servicecatalogue/getworklocations")
+  const FetchServicesFromActivity = (actID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNameNewDesign, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setWorkLocationFullData(response.data.data);
-            const workLocations = response.data.data.map((data) => data.workLocationName);
-            setWorkLocationData(workLocations);
+            response.data.data = APIConverter(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoriesFromServices(route.params.data.serviceName, response.data.data, actID);
+            }
+            setServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
           }
         }
       })
       .catch((e) => {});
   };
 
-  const FetchCategoriesFromServices = (selectedItem, activityData) => {
+  const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        service_refno: servicesDataParam
+          ? servicesDataParam.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id
           : servicesFullData.find((el) => {
               return el.serviceName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameNewDesign, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchProductsFromCategory(route.params.data.categoryName, response.data.data, actID);
+            }
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
           }
@@ -182,36 +192,30 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchProductsFromCategory = (selectedItem, activityData) => {
+  const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Contractor";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: actID ? actID : activityID,
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
           : categoriesFullData.find((el) => {
               return el.categoryName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductNameNewDesign, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchProductDataFromProduct(route.params.data.productName, response.data.data);
+              FetchDesignTypeFromProduct(route.params.data.productName, response.data.data);
+            }
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
           }
@@ -220,34 +224,49 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchDesignTypeFromProductID = (selectedItem) => {
+  const FetchProductDataFromProduct = (selectedItem, productDataParams) => {
     let params = {
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : categoriesFullData.find((el) => {
-              return el.categoryName === categoriesName;
-            }).id,
-      ProductID:
-        route.params.type === "edit"
-          ? route.params.data.productID
+      data: {
+        Sess_UserRefno: "2",
+        product_refno: productDataParams
+          ? productDataParams.find((el) => {
+              return el.productName === selectedItem;
+            }).productID
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
             }).productID,
+      },
     };
-    Provider.getAll(`servicecatalogue/getdesigntypebyproductidformaterialsetup?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.ProductDataNewDesign, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
+            setName(response.data.data[0].labourCost);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchDesignTypeFromProduct = (selectedItem, productDataParams) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        product_refno: productDataParams
+          ? productDataParams.find((el) => {
+              return el.productName === selectedItem;
+            }).productID
+          : productsFullData.find((el) => {
+              return el.productName === selectedItem;
+            }).productID,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ProductDesignTypeNewDesign, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setDesignTypeFullData(response.data.data);
             const designTypes = response.data.data.map((data) => data.designTypeName);
             setDesignTypeData(designTypes);
@@ -260,15 +279,13 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   useEffect(() => {
     FetchActvityRoles();
     FetchWorkLocation();
+    if(route.params.type !== "edit"){
+      FetchDesignNumber();
+    }
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setProductsData([]);
@@ -282,11 +299,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.categoryID = categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id;
-    }
     productsDDRef.current.reset();
     setCNError(false);
     setProductsData([]);
@@ -298,44 +310,22 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
 
   const onProductsNameSelected = (selectedItem) => {
     setProductsName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.productID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).productID;
-    }
-    const labCo = productsFullData.find((el) => {
-      return el.productName === selectedItem;
-    }).rateWithoutMaterials;
-    if (labCo) {
-      setName(parseFloat(labCo).toFixed(2));
-    } else {
-      setName("");
-    }
     designTypeDDRef.current.reset();
     setPNError(false);
     setDesignTypeData([]);
     setDesignTypeName("");
-    FetchDesignTypeFromProductID(selectedItem);
+    FetchProductDataFromProduct(selectedItem);
+    FetchDesignTypeFromProduct(selectedItem);
   };
 
   const onDesignTypeNameSelected = (selectedItem) => {
     setDesignTypeName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.designTypeID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).id;
-    }
     setDTError(false);
   };
 
   const onWorkLocationSelected = (selectedItem) => {
     setWorkLocationName(selectedItem);
     setWLError(false);
-    if (route.params.type === "edit") {
-      route.params.data.workLocationID = workLocationFullData.find((el) => {
-        return el.workLocationName === selectedItem;
-      }).id;
-    }
   };
 
   const onNameChanged = (text) => {
@@ -423,28 +413,34 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    Provider.create("servicecatalogue/insertpostnewdesigntype", {
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      DesignTypeID: designTypeFullData.find((el) => {
-        return el.designTypeName === designTypeName;
-      }).id,
-      WorkLocationID: workLocationFullData.find((el) => {
-        return el.workLocationName === workLocationName;
-      }).id,
-      DesignNumber: designNumber[0],
-      DesignImage: designImage,
-      LabourCost: name,
-      Display: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: activityID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        designtype_refno: designTypeFullData.find((el) => {
+          return el.designTypeName === designTypeName;
+        }).id,
+        worklocation_refno: workLocationFullData.find((el) => {
+          return el.workLocationName === workLocationName;
+        }).id,
+        design_no: parseInt(designNumber.split("-")[1]),
+        labour_cost: name,
+        view_status: checked ? 1 : 0
+      },
+      design_image: filePath.uri
+    }
+    Provider.createDFAdmin(Provider.API_URLS.NewDesignCreate, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -464,28 +460,33 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    Provider.create("servicecatalogue/updatepostnewdesigntype", {
-      ID: route.params.data.id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      DesignTypeID: designTypeFullData.find((el) => {
-        return el.designTypeName === designTypeName;
-      }).id,
-      WorkLocationID: workLocationFullData.find((el) => {
-        return el.workLocationName === workLocationName;
-      }).id,
-      DesignNumber: designNumber[0],
-      DesignImage: designImage,
-      LabourCost: name,
-      Display: checked,
-    })
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        designgallery_refno: route.params.data.id,
+        group_refno: activityID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        designtype_refno: designTypeFullData.find((el) => {
+          return el.designTypeName === designTypeName;
+        }).id,
+        worklocation_refno: workLocationFullData.find((el) => {
+          return el.workLocationName === workLocationName;
+        }).id,
+        design_no: parseInt(designNumber.split("-")[1]),
+        labour_cost: name,
+        view_status: checked ? 1 : 0
+      },
+      design_image: filePath.uri
+    }
+    Provider.createDFAdmin(Provider.API_URLS.NewDesignCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -551,10 +552,14 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      uploadFile();
+      if (route.params.type === "edit") {
+        UpdateData();
+      } else {
+        InsertData();
+      }
     }
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -580,7 +585,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorWL}>
             {communication.InvalidWorkLocationName}
           </HelperText>
-          <TextInput mode="flat" label="Design Number" value={designNumber[0]} editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="flat" label="Design Number" value={designNumber} editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
           <TextInput mode="flat" label="Labour Cost" value={name} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidLabourCost}
