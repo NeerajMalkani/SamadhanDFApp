@@ -44,10 +44,10 @@ const MaterialSetupScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        materials_setup_refno: "all",
+        //materials_setup_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupRefNoCheck, params)
+    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupList, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

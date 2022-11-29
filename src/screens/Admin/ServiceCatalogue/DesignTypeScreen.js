@@ -49,6 +49,7 @@ const DesignTypeScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.DesignTypeRefNoCheck, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -69,6 +70,7 @@ const DesignTypeScreen = ({ navigation }) => {
         setRefreshing(false);
       })
       .catch((e) => {
+        console.log(e);
         setIsLoading(false);
         setSnackbarText(e.message);
         setSnackbarColor(theme.colors.error);

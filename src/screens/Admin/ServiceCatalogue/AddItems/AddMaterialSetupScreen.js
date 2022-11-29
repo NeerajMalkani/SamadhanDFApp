@@ -245,8 +245,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         product_refno_Array: productids.join(","),
       },
     };
+    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.ProductRateBrandRefNoMaterialSetup, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -280,7 +282,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const FetchProductsFromMaterialSetup = () => {
