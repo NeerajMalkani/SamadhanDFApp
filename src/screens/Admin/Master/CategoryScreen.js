@@ -50,14 +50,12 @@ const CategoryScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
-        if (response.data && response.data.code === 200) {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) { 
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
-// console.log(lisData)
             lisData.map((k, i) => {
-              // console.log(k)
-
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);

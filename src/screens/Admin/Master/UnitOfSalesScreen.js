@@ -9,6 +9,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -42,9 +43,19 @@ const UnitOfSalesScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
+              k.displayUnitFull =  k.displayUnit;
+              const arrDisplyUnit = k.displayUnit.split(" / ");
+              if(arrDisplyUnit.length > 3){
+                k.displayUnit = arrDisplyUnit[0] + " / " + arrDisplyUnit[1];
+                k.convertUnitName = arrDisplyUnit[2] + " / " + arrDisplyUnit[3]
+              } else {
+                k.displayUnit = arrDisplyUnit[0];
+                k.convertUnitName = arrDisplyUnit[1];
+              }
             });
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
@@ -78,7 +89,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.unit_name_text.toString().toLowerCase().includes(query.toLowerCase()) || el.unit2Name.toString().toLowerCase().includes(query.toLowerCase());
+          return el.displayUnitFull.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -87,7 +98,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-        <List.Item title={data.item.unit_name_text} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.view_status === "1" ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="scale" />} />
+        <List.Item title={data.item.displayUnitFull} titleStyle={{ fontSize: 18 }} description={"Display: " + (data.item.displayUnit ? "Yes" : "No")} left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="scale" />} />
       </View>
     );
   };
@@ -103,9 +114,9 @@ const UnitOfSalesScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.unit_category_refno,
-        unit_name_text: data.item.unit_name,
-        convert_unit_name: data.item.convert_unit_name,
-        view_status: data.item.view_status,
+        displayUnit: data.item.displayUnit,
+        convertUnitName: data.item.convertUnitName,
+        display: data.item.display,
       },
     });
   };
