@@ -25,6 +25,8 @@ const AddEWayBillScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const ref_input2 = useRef();
   //#endregion
 
@@ -86,6 +88,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -99,6 +102,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -119,6 +123,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -132,6 +137,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -155,6 +161,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateEWayBill();
       } else {
@@ -220,7 +227,7 @@ const AddEWayBillScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateEWayBillName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateEWayBillName}>
             SAVE
           </Button>
         </Card.Content>

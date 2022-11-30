@@ -127,6 +127,7 @@ class Provider {
     ProductServiceProduct: "getproductnameserviceproductform/",
     ServiceProductCreate: "serviceproductcreate/",
     ServiceProductUpdate: "serviceproductupdate/",
+    ServiceProductrefNoCheck:"serviceproductrefnocheck/",
 
     DepartmentRefNoCheck: "departmentrefnocheck/",
     DepartmentNameCreate: "departmentnamecreate/",

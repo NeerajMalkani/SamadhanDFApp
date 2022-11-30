@@ -47,6 +47,8 @@ const AddProductScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions
@@ -301,6 +303,7 @@ const AddProductScreen = ({ route, navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -314,6 +317,7 @@ const AddProductScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -342,6 +346,7 @@ const AddProductScreen = ({ route, navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -355,6 +360,7 @@ const AddProductScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -403,6 +409,7 @@ const AddProductScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -460,7 +467,7 @@ const AddProductScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button>
         </Card.Content>

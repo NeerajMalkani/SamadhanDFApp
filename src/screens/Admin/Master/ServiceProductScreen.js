@@ -48,12 +48,10 @@ const ServiceProductScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        service_refno: "0",
-        category_refno: "0",
-        product_refno: "0",
+        service_product_refno: "all"
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.ServiceProductFilter, params)
+    Provider.createDFAdmin(Provider.API_URLS.ServiceProductrefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

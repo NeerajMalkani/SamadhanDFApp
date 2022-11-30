@@ -113,7 +113,7 @@ const UnitOfSalesScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.unit_category_refno,
+        id: data.item.id,
         displayUnit: data.item.displayUnit,
         convertUnitName: data.item.convertUnitName,
         display: data.item.display,

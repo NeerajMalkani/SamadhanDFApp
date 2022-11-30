@@ -14,6 +14,8 @@ const AddServicesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions
@@ -54,13 +56,14 @@ const AddServicesScreen = ({ route, navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.ServiceNameUpdate, {
       data: {
         Sess_UserRefno: "2",
-        service_refno: route.params.data.service_refno,
+        service_refno: route.params.data.id,
         service_name: services,
         production_unit: "1",
         view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -74,6 +77,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -86,6 +90,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateServices();
       } else {
@@ -119,7 +124,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateServices}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateServices}>
             SAVE
           </Button>
         </Card.Content>

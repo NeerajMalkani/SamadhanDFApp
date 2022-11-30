@@ -83,7 +83,6 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
                 ? true
                 : false,
             }));
-            console.log(response.data.data);
             setProductsFullData(fullData);
           }
         }

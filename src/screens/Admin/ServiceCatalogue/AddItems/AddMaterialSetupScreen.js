@@ -245,7 +245,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         product_refno_Array: productids.join(","),
       },
     };
-    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.ProductRateBrandRefNoMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

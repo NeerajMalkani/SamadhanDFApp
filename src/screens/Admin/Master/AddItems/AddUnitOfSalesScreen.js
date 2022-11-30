@@ -17,6 +17,8 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const ref_input2 = useRef();
   //#endregion
 
@@ -41,7 +43,6 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -70,6 +71,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && (response.data.code === 200 || response.data.code === 204)) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -82,6 +84,8 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -98,6 +102,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -135,7 +140,7 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button>
         </Card.Content>

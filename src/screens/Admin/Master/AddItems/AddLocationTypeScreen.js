@@ -27,6 +27,8 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : true);
 
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+
   const refActivityRBSheet = useRef();
   const refServicesRBSheet = useRef();
   //#endregion
@@ -164,9 +166,9 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.LocationTypeCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -180,6 +182,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -198,6 +201,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.LocationTypeUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -211,6 +215,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -232,6 +237,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateLocationType();
       } else {
@@ -333,7 +339,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateLocationType}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateLocationType}>
             SAVE
           </Button>
         </Card.Content>

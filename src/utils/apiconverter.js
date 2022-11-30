@@ -64,7 +64,25 @@ export const APIConverter = (response) => {
     renameKey(obj, "design_image_url", "designImage");
     renameKey(obj, "labour_cost", "labourCost");
     renameKey(obj, "design_no", "designNumber");
+    renameKey(obj, "department_refno", "id");
+    renameKey(obj, "department_name", "departmentName");
+    renameKey(obj, "designation_refno", "id");
+    renameKey(obj, "designation_name", "designationName");
   });
 
   return response;
 };
+
+export const RemoveUnwantedParameters = (response, params) => {
+  if(Array.isArray(params)){
+    response.forEach((obj) => {
+      for(let i = 0; i <  params.length; i++){
+        if (obj.hasOwnProperty(params[i])) {
+          delete obj[params[i]];
+        }
+      }
+      
+    });
+  }
+  return response;
+}

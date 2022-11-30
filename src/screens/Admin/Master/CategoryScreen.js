@@ -10,7 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
+import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -50,9 +50,9 @@ const CategoryScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) { 
           if (response.data.data) {
+            response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -110,7 +110,7 @@ const CategoryScreen = ({ navigation }) => {
             setServiceName(data.item.serviceName);
             setHsnsacCode(data.item.hsnsacCode);
             setGstRate(data.item.gstRate + "%");
-            setUnitName(data.item.unitName.replace(/<br>/g, ","));
+            setUnitName(data.item.unitName ? data.item.unitName.join(",") : "");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -132,7 +132,7 @@ const CategoryScreen = ({ navigation }) => {
         id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
-        unitName: data.item.unitName.replace(/<br>/g, ","),
+        unitName: data.item.unitName ? data.item.unitName.join(",") : "",
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate,

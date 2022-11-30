@@ -15,7 +15,6 @@ import { APIConverter } from "../../../../utils/apiconverter";
 
 const AddPostNewDesignScreen = ({ route, navigation }) => {
   //#region Variables
-  const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityID, setActivityID] = React.useState("");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -74,7 +73,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setDesignNumber("DC-" + response.data.data[0].autoincrement_design_no.toString().padStart(4, '0'));
+            setDesignNumber("DS-" + response.data.data[0].autoincrement_design_no.toString().padStart(4, '0'));
           }
         }
       })
@@ -107,7 +106,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            setActivityFullData(response.data.data);
             if (route.params.type !== "edit") {
               servicesDDRef.current.reset();
               setName("");

@@ -73,6 +73,8 @@ const AddServiceProductScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const ref_input2 = useRef();
   const ref_input3 = useRef();
   const ref_input4 = useRef();
@@ -379,6 +381,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     }
     Provider.createDFAdmin(route.params.type === "edit" ? Provider.API_URLS.ServiceProductUpdate : Provider.API_URLS.ServiceProductCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData(route.params.type === "edit" ? "update" : "add");
           navigation.goBack();
@@ -392,6 +395,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -451,6 +455,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       UpdateData();
     }
   };
@@ -526,7 +531,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button>
         </Card.Content>

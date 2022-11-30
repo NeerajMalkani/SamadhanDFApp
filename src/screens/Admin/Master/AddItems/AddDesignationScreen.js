@@ -9,11 +9,13 @@ import { communication } from "../../../../utils/communication";
 const AddDesignationScreen = ({ route, navigation }) => {
   //#region Variables
   const [designationNameError, setDesignationNameError] = React.useState(false);
-  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designation_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status : true);
+  const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions
@@ -53,12 +55,13 @@ const AddDesignationScreen = ({ route, navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.DesignationNameUpdate, {
       data: {
         Sess_UserRefno: "2",
-        designation_refno: route.params.data.designation_refno,
+        designation_refno: route.params.data.id,
         designation_name: designationName,
         view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -72,6 +75,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -84,6 +88,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateDesignationName();
       } else {
@@ -117,7 +122,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateDesignationName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateDesignationName}>
             SAVE
           </Button>
         </Card.Content>

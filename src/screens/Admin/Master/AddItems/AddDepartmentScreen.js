@@ -9,11 +9,13 @@ import { communication } from "../../../../utils/communication";
 const AddDepartmentScreen = ({ route, navigation }) => {
   //#region Variables
   const [departmentNameError, setDepartmentNameError] = React.useState(false);
-  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.department_name : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.view_status : true);
+  const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions
@@ -53,12 +55,13 @@ const AddDepartmentScreen = ({ route, navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.DepartmentNameUpdate, {
       data: {
         Sess_UserRefno: "2",
-        department_refno: route.params.data.department_refno,
+        department_refno: route.params.data.id,
         department_name: departmentName,
         view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -72,6 +75,7 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -84,6 +88,7 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateDepartmentName();
       } else {
@@ -117,7 +122,7 @@ const AddDepartmentScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateDepartmentName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateDepartmentName}>
             SAVE
           </Button>
         </Card.Content>

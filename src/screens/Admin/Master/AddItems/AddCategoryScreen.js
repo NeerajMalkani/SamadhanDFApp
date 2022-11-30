@@ -39,6 +39,8 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const ref_input2 = useRef();
   const ref_input3 = useRef();
   //#endregion
@@ -50,9 +52,6 @@ const AddCategoryScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
             setActivityFullData(response.data.data);
             const activities = response.data.data.map((data) => data.activityRoleName);
             setActivityData(activities);
@@ -72,11 +71,8 @@ const AddCategoryScreen = ({ route, navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.ServiceFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          response.data.data = APIConverter(response.data.data);
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
@@ -98,9 +94,6 @@ const AddCategoryScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
             let allUnits = "";
             if (route.params.type === "edit") {
               const arrunitOfSalesNameNew = [];
@@ -158,10 +151,10 @@ const AddCategoryScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    let str = "";
+    let arrUnits = [];
     unitOfSalesData.map((o) => {
       if (o.isChecked) {
-        str += str.length === 0 ? o.id : "," + o.id;
+        arrUnits.push(parseInt(o.id));
       }
     });
     const params = {
@@ -175,13 +168,14 @@ const AddCategoryScreen = ({ route, navigation }) => {
           return el.serviceName === serviceName;
         }).id,
         hsn_sac_code: hsn,
-        gst_rate: parseFloat(gst),
-        unit_category_refno: str,
+        gst_rate: parseFloat(gst).toFixed(2),
+        unit_category_refno: arrUnits,
         view_status: checked ? 1 : 0,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryNameCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -195,16 +189,17 @@ const AddCategoryScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-    let str = "";
+    let arrUnits = [];
     unitOfSalesData.map((o) => {
       if (o.isChecked) {
-        str += str.length === 0 ? o.id : "," + o.id;
+        arrUnits.push(parseInt(o.id));
       }
     });
     const params = {
@@ -219,13 +214,15 @@ const AddCategoryScreen = ({ route, navigation }) => {
           return el.serviceName === serviceName;
         }).id,
         hsn_sac_code: hsn,
-        gst_rate: parseFloat(gst),
-        unit_category_refno: str,
+        gst_rate: parseFloat(gst).toFixed(2),
+        unit_category_refno: arrUnits,
         view_status: checked ? 1 : 0,
       },
     };
+    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.CategoryNameCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -239,6 +236,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -280,6 +278,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -359,7 +358,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button>
         </Card.Content>

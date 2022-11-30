@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -14,6 +14,8 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
 
   //#region Functions
@@ -31,6 +33,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -44,6 +47,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -53,12 +57,13 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.GroupNameUpdate, {
       data: {
         Sess_UserRefno: "2",
-        group_refno: route.params.data.group_refno,
+        group_refno: route.params.data.id,
         group_name: activityName,
         view_status: checked ? 1 : 0,
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -72,6 +77,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -84,6 +90,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateActivityName();
       } else {
@@ -117,7 +124,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateActivityName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
             SAVE
           </Button>
         </Card.Content>
