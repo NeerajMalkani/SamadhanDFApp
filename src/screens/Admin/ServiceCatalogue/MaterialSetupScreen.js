@@ -121,19 +121,42 @@ const MaterialSetupScreen = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddMaterialSetupScreen", {
-      type: "edit",
-      fetchData: FetchData,
+    let params = {
       data: {
-        id: data.item.id,
-        serviceName: data.item.serviceName,
-        categoryName: data.item.categoryName,
-        productName: data.item.productName,
-        designTypeName: data.item.designTypeName,
-        materialCost: data.item.materialCost,
-        display: data.item.display,
+        Sess_UserRefno: "2",
+        materials_setup_refno: data.item.id
       },
-    });
+    };
+    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupRefNoCheck, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            response.data.data[0].productlist_data = APIConverter(response.data.data[0].productlist_data);
+            navigation.navigate("AddMaterialSetupScreen", {
+              type: "edit",
+              fetchData: FetchData,
+              data: {
+                id: data.item.id,
+                serviceName: data.item.serviceName,
+                categoryName: data.item.categoryName,
+                productName: data.item.productName,
+                designTypeName: data.item.designTypeName,
+                materialCost: data.item.materialCost,
+                lengthfoot: response.data.data[0].lengthfoot,
+                lengthinches: response.data.data[0].lengthinches,
+                widthheightfoot: response.data.data[0].widthheightfoot,
+                widthheightinches: response.data.data[0].widthheightinches,
+                totalfoot: response.data.data[0].totalfoot,
+                productList: response.data.data[0].productlist_data,
+                display: data.item.display,
+
+              },
+            });
+          }
+        }
+      })
+      .catch((e) => {});
   };
   //#endregion
 

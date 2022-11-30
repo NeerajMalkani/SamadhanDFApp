@@ -125,6 +125,7 @@ class Provider {
     CategoryNameServiceProduct: "getcategorynameserviceproductform/",
     CategoryDataServiceProduct: "getcategorydataserviceproductform/",
     ProductServiceProduct: "getproductnameserviceproductform/",
+    AlternativeUnitOfSalesServiceProduct:"getalternativeunitofsalesserviceproductform/",
     ServiceProductCreate: "serviceproductcreate/",
     ServiceProductUpdate: "serviceproductupdate/",
     ServiceProductrefNoCheck:"serviceproductrefnocheck/",
@@ -174,8 +175,8 @@ class Provider {
     BrandNamelistPopupMaterialSetup: "getbrandnamelist_popup_materialsetupform/",
     ProductRateBrandRefNoMaterialSetup: "getproductrate_by_brandrefno_materialsetupform/",
     MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
-    MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
     MaterialsSetupCreate: "materialsetupcreate/",
+    MaterialsSetupUpdate: "materialsetupupdate/",
     MaterialsSetupList: "materialssetuplist/",
 
     DesignGalleryRefNoCheck: "designgalleryrefnocheck/",
@@ -195,9 +196,13 @@ class Provider {
   createDF(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
-  createDFAdmin(resource, params) {
+  createDFAdmin(resource, params, headers) {
     if (params) {
-      return axios.post(`${BASE_URL_Admin}/${resource}`, params);
+      if(headers){
+        return axios.post(`${BASE_URL_Admin}/${resource}`, params, headers);
+      } else {
+        return axios.post(`${BASE_URL_Admin}/${resource}`, params);
+      }
     } else {
       return axios.post(`${BASE_URL_Admin}/${resource}`);
     }

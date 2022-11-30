@@ -33,7 +33,7 @@ export const APIConverter = (response) => {
     renameKey(obj, "unit_display_name", "displayUnit");
     renameKey(obj, "unit_name_convert_unit_name", "displayUnitFull");
     renameKey(obj, "unit_name", "displayUnit");
-    renameKey(obj, "unitcategoryrefno_unitrefno", "id");
+    renameKey(obj, "unitcategoryrefno_unitrefno", "unitId");
     renameKey(obj, "with_material_rate", "rateWithMaterials");
     renameKey(obj, "without_material_rate", "rateWithoutMaterials");
     renameKey(obj, "short_desc", "shortSpecification");
@@ -68,6 +68,9 @@ export const APIConverter = (response) => {
     renameKey(obj, "department_name", "departmentName");
     renameKey(obj, "designation_refno", "id");
     renameKey(obj, "designation_name", "designationName");
+    renameKey(obj, "formula_parameter1", "formula");
+    renameKey(obj, "qty", "quantity");
+    renameKey(obj, "rate", "price");
   });
 
   return response;

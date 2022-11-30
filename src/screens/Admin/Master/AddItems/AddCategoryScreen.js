@@ -199,7 +199,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
     let arrUnits = [];
     unitOfSalesData.map((o) => {
       if (o.isChecked) {
-        arrUnits.push(parseInt(o.id));
+        arrUnits.push(o.id);
       }
     });
     const params = {
@@ -219,8 +219,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    console.log(params);
-    Provider.createDFAdmin(Provider.API_URLS.CategoryNameCreate, params)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNameUpdate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

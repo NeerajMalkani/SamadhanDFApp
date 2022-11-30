@@ -48,7 +48,7 @@ const ServiceProductScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        service_product_refno: "all"
+        service_product_refno: "all",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ServiceProductrefNoCheck, params)
@@ -120,6 +120,7 @@ const ServiceProductScreen = ({ navigation }) => {
         rateWithoutMaterials: data.item.rateWithoutMaterials,
         shortSpecification: data.item.shortSpecification,
         specification: data.item.specification,
+        unitId: data.item.unitId,
         display: data.item.display,
       },
     });

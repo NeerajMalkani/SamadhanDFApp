@@ -438,7 +438,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     }
     Provider.createDFAdmin(Provider.API_URLS.NewDesignCreate, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();

@@ -38,7 +38,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitsData, setUnitsData] = React.useState([]);
   const [selectedUnitID, setSelectedUnitID] = React.useState(0);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name : "");
+  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? route.params.data.unit1Name === null ? "" : route.params.data.unit1Name : "");
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
@@ -222,6 +222,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
             response.data.data = APIConverter(response.data.data);
             if (route.params.type === "edit") {
               FetchUnitsFromProductID(route.params.data.productName, response.data.data);
+              FetchAlternativeUnitOfSalesFromUnit(route.params.data.unitId);
             }
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
@@ -253,6 +254,26 @@ const AddServiceProductScreen = ({ route, navigation }) => {
             setUnitFullData(response.data.data);
             const units = response.data.data.map((data) => data.displayUnit);
             setUnitsData(units);
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+
+  const FetchAlternativeUnitOfSalesFromUnit = (unitID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        unitcategoryrefno_unitrefno: unitID,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.AlternativeUnitOfSalesServiceProduct, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setUnitSelected(response.data.data[0].actual_unitname.split(" ")[1].split("=")[0]);
+            setConversionUnitSelected(response.data.data[0].convert_unitname);
+            setAUOS(response.data.data[0].actual_unit_value);
           }
         }
       })
@@ -309,11 +330,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-    setSelectedUnitID(
-      unitFullData.find((el) => {
-        return el.displayUnit === selectedItem;
-      }).id
-    );
+    const selectedUnitID = unitFullData.find((el) => {
+      return el.displayUnit === selectedItem;
+    }).unitId;
+    setSelectedUnitID(selectedUnitID);
+    FetchAlternativeUnitOfSalesFromUnit(selectedUnitID);
   };
 
   const onHSNChanged = (text) => {

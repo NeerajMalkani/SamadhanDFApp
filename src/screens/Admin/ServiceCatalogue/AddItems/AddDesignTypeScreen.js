@@ -1,17 +1,16 @@
 import React, { useEffect, useRef } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, Platform, ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
-import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
-import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 import { APIConverter } from "../../../../utils/apiconverter";
+import axios from "axios";
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -32,7 +31,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const [productsFullData, setProductsFullData] = React.useState([]);
   const [productsData, setProductsData] = React.useState([]);
-  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName : "");
+  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName === null ? "" : route.params.data.productName : "");
   const [errorPN, setPNError] = React.useState(false);
   const productsDDRef = useRef({});
 
@@ -218,67 +217,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
     }
   };
 
-  const uploadFile = () => {
-    if (route.params.type === "edit" && !isImageReplaced) {
-      UpdateData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: designImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              if (route.params.type === "edit") {
-                UpdateData();
-              } else {
-                InsertData();
-              }
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
-
   const InsertData = () => {
-    //filePath.uri
     const params = {
       data: {
         Sess_UserRefno: "2",
@@ -297,7 +236,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       },
       designtype_image: filePath.uri,
     };
-    Provider.createDFAdmin(Provider.API_URLS.DesignTypeCreate, params)
+    Provider.createDFAdmin(Provider.API_URLS.DesignTypeCreate, params, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -318,43 +259,49 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
+    const datas = new FormData();
     const params = {
-      data: {
-        Sess_UserRefno: "2",
-        designtype_refno: route.params.data.id,
-        designtype_name: name,
-        group_refno: activityID,
-        service_refno: servicesFullData.find((el) => {
-          return el.serviceName === serviceName;
-        }).id,
-        category_refno: categoriesFullData.find((el) => {
-          return el.categoryName === categoriesName;
-        }).id,
-        product_refno: productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).productID,
-        view_status: checked ? 1 : 0,
-      },
-      designtype_image: filePath.uri,
+      Sess_UserRefno: "2",
+      designtype_refno: route.params.data.id,
+      designtype_name: name,
+      group_refno: activityID,
+      service_refno: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      category_refno: categoriesFullData.find((el) => {
+        return el.categoryName === categoriesName;
+      }).id,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID,
+      view_status: checked ? 1 : 0,
     };
-    Provider.createDFAdmin(Provider.API_URLS.DesignTypeUpdate, params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          route.params.fetchData("update");
-          navigation.goBack();
-        } else if (response.data.code === 304) {
-          setSnackbarText(communication.AlreadyExists);
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        }
+    datas.append("data", JSON.stringify(params));
+    datas.append("designtype_image", {
+      name: "appimage",
+      type: filePath.type,
+      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+    });
+      Provider.createDFAdmin(Provider.API_URLS.DesignTypeUpdate, params, {
+        headers: { "Content-Type": "multipart/form-data" }
       })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarVisible(true);
-      });
+        .then((response) => {
+          if (response.data && response.data.code === 200) {
+            route.params.fetchData("update");
+            navigation.goBack();
+          } else if (response.data.code === 304) {
+            setSnackbarText(communication.AlreadyExists);
+            setSnackbarVisible(true);
+          } else {
+            setSnackbarText(communication.UpdateError);
+            setSnackbarVisible(true);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarText(communication.NetworkError);
+          setSnackbarVisible(true);
+        });
   };
 
   const ValidateData = () => {

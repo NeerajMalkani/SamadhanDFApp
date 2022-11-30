@@ -12,7 +12,7 @@ import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   //#region Variables
-  const arrProductData = React.useState([]);
+  const arrProductData = React.useState(route.params.type === "edit" ? route.params.data.productList : []);
 
   const [activityID, setActivityID] = React.useState("");
 
@@ -42,13 +42,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
-  const [lengthFeet, setLengthFeet] = React.useState("1");
-  const [lengthInches, setLengthInches] = React.useState("0");
+  const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? parseInt(route.params.data.lengthfoot).toString() : "1");
+  const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? parseInt(route.params.data.lengthinches).toString() : "0");
 
-  const [widthFeet, setWidthFeet] = React.useState("1");
-  const [widthInches, setWidthInches] = React.useState("0");
+  const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? parseInt(route.params.data.widthheightfoot).toString() : "1");
+  const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? parseInt(route.params.data.widthheightinches).toString() : "0");
 
-  const [totalSqFt, setTotalSqft] = React.useState("1.0000");
+  const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? route.params.data.totalfoot : "1.0000");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -62,7 +62,12 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const [total, setTotal] = React.useState(0);
+  let amountEdit = 0;
+  if (route.params.type === "edit") {
+    const amountEditTemp = route.params.data.productList.map((data) => data.amount);
+    amountEdit = amountEditTemp.reduce((a, b) => parseFloat(a ? a : 0) + parseFloat(b ? b : 0), 0).toFixed(4);
+  }
+  const [total, setTotal] = React.useState(amountEdit);
 
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
@@ -272,8 +277,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                 }
               }
             });
-            console.log("Hi");
-            console.log(newData);
             const amounts = appliedProducts.map((data) => data.amount);
             setTotal(amounts.reduce((a, b) => (a ? a : 0 + parseFloat(b ? b : 0)), 0).toFixed(4));
             arrProductData[1](newData);
@@ -285,45 +288,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       });
   };
 
-  const FetchProductsFromMaterialSetup = () => {
-    let params = {
-      MaterialSetupID: route.params.data.id,
-    };
-    Provider.getAll(`servicecatalogue/getmaterialsetupmapping?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            const tempArr = [];
-            setTotal(0);
-            let totalTemp = 0;
-            response.data.data.map((k) => {
-              if (k.amount) {
-                totalTemp += parseFloat(k.amount);
-              }
-              tempArr.push({
-                productID: k.productID,
-                productName: k.productName,
-                brandID: k.brandID,
-                brandName: k.brandName,
-                price: k.rate.toFixed(4),
-                amount: k.amount.toFixed(4),
-                quantity: parseFloat(k.quantity),
-                formula: k.formula.toFixed(4),
-              });
-            });
-            setTotal(totalTemp);
-            arrProductData[1](tempArr);
-            setBrandsData([]);
-            setBrandsFullData([]);
-            FetchBrandsFromProductIds(tempArr);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-
   useEffect(() => {
     FetchActvityRoles();
+    if (route.params.type === "edit") {
+      FetchBrandsFromProductIds();
+    }
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
@@ -390,29 +359,61 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    const arrMaterialProducts = [];
-    arrProductData[0].map((k) => {
-      arrMaterialProducts.push({
-        ProductID: k.productID,
-        BrandID: k.brandID,
-        Rate: k.price,
-        Amount: k.amount,
-        Quantity: k.quantity,
-        Formula: k.formula,
-      });
+    let product_refno = new Object();
+    let product_name = new Object();
+    let brand_name = new Object();
+    let brand_refno = new Object();
+    let qty = new Object();
+    let rate = new Object();
+    let amount = new Object();
+    let formula_parameter1 = new Object();
+
+    arrProductData[0].map((k, i) => {
+      product_refno[(i + 1).toString()] = k.productID;
+      product_name[(i + 1).toString()] = k.productName;
+      brand_name[(i + 1).toString()] = k.brandName;
+      brand_refno[(i + 1).toString()] = k.brandID;
+      qty[(i + 1).toString()] = k.quantity;
+      rate[(i + 1).toString()] = k.price;
+      amount[(i + 1).toString()] = k.amount;
+      formula_parameter1[(i + 1).toString()] = k.formula;
     });
-    Provider.create("servicecatalogue/insertmaterialsetup", {
-      MaterialSetupMaster: {
-        DesignTypeID: designTypeFullData.find((el) => {
+
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        group_refno: activityID,
+        cont_service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        cont_category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        cont_product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        designtype_refno: designTypeFullData.find((el) => {
           return el.designTypeName === designType;
         }).id,
-        Length: parseFloat(lengthFeet + "." + lengthInches),
-        Width: parseFloat(widthFeet + "." + widthInches),
-        Subtotal: parseFloat(total),
-        Display: checked,
+        view_status: checked ? 1 : 0,
+        lengthfoot: lengthFeet,
+        lengthinches: lengthInches,
+        widthheightfoot: widthFeet,
+        widthheightinches: widthInches,
+        totalfoot: totalSqFt,
+        product_refno: product_refno,
+        product_name: product_name,
+        brand_name: brand_name,
+        brand_refno: brand_refno,
+        qty: qty,
+        rate: rate,
+        amount: amount,
+        formula_parameter1: formula_parameter1,
+        subtotal: total
       },
-      MaterialProductMappings: arrMaterialProducts,
-    })
+    };
+
+    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -433,30 +434,62 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    const arrMaterialProducts = [];
-    arrProductData[0].map((k) => {
-      arrMaterialProducts.push({
-        ProductID: k.productID,
-        BrandID: k.brandID,
-        Rate: k.price,
-        Amount: k.amount,
-        Quantity: k.quantity,
-        Formula: k.formula,
-      });
+    let product_refno = new Object();
+    let product_name = new Object();
+    let brand_name = new Object();
+    let brand_refno = new Object();
+    let qty = new Object();
+    let rate = new Object();
+    let amount = new Object();
+    let formula_parameter1 = new Object();
+
+    arrProductData[0].map((k, i) => {
+      product_refno[(i + 1).toString()] = k.productID;
+      product_name[(i + 1).toString()] = k.productName;
+      brand_name[(i + 1).toString()] = k.brandName;
+      brand_refno[(i + 1).toString()] = k.brandID;
+      qty[(i + 1).toString()] = k.quantity;
+      rate[(i + 1).toString()] = k.price;
+      amount[(i + 1).toString()] = k.amount;
+      formula_parameter1[(i + 1).toString()] = k.formula;
     });
-    Provider.create("servicecatalogue/updatematerialsetup", {
-      MaterialSetupMaster: {
-        ID: route.params.data.id,
-        DesignTypeID: designTypeFullData.find((el) => {
+
+    const params = {
+      data: {
+        Sess_UserRefno: "2",
+        materials_setup_refno: route.params.data.id,
+        group_refno: activityID,
+        cont_service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        cont_category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        cont_product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).productID,
+        designtype_refno: designTypeFullData.find((el) => {
           return el.designTypeName === designType;
         }).id,
-        Length: parseFloat(lengthFeet + "." + lengthInches),
-        Width: parseFloat(widthFeet + "." + widthInches),
-        Subtotal: parseFloat(total),
-        Display: checked,
+        view_status: checked ? 1 : 0,
+        lengthfoot: lengthFeet,
+        lengthinches: lengthInches,
+        widthheightfoot: widthFeet,
+        widthheightinches: widthInches,
+        totalfoot: totalSqFt,
+        product_refno: product_refno,
+        product_name: product_name,
+        brand_name: brand_name,
+        brand_refno: brand_refno,
+        qty: qty,
+        rate: rate,
+        amount: amount,
+        formula_parameter1: formula_parameter1,
+        subtotal: total
       },
-      MaterialProductMappings: arrMaterialProducts,
-    })
+    };
+
+    Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
