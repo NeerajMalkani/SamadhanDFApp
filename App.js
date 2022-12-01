@@ -123,6 +123,15 @@ import AddOpeningStockScrap from "./src/screens/Manufacture/AddItems/AddOpeningS
 import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
 import EditStockList from "./src/screens/Manufacture/AddItems/EditStockList";
 import EditStockScrap from "./src/screens/Manufacture/AddItems/EditOpeningStockScrap";
+import ProductforProduction from "./src/screens/Manufacture/ProductforProduction";
+import AddProduction from "./src/screens/Manufacture/AddItems/AddProduction";
+import ProductionStatus from "./src/screens/Manufacture/ProductionStatus";
+import AddProductionStatus from "./src/screens/Manufacture/AddItems/AddProductionStatus";
+import EditProductionStatus from "./src/screens/Manufacture/AddItems/EditProductionStatus";
+import EditProductForProduction from "./src/screens/Manufacture/AddItems/EditProductForProduction";
+import ProductionOrderList from "./src/screens/Manufacture/ProductionOrderList";
+import AddProductOrderList from "./src/screens/Manufacture/AddItems/AddProductOrderList";
+import EditProductOrderList from "./src/screens/Manufacture/AddItems/EditProductOrderList";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -360,6 +369,9 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockScrap" component={OpeningStockScrap} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductforProduction" component={ProductforProduction} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionStatus" component={ProductionStatus} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionOrderList" component={ProductionOrderList} />
             </Drawer.Navigator>
           );
       }
@@ -464,6 +476,16 @@ export default function App() {
               <Stack.Screen name="AddOpeningStockScrap" component={AddOpeningStockScrap} options={{ headerTitle: "Add Opening Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EditStockScrap" component={EditStockScrap} options={{ headerTitle: "Edit  Stock Scrap", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ApiMaster" component={ApiMaster} options={{ headerTitle: "Api Master", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="ProductforProduction" component={ProductforProduction} options={{ headerTitle: "Product For Production ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddProduction" component={AddProduction} options={{ headerTitle: "Add Production For Production", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EditProductForProduction" component={EditProductForProduction} options={{ headerTitle: "Edit Production For Production", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+           
+              <Stack.Screen name="EditProductionStatus" component={EditProductionStatus} options={{ headerTitle: "Edit  Production Status", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+
+              <Stack.Screen name="ProductionOrderList" component={ProductionOrderList} options={{ headerTitle: "Production Order List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddProductOrderList" component={AddProductOrderList} options={{ headerTitle: "Add Product Order List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="EditProductOrderList" component={EditProductOrderList} options={{ headerTitle: "Edit Product Order List ", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddProductionStatus" component={AddProductionStatus} options={{ headerTitle: "Add Production Status", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

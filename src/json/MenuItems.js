@@ -836,17 +836,17 @@ export const MenuItemsManufacture = [
     index: 1,
     roleID: 7,
     items: [
+      // {
+      //   title: "Brand Conversion Value",
+      //   type: "accordian",
+      //   index: 70,
+      //   navigation: "BrandConversionValue",
+      // },
       {
-        title: "Brand Conversion Value",
+        title: "Product for Production",
         type: "accordian",
         index: 70,
-        navigation: "BrandConversionValue",
-      },
-      {
-        title: "Opening Stock",
-        type: "accordian",
-        index: 71,
-        navigation: "OpeningStockList",
+        navigation: "ProductforProduction",
       },
     ],
   },
@@ -857,17 +857,23 @@ export const MenuItemsManufacture = [
     index: 2,
     roleID: 7,
     items: [
+      // {
+      //   title: "Employee New / List",
+      //   type: "accordian",
+      //   index: 20,
+      //   navigation: "EmployeeListScreen",
+      // },
+      // {
+      //   title: "Production Order List",
+      //   type: "accordian",
+      //   index: 21,
+      //   navigation: "ProductionOrderList",
+      // },
       {
-        title: "Employee New / List",
-        type: "accordian",
-        index: 20,
-        navigation: "EmployeeListScreen",
-      },
-      {
-        title: "Employee Report",
+        title: "Production Order List",
         type: "accordian",
         index: 21,
-        //navigation: "EmployeeReportScreen",
+        navigation: "ProductionOrderList",
       },
     ],
   },
@@ -905,19 +911,24 @@ export const MenuItemsManufacture = [
     index: 4,
     roleID: 7,
     items: [
-      {
-        title: " Architect Rate Card Setup",
-        type: "accordian",
-        index: 40,
-        navigation: "ArchitectRateCardSetup",
-        // navigation:"ArchitectRateCardSetup"
-      },
+      // {
+      //   title: "Production Status",
+      //     type: "accordian",
+      //     index: 40,
+      //     navigation: "ProductionStatus",
+      // }
       // {
       //   title: "Send Rate Card",
       //   type: "accordian",
       //   index: 41,
       //   //navigation: "ClientListScreen",
       // },
+      {
+        title: "Production Status",
+          type: "accordian",
+          index: 40,
+          navigation: "ProductionStatus",
+      }
     ],
   },
   {
