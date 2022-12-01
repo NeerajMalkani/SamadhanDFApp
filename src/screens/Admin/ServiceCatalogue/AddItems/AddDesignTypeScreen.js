@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import FormData from "form-data";
 import { Image, Platform, ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -10,7 +11,6 @@ import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 import { APIConverter } from "../../../../utils/apiconverter";
-import axios from "axios";
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -31,7 +31,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const [productsFullData, setProductsFullData] = React.useState([]);
   const [productsData, setProductsData] = React.useState([]);
-  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? route.params.data.productName === null ? "" : route.params.data.productName : "");
+  const [productsName, setProductsName] = React.useState(route.params.type === "edit" ? (route.params.data.productName === null ? "" : route.params.data.productName) : "");
   const [errorPN, setPNError] = React.useState(false);
   const productsDDRef = useRef({});
 
@@ -218,28 +218,31 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    const datas = new FormData();
     const params = {
-      data: {
-        Sess_UserRefno: "2",
-        designtype_name: name,
-        group_refno: activityID,
-        service_refno: servicesFullData.find((el) => {
-          return el.serviceName === serviceName;
-        }).id,
-        category_refno: categoriesFullData.find((el) => {
-          return el.categoryName === categoriesName;
-        }).id,
-        product_refno: productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).productID,
-        view_status: checked ? 1 : 0,
-      },
-      designtype_image: filePath.uri,
+      Sess_UserRefno: "2",
+      designtype_name: name,
+      group_refno: activityID,
+      service_refno: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      category_refno: categoriesFullData.find((el) => {
+        return el.categoryName === categoriesName;
+      }).id,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID,
+      view_status: checked ? 1 : 0,
     };
-    Provider.createDFAdmin(Provider.API_URLS.DesignTypeCreate, params, {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    datas.append("data", JSON.stringify(params));
+    datas.append("designtype_image", {
+      name: "appimage1212.jpg",
+      type: filePath.type + "/*",
+      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+    });
+    Provider.createDFAdminWithHeader(Provider.API_URLS.DesignTypeCreate, datas)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -253,6 +256,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -277,31 +281,36 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));
-    datas.append("designtype_image", {
-      name: "appimage",
-      type: filePath.type,
-      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-    });
-      Provider.createDFAdmin(Provider.API_URLS.DesignTypeUpdate, params, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
-        .then((response) => {
-          if (response.data && response.data.code === 200) {
-            route.params.fetchData("update");
-            navigation.goBack();
-          } else if (response.data.code === 304) {
-            setSnackbarText(communication.AlreadyExists);
-            setSnackbarVisible(true);
-          } else {
-            setSnackbarText(communication.UpdateError);
-            setSnackbarVisible(true);
+    datas.append(
+      "designtype_image",
+      isImageReplaced
+        ? {
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
           }
-        })
-        .catch((e) => {
-          console.log(e);
-          setSnackbarText(communication.NetworkError);
+        : null
+    );
+    Provider.createDFAdminWithHeader(Provider.API_URLS.DesignTypeUpdate, datas)
+      .then((response) => {
+        setIsButtonLoading(false);
+        if (response.data && response.data.code === 200) {
+          route.params.fetchData("update");
+          navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
-        });
+        } else {
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setIsButtonLoading(false);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
   };
 
   const ValidateData = () => {
@@ -342,6 +351,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -398,7 +408,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button>
         </Card.Content>

@@ -125,10 +125,10 @@ class Provider {
     CategoryNameServiceProduct: "getcategorynameserviceproductform/",
     CategoryDataServiceProduct: "getcategorydataserviceproductform/",
     ProductServiceProduct: "getproductnameserviceproductform/",
-    AlternativeUnitOfSalesServiceProduct:"getalternativeunitofsalesserviceproductform/",
+    AlternativeUnitOfSalesServiceProduct: "getalternativeunitofsalesserviceproductform/",
     ServiceProductCreate: "serviceproductcreate/",
     ServiceProductUpdate: "serviceproductupdate/",
-    ServiceProductrefNoCheck:"serviceproductrefnocheck/",
+    ServiceProductrefNoCheck: "serviceproductrefnocheck/",
 
     DepartmentRefNoCheck: "departmentrefnocheck/",
     DepartmentNameCreate: "departmentnamecreate/",
@@ -183,30 +183,37 @@ class Provider {
     NewDesignCreate: "newdesigncreate/",
     NewDesignUpdate: "newdesignupdate/",
     AutoDesignNoNewDesign: "getautodesignnonewdesignform/",
-    ActivityRoleNameNewDesign:"getgroupnamenewdesignform/",
+    ActivityRoleNameNewDesign: "getgroupnamenewdesignform/",
     ServiceNameNewDesign: "getservicenamenewdesignform/",
     CategoryNameNewDesign: "getcategorynamenewdesignform/",
     ProductNameNewDesign: "getproductnamenewdesignform/",
     ProductDesignTypeNewDesign: "getproductdesigntypenewdesignform/",
     ProductDataNewDesign: "getproductdatanewdesignform/",
     WorkLocationNameNewDesign: "getworklocationnamenewdesignform/",
-
   };
 
   createDF(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
-  createDFAdmin(resource, params, headers) {
+  createDFAdmin(resource, params) {
     if (params) {
-      if(headers){
-        return axios.post(`${BASE_URL_Admin}/${resource}`, params, headers);
-      } else {
-        return axios.post(`${BASE_URL_Admin}/${resource}`, params);
-      }
+      return axios.post(`${BASE_URL_Admin}/${resource}`, params);
     } else {
       return axios.post(`${BASE_URL_Admin}/${resource}`);
     }
   }
+  createDFAdminWithHeader(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Admin}/${resource}`, params, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      return axios.post(`${BASE_URL_Admin}/${resource}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    }
+  }
+
   createDFAPI(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_API}/${resource}`, params);

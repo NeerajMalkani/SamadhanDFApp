@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import FormData from "form-data";
 import { Image, ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -50,7 +51,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   const [error, setError] = React.useState(false);
   const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.labourCost.toString() : "");
 
-  const [designNumber, setDesignNumber] = React.useState(route.params.type === "edit" ?  route.params.data.designNumber : "");
+  const [designNumber, setDesignNumber] = React.useState(route.params.type === "edit" ? route.params.data.designNumber : "");
   const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
@@ -73,7 +74,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setDesignNumber("DS-" + response.data.data[0].autoincrement_design_no.toString().padStart(4, '0'));
+            setDesignNumber("DS-" + response.data.data[0].autoincrement_design_no.toString().padStart(4, "0"));
           }
         }
       })
@@ -277,7 +278,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
   useEffect(() => {
     FetchActvityRoles();
     FetchWorkLocation();
-    if(route.params.type !== "edit"){
+    if (route.params.type !== "edit") {
       FetchDesignNumber();
     }
   }, []);
@@ -351,93 +352,39 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     }
   };
 
-  const uploadFile = () => {
-    if (route.params.type === "edit" && !isImageReplaced) {
-      UpdateData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: designImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              if (route.params.type === "edit") {
-                UpdateData();
-              } else {
-                InsertData();
-              }
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
-
   const InsertData = () => {
+    const datas = new FormData();
     const params = {
-      data: {
-        Sess_UserRefno: "2",
-        group_refno: activityID,
-        service_refno: servicesFullData.find((el) => {
-          return el.serviceName === serviceName;
-        }).id,
-        category_refno: categoriesFullData.find((el) => {
-          return el.categoryName === categoriesName;
-        }).id,
-        product_refno: productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).productID,
-        designtype_refno: designTypeFullData.find((el) => {
-          return el.designTypeName === designTypeName;
-        }).id,
-        worklocation_refno: workLocationFullData.find((el) => {
-          return el.workLocationName === workLocationName;
-        }).id,
-        design_no: parseInt(designNumber.split("-")[1]),
-        labour_cost: name,
-        view_status: checked ? 1 : 0
-      },
-      design_image: filePath.uri
-    }
-    Provider.createDFAdmin(Provider.API_URLS.NewDesignCreate, params)
+      Sess_UserRefno: "2",
+      group_refno: activityID,
+      service_refno: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      category_refno: categoriesFullData.find((el) => {
+        return el.categoryName === categoriesName;
+      }).id,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID,
+      designtype_refno: designTypeFullData.find((el) => {
+        return el.designTypeName === designTypeName;
+      }).id,
+      worklocation_refno: workLocationFullData.find((el) => {
+        return el.workLocationName === workLocationName;
+      }).id,
+      design_no: parseInt(designNumber.split("-")[1]),
+      labour_cost: name,
+      view_status: checked ? 1 : 0,
+    };
+    datas.append("data", JSON.stringify(params));
+    datas.append("designtype_image", {
+      name: "appimage1212.jpg",
+      type: filePath.type + "/*",
+      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+    });
+    Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignCreate, datas)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -451,40 +398,51 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
+    const datas = new FormData();
     const params = {
-      data: {
-        Sess_UserRefno: "2",
-        designgallery_refno: route.params.data.id,
-        group_refno: activityID,
-        service_refno: servicesFullData.find((el) => {
-          return el.serviceName === serviceName;
-        }).id,
-        category_refno: categoriesFullData.find((el) => {
-          return el.categoryName === categoriesName;
-        }).id,
-        product_refno: productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).productID,
-        designtype_refno: designTypeFullData.find((el) => {
-          return el.designTypeName === designTypeName;
-        }).id,
-        worklocation_refno: workLocationFullData.find((el) => {
-          return el.workLocationName === workLocationName;
-        }).id,
-        design_no: parseInt(designNumber.split("-")[1]),
-        labour_cost: name,
-        view_status: checked ? 1 : 0
-      },
-      design_image: filePath.uri
-    }
-    Provider.createDFAdmin(Provider.API_URLS.NewDesignCreate, params)
+      Sess_UserRefno: "2",
+      designgallery_refno: route.params.data.id,
+      group_refno: activityID,
+      service_refno: servicesFullData.find((el) => {
+        return el.serviceName === serviceName;
+      }).id,
+      category_refno: categoriesFullData.find((el) => {
+        return el.categoryName === categoriesName;
+      }).id,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).productID,
+      designtype_refno: designTypeFullData.find((el) => {
+        return el.designTypeName === designTypeName;
+      }).id,
+      worklocation_refno: workLocationFullData.find((el) => {
+        return el.workLocationName === workLocationName;
+      }).id,
+      design_no: parseInt(designNumber.split("-")[1]),
+      labour_cost: name,
+      view_status: checked ? 1 : 0,
+    };
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "designtype_image",
+      isImageReplaced
+        ? {
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+          }
+        : null
+    );
+    Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignUpdate, datas)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -498,6 +456,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -549,6 +508,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -613,7 +573,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading} disabled={isButtonLoading}>
             SAVE
           </Button>
         </Card.Content>
