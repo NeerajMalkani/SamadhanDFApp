@@ -4,6 +4,7 @@ const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
 const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
 const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
+const BASE_URL_Dashboard = "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
 
 class Provider {
   //#region Old API's
@@ -190,11 +191,19 @@ class Provider {
     ProductDesignTypeNewDesign: "getproductdesigntypenewdesignform/",
     ProductDataNewDesign: "getproductdatanewdesignform/",
     WorkLocationNameNewDesign: "getworklocationnamenewdesignform/",
+
+    GetdashboardTotaluser: "getdashboard_totaluser/",
+    GetdashboardUserswitchto: "getdashboard_userswitchto/",
+    Getdashboard_Userswitchto_Proceed: "getdashboard_userswitchto_proceed/",
+    GetdashboardServicecatalogue: "getdashboard_servicecatalogue/",
+    GetserviceimagegalleryByServicerefno: "getserviceimagegallery_by_servicerefno/",
+    Getgotoestimation: "getgotoestimation/",
   };
 
   createDF(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
+
   createDFAdmin(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_Admin}/${resource}`, params);
@@ -202,6 +211,7 @@ class Provider {
       return axios.post(`${BASE_URL_Admin}/${resource}`);
     }
   }
+
   createDFAdminWithHeader(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_Admin}/${resource}`, params, {
@@ -211,6 +221,14 @@ class Provider {
       return axios.post(`${BASE_URL_Admin}/${resource}`, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+    }
+  }
+
+  createDFDashboard(resource, params = null) {
+    if (params) {
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params);
+    } else {
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`);
     }
   }
 
