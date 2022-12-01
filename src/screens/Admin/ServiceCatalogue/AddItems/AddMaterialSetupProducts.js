@@ -75,7 +75,6 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data.data);
             const fullData = response.data.data.map((o) => ({
               ...o,
               isChecked: arrProductData[0].find((el) => {

@@ -124,7 +124,7 @@ const MaterialSetupScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        materials_setup_refno: data.item.id
+        materials_setup_refno: data.item.id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupRefNoCheck, params)
@@ -132,7 +132,9 @@ const MaterialSetupScreen = ({ navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            response.data.data[0].productlist_data = APIConverter(response.data.data[0].productlist_data);
+            if (response.data.data[0].productlist_data !== null) {
+              response.data.data[0].productlist_data = APIConverter(response.data.data[0].productlist_data);
+            }
             navigation.navigate("AddMaterialSetupScreen", {
               type: "edit",
               fetchData: FetchData,
@@ -150,7 +152,6 @@ const MaterialSetupScreen = ({ navigation }) => {
                 totalfoot: response.data.data[0].totalfoot,
                 productList: response.data.data[0].productlist_data,
                 display: data.item.display,
-
               },
             });
           }

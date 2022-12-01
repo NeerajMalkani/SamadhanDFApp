@@ -12,7 +12,7 @@ import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   //#region Variables
-  const arrProductData = React.useState(route.params.type === "edit" ? route.params.data.productList : []);
+  const arrProductData = React.useState(route.params.type === "edit" ? route.params.data.productList === null ? [] : route.params.data.productList : []);
 
   const [activityID, setActivityID] = React.useState("");
 
@@ -63,7 +63,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
 
   let amountEdit = 0;
-  if (route.params.type === "edit") {
+  if (route.params.type === "edit" && route.params.data.productList !== null) {
     const amountEditTemp = route.params.data.productList.map((data) => data.amount);
     amountEdit = amountEditTemp.reduce((a, b) => parseFloat(a ? a : 0) + parseFloat(b ? b : 0), 0).toFixed(4);
   }
@@ -290,7 +290,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     FetchActvityRoles();
-    if (route.params.type === "edit") {
+    if (route.params.type === "edit" && arrProductData[0].length > 0) {
       FetchBrandsFromProductIds();
     }
   }, []);
@@ -409,7 +409,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         rate: rate,
         amount: amount,
         formula_parameter1: formula_parameter1,
-        subtotal: total
+        subtotal: total.toFixed(4)
       },
     };
 
@@ -485,10 +485,9 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         rate: rate,
         amount: amount,
         formula_parameter1: formula_parameter1,
-        subtotal: total
+        subtotal: total.toFixed(4)
       },
     };
-
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
