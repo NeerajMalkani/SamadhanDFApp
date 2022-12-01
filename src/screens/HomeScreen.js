@@ -26,10 +26,11 @@ import FadeCarousel from "rn-fade-carousel";
 export const navigationRef = createNavigationContainerRef();
 
 const windowWidth = Dimensions.get("window").width;
-let roleID = 0;
+let roleID = 0, userID = 0, groupRefNo = 0;
+let totUsers = 0;
 
 const HomeScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
@@ -49,9 +50,9 @@ const HomeScreen = ({ route, navigation }) => {
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const slidesTwo = [
     <Image source={require('../../assets/dreamone.jpg')} style={Styles.flex1} resizeMode="cover" />,
@@ -131,15 +132,43 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const GetUserCount = () => {
-    Provider.getAll("registration/getusers")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo
+      },
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardTotaluser, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           let totalUserCount = 0;
-          response.data.data.map((k) => {
-            totalUserCount += parseInt(k.roleCount);
-          });
-          setTotalUsers(totalUserCount);
-          setUserCountData(response.data.data);
+          setTotalUsers(response.data.data[0].TotalUsers);
+          totalUsers = response.data.data[0].TotalUsers;
+
+          let usr_data = [
+            {
+              roleID: 0,
+              roleName: 'Dealer',
+              roleCount: response.data.data[0].TotalDealer
+            },
+            {
+              roleID: 1,
+              roleName: 'Contractor',
+              roleCount: response.data.data[0].TotalContractor
+            },
+            {
+              roleID: 2,
+              roleName: 'General User',
+              roleCount: response.data.data[0].TotalGeneralUser
+            },
+            {
+              roleID: 3,
+              roleName: 'Client',
+              roleCount: response.data.data[0].TotalClient
+            },
+          ]
+          console.log(usr_data);
+          setUserCountData(usr_data);
           let switchRolesData = [];
           response.data.data.map((data) => {
             data.roleName !== "General User" ? switchRolesData.push(data.roleName) : null;
@@ -157,13 +186,15 @@ const HomeScreen = ({ route, navigation }) => {
     GetServiceCatalogue();
     FetchImageGalleryData();
     GetUserCount();
-    GetRoleID();
+    GetUserData();
   }, []);
 
-  const GetRoleID = async () => {
+  const GetUserData = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       roleID = JSON.parse(userData).RoleID;
+      userID = JSON.parse(userData).userID;
+      groupRefNo = JSON.parse(userData).Sess_group_refno;
     }
   };
 
@@ -228,8 +259,8 @@ const HomeScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
@@ -310,22 +341,39 @@ const HomeScreen = ({ route, navigation }) => {
                 start={true}
               />
               <View style={[Styles.width100per, Styles.height40, { backgroundColor: "rgba(0,0,0,0.4)", position: "absolute" }]}>
-                <Text style={[Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite,Styles.fontBold]}>Design your Dream</Text>
+                <Text style={[Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold]}>Design your Dream</Text>
               </View>
             </View>
 
             <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
 
-
               <View style={Styles.width50per}>
-                <Card onPress={() => {
-                  if (roleID == 1) {
-                    navigation.navigate("ApprovedUserScreen", { type: "add" });
-                  }
-                }} style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}>
-                  <Card.Title title="Users" titleStyle={[Styles.textColorWhite]} />
+                <Card
+                  onPress={() => {
+                    if (roleID == 1) {
+                      navigation.navigate("ApprovedUserScreen", { type: "add" });
+                    }
+                  }}
+                  style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16,
+                  { backgroundColor: "#42c6a5" }]}
 
-                  <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
+                >
+                  <Card.Title style={[Styles.width100per]} title={
+
+                    <View style={[Styles.flexSpaceBetween, Styles.flexRow, Styles.width100per]}>
+                      <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>
+                        <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>Users</Text>
+                      </View>
+                    </View>
+                  }
+                    right={(props) =>
+                      <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite, Styles.marginEnd8]}>
+                        <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>{totUsers}</Text>
+                      </View>
+                    }
+                    titleStyle={[Styles.textColorWhite]} />
+
+                  <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>{15}</Text>
                   <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>General Users</Text>
 
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
@@ -376,7 +424,7 @@ const HomeScreen = ({ route, navigation }) => {
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
-      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)}  transparent={true}>
+      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)} transparent={true}>
         <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
           <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => { }}>
             View
