@@ -198,6 +198,9 @@ class Provider {
     GetdashboardServicecatalogue: "getdashboard_servicecatalogue/",
     GetserviceimagegalleryByServicerefno: "getserviceimagegallery_by_servicerefno/",
     Getgotoestimation: "getgotoestimation/",
+    MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
+
+
   };
 
   createDF(resource, params) {

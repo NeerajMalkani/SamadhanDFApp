@@ -15,7 +15,7 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let DealerID = 0;
 
 const DealerDepartmentScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -24,15 +24,15 @@ const DealerDepartmentScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       DealerID = JSON.parse(userData).UserID;
-        FetchData();
+      FetchData();
     }
   };
 
@@ -43,14 +43,20 @@ const DealerDepartmentScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-        UserType: 4,
-        UserId: DealerID
-      };
-    Provider.getAll(`master/getuserdepartments?${new URLSearchParams(params)}`)
+      data: {
+        "Sess_UserRefno": DealerID,
+        "Sess_CompanyAdmin_UserRefno": "all"
+      }
+    };
+    console.log(params)
+    Provider.createDF(Provider.API_URLS.MyDepartmentRefnoCheck, params)
+    // Provider.getAll(`master/getuserdepartments?${new URLSearchParams(params)}`)
       .then((response) => {
-        debugger;
+        console.log(response.data)
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+  
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -118,8 +124,8 @@ const DealerDepartmentScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Departments" />
