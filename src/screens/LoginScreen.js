@@ -42,7 +42,7 @@ const LoginScreen = ({ route, navigation }) => {
     }
   };
   //#endregion
-  
+
   //#region Api calling
   const StoreUserData = async (user) => {
     try {
@@ -86,7 +86,7 @@ const LoginScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           const user = {
             UserID: user_refno,
-            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : "",
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
             RoleID: response.data.data.Sess_group_refno,
             RoleName: response.data.data.Sess_Username,
             Sess_FName: response.data.data.Sess_FName,

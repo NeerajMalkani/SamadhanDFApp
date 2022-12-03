@@ -377,7 +377,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));
-    datas.append("designtype_image", {
+    datas.append("design_image", {
       name: "appimage1212.jpg",
       type: filePath.type + "/*",
       uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
@@ -431,7 +431,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     };
     datas.append("data", JSON.stringify(params));
     datas.append(
-      "designtype_image",
+      "design_image",
       isImageReplaced
         ? {
             name: "appimage1212.jpg",
@@ -440,6 +440,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
           }
         : null
     );
+    console.log(datas);
     Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignUpdate, datas)
       .then((response) => {
         setIsButtonLoading(false);

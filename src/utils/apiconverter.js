@@ -71,24 +71,24 @@ export const APIConverter = (response) => {
     renameKey(obj, "formula_parameter1", "formula");
     renameKey(obj, "qty", "quantity");
     renameKey(obj, "rate", "price");
+    renameKey(obj, "brand_master_refno", "id");
 
     renameKey(obj, "department_refno_name", "departmentName");
-    renameKey(obj, "mydepartment_refno", "departmentID");    
+    renameKey(obj, "mydepartment_refno", "departmentID");
   });
 
   return response;
 };
 
 export const RemoveUnwantedParameters = (response, params) => {
-  if(Array.isArray(params)){
+  if (Array.isArray(params)) {
     response.forEach((obj) => {
-      for(let i = 0; i <  params.length; i++){
+      for (let i = 0; i < params.length; i++) {
         if (obj.hasOwnProperty(params[i])) {
           delete obj[params[i]];
         }
       }
-      
     });
   }
   return response;
-}
+};

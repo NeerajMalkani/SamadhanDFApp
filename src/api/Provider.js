@@ -200,7 +200,8 @@ class Provider {
     Getgotoestimation: "getgotoestimation/",
     MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
 
-
+    /******************************Admin Service Catalogue************************************/
+    DealerBrandMasterRefNoCheck: "dealerbrandmasterrefnocheck/",
   };
 
   createDF(resource, params) {
