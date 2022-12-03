@@ -9,8 +9,9 @@ import Dropdown from "../../../components/Dropdown";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
+import { APIConverter } from "../../../utils/apiconverter";
 
-let userID = 0;
+let userID = 0, Sess_group_refno = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -18,6 +19,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [otherClients, setOtherClients] = React.useState([]);
+  const [selectedData, setSelectedData] = React.useState([]);
   const [otherClientsAutocomplete, setOtherClientsAutocomplete] = React.useState([]);
   const [selectedClient, setSelectedClient] = React.useState("");
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
@@ -33,23 +35,125 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   const [widthFeet, setWidthFeet] = React.useState("1");
   const [widthInches, setWidthInches] = React.useState("0");
-
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
-
   const refRBSheet = useRef();
   //#endregion 
 
   //#region Functions
 
+  useEffect(() => {
+    GetUserID();
+  }, []);
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
+      FetchImageGalleryProductDetail(JSON.parse(userData));
       if (route.params.isContractor) {
         FetchClients();
         FetchOtherClients();
       }
     }
+  };
+
+  const FetchImageGalleryProductDetail = (data: any) => {
+    debugger;
+    let params = {
+      data: {
+        Sess_UserRefno: data.UserID,
+        Sess_group_refno: data.Sess_group_refno,
+        service_refno: route.params.data.id,
+        designtype_refno: route.params.data.designTypeID,
+        product_refno: route.params.data.productID,
+        designgallery_refno: route.params.data.designgallery_refno
+      },
+    };
+    Provider.createDF(Provider.API_URLS.Getgotoestimation, params)
+      .then((response: any) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setSelectedData(response.data.data[0]);
+            //setLoading(false);
+          }
+        } else {
+          //setSnackMsg(communication.NoData);
+          //setSnackbarType("info");
+          //setOpen(true);
+        }
+        //setLoading(false);
+      })
+      .catch((e) => {
+        //setLoading(false);
+        //setSnackMsg(communication.NetworkError);
+        //setSnackbarType("error");
+        //setOpen(true);
+      });
+  };
+
+  const AddMoreDesigns = () => {
+    debugger;
+    const params = {
+      data: {
+        "Sess_UserRefno": userID,
+        "Sess_group_refno": Sess_group_refno,
+        "clickaddmorecheck": "0",
+        "service_refno": route.params.data.id,
+        "designtype_refno": route.params.data.designTypeID,
+        "product_refno": route.params.data.productID,
+        "designgallery_refno": route.params.data.designgallery_refno,
+        "lengthfoot": lengthFeet,
+        "lengthinches": lengthInches,
+        "widthheightfoot": widthFeet,
+        "widthheightinches": widthInches,
+        "totalfoot": totalSqFt
+      }
+    };
+
+    Provider.createDF(Provider.API_URLS.GetscEstimation, params)
+      .then((response) => {
+        debugger;
+        if (response.data && response.data.code === 200) {
+          debugger;
+          navigation.navigate("ImageGalleryScreen");
+          // if (number === "2") {
+          //   if (from === "add") {
+          //     if (route.params.from === "home") {
+          //       navigation.navigate("HomeScreen");
+          //     } else {
+          //       navigation.navigate("ImageGalleryScreen");
+          //     }
+          //   } else {
+          //     navigation.navigate("GetEstimationScreen", {
+          //       userDesignEstimationID: response.data.data[0].userDesignEstimationID,
+          //       designImage: route.params.data.designImage,
+          //       isContractor: route.params.isContractor,
+          //       fetchData: route.params.fetchData,
+          //       clientID: route.params.isContractor
+          //         ? clientsFullData.find((el) => {
+          //           return el.companyName === clientName;
+          //         }).id
+          //         : 0,
+          //     });
+          //   }
+          // } else {
+          //   console.log(response.data.data[0].userDesignEstimationID);
+          //   FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
+          // }
+        } else {
+          setSnackMsg(communication.Error);
+          setSnackbarType("error");
+          setOpen(true);
+        }
+      })
+      .catch((e) => {
+        setSnackMsg(communication.NetworkError);
+        setSnackbarType("error");
+        setOpen(true);
+      });
+
   };
 
   const FetchClients = () => {
@@ -108,10 +212,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         setOtherClientsAutocomplete([]);
       });
   };
-
-  useEffect(() => {
-    GetUserID();
-  }, []);
 
   const onClientNameSelected = (selectedItem) => {
     setClientName(selectedItem);
@@ -323,19 +423,19 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           <View style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
             <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
               <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Code</Subheading>
-              <Subheading style={[Styles.flex1]}>{"DS-" + pad(route.params.data.designTypeID, 4, "0")}</Subheading>
+              <Subheading style={[Styles.flex1]}>{selectedData.designNumber}</Subheading>
             </View>
             <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
               <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Design Type</Subheading>
-              <Subheading style={[Styles.flex1]}>{route.params.data.designTypeName}</Subheading>
+              <Subheading style={[Styles.flex1]}>{selectedData.designTypeName}</Subheading>
             </View>
             <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding16, Styles.flexAlignCenter]}>
               <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Category Name</Subheading>
-              <Subheading style={[Styles.flex1]}>{route.params.data.categoryName}</Subheading>
+              <Subheading style={[Styles.flex1]}>{selectedData.categoryName}</Subheading>
             </View>
             <View style={[Styles.flexRow, Styles.padding16, Styles.flexAlignCenter]}>
               <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Product Name</Subheading>
-              <Subheading style={[Styles.flex1]}>{route.params.data.productName}</Subheading>
+              <Subheading style={[Styles.flex1]}>{selectedData.productName}</Subheading>
             </View>
           </View>
           {route.params.isContractor && (
@@ -398,7 +498,10 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           </Card.Content>
         ) : (
           <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-            <Button mode="outlined" onPress={() => InsertDesignEstimationEnquiry("add", "1")}>
+            <Button mode="outlined" onPress={() => 
+            AddMoreDesigns()
+              //InsertDesignEstimationEnquiry("add", "1")
+            }>
               Add More
             </Button>
             <Button mode="contained" onPress={() => InsertDesignEstimationEnquiry("get", "1")}>
@@ -447,7 +550,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-    </View>
+    </View >
   );
 };
 

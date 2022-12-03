@@ -24,6 +24,8 @@ import FadeCarousel from "rn-fade-carousel";
 // import { CustomCard } from '@tsamantanis/react-glassmorphism'
 // import '../../node_modules/@tsamantanis/react-glassmorphism/dist/index';
 export const navigationRef = createNavigationContainerRef();
+import { NullOrEmpty } from "../utils/validations";
+import { APIConverter } from "../utils/apiconverter";
 
 const windowWidth = Dimensions.get("window").width;
 let roleID = 0, userID = 0, groupRefNo = 0;
@@ -35,6 +37,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails[0].RoleName);
+  const [userRoleID, setUserRoleID] = React.useState("");
 
   const [imageGalleryData, setImageGalleryData] = React.useState([]);
   const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
@@ -47,6 +50,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [roleName, setRoleName] = React.useState("");
   const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
+  const [userRoleData, setUserRoleData] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
@@ -71,10 +75,17 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const FetchImageGalleryData = () => {
-    Provider.getAll("generaluserenquiryestimations/getimagegallery")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo
+      },
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardServicecatalogue, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setImageGalleryData(response.data.data);
           }
         } else {
@@ -94,10 +105,17 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const GetServiceCatalogue = () => {
-    Provider.getAll("servicecatalogue/getpostnewdesigntypes")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo
+      },
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardServicecatalogue, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const categoryImageData = [];
             const sliderImageData = [];
             const sliderImageZoomData = [];
@@ -131,7 +149,7 @@ const HomeScreen = ({ route, navigation }) => {
       });
   };
 
-  const GetUserCount = () => {
+  const GetUserCount = (userID, groupRefNo) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -143,8 +161,6 @@ const HomeScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           let totalUserCount = 0;
           setTotalUsers(response.data.data[0].TotalUsers);
-          totalUsers = response.data.data[0].TotalUsers;
-
           let usr_data = [
             {
               roleID: 0,
@@ -166,14 +182,9 @@ const HomeScreen = ({ route, navigation }) => {
               roleName: 'Client',
               roleCount: response.data.data[0].TotalClient
             },
-          ]
-          console.log(usr_data);
+          ];
           setUserCountData(usr_data);
-          let switchRolesData = [];
-          response.data.data.map((data) => {
-            data.roleName !== "General User" ? switchRolesData.push(data.roleName) : null;
-          });
-          setSwitchRoleNames(switchRolesData);
+
         }
         setIsLoading(false);
       })
@@ -183,9 +194,6 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   React.useEffect(() => {
-    GetServiceCatalogue();
-    FetchImageGalleryData();
-    GetUserCount();
     GetUserData();
   }, []);
 
@@ -193,13 +201,19 @@ const HomeScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       roleID = JSON.parse(userData).RoleID;
-      userID = JSON.parse(userData).userID;
+      setUserRoleID(JSON.parse(userData).RoleID);
+      userID = JSON.parse(userData).UserID;
       groupRefNo = JSON.parse(userData).Sess_group_refno;
+      GetServiceCatalogue();
+      FetchImageGalleryData();
+      GetUserCount(JSON.parse(userData).UserID, JSON.parse(userData).Sess_group_refno);
+      if (JSON.parse(userData).RoleID == 3) {
+        FillUserRoles();
+      }
     }
   };
 
   const showDialog = () => setIsDialogVisible(true);
-
   const hideDialog = () => setIsDialogVisible(false);
 
   const SingleCardClick = (headerTitle, categoryID, data) => {
@@ -228,25 +242,106 @@ const HomeScreen = ({ route, navigation }) => {
     hideDialog();
     setIsButtonLoading(true);
     const params = {
-      UserID: route.params.userDetails[0].UserID,
-      RoleID: userCountData.filter((el) => {
-        return el.roleName === roleName;
-      })[0].roleID,
+      data:{
+        Sess_UserRefno: userID,
+        switchto_group_refno: userRoleData.filter((el) => {
+          return el.roleName === roleName;
+        })[0].roleID
+      }
     };
-    Provider.create("registration/updateuserrole", params)
+    Provider.createDFDashboard(Provider.API_URLS.Getdashboard_Userswitchto_Proceed, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           setUserRoleName(roleName);
           GetUserCount();
+          GetUserDetails(userID);
+
+        } else {
+          setSnackbarText(communication.NoData);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const GetUserDetails = (user_refno) => {
+    setIsButtonLoading(true);
+    let params = {
+      data: {
+        user_refno: user_refno,
+      },
+    };
+    Provider.createDF(Provider.API_URLS.UserFromRefNo, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
           const user = {
-            UserID: route.params.userDetails[0].UserID,
-            FullName: route.params.userDetails[0].FullName,
-            RoleID: userCountData.filter((el) => {
-              return el.roleName === roleName;
-            })[0].roleID,
-            RoleName: roleName, //TBC
+            UserID: user_refno,
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : "",
+            RoleID: response.data.data.Sess_group_refno,
+            RoleName: response.data.data.Sess_Username,
+            Sess_FName: response.data.data.Sess_FName,
+            Sess_MobileNo: response.data.data.Sess_MobileNo,
+            Sess_Username: response.data.data.Sess_Username,
+            Sess_role_refno: response.data.data.Sess_role_refno,
+            Sess_group_refno: response.data.data.Sess_group_refno,
+            Sess_designation_refno: response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno: response.data.data.Sess_branch_refno,
+            Sess_company_refno: response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
           };
+
           StoreUserData(user);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const FillUserRoles = () => {
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo,
+      }
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardUserswitchto, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+
+          let d = [], userRoleNames = [];
+          for (var key in response.data.data[0]) {
+            if (response.data.data[0].hasOwnProperty(key)) {
+              d.push({
+                roleID: key,
+                roleName: response.data.data[0][key],
+              });
+
+              userRoleNames.push(response.data.data[0][key]);
+            }
+          }
+
+          setUserRoleData(d);
+          setSwitchRoleNames(userRoleNames);
+
         } else {
           setSnackbarText(communication.NoData);
           setIsSnackbarVisible(true);
@@ -307,7 +402,7 @@ const HomeScreen = ({ route, navigation }) => {
             <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
             <Caption style={[{ position: "absolute", bottom: 4, right: 4, color: theme.colors.textLight }]}>Sponsered Ads</Caption>
           </View>
-          {userRoleName === "General User" ? (
+          {userRoleID === "3" ? (
             <View style={[Styles.marginBottom16]}>
               <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
               <View style={[Styles.paddingHorizontal16]}>
@@ -368,7 +463,7 @@ const HomeScreen = ({ route, navigation }) => {
                   }
                     right={(props) =>
                       <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite, Styles.marginEnd8]}>
-                        <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>{totUsers}</Text>
+                        <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>{totalUsers}</Text>
                       </View>
                     }
                     titleStyle={[Styles.textColorWhite]} />
