@@ -11,12 +11,14 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+let companyAdminID = 0;
 let dealerID = 0;
 
 const DealerBuyerCategoryScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -28,37 +30,23 @@ const DealerBuyerCategoryScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      dealerID = JSON.parse(userData).UserID;
-      FetchShowBrand();
+      const parsedUserData = JSON.parse(userData);
+      companyAdminID = parsedUserData.Sess_CompanyAdmin_UserRefno;
+      dealerID = parsedUserData.UserID;
+      if (parsedUserData.Sess_if_create_brand == 1) {
+        setShouldShow(true);
+        FetchData();
+      } else {
+        setShouldShow(false);
+      }
     }
   };
-
-  const FetchShowBrand = () => {
-    let params = {
-      DealerID: dealerID,
-    };
-    Provider.getAll(`dealerbrand/getshowbrand?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            setShouldShow(response.data.data[0].showBrand);
-            if (response.data.data[0].showBrand) {
-              FetchData();
-            }
-            setIsLoading(false);
-            setRefreshing(false);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -66,12 +54,16 @@ const DealerBuyerCategoryScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID,
+        buyercategory_refno: "all",
+      },
     };
-    Provider.getAll(`dealerbrand/getbuyercategory?${new URLSearchParams(params)}`)
+    Provider.createDF(Provider.API_URLS.DealerBuyerCategoryRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -138,7 +130,7 @@ const DealerBuyerCategoryScreen = ({ navigation }) => {
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

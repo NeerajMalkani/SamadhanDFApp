@@ -15,6 +15,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let companyAdminID = 0;
+let dealerID = 0;
 
 const DealerBrandMasterScreen = ({ route, navigation }) => {
   //#region Variables
@@ -34,8 +35,15 @@ const DealerBrandMasterScreen = ({ route, navigation }) => {
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      companyAdminID = JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
-      FetchData();
+      const parsedUserData = JSON.parse(userData);
+      companyAdminID = parsedUserData.Sess_CompanyAdmin_UserRefno;
+      dealerID = parsedUserData.UserID;
+      if (parsedUserData.Sess_if_create_brand == 1) {
+        setShouldShow(true);
+        FetchData();
+      } else {
+        setShouldShow(false);
+      }
     }
   };
 
@@ -47,7 +55,7 @@ const DealerBrandMasterScreen = ({ route, navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: dealerID,
         Sess_CompanyAdmin_UserRefno: companyAdminID,
         brand_master_refno: "all",
       },

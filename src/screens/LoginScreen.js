@@ -85,7 +85,7 @@ const LoginScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           const user = {
-            UserID: user_refno,
+            UserID: response.data.data.Sess_UserRefno,
             FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
             RoleID: response.data.data.Sess_group_refno,
             RoleName: response.data.data.Sess_Username,
@@ -97,6 +97,7 @@ const LoginScreen = ({ route, navigation }) => {
             Sess_designation_refno: response.data.data.Sess_designation_refno,
             Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
             Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_if_create_brand: response.data.data.Sess_if_create_brand,
             Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
             Sess_branch_refno: response.data.data.Sess_branch_refno,
             Sess_company_refno: response.data.data.Sess_company_refno,

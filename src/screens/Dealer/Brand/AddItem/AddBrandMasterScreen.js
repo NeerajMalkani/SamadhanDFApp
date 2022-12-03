@@ -9,22 +9,24 @@ import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerBrandMasterScreen = ({ route, navigation }) => {
-
-   //#region Variables
+  //#region Variables
   const [brandNameError, setBrandNameError] = React.useState(false);
   const [brandName, setBrandName] = React.useState(route.params.type === "edit" ? route.params.data.brandName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
- //#endregion 
 
- //#region Functions
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  //#endregion
+
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      dealerID = JSON.parse(userData).UserID;
+      const parsedUserData = JSON.parse(userData);
+      dealerID = parsedUserData.UserID;
     }
   };
 
@@ -38,8 +40,17 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
   };
 
   const InsertBrandName = () => {
-    Provider.create("dealerbrand/insertbrand", { BrandName: brandName, DealerID: dealerID, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        brand_name: brandName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    console.log(params);
+    Provider.createDF(Provider.API_URLS.DealerBrandMasterCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -53,14 +64,24 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateBrandName = () => {
-    Provider.create("dealerbrand/updatebrand", { ID: route.params.data.id, BrandName: brandName, DealerID: dealerID, Display: checked })
+    const params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        brand_master_refno: route.params.data.id,
+        brand_name: brandName,
+        view_status: checked ? 1 : 0,
+      },
+    };
+    Provider.createDF(Provider.API_URLS.DealerBrandMasterUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -74,6 +95,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -86,6 +108,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateBrandName();
       } else {
@@ -93,7 +116,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -119,7 +142,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateBrandName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateBrandName}>
             SAVE
           </Button>
         </Card.Content>
