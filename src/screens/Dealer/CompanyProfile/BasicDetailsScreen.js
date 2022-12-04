@@ -14,6 +14,7 @@ import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
+import { APIConverter } from "../../../utils/apiconverter";
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
@@ -54,12 +55,14 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const [cityFullData, setCityFullData] = React.useState([]);
   const [cityData, setCityData] = React.useState([]);
   const [cityName, setCityName] = React.useState("");
+  const [cityID, setCityID] = React.useState(0);
   const [errorCN, setCNError] = React.useState(false);
   const cityRef = useRef({});
 
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
   const [stateName, setStateName] = React.useState("");
+  const [stateID, setStateID] = React.useState(0);
   const [errorSN, setSNError] = React.useState(false);
 
   const [pincode, setPincode] = useState("");
@@ -136,6 +139,9 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            console.log('=============================================');
+            console.log(response.data.data);
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
             setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
             setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
@@ -152,6 +158,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
             setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
             setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
+            console.log(response.data.data[0].employeeCodePrefix);
             setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
             setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
             setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
@@ -449,12 +456,12 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
-              <HelperText type="error" visible={addressInvalid}>
+              <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
+              <HelperText type="error" visible={locationInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={locationRef} mode="flat" dense label="Address" value={location} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
-              <HelperText type="error" visible={locationInvalid}>
+              <TextInput ref={locationRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+              <HelperText type="error" visible={addressInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
