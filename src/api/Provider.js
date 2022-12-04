@@ -208,6 +208,15 @@ class Provider {
     DealerBuyerCategoryRefNoCheck: "dealerbuyercategoryrefnocheck/",
     DealerBuyerCategoryCreate: "dealerbuyercategorycreate/",
     DealerBuyerCategoryUpdate: "dealerbuyercategoryupdate/",
+
+    ServiceNameDealerBrandSetup:"getservicenamedealerbrandsetupform/",
+    CategoryNameDealerBrandSetup:"getcategorynamedealerbrandsetupform/",
+    CategoryDataDealerBrandSetup:"getcategorydatadealerbrandsetupform/",
+    UnitOfSaleDealerBrandSetup:"getunitofsaledealerbrandsetupform/",
+    BrandNameDealerBrandSetup:"getbrandnamedealerbrandsetupform/",
+    DealerBrandRefNoCheck:"dealerbrandrefnocheck/",
+    DealerBrandSetupCreate:"dealerbrandsetupcreate/",
+    DealerBrandSetupUpdate:"dealerbrandsetupupdate/",
   };
 
   createDF(resource, params) {

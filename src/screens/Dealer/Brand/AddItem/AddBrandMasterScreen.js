@@ -47,7 +47,6 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    console.log(params);
     Provider.createDF(Provider.API_URLS.DealerBrandMasterCreate, params)
       .then((response) => {
         setIsButtonLoading(false);

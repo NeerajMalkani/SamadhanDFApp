@@ -12,12 +12,13 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0;
 
 const DealerBrandSetupScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -38,38 +39,27 @@ const DealerBrandSetupScreen = ({ navigation }) => {
   const [referralPoints, setReferralPoints] = React.useState("");
   const [serviceName, setServiceName] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
+  const [isApprove, setIsApprove] = React.useState(0);
+  const [isPublish, setIsPublish] = React.useState(0);
 
   const refRBSheet = useRef();
 
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      dealerID = JSON.parse(userData).UserID;
-      FetchShowBrand();
+      const parsedUserData = JSON.parse(userData);
+      companyAdminID = parsedUserData.Sess_CompanyAdmin_UserRefno;
+      dealerID = parsedUserData.UserID;
+      if (parsedUserData.Sess_if_create_brand == 1) {
+        setShouldShow(true);
+        FetchData();
+      } else {
+        setShouldShow(false);
+      }
     }
-  };
-
-  const FetchShowBrand = () => {
-    let params = {
-      DealerID: dealerID,
-    };
-    Provider.getAll(`dealerbrand/getshowbrand?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            setShouldShow(response.data.data[0].showBrand);
-            if (response.data.data[0].showBrand) {
-              FetchData();
-            }
-            setIsLoading(false);
-            setRefreshing(false);
-          }
-        }
-      })
-      .catch((e) => {});
   };
 
   const FetchData = (from) => {
@@ -79,12 +69,17 @@ const DealerBrandSetupScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID,
+        brand_refno: "all",
+      },
     };
-    Provider.getAll(`dealerbrand/getbrandsetup?${new URLSearchParams(params)}`)
+    Provider.createDF(Provider.API_URLS.DealerBrandRefNoCheck, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -140,11 +135,13 @@ const DealerBrandSetupScreen = ({ navigation }) => {
             setBrandPrefixName(data.item.brandPrefixName);
             setServiceName(data.item.serviceName);
             setCategoryName(data.item.categoryName);
-            setGeneralDiscount(data.item.generalDiscount.toFixed(2) + "%");
-            setAppProviderDiscount(data.item.appProviderDiscount.toFixed(2) + "%");
-            setReferralPoints(data.item.referralPoints.toFixed(2) + "%");
-            setContractorDiscount(data.item.contractorDiscount.toFixed(2) + "%");
+            setGeneralDiscount(data.item.generalDiscount + "%");
+            setAppProviderDiscount(data.item.appProviderDiscount + "%");
+            setReferralPoints(data.item.referralPoints + "%");
+            setContractorDiscount(data.item.contractorDiscount + "%");
             setUnitName(data.item.unitName);
+            setIsApprove(data.item.isapprove);
+            setIsPublish(data.item.ispublish);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -163,25 +160,25 @@ const DealerBrandSetupScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        appProviderDiscount: data.item.appProviderDiscount.toFixed(2),
-        brandID: data.item.brandID,
+        id: data.item.brandID,
+        appProviderDiscount: data.item.appProviderDiscount,
+        brandID: data.item.brandMasterID,
         brandName: data.item.brandName,
         brandPrefixName: data.item.brandPrefixName,
         categoryID: data.item.categoryID,
         categoryName: data.item.categoryName,
-        contractorDiscount: data.item.contractorDiscount.toFixed(2),
-        generalDiscount: data.item.generalDiscount.toFixed(2),
-        referralPoints: data.item.referralPoints.toFixed(2),
+        contractorDiscount: data.item.contractorDiscount,
+        generalDiscount: data.item.generalDiscount,
+        referralPoints: data.item.referralPoints,
         serviceID: data.item.serviceID,
         serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
+        unitName: data.item.displayUnit,
         unitOfSalesID: data.item.unitOfSalesID,
         display: data.item.display,
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -247,6 +244,8 @@ const DealerBrandSetupScreen = ({ navigation }) => {
             <List.Item title="Referral Points" description={referralPoints} />
             <List.Item title="Contractor Discount" description={contractorDiscount} />
             <List.Item title="Sale Unit" description={unitName} />
+            <List.Item title="Approved" description={isApprove == 1 ? "Yes" : "No"} />
+            <List.Item title="Announced" description={isPublish == 1 ? "Yes" : "No"} />
           </ScrollView>
         </View>
       </RBSheet>

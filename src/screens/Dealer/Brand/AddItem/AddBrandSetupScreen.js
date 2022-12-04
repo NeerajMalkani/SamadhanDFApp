@@ -6,13 +6,12 @@ import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 
 let dealerID = 0;
 const AddDealerBrandSetupScreen = ({ route, navigation }) => {
-   //#region Variables
-
-  const [activityFullData, setActivityFullData] = React.useState([]);
+  //#region Variables
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
   const [servicesData, setServicesData] = React.useState([]);
@@ -73,9 +72,9 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const ref_input4 = useRef();
   const ref_input5 = useRef();
   const myRefs = useRef([]);
-   //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -86,15 +85,24 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       FetchBuyerCategories();
     }
   };
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+ 
+  const FetchServices = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: dealerID,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.ServiceNamePopupMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Dealer";
-            });
-            setActivityFullData(response.data.data);
+            response.data.data = APIConverter(response.data.data);
+            setServicesFullData(response.data.data);
+            if (route.params.type === "edit") {
+              FetchCategoriesFromServices(route.params.data.serviceName, response.data.data);
+            }
+            const services = response.data.data.map((data) => data.serviceName);
+            setServicesData(services);
             if (route.params.type !== "edit") {
               servicesDDRef.current.reset();
               setServiceName("");
@@ -124,74 +132,61 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
               setContractorDiscountError(false);
               setBrandSetupNameError(false);
             }
-            if (route.params.type === "edit") {
-              FetchCategoriesFromServices("Dealer", response.data.data);
-            }
           }
         }
       })
       .catch((e) => {});
   };
-  const FetchServices = () => {
+  const FetchCategoriesFromServices = (selectedItem, servicesDataParam) => {
     let params = {
-      DealerID: dealerID,
-    };
-    Provider.getAll(`dealercompanyprofile/getmyservices?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-  const FetchCategoriesFromServices = (selectedItem, activityData) => {
-    let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-            return el.activityRoleName === "Dealer";
-          }).id
-        : activityFullData.find((el) => {
-            return el.activityRoleName === "Dealer";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
+      data: {
+        Sess_UserRefno: dealerID,
+        service_refno: servicesDataParam
+          ? servicesDataParam.find((el) => {
+              return el.serviceName === selectedItem;
+            }).id
           : servicesFullData.find((el) => {
               return el.serviceName === selectedItem;
-            }).serviceID,
+            }).id,
+      },
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFAdmin(Provider.API_URLS.CategoryNamePopupMaterialSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
             if (route.params.type === "edit") {
-              setHSN(
-                response.data.data.find((el) => {
-                  return el.categoryName === categoriesName;
-                }).hsnsacCode
-              );
-              setGST(
-                response.data.data
-                  .find((el) => {
-                    return el.categoryName === categoriesName;
-                  })
-                  .gstRate.toFixed(2)
-              );
-              FetchUnitsFromCategory();
+              FetchCategoryDataFromCategory(route.params.data.categoryName, response.data.data);
+              FetchUnitsFromCategory(route.params.data.categoryName, response.data.data);
             }
+          }
+        }
+      })
+      .catch((e) => {});
+  };
+  const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
+          : categoriesFullData.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id,
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryDataServiceProduct, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setHSN(response.data.data[0].hsnsacCode);
+            setGST(response.data.data[0].gstRate);
           }
         }
       })
@@ -199,15 +194,15 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   };
   const FetchBrands = () => {
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID,
+      },
     };
-    Provider.getAll(`dealerbrand/getbrand?${new URLSearchParams(params)}`)
+    Provider.createDF(Provider.API_URLS.BrandNameDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setBrandFullData(response.data.data);
             const brands = response.data.data.map((data) => data.brandName);
             setBrandData(brands);
@@ -216,28 +211,27 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {});
   };
-  const FetchUnitsFromCategory = (selectedItem) => {
+  const FetchUnitsFromCategory = (selectedItem, categoriesDataParam) => {
     let params = {
-      ID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
+      data: {
+        Sess_UserRefno: dealerID,
+        category_refno: categoriesDataParam
+          ? categoriesDataParam.find((el) => {
+              return el.categoryName === selectedItem;
+            }).id
           : categoriesFullData.find((el) => {
               return el.categoryName === selectedItem;
             }).id,
+      },
     };
-    Provider.getAll(`master/getunitbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDF(Provider.API_URLS.UnitOfSaleDealerBrandSetup, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setUnitFullData(response.data.data);
-            const units = [];
-            response.data.data.map((el) => {
-              units.push(el.unit1Name);
-              units.push(el.unit2Name);
-            });
+            const units = response.data.data.map((data) => data.displayUnit);
             setUnitData(units);
           }
         }
@@ -298,16 +292,10 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     GetUserID();
-    FetchActvityRoles();
   }, []);
 
   const onServiceNameSelected = (selectedItem) => {
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
     categoriesDDRef.current.reset();
     setCategoriesName("");
     setHSN("");
@@ -320,7 +308,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     setHSNError(false);
     setGSTError(false);
     setUNError(false);
-    FetchCategoriesFromServices(selectedItem, activityFullData);
+    FetchCategoriesFromServices(selectedItem);
   };
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
@@ -589,7 +577,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     }
   };
 
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
