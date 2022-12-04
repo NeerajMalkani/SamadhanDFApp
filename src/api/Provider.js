@@ -218,6 +218,9 @@ class Provider {
     DealerBrandSetupCreate:"dealerbrandsetupcreate/",
     DealerBrandSetupUpdate:"dealerbrandsetupupdate/",
     GetDealerCompanyBasicDetails: "getdealercompanybasicdetails/",
+    MyDepartmentRefnocheck: "mydepartmentrefnocheck/",
+    DepartmentCreate: "departmentcreate/",
+    DepartmentUpdate	:"departmentupdate/",
   };
 
   createDF(resource, params) {

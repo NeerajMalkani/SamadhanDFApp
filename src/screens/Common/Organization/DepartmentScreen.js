@@ -58,10 +58,10 @@ const ContractorDepartmentScreen = ({ navigation }) => {
           if (response.data.data) {
             console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
-
+            console.log(response.data.data);
             const lisData = [...response.data.data];
+        
             lisData.map((k, i) => {
-            
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
@@ -114,21 +114,25 @@ const ContractorDepartmentScreen = ({ navigation }) => {
 
   const AddCallback = () => {
     navigation.navigate("AddCommonDepartmentScreen", { type: "add", fetchData: FetchData });
+    
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddCommonDepartmentScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
+        departmentID: data.item.departmentID,
         departmentName: data.item.departmentName,
         display: data.item.display,
         uid: ContractorID
       },
     });
   };
+ 
 
   //#endregion 
 

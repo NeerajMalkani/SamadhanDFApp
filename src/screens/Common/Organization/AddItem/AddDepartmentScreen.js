@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -6,22 +6,25 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../../utils/apiconverter";
 let ContractorID = 0;
 
 const AddContractorDepartmentScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [departmentFullData, setDepartmentFullData] = React.useState([]);
   const [departmentData, setDepartmentData] = React.useState([]);
   const [departmentName, setDepartmentName] = React.useState(route.params.type === "edit" ? route.params.data.departmentName : "");
   const [departmentError, setDepartmentError] = React.useState(false);
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [departmentID, setDepartmentID] = useState(0);
+  const [myDepartmentID, setMyDepartmentID] = React.useState(route.params.type === "edit" ? route.params.data.departmentID : 0);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -33,13 +36,25 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     GetUserID();
+    console.log("department id check");
+    console.log(route.params.data.departmentID);
   }, []);
 
   const FetchDepartments = () => {
-    Provider.getAll("master/getdepartments")
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        department_refno: "all"
+      },
+    };
+
+    Provider.createDFAdmin(Provider.API_URLS.DepartmentRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          console.log(response.data)
           if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
@@ -60,16 +75,20 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
   };
 
   const InsertDepartment = () => {
-    const params = {
-      AddedByUserID: ContractorID,
-      DepartmentID: departmentFullData.find((el) => {
-        return el.departmentName === departmentName;
-      }).id,
-      Display: checked
-    };
-    console.log(params);
-    Provider.create("master/insertuserdepartments", params)
+    console.log("start")
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        department_refno: departmentFullData.find((el) => {
+          return el.departmentName === departmentName;
+        }).id,
+
+        view_status: checked ? "1" : "0"
+      }
+    }
+    Provider.createDF(Provider.API_URLS.DepartmentCreate, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -82,6 +101,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        console.log("4");
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -89,17 +109,20 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
   };
 
   const UpdateDepartment = () => {
-    const params = {
-      AddedByUserID: ContractorID,
-      DepartmentID: departmentFullData.find((el) => {
-        return el.departmentName === departmentName;
-      }).id,
-      ID: route.params.data.id,
-      Display: checked
-    };
-
-    Provider.create("master/updateuserdepartment", params)
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        mydepartment_refno: myDepartmentID,
+        department_refno: departmentFullData.find((el) => {
+          return el.departmentName === departmentName;
+        }).id,
+        view_status: checked ? "1" : "0"
+      }
+    }
+    console.log(params);
+    Provider.createDF(Provider.API_URLS.DepartmentUpdate, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -132,8 +155,8 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       }
     }
   };
-  
- //#endregion 
+
+  //#endregion 
 
 
   return (

@@ -3,7 +3,7 @@ export const APIConverter = (response, convertIDs) => {
     if (obj.hasOwnProperty(oldKey)) {
       obj[newKey] = obj[oldKey];
       if (newKey === "display") {
-        obj[newKey] = obj[newKey] === "1" ? true : false;
+        obj[newKey] = obj[newKey] == "1" ? true : false;
       }
       delete obj[oldKey];
     }

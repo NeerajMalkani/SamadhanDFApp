@@ -177,6 +177,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
+          
           route.params.fetchData("add");
           navigation.goBack();
         } else if (response.data.code === 304) {
