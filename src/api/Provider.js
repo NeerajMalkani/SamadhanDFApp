@@ -217,6 +217,7 @@ class Provider {
     DealerBrandRefNoCheck:"dealerbrandrefnocheck/",
     DealerBrandSetupCreate:"dealerbrandsetupcreate/",
     DealerBrandSetupUpdate:"dealerbrandsetupupdate/",
+    GetDealerCompanyBasicDetails: "getdealercompanybasicdetails/",
   };
 
   createDF(resource, params) {

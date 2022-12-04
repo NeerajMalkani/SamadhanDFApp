@@ -19,10 +19,10 @@ const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const DealerBasicDetailsScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
-  
+
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -112,9 +112,9 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -124,11 +124,16 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   };
   let tempStateName = "";
   const FetchBasicDetails = () => {
+    console.log('==========start==========');
     let params = {
-      UserID: userID,
+      data: {
+        Sess_UserRefno: userID
+      }
     };
-    Provider.getAll(`master/getuserprofile?${new URLSearchParams(params)}`)
+    console.log(params);
+    Provider.createDF(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
+        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
@@ -168,11 +173,11 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     let params = {
       ID: stateData
         ? stateData.find((el) => {
-            return el.stateName === stateName;
-          }).id
+          return el.stateName === stateName;
+        }).id
         : statesFullData.find((el) => {
-            return el.stateName === stateName;
-          }).id,
+          return el.stateName === stateName;
+        }).id,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -184,7 +189,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchStates = () => {
@@ -201,7 +206,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -416,8 +421,8 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
 
- //#endregion 
- 
+  //#endregion 
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "companyDetails":
