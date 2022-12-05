@@ -199,6 +199,7 @@ class Provider {
     GetserviceimagegalleryByServicerefno: "getserviceimagegallery_by_servicerefno/",
     Getgotoestimation: "getgotoestimation/",
     MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
+    MyDesignationRefnoCheck: "mydesignationrefnocheck/",
 
     /******************************Dealer Brand************************************/
     DealerBrandMasterRefNoCheck: "dealerbrandmasterrefnocheck/",
@@ -221,6 +222,9 @@ class Provider {
     MyDepartmentRefnocheck: "mydepartmentrefnocheck/",
     DepartmentCreate: "departmentcreate/",
     DepartmentUpdate	:"departmentupdate/",
+    MyDesignationRefnoCheck: "mydesignationrefnocheck/",
+    DesignationCreate: "designationcreate/",
+    DesignationUpdate: "designationupdate/",
   };
 
   createDF(resource, params) {

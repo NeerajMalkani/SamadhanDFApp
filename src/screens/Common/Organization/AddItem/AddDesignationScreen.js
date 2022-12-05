@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
@@ -6,47 +6,65 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../../utils/apiconverter";
 
-let ContractorID = 0;
+let ContractorID = 0, companyID = 0;
 const AddContractorDesignationScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [designationFullData, setDesignationFullData] = React.useState([]);
+  const [myDesignationFullData, setMyDesignationFullData] = React.useState([]);
   const [designationData, setDesignationData] = React.useState([]);
   const [designationName, setDesignationName] = React.useState(route.params.type === "edit" ? route.params.data.designationName : "");
+
+  const [sessionNo, setSessionNo] = React.useState(route.params.type === "edit" ? route.params.data.Sess_company_refno : "");
   const [designationError, setDesignationError] = React.useState(false);
+  // const [myDesignationtID, setMyDesignationID] = useState(0);
+  // const [myDesignation, setMyDesignation] = React.useState(route.params.type === "edit" ? route.params.data.mydesignation_refno : "");
+  const [myDesignationID, setMyDesignationID] = React.useState(route.params.type === "edit" ? route.params.data.designationID : 0);
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-  const [reportingAuthority, setReportingAuthority] = React.useState(route.params.type === "edit" ? route.params.data.reportingAuthority : false);
+  const [reportingAuthority, setReportingAuthority] = React.useState(route.params.type === "edit" ? route.params.data.reportingAuthority : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       ContractorID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+
       FetchDesignations();
     }
   };
-
   useEffect(() => {
     GetUserID();
   }, []);
-
   const FetchDesignations = () => {
-    Provider.getAll("master/getdesignations")
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        designation_refno: "all"
+      },
+    };
+    console.log(params)
+    Provider.createDFAdmin(Provider.API_URLS.DesignationRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
             });
             setDesignationFullData(response.data.data);
+            //fetching fulldata from api
             const designation = response.data.data.map((data) => data.designationName);
             setDesignationData(designation);
+
+          
           }
         }
       })
@@ -59,16 +77,18 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
   };
 
   const InsertDesignation = () => {
-    const params = {
-      ReportingAuthority: reportingAuthority,
-      AddedByUserID: ContractorID,
-      DesignationID: designationFullData.find((el) => {
-        return el.designationName === designationName;
-      }).id,
-      Display: checked
-    };
-
-    Provider.create("master/insertuserdesignation", params)
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        Sess_company_refno:companyID,
+        designation_refno: designationFullData.find((el) => {
+          return el.designationName === designationName;
+        }).id,
+        view_status: checked ? "1" : "0",
+        reporting_status: reportingAuthority ? "1" : "0"
+      }
+    }
+    Provider.createDF(Provider.API_URLS.DesignationCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -89,17 +109,20 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
   };
 
   const UpdateDesignation = () => {
-    const params = {
-      ID: route.params.data.id,
-      AddedByUserID: ContractorID,
-      DesignationID: designationFullData.find((el) => {
-        return el.designationName === designationName;
-      }).id,
-      Display: checked,
-      ReportingAuthority: reportingAuthority
-    };
-
-    Provider.create("master/updateuserdesignation", params)
+    let params = {
+      data: {
+        Sess_UserRefno: ContractorID,
+        Sess_company_refno: companyID,
+        mydesignation_refno: myDesignationID,
+        designation_refno: designationFullData.find((el) => {
+          return el.designationName === designationName;
+        }).id,
+        view_status: checked ? "1" : "0",
+        reporting_status: reportingAuthority ? "1" : "0"
+      }
+    }
+    console.log(params)
+    Provider.createDF(Provider.API_URLS.DesignationUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -133,7 +156,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
       }
     }
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
