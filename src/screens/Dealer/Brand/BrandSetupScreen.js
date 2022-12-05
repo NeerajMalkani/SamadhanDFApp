@@ -76,7 +76,6 @@ const DealerBrandSetupScreen = ({ navigation }) => {
     };
     Provider.createDF(Provider.API_URLS.DealerBrandRefNoCheck, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -139,7 +138,7 @@ const DealerBrandSetupScreen = ({ navigation }) => {
             setAppProviderDiscount(data.item.appProviderDiscount + "%");
             setReferralPoints(data.item.referralPoints + "%");
             setContractorDiscount(data.item.contractorDiscount + "%");
-            setUnitName(data.item.unitName);
+            setUnitName(data.item.displayUnit);
             setIsApprove(data.item.isapprove);
             setIsPublish(data.item.ispublish);
           }}
@@ -155,28 +154,45 @@ const DealerBrandSetupScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddDealerBrandSetupScreen", {
-      type: "edit",
-      fetchData: FetchData,
+    let params = {
       data: {
-        id: data.item.brandID,
-        appProviderDiscount: data.item.appProviderDiscount,
-        brandID: data.item.brandMasterID,
-        brandName: data.item.brandName,
-        brandPrefixName: data.item.brandPrefixName,
-        categoryID: data.item.categoryID,
-        categoryName: data.item.categoryName,
-        contractorDiscount: data.item.contractorDiscount,
-        generalDiscount: data.item.generalDiscount,
-        referralPoints: data.item.referralPoints,
-        serviceID: data.item.serviceID,
-        serviceName: data.item.serviceName,
-        unitName: data.item.displayUnit,
-        unitOfSalesID: data.item.unitOfSalesID,
-        display: data.item.display,
+        Sess_UserRefno: dealerID,
+        brand_refno: data.item.brandID,
       },
-    });
+    };
+    Provider.createDF(Provider.API_URLS.DealerBrandRefNoCheck, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            response.data.data[0].discountData = APIConverter(response.data.data[0].discountData);
+            rowMap[data.item.key].closeRow();
+            navigation.navigate("AddDealerBrandSetupScreen", {
+              type: "edit",
+              fetchData: FetchData,
+              data: {
+                id: data.item.brandID,
+                appProviderDiscount: data.item.appProviderDiscount,
+                brandID: data.item.brandMasterID,
+                brandName: data.item.brandName,
+                brandPrefixName: data.item.brandPrefixName,
+                categoryID: data.item.categoryID,
+                categoryName: data.item.categoryName,
+                contractorDiscount: data.item.contractorDiscount,
+                generalDiscount: data.item.generalDiscount,
+                referralPoints: data.item.referralPoints,
+                serviceID: data.item.serviceID,
+                serviceName: data.item.serviceName,
+                unitName: data.item.displayUnit,
+                unitOfSalesID: data.item.unitOfSalesID,
+                discountData: response.data.data[0].discountData,
+                display: data.item.display,
+              },
+            });
+          }
+        }
+      })
+      .catch((e) => {});
   };
   //#endregion
 

@@ -66,6 +66,8 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const ref_input1 = useRef();
   const ref_input2 = useRef();
   const ref_input3 = useRef();
@@ -75,17 +77,21 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
-
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
       FetchServices();
       FetchBrands();
-      FetchBuyerCategories();
+      if (route.params.type === "edit") {
+        setBuyerCategoryFullData(route.params.data.discountData);
+        setSelectedBuyerCategoryFullData(route.params.data.discountData);
+      } else {
+        FetchBuyerCategories();
+      }
     }
   };
- 
+
   const FetchServices = () => {
     let params = {
       data: {
@@ -104,9 +110,6 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
             if (route.params.type !== "edit") {
-              servicesDDRef.current.reset();
-              setServiceName("");
-              setBrandName("");
               setBrandSetupName("");
               setCategoriesName("");
               setHSN("");
@@ -117,12 +120,9 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
               setReferralPoints("");
               setContractorDiscount("");
               setCategoriesData([]);
-              setServicesData([]);
-              setBrandData([]);
               setUnitData([]);
               setSNError(false);
               setCNError(false);
-              setBNError(false);
               setUNError(false);
               setHSNError(false);
               setGSTError(false);
@@ -226,7 +226,6 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     };
     Provider.createDF(Provider.API_URLS.UnitOfSaleDealerBrandSetup, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -240,50 +239,16 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   };
   const FetchBuyerCategories = () => {
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID,
+      },
     };
-    Provider.getAll(`dealerbrand/getbuyercategory?${new URLSearchParams(params)}`)
+    Provider.createDF(Provider.API_URLS.BuyerCategoryDiscountDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setBuyerCategoryFullData(response.data.data);
-            if (route.params.type === "edit") {
-              FetchBuyerCategoriesDiscounts(response.data.data);
-            }
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-  const FetchBuyerCategoriesDiscounts = (buyerData) => {
-    let params = {
-      DealerID: dealerID,
-      DealerBrandID: route.params.data.brandID,
-    };
-    Provider.getAll(`dealerbrand/getbrandbuyermapping?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            const arrBuyerDiscountData = [];
-            const arrSelectedBuyerDiscountData = [];
-            buyerData.map((el) => {
-              const matchingData = response.data.data.find((a) => {
-                return a.buyerCategoryID === el.id;
-              });
-              if (matchingData) {
-                arrSelectedBuyerDiscountData.push({
-                  buyerCategoryID: matchingData.buyerCategoryID,
-                  buyerCategoryDiscount: matchingData.buyerCategoryDiscount,
-                });
-                el.buyerCategoryDiscount = matchingData.buyerCategoryDiscount.toFixed(2);
-              }
-              arrBuyerDiscountData.push(el);
-            });
-            setBuyerCategoryFullData(arrBuyerDiscountData);
-            setSelectedBuyerCategoryFullData(arrSelectedBuyerDiscountData);
           }
         }
       })
@@ -313,24 +278,13 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
     unitDDRef.current.reset();
-    setHSN(
-      categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).hsnsacCode
-    );
-    setGST(
-      categoriesFullData
-        .find((el) => {
-          return el.categoryName === selectedItem;
-        })
-        .gstRate.toFixed(2)
-    );
     setUnitName("");
     setCNError(false);
     setHSNError(false);
     setGSTError(false);
     setUNError(false);
     setUnitData([]);
+    FetchCategoryDataFromCategory(selectedItem);
     FetchUnitsFromCategory(selectedItem);
   };
   const onHSNChanged = (text) => {
@@ -370,17 +324,42 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     setUNError(false);
   };
 
-  const InsertBrandBuyerMapping = () => {
-    let arrBrandBuyerMapping = [...selectedBuyerCategoryFullData];
-    for (let i = 0; i < arrBrandBuyerMapping.length; i++) {
-      arrBrandBuyerMapping[i]["dealerID"] = dealerID;
-      arrBrandBuyerMapping[i]["dealerBrandID"] = brandFullData.find((el) => {
-        return el.brandName === brandName;
-      }).id;
-    }
-    Provider.create(route.params.type === "edit" ? "dealerbrand/updatebrandbuyermapping" : "dealerbrand/insertbrandbuyermapping", arrBrandBuyerMapping)
+  const InsertBrandSetup = () => {
+    const objBuyerCatRefNo = new Object();
+    const objDiscountPerc = new Object();
+    selectedBuyerCategoryFullData.map((k, i) => {
+      objBuyerCatRefNo[(i + 1).toString()] = k.id;
+      objDiscountPerc[(i + 1).toString()] = k.buyerCategoryDiscount;
+    });
+    const params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        brand_master_refno: brandFullData.find((el) => {
+          return el.brandName === brandName;
+        }).id,
+        unit_refno: unitFullData.find((el) => {
+          return el.displayUnit === unitName;
+        }).unitOfSalesID,
+        brand_prefix_name: brandSetupName,
+        general_discount_perc: generalDiscount === "" ? 0 : generalDiscount,
+        promotion_perc: appProviderPromotion === "" ? 0 : appProviderPromotion,
+        referral_points_perc: referralPoints === "" ? 0 : referralPoints,
+        contractor_discount_perc: contractorDiscount === "" ? 0 : contractorDiscount,
+        view_status: checked,
+        buyercategory_refno: objBuyerCatRefNo,
+        discount_perc: objDiscountPerc,
+      },
+    };
+    Provider.createDF(Provider.API_URLS.DealerBrandSetupCreate, params)
       .then((response) => {
-        if (response.data && (response.data.code === 200 || response.data.code === 204)) {
+        setIsButtonLoading(false);
+        if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
         } else if (response.data.code === 304) {
@@ -393,105 +372,50 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarVisible(true);
-      });
-  };
-  const InsertBrandSetup = () => {
-    let uosid = 0;
-    let uosid2 = 0;
-    const objUnits1 = unitFullData.find((el) => {
-      return el.unit1Name && el.unit1Name === unitName;
-    });
-    const objUnits2 = unitFullData.find((el) => {
-      return el.unit2Name && el.unit2Name === unitName;
-    });
-    if (objUnits1) {
-      uosid = objUnits1.unit1ID;
-      uosid2 = objUnits1.unit2ID;
-    } else if (objUnits2) {
-      uosid = objUnits2.unit2ID;
-      uosid2 = objUnits2.unit2ID;
-    }
-    const params = {
-      DealerID: dealerID,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).serviceID,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      BrandID: brandFullData.find((el) => {
-        return el.brandName === brandName;
-      }).id,
-      UnitOfSalesID: uosid,
-      UnitOfSalesID2: uosid2,
-      BrandPrefixName: brandSetupName,
-      GeneralDiscount: generalDiscount === "" ? 0 : generalDiscount,
-      AppProviderDiscount: appProviderPromotion === "" ? 0 : appProviderPromotion,
-      ReferralPoints: referralPoints === "" ? 0 : referralPoints,
-      ContractorDiscount: contractorDiscount === "" ? 0 : contractorDiscount,
-      Display: checked,
-    };
-    Provider.create("dealerbrand/insertbrandsetup", params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          InsertBrandBuyerMapping();
-        } else if (response.data.code === 304) {
-          setSnackbarText(communication.AlreadyExists);
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarText(communication.InsertError);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
   const UpdateBrandSetup = () => {
-    let uosid = 0;
-    let uosid2 = 0;
-    const objUnits1 = unitFullData.find((el) => {
-      return el.unit1Name && el.unit1Name === unitName;
+    const objBuyerCatRefNo = new Object();
+    const objDiscountPerc = new Object();
+    selectedBuyerCategoryFullData.map((k, i) => {
+      objBuyerCatRefNo[(i + 1).toString()] = k.id;
+      objDiscountPerc[(i + 1).toString()] = k.buyerCategoryDiscount;
     });
-    const objUnits2 = unitFullData.find((el) => {
-      return el.unit2Name && el.unit2Name === unitName;
-    });
-    if (objUnits1) {
-      uosid = objUnits1.unit1ID;
-      uosid2 = objUnits1.unit2ID;
-    } else if (objUnits2) {
-      uosid = objUnits2.unit2ID;
-      uosid2 = objUnits2.unit2ID;
-    }
     const params = {
-      ID: route.params.data.id,
-      DealerID: dealerID,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).serviceID,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      BrandID: brandFullData.find((el) => {
-        return el.brandName === brandName;
-      }).id,
-      UnitOfSalesID: uosid,
-      UnitOfSalesID2: uosid2,
-      BrandPrefixName: brandSetupName,
-      GeneralDiscount: generalDiscount === "" ? 0 : generalDiscount,
-      AppProviderDiscount: appProviderPromotion === "" ? 0 : appProviderPromotion,
-      ReferralPoints: referralPoints === "" ? 0 : referralPoints,
-      ContractorDiscount: contractorDiscount === "" ? 0 : contractorDiscount,
-      Display: checked,
+      data: {
+        Sess_UserRefno: dealerID,
+        brand_refno: route.params.data.id,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        brand_master_refno: brandFullData.find((el) => {
+          return el.brandName === brandName;
+        }).id,
+        unit_refno: unitFullData.find((el) => {
+          return el.displayUnit === unitName;
+        }).unitOfSalesID,
+        brand_prefix_name: brandSetupName,
+        general_discount_perc: generalDiscount === "" ? 0 : generalDiscount,
+        promotion_perc: appProviderPromotion === "" ? 0 : appProviderPromotion,
+        referral_points_perc: referralPoints === "" ? 0 : referralPoints,
+        contractor_discount_perc: contractorDiscount === "" ? 0 : contractorDiscount,
+        view_status: checked,
+        buyercategory_refno: objBuyerCatRefNo,
+        discount_perc: objDiscountPerc,
+      },
     };
-    Provider.create("dealerbrand/updatebrandsetup", params)
+    Provider.createDF(Provider.API_URLS.DealerBrandSetupUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          InsertBrandBuyerMapping();
+          route.params.fetchData("update");
+          navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -502,6 +426,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -530,13 +455,10 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       setGSTError(true);
       isValid = false;
     }
-    const objUnits1 = unitFullData.find((el) => {
-      return el.unit1Name && el.unit1Name === unitName;
+    const objUnits = unitFullData.find((el) => {
+      return el.displayUnit === unitName;
     });
-    const objUnits2 = unitFullData.find((el) => {
-      return el.unit2Name && el.unit2Name === unitName;
-    });
-    if (unitName.length === 0 || (!objUnits1 && !objUnits2)) {
+    if (unitName.length === 0 || !objUnits) {
       setUNError(true);
       isValid = false;
     }
@@ -569,6 +491,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateBrandSetup();
       } else {
@@ -644,19 +567,25 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
                     label={k.buyerCategoryName}
                     onChangeText={(text) => {
                       let tempSelectedBuyerCats = [...selectedBuyerCategoryFullData];
-                      for (let i = 0; i < tempSelectedBuyerCats.length; i++) {
-                        if (tempSelectedBuyerCats[i].buyerCategoryID === k.id) {
-                          tempSelectedBuyerCats.splice(i, 1);
+                      tempSelectedBuyerCats.map((a) => {
+                        if (a.id === k.id) {
+                          k.buyerCategoryDiscount = text;
                         }
-                      }
-                      if (text !== "") {
-                        tempSelectedBuyerCats.push({
-                          buyerCategoryID: k.id,
-                          buyerCategoryDiscount: text,
-                        });
-                      }
-                      k.buyerCategoryDiscount = text;
+                      });
                       setSelectedBuyerCategoryFullData(tempSelectedBuyerCats);
+                      // for (let i = 0; i < tempSelectedBuyerCats.length; i++) {
+                      //   if (tempSelectedBuyerCats[i].buyerCategoryID === k.id) {
+                      //     tempSelectedBuyerCats.splice(i, 1);
+                      //   }
+                      // }
+                      // if (text !== "") {
+                      //   tempSelectedBuyerCats.push({
+                      //     buyerCategoryID: k.id,
+                      //     buyerCategoryDiscount: text,
+                      //   });
+                      // }
+                      // k.buyerCategoryDiscount = text;
+                      // setSelectedBuyerCategoryFullData(tempSelectedBuyerCats);
                     }}
                     keyboardType="decimal-pad"
                     style={{ backgroundColor: "white" }}
@@ -672,7 +601,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateBrandSetupName}>
+          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateBrandSetupName}>
             SAVE
           </Button>
         </Card.Content>
