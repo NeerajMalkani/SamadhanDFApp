@@ -60,7 +60,7 @@ const DealerBrandMasterScreen = ({ route, navigation }) => {
         brand_master_refno: "all",
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandMasterRefNoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandMasterRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

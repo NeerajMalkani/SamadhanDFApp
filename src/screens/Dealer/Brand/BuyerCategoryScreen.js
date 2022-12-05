@@ -59,7 +59,7 @@ const DealerBuyerCategoryScreen = ({ navigation }) => {
         buyercategory_refno: "all",
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBuyerCategoryRefNoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBuyerCategoryRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

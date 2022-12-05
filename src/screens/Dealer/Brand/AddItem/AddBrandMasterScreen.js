@@ -47,7 +47,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandMasterCreate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandMasterCreate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -78,7 +78,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandMasterUpdate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandMasterUpdate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

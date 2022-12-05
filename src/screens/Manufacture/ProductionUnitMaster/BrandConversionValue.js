@@ -32,7 +32,7 @@ const BrandConversionValue = ({ navigation }) => {
         user_refno: selectedID
       }
     };
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
+    Provider.createDFCommon("apiappadmin/spawu7S4urax/tYjD/userdeclinestatus/", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           FetchData("decline");

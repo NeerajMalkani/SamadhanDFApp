@@ -70,7 +70,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         designgallery_refno: route.params.data.designgallery_refno
       },
     };
-    Provider.createDF(Provider.API_URLS.Getgotoestimation, params)
+    Provider.createDFCommon(Provider.API_URLS.Getgotoestimation, params)
       .then((response: any) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -112,7 +112,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       }
     };
 
-    Provider.createDF(Provider.API_URLS.GetscEstimation, params)
+    Provider.createDFCommon(Provider.API_URLS.GetscEstimation, params)
       .then((response) => {
         debugger;
         if (response.data && response.data.code === 200) {

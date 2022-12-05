@@ -48,7 +48,7 @@ const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBuyerCategoryCreate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBuyerCategoryCreate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -79,7 +79,7 @@ const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
         view_status: checked ? 1 : 0,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBuyerCategoryUpdate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBuyerCategoryUpdate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

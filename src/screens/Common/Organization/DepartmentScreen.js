@@ -52,7 +52,7 @@ const ContractorDepartmentScreen = ({ navigation }) => {
         mydepartment_refno: "all"
       }  
     };
-    Provider.createDF(Provider.API_URLS.MyDepartmentRefnoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.MyDepartmentRefnoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

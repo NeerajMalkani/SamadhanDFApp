@@ -49,7 +49,7 @@ const DealerDepartmentScreen = ({ navigation }) => {
       }
     };
     console.log(params)
-    Provider.createDF(Provider.API_URLS.MyDepartmentRefnoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.MyDepartmentRefnoCheck, params)
     // Provider.getAll(`master/getuserdepartments?${new URLSearchParams(params)}`)
       .then((response) => {
         console.log(response.data)

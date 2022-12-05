@@ -74,7 +74,7 @@ const DealerBrandSetupScreen = ({ navigation }) => {
         brand_refno: "all",
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandRefNoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -160,7 +160,7 @@ const DealerBrandSetupScreen = ({ navigation }) => {
         brand_refno: data.item.brandID,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandRefNoCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

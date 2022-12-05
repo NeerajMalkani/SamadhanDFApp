@@ -88,7 +88,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
         reporting_status: reportingAuthority ? "1" : "0"
       }
     }
-    Provider.createDF(Provider.API_URLS.DesignationCreate, params)
+    Provider.createDFCommon(Provider.API_URLS.DesignationCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -122,7 +122,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
       }
     }
     console.log(params)
-    Provider.createDF(Provider.API_URLS.DesignationUpdate, params)
+    Provider.createDFCommon(Provider.API_URLS.DesignationUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");

@@ -51,7 +51,7 @@ const ContractorDesignationScreen = ({ navigation }) => {
         mydesignation_refno: "all"
       }
     };
-    Provider.createDF(Provider.API_URLS.MyDesignationRefnoCheck,params)
+    Provider.createDFCommon(Provider.API_URLS.MyDesignationRefnoCheck,params)
       .then((response) => {
         console.log(response)
         if (response.data && response.data.code === 200) {

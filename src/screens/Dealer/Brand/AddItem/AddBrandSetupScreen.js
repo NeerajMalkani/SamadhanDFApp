@@ -198,7 +198,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: dealerID,
       },
     };
-    Provider.createDF(Provider.API_URLS.BrandNameDealerBrandSetup, params)
+    Provider.createDFCommon(Provider.API_URLS.BrandNameDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -224,7 +224,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
             }).id,
       },
     };
-    Provider.createDF(Provider.API_URLS.UnitOfSaleDealerBrandSetup, params)
+    Provider.createDFCommon(Provider.API_URLS.UnitOfSaleDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -243,7 +243,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: dealerID,
       },
     };
-    Provider.createDF(Provider.API_URLS.BuyerCategoryDiscountDealerBrandSetup, params)
+    Provider.createDFCommon(Provider.API_URLS.BuyerCategoryDiscountDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -356,7 +356,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         discount_perc: objDiscountPerc,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandSetupCreate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandSetupCreate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -410,7 +410,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         discount_perc: objDiscountPerc,
       },
     };
-    Provider.createDF(Provider.API_URLS.DealerBrandSetupUpdate, params)
+    Provider.createDFCommon(Provider.API_URLS.DealerBrandSetupUpdate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

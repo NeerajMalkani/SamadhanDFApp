@@ -24,6 +24,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
+  const [companyID, setCompanyID] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -125,24 +126,21 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       FetchBasicDetails();
     }
   };
-  let tempStateName = "";
+  let tempStateID = "";
   const FetchBasicDetails = () => {
-    console.log('==========start==========');
     let params = {
       data: {
         Sess_UserRefno: userID
       }
     };
-    console.log(params);
-    Provider.createDF(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
+    Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log('=============================================');
-            console.log(response.data.data);
+            
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
+            setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
             setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
             setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
             setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
@@ -150,24 +148,25 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setLocation(response.data.data[0].locationName ? response.data.data[0].locationName : "");
             setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
-            tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
+            setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
+            tempStateID = response.data.data[0].stateID === null ? "" : response.data.data[0].stateID;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
+            setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
             setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
             setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
             setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
             setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
             setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
             setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
-            console.log(response.data.data[0].employeeCodePrefix);
             setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
             setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
             setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
-            setIsSwitchOn(response.data.data[0].showBrand);
+            setIsSwitchOn(response.data.data[0].showBrand ? response.data.data[0].showBrand == "1" ? true : false : false);
             setLogoImage(response.data.data[0].companyLogo);
             setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
             setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
           }
-          FetchStates();
+          FetchStates(response.data.data[0].stateID);
           setIsLoading(false);
         }
       })
@@ -176,39 +175,51 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       });
   };
 
-  const FetchCities = (stateName, stateData) => {
-    let params = {
-      ID: stateData
-        ? stateData.find((el) => {
-          return el.stateName === stateName;
-        }).id
-        : statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
-    };
-    Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+  const FetchStates = (stateID) => {
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails, null)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setCityFullData(response.data.data);
-            const cities = response.data.data.map((data) => data.cityName);
-            setCityData(cities);
+            response.data.data = APIConverter(response.data.data);
+            setStatesFullData(response.data.data);
+            const states = response.data.data.map((data) => data.stateName);
+            setStatesData(states);
+
+            if (stateID != "") {
+
+              setStateName(response.data.data.find((el) => {
+                return el.stateID == stateID;
+              }).stateName);
+            }
+            if (tempStateID !== "") {
+              FetchCities(tempStateID, response.data.data);
+            }
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchStates = () => {
-    Provider.getAll("master/getstates")
+  const FetchCities = (stateID, stateData) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        state_refno: stateID
+      }
+    };
+    Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setStatesFullData(response.data.data);
-            const states = response.data.data.map((data) => data.stateName);
-            setStatesData(states);
-            if (tempStateName !== "") {
-              FetchCities(tempStateName, response.data.data);
+            response.data.data = APIConverter(response.data.data);
+            setCityFullData(response.data.data);
+            const cities = response.data.data.map((data) => data.cityName);
+            setCityData(cities);
+
+            if (stateData != null) {
+              setCityName(response.data.data.find((el) => {
+                return el.cityID == cityID;
+              }).cityName);
             }
           }
         }
@@ -372,32 +383,71 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    const datas = new FormData();
     const params = {
-      UserID: userID,
-      CompanyName: companyName,
-      CompanyLogo: logoImage ? logoImage : "",
-      ContactPersonName: contactName,
-      ContactPersonNumber: contactNumber,
-      AddressLine: address,
-      LocationName: location,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      GSTNumber: gstNumber,
-      PAN: panNumber,
-      AccountNumber: accountNo ? accountNo : 0,
-      BankName: bankName,
-      BranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      CompanyNamePrefix: cnPrefix,
-      EmployeeCodePrefix: ecPrefix,
-      PurchaseOrderPrefix: poPrefix,
-      SalesOrderPrefix: soPrefix,
-      QuotationBudgetPrefix: "",
-      ShowBrand: isSwitchOn,
+      // UserID: userID,
+      // CompanyName: companyName,
+      // CompanyLogo: logoImage ? logoImage : "",
+      // ContactPersonName: contactName,
+      // ContactPersonNumber: contactNumber,
+      // AddressLine: address,
+      // LocationName: location,
+      // StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
+      // CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
+      // Pincode: pincode ? pincode : 0,
+      // GSTNumber: gstNumber,
+      // PAN: panNumber,
+      // AccountNumber: accountNo ? accountNo : 0,
+      // BankName: bankName,
+      // BranchName: bankBranchName,
+      // IFSCCode: ifscCode,
+      // CompanyNamePrefix: cnPrefix,
+      // EmployeeCodePrefix: ecPrefix,
+      // PurchaseOrderPrefix: poPrefix,
+      // SalesOrderPrefix: soPrefix,
+      // QuotationBudgetPrefix: "",
+      // ShowBrand: isSwitchOn,
+
+      data: {
+        Sess_UserRefno: userID,
+        company_refno: companyID,
+        company_name: companyName,
+        firstname: contactName,
+        mobile_no: contactNumber,
+        gst_no: gstNumber,
+        pan_no: panNumber,
+        location_name: location,
+        address: address,
+        state_refno: statesFullData.find((el) => {
+          return el.stateName == stateName;
+        }).stateID,
+        district_refno: cityFullData.find((el) => {
+          return el.cityName == cityName;
+        }).cityID,
+        pincode: pincode,
+        bank_account_no: accountNo,
+        bank_name: bankName,
+        bank_branch_name: bankBranchName,
+        ifsc_code: ifscCode,
+        if_create_brand: isSwitchOn ? 1 : 0,
+        company_name_prefix: cnPrefix,
+        quotation_no_prefix: "",
+        employee_code_prefix: ecPrefix,
+        po_prefix: poPrefix,
+        so_prefix: soPrefix
+      }
     };
-    Provider.create("master/insertuserprofile", params)
+
+    datas.append("data", JSON.stringify(params));
+    datas.append("company_logo", {
+      name: "appimage1212.jpg",
+      type: filePath.type + "/*",
+      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+    });
+
+    Provider.createDFCommon(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");

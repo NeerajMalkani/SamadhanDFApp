@@ -227,9 +227,13 @@ class Provider {
     MyDesignationRefnoCheck: "mydesignationrefnocheck/",
     DesignationCreate: "designationcreate/",
     DesignationUpdate: "designationupdate/",
+
+    DealerCompanyBasicDetailsUpdate: "dealercompanybasicdetailsupdate/",
+    GetStateDetails:"getstatedetails/",
+    GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
   };
 
-  createDF(resource, params) {
+  createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
 

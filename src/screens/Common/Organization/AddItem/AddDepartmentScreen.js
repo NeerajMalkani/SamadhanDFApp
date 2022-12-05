@@ -86,7 +86,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0"
       }
     }
-    Provider.createDF(Provider.API_URLS.DepartmentCreate, params)
+    Provider.createDFCommon(Provider.API_URLS.DepartmentCreate, params)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
@@ -120,7 +120,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       }
     }
     console.log(params);
-    Provider.createDF(Provider.API_URLS.DepartmentUpdate, params)
+    Provider.createDFCommon(Provider.API_URLS.DepartmentUpdate, params)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {

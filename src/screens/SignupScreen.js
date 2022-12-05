@@ -114,7 +114,7 @@ const SignupScreen = ({ route, navigation }) => {
         EntryFrom: 1,
       },
     };
-    Provider.createDF(Provider.API_URLS.MobileCheck, params)
+    Provider.createDFCommon(Provider.API_URLS.MobileCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           let otp = response.data.data.OTP_No;
@@ -150,7 +150,7 @@ const SignupScreen = ({ route, navigation }) => {
         EntryFrom: "App",
       },
     };
-    Provider.createDF(Provider.API_URLS.NewUserProfile, params)
+    Provider.createDFCommon(Provider.API_URLS.NewUserProfile, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           navigation.goBack();

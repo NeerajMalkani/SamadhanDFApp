@@ -277,7 +277,7 @@ const HomeScreen = ({ route, navigation }) => {
         user_refno: user_refno,
       },
     };
-    Provider.createDF(Provider.API_URLS.UserFromRefNo, params)
+    Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           const user = {

@@ -21,7 +21,7 @@ const AddApiMaster = ({ route, navigation }) => {
   //#region Functions
 
   const InsertActivityName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnamecreate/", {
+    Provider.createDFCommon("apiappadmin/spawu7S4urax/tYjD/groupnamecreate/", {
       data: {
         Sess_UserRefno: "2",
         group_name: activityName,
@@ -48,7 +48,7 @@ const AddApiMaster = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
-    Provider.createDF("apiappadmin/spawu7S4urax/tYjD/groupnameupdate/",
+    Provider.createDFCommon("apiappadmin/spawu7S4urax/tYjD/groupnameupdate/",
      { 
       // ID: route.params.data.id, 
       // ActivityRoleName: activityName, 

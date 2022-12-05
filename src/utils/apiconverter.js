@@ -116,6 +116,10 @@ export const APIConverter = (response, convertIDs) => {
     renameKey(obj, "reporting_status", "reportingAuthority");
     renameKey(obj, "discount_data", "discountData");
     renameKey(obj, "discount_perc", "buyerCategoryDiscount");
+    renameKey(obj, "state_name", "stateName");
+    renameKey(obj, "state_refno", "stateID");
+    renameKey(obj, "district_name", "cityName");
+    renameKey(obj, "district_refno", "cityID");
   });
 
   return response;

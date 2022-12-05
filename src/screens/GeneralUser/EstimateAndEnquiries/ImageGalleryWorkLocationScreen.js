@@ -41,7 +41,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
       },
     };
     console.log(params);
-    Provider.createDF(Provider.API_URLS.GetserviceimagegalleryByServicerefno, params)
+    Provider.createDFCommon(Provider.API_URLS.GetserviceimagegalleryByServicerefno, params)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
