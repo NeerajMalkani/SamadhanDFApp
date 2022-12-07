@@ -126,7 +126,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       FetchBasicDetails();
     }
   };
-  let tempStateName = "";
+  let tempStateID = "";
   const FetchBasicDetails = () => {
     let params = {
       data: {
@@ -148,7 +148,10 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
             setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
-            tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
+            //console.log('==================');
+            //console.log(response.data.data[0]);
+            //console.log(response.data.data[0].stateName);
+            tempStateID = response.data.data[0].stateID === null ? "" : response.data.data[0].stateID;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
             setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
             setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
@@ -191,8 +194,8 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
                 }).stateName
               );
             }
-            if (tempStateName !== "") {
-              FetchCities(tempStateName, response.data.data);
+            if (tempStateID !== "") {
+              FetchCities(tempStateID, response.data.data);
             }
           }
         }
@@ -200,20 +203,19 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchCities = (stateName, stateData) => {
+  const FetchCities = (tempStateID, stateData) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
         state_refno: stateData
           ? stateData.find((el) => {
-              return el.stateName == stateName;
+              return el.stateID == stateID;
             }).stateID
           : statesFullData.find((el) => {
-              return el.stateName == stateName;
+              return el.stateID == stateID;
             }).stateID,
       },
     };
-    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -382,25 +384,25 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         : ""
     );
     console.log(datas);
-    Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
-      .then((response) => {
-        console.log(response.data);
-        if (response.data && response.data.code === 200) {
-          setSnackbarColor(theme.colors.success);
-          setSnackbarText("Data updated successfully");
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarVisible(true);
-      });
+    // Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     if (response.data && response.data.code === 200) {
+    //       setSnackbarColor(theme.colors.success);
+    //       setSnackbarText("Data updated successfully");
+    //       setSnackbarVisible(true);
+    //     } else {
+    //       setSnackbarColor(theme.colors.error);
+    //       setSnackbarText(communication.UpdateError);
+    //       setSnackbarVisible(true);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //     setSnackbarColor(theme.colors.error);
+    //     setSnackbarText(communication.NetworkError);
+    //     setSnackbarVisible(true);
+    //   });
   };
 
   const ValidateData = () => {
