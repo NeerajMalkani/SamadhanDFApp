@@ -126,6 +126,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
   let tempStateName = "";
+  let tempCityID = "";
   const FetchBasicDetails = () => {
     let params = {
       data: {
@@ -150,6 +151,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
             setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
+            tempCityID = response.data.data[0].cityID === null ? "" : response.data.data[0].cityID;
             setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
             setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
             setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
@@ -190,7 +192,6 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
                 }).stateName
               );
             }
-            
             if (tempStateName) {
               FetchCities(tempStateName, response.data.data);
             } else {
@@ -225,11 +226,10 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setCityFullData(response.data.data);
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
-
-            if (stateData != null) {
+            if (tempCityID) {
               setCityName(
                 response.data.data.find((el) => {
-                  return el.cityID == cityID;
+                  return el.cityID == tempCityID;
                 }).cityName
               );
             }
