@@ -229,12 +229,24 @@ class Provider {
     DesignationUpdate: "designationupdate/",
 
     DealerCompanyBasicDetailsUpdate: "dealercompanybasicdetailsupdate/",
-    GetStateDetails:"getstatedetails/",
+    GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
   };
 
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
+  }
+
+  createDFCommonWithHeader(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL}/${resource}`, params, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      return axios.post(`${BASE_URL}/${resource}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    }
   }
 
   createDFAdmin(resource, params) {

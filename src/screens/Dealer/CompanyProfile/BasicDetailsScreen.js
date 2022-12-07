@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Dimensions, ScrollView, Image } from "react-native";
+import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
 import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
@@ -116,7 +116,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const GetUserID = async () => {
@@ -126,19 +126,18 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       FetchBasicDetails();
     }
   };
-  let tempStateID = "";
+  let tempStateName = "";
   const FetchBasicDetails = () => {
     let params = {
       data: {
-        Sess_UserRefno: userID
-      }
+        Sess_UserRefno: userID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
             setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
             setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
@@ -149,7 +148,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
             setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
-            tempStateID = response.data.data[0].stateID === null ? "" : response.data.data[0].stateID;
+            tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
             setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
             setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
@@ -161,7 +160,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
             setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
             setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
-            setIsSwitchOn(response.data.data[0].showBrand ? response.data.data[0].showBrand == "1" ? true : false : false);
+            setIsSwitchOn(response.data.data[0].showBrand ? (response.data.data[0].showBrand == "1" ? true : false) : false);
             setLogoImage(response.data.data[0].companyLogo);
             setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
             setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
@@ -186,27 +185,35 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setStatesData(states);
 
             if (stateID != "") {
-
-              setStateName(response.data.data.find((el) => {
-                return el.stateID == stateID;
-              }).stateName);
+              setStateName(
+                response.data.data.find((el) => {
+                  return el.stateID == stateID;
+                }).stateName
+              );
             }
-            if (tempStateID !== "") {
-              FetchCities(tempStateID, response.data.data);
+            if (tempStateName !== "") {
+              FetchCities(tempStateName, response.data.data);
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchCities = (stateID, stateData) => {
+  const FetchCities = (stateName, stateData) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        state_refno: stateID
-      }
+        state_refno: stateData
+          ? stateData.find((el) => {
+              return el.stateName == stateName;
+            }).stateID
+          : statesFullData.find((el) => {
+              return el.stateName == stateName;
+            }).stateID,
+      },
     };
+    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -217,14 +224,16 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setCityData(cities);
 
             if (stateData != null) {
-              setCityName(response.data.data.find((el) => {
-                return el.cityID == cityID;
-              }).cityName);
+              setCityName(
+                response.data.data.find((el) => {
+                  return el.cityID == cityID;
+                }).cityName
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -327,87 +336,15 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  const uploadFile = () => {
-    if (!isImageReplaced) {
-      InsertData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: logoImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              InsertData();
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
-
   const InsertData = () => {
     const datas = new FormData();
+    const stateData = statesFullData.find((el) => {
+      return el.stateName == stateName;
+    });
+    const cityData = cityFullData.find((el) => {
+      return el.cityName == cityName;
+    });
     const params = {
-      // UserID: userID,
-      // CompanyName: companyName,
-      // CompanyLogo: logoImage ? logoImage : "",
-      // ContactPersonName: contactName,
-      // ContactPersonNumber: contactNumber,
-      // AddressLine: address,
-      // LocationName: location,
-      // StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      // CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      // Pincode: pincode ? pincode : 0,
-      // GSTNumber: gstNumber,
-      // PAN: panNumber,
-      // AccountNumber: accountNo ? accountNo : 0,
-      // BankName: bankName,
-      // BranchName: bankBranchName,
-      // IFSCCode: ifscCode,
-      // CompanyNamePrefix: cnPrefix,
-      // EmployeeCodePrefix: ecPrefix,
-      // PurchaseOrderPrefix: poPrefix,
-      // SalesOrderPrefix: soPrefix,
-      // QuotationBudgetPrefix: "",
-      // ShowBrand: isSwitchOn,
-
       data: {
         Sess_UserRefno: userID,
         company_refno: companyID,
@@ -418,12 +355,8 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         pan_no: panNumber,
         location_name: location,
         address: address,
-        state_refno: statesFullData.find((el) => {
-          return el.stateName == stateName;
-        }).stateID,
-        district_refno: cityFullData.find((el) => {
-          return el.cityName == cityName;
-        }).cityID,
+        state_refno: stateData ? stateData.stateID : "0",
+        district_refno: cityData ? cityData.cityID : "0",
         pincode: pincode,
         bank_account_no: accountNo,
         bank_name: bankName,
@@ -434,18 +367,22 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         quotation_no_prefix: "",
         employee_code_prefix: ecPrefix,
         po_prefix: poPrefix,
-        so_prefix: soPrefix
-      }
+        so_prefix: soPrefix,
+      },
     };
-
     datas.append("data", JSON.stringify(params));
-    datas.append("company_logo", {
-      name: "appimage1212.jpg",
-      type: filePath.type + "/*",
-      uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-    });
-
-    Provider.createDFCommon(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
+    datas.append(
+      "company_logo",
+      filePath != null
+        ? {
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+          }
+        : ""
+    );
+    console.log(datas);
+    Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
@@ -470,15 +407,11 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     const isValid = true;
 
     if (isValid) {
-      if (filePath !== null) {
-        uploadFile();
-      } else {
-        InsertData();
-      }
+      InsertData();
     }
   };
 
-  //#endregion 
+  //#endregion
 
   const renderScene = ({ route }) => {
     switch (route.key) {
