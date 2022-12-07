@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import FormData from "form-data";
 import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
 import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
@@ -7,9 +8,7 @@ import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
-import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
-import { creds } from "../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -126,7 +125,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       FetchBasicDetails();
     }
   };
-  let tempStateID = "";
+  let tempStateName = "";
   const FetchBasicDetails = () => {
     let params = {
       data: {
@@ -148,10 +147,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
             setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
-            //console.log('==================');
-            //console.log(response.data.data[0]);
-            //console.log(response.data.data[0].stateName);
-            tempStateID = response.data.data[0].stateID === null ? "" : response.data.data[0].stateID;
+            tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
             setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
             setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
@@ -194,8 +190,13 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
                 }).stateName
               );
             }
-            if (tempStateID !== "") {
-              FetchCities(tempStateID, response.data.data);
+            
+            if (tempStateName) {
+              FetchCities(tempStateName, response.data.data);
+            } else {
+              FetchCities(response.data.data.find((el) => {
+                return el.stateID == stateID;
+              }).stateName, response.data.data);
             }
           }
         }
@@ -203,16 +204,16 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchCities = (tempStateID, stateData) => {
+  const FetchCities = (tempStateName, stateData) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
         state_refno: stateData
           ? stateData.find((el) => {
-              return el.stateID == stateID;
+              return el.stateName == tempStateName;
             }).stateID
           : statesFullData.find((el) => {
-              return el.stateID == stateID;
+              return el.stateName == tempStateName;
             }).stateID,
       },
     };
@@ -347,30 +348,28 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       return el.cityName == cityName;
     });
     const params = {
-      data: {
-        Sess_UserRefno: userID,
-        company_refno: companyID,
-        company_name: companyName,
-        firstname: contactName,
-        mobile_no: contactNumber,
-        gst_no: gstNumber,
-        pan_no: panNumber,
-        location_name: location,
-        address: address,
-        state_refno: stateData ? stateData.stateID : "0",
-        district_refno: cityData ? cityData.cityID : "0",
-        pincode: pincode,
-        bank_account_no: accountNo,
-        bank_name: bankName,
-        bank_branch_name: bankBranchName,
-        ifsc_code: ifscCode,
-        if_create_brand: isSwitchOn ? 1 : 0,
-        company_name_prefix: cnPrefix,
-        quotation_no_prefix: "",
-        employee_code_prefix: ecPrefix,
-        po_prefix: poPrefix,
-        so_prefix: soPrefix,
-      },
+      Sess_UserRefno: userID,
+      company_refno: companyID,
+      company_name: companyName,
+      firstname: contactName,
+      mobile_no: contactNumber,
+      gst_no: gstNumber,
+      pan_no: panNumber,
+      location_name: location,
+      address: address,
+      state_refno: stateData ? stateData.stateID : "0",
+      district_refno: cityData ? cityData.cityID : "0",
+      pincode: pincode,
+      bank_account_no: accountNo,
+      bank_name: bankName,
+      bank_branch_name: bankBranchName,
+      ifsc_code: ifscCode,
+      if_create_brand: isSwitchOn ? 1 : 0,
+      company_name_prefix: cnPrefix,
+      quotation_no_prefix: "",
+      employee_code_prefix: ecPrefix,
+      po_prefix: poPrefix,
+      so_prefix: soPrefix,
     };
     datas.append("data", JSON.stringify(params));
     datas.append(
@@ -383,26 +382,24 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         : ""
     );
-    console.log(datas);
-    // Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     if (response.data && response.data.code === 200) {
-    //       setSnackbarColor(theme.colors.success);
-    //       setSnackbarText("Data updated successfully");
-    //       setSnackbarVisible(true);
-    //     } else {
-    //       setSnackbarColor(theme.colors.error);
-    //       setSnackbarText(communication.UpdateError);
-    //       setSnackbarVisible(true);
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     setSnackbarColor(theme.colors.error);
-    //     setSnackbarText(communication.NetworkError);
-    //     setSnackbarVisible(true);
-    //   });
+    Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setSnackbarColor(theme.colors.success);
+          setSnackbarText("Data updated successfully");
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarColor(theme.colors.error);
+          setSnackbarText(communication.UpdateError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
   };
 
   const ValidateData = () => {
