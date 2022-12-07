@@ -231,6 +231,16 @@ class Provider {
     DealerCompanyBasicDetailsUpdate: "dealercompanybasicdetailsupdate/",
     GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
+
+    getservicenamematerialcalculatorform : "getservicenamematerialcalculatorform/",
+    getcategorynamematerialcalculatorform : "getcategorynamematerialcalculatorform/",
+    getproductnamematerialcalculatorform : "getproductnamematerialcalculatorform/",
+    getproductdesigntypematerialcalculatorform : "getproductdesigntypematerialcalculatorform/",
+    getdesigntypeimagematerialcalculatorform : "getdesigntypeimagematerialcalculatorform/",
+    getsqftcalculation_materialcalculatorform : "getservicenamematerialcalculatorform/",
+    getviewmaterials_materialcalculatorform : "getviewmaterials_materialcalculatorform/",
+    getproductrate_by_brandrefno_materialcalculatorform : "getproductrate_by_brandrefno_materialcalculatorform/",
+
   };
 
   createDFCommon(resource, params) {
