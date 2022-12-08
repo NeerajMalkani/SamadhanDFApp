@@ -30,9 +30,7 @@ import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne
 import FeedbackScreen from "./src/screens/FeedbackScreen";
 import UserProfileScreen from "./src/screens/UserProfile";
 import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
-//import DealerMyServicesScreen from "./src/screens/Dealer/CompanyProfile/MyServicesScreen";
 import ContractorBasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
-//import ContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/MyServicesScreen";
 import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
 
 import AddProductScreen from "./src/screens/Admin/Master/AddItems/AddProductScreen";
@@ -57,7 +55,6 @@ import PostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/PostNewDes
 import AddPostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen";
 import DealerPresentationScreen from "./src/screens/Dealer/CompanyProfile/PresentationScreen";
 import DealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/BuyerCategoryScreen";
-import AddDealerMyServicesScreen from "./src/screens/Dealer/CompanyProfile/AddItem/AddMyServicesScreen";
 import AddDealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen";
 import DealerBrandMasterScreen from "./src/screens/Dealer/Brand/BrandMasterScreen";
 import AddDealerBrandMasterScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen";
@@ -67,7 +64,6 @@ import DealerProductScreen from "./src/screens/Dealer/Product/ProductScreen";
 import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProductScreen";
 import MaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/MaterialSetupScreen";
 import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen";
-//import AddContractorMyServicesScreen from "./src/screens/Contractor/CompanyProfile/AddItem/AddMyServicesScreen";
 import AddMyServicesScreen from "./src/screens/Common/CompanyProfile/AddItem/AddMyServicesScreen";
 import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
@@ -429,7 +425,6 @@ export default function App() {
               <Stack.Screen name="AddWorkLocationScreen" component={AddWorkLocationScreen} options={{ headerTitle: "Add Work Location", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDesignTypeScreen" component={AddDesignTypeScreen} options={{ headerTitle: "Add Design Type", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddPostNewDesignScreen" component={AddPostNewDesignScreen} options={{ headerTitle: "Add Post New Design", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddDealerMyServicesScreen" component={AddDealerMyServicesScreen} options={{ headerTitle: "Add My Services", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBrandMasterScreen" component={AddDealerBrandMasterScreen} options={{ headerTitle: "Add Brand", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBrandSetupScreen" component={AddDealerBrandSetupScreen} options={{ headerTitle: "Add Brand Setup", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddDealerBuyerCategoryScreen" component={AddDealerBuyerCategoryScreen} options={{ headerTitle: "Add Buyer Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
