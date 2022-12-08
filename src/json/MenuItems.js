@@ -292,7 +292,7 @@ export const MenuItemsDealer = [
         title: "My Services",
         type: "accordian",
         index: 10,
-        navigation: "DealerMyServicesScreen",
+        navigation: "MyServicesScreen",
       },
       {
         title: "Presentation",
@@ -442,7 +442,7 @@ export const MenuItemsContractor = [
         title: "My Services",
         type: "accordian",
         index: 10,
-        navigation: "ContractorMyServicesScreen",
+        navigation: "MyServicesScreen",
       },
     ],
   },

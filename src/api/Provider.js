@@ -240,6 +240,12 @@ class Provider {
     getsqftcalculation_materialcalculatorform : "getservicenamematerialcalculatorform/",
     getviewmaterials_materialcalculatorform : "getviewmaterials_materialcalculatorform/",
     getproductrate_by_brandrefno_materialcalculatorform : "getproductrate_by_brandrefno_materialcalculatorform/",
+    getbrandnamelist_materialcalculatorform: "getbrandnamelist_materialcalculatorform/",
+
+    getservicenamedealermyserviceform: "getservicenamedealermyserviceform/",
+    dealermyservicecreate: "dealermyservicecreate/",
+    dealermyserviceupdate: "dealermyserviceupdate/",
+    dealermyservicerefnocheck: "dealermyservicerefnocheck/",
 
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, Dimensions, Image, View, useWindowDimensions, InteractionManager } from "react-native";
+import { ScrollView, Dimensions, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity } from "react-native";
 import {
   Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading,
   Text, TextInput, Title, MD3Colors
@@ -16,6 +16,9 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import styles from "react-native-inset-shadow/src/styles";
 import { scrollTo } from "react-native-reanimated/lib/reanimated2/NativeMethods";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../utils/apiconverter";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 
 
@@ -78,9 +81,12 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const [total, setTotal] = React.useState(0);
 
+  let userID = 0, groupID = 0;
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
+  const [isZoomShow, setIsZoomShow] = React.useState(false);
+  const [imageToZoom, setImageToZoom] = React.useState([]);
   //#endregion 
 
   //#region Functions
@@ -155,7 +161,15 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     CalculateSqFt(0, 0, 0, 0, "ta", text, true);
   };
 
-
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+      //FetchBasicDetails();
+      FetchServicesFromActivity();
+    }
+  };
 
   const renderTabBar = props => (
     <TabBar
@@ -247,58 +261,22 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
-            setActivityFullData(response.data.data);
+  useEffect(() => {
+    GetUserID();
+  }, []);
 
-            if (route.params.type !== "edit") {
-              servicesDDRef.current.reset();
-              setServiceName("");
-              setProductsName("");
-              setCategoriesName("");
-              setDesignType("");
-              setCategoriesData([]);
-              setServicesData([]);
-              setProductsData([]);
-              setDesignTypeData([]);
-              setSNError(false);
-              setCNError(false);
-              setPNError(false);
-              setDTError(false);
-              setPLError(false);
-              setBNError(false);
-            }
-            FetchServicesFromActivity("Contractor", response.data.data);
-            if (route.params.type === "edit") {
-              FetchCategoriesFromServices("Contractor", response.data.data);
-              FetchProductsFromCategory("Contractor", response.data.data);
-              FetchDesignTypeFromProduct("Contractor", response.data.data);
-            }
-          }
-        }
-      })
-      .catch((e) => { });
-  };
-
-  const FetchServicesFromActivity = (selectedItem, activityData) => {
+  const FetchServicesFromActivity = () => {
     let params = {
-      ID: activityData.find((el) => {
-        return el.activityRoleName === selectedItem;
-      }).id,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      }
     };
-    Provider.getAll(`master/getservicesbyroleid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getservicenamematerialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
             const services = response.data.data.map((data) => data.serviceName);
             setServicesData(services);
@@ -308,29 +286,21 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchCategoriesFromServices = (selectedItem, activityData) => {
+  const FetchCategoriesFromServices = (serviceName) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-          return el.activityRoleName === "Contractor";
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
         }).id
-        : activityFullData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-            return el.serviceName === selectedItem;
-          }).id,
+      }
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getcategorynamematerialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
             const categories = response.data.data.map((data) => data.categoryName);
             setCategoriesData(categories);
@@ -342,12 +312,17 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const FetchDesignImage = (designID) => {
     let params = {
-      ID: designID
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        designtype_refno: designID
+      }
     };
-    Provider.getAll(`master/getdesigntypeimage?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getdesigntypeimagematerialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setDesignImage(response.data.data[0].designImage);
           }
         }
@@ -355,35 +330,22 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchProductsFromCategory = (selectedItem, activityData) => {
+  const FetchProductsFromCategory = (categoryName) => {
     let params = {
-      ActivityID: activityData
-        ? activityData.find((el) => {
-          return el.activityRoleName === "Contractor";
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoryName;
         }).id
-        : activityFullData.find((el) => {
-          return el.activityRoleName === "Contractor";
-        }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-            return el.serviceName === serviceName;
-          }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : categoriesFullData.find((el) => {
-            return el.categoryName === selectedItem;
-          }).id,
+      }
+
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getproductnamematerialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
@@ -395,32 +357,19 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const FetchDesignTypeFromProduct = (selectedItem) => {
     let params = {
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-            return el.serviceName === serviceName;
-          }).id,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : categoriesFullData.find((el) => {
-            return el.categoryName === categoriesName;
-          }).id,
-      ProductID:
-        route.params.type === "edit"
-          ? route.params.data.productID
-          : productsFullData.find((el) => {
-            return el.productName === selectedItem;
-          }).productID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === selectedItem;
+        }).id
+      }
     };
-    Provider.getAll(`servicecatalogue/getdesigntypebyproductid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getproductdesigntypematerialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setDesignTypeFullData(response.data.data);
             const designTypes = response.data.data.map((data) => data.designTypeName);
             setDesignTypeData(designTypes);
@@ -453,42 +402,58 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const FetchProductsFromMaterialSetup = (callback) => {
     let params = {
-      DesignTypeID: designTypeFullData.find((el) => {
-        return el.designTypeName === designType;
-      }).id,
+
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        designtype_refno: designTypeFullData.find((el) => {
+          return el.designTypeName === designType;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        totalfoot: totalSqFt
+      }
     };
-    Provider.getAll(`servicecatalogue/getmaterialbydesigntypeid?${new URLSearchParams(params)}`)
+    console.log(params);
+    Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+
+            console.log(response.data.data);
+
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
-            response.data.data.map((k) => {
-              tempArr.push({
-                productID: k.productID,
-                productName: k.productName,
-                brandID: 0,
-                brandName: "",
-                price: 0,
-                amount: 0,
-                quantity: parseFloat(k.quantity),
-                formula: k.formula.toFixed(4),
-              });
-            });
-            setTotal(totalTemp);
-            arrProductData[1](tempArr);
+
+            // response.data.data.map((k) => {
+            //   tempArr.push({
+            //     productID: k.productID,
+            //     productName: k.productName,
+            //     brandID: 0,
+            //     brandName: "",
+            //     price: 0,
+            //     amount: 0,
+            //     quantity: parseFloat(k.quantity),
+            //     formula: k.formula.toFixed(4),
+            //   });
+            // });
+            // setTotal(totalTemp);
+            // arrProductData[1](tempArr);
 
 
-            setBrandsData([]);
-            setBrandsFullData([]);
-            CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
-            FirstCalculationSqFt(totalSqFt, response.data.data);
-            FetchBrandsFromProductIds(tempArr);
-            scrollRef.current?.scrollTo({
-              y: 0,
-              animated: true,
-            });
+            // setBrandsData([]);
+            // setBrandsFullData([]);
+            // CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
+            // FirstCalculationSqFt(totalSqFt, response.data.data);
+            // FetchBrandsFromProductIds(tempArr);
+            // scrollRef.current?.scrollTo({
+            //   y: 0,
+            //   animated: true,
+            // });
           }
         }
         else {
@@ -499,17 +464,12 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  useEffect(() => {
-    FetchActvityRoles();
-  }, []);
+
 
   const onServiceNameSelected = (selectedItem) => {
+
     setServiceName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.serviceID = servicesFullData.find((el) => {
-        return el.serviceName === selectedItem;
-      }).id;
-    }
+
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setProductsData([]);
@@ -523,11 +483,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const onCategoriesNameSelected = (selectedItem) => {
     setCategoriesName(selectedItem);
-    if (route.params.type === "edit") {
-      route.params.data.categoryID = categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).id;
-    }
+
     productsDDRef.current.reset();
     setCNError(false);
     setProductsData([]);
@@ -541,11 +497,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     setProductsName(selectedItem);
     setDesignTypeData([]);
     setDesignType("");
-    if (route.params.type === "edit") {
-      route.params.data.productID = productsFullData.find((el) => {
-        return el.productName === selectedItem;
-      }).productID;
-    }
+
     setPNError(false);
     FetchDesignTypeFromProduct(selectedItem);
   };
@@ -915,7 +867,17 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           </HelperText>
 
           <View style={[Styles.flexRow, Styles.flexAlignEnd]}>
-            <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
+            <TouchableOpacity style={[Styles.height100per, Styles.width100per]} onPress={() => {
+              setImageToZoom([
+                {
+                  url: designImage,
+                },
+              ]);
+              setIsZoomShow(true);
+            }}>
+              <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
+            </TouchableOpacity>
+
           </View>
 
           <View style={[Styles.height325, Styles.marginTop16]}>
@@ -1028,6 +990,14 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           </View>
         </View>
       </RBSheet>
+      <Modal visible={isZoomShow} onRequestClose={() => setIsZoomShow(false)} transparent={true}>
+        <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
+          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
+            Close
+          </Button>
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => { }} />
+        </View>
+      </Modal>
     </View>
   );
 };

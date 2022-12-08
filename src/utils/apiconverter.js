@@ -120,6 +120,10 @@ export const APIConverter = (response, convertIDs) => {
     renameKey(obj, "state_refno", "stateID");
     renameKey(obj, "district_name", "cityName");
     renameKey(obj, "district_refno", "cityID");
+    renameKey(obj, "materital_product_refno", "productID");
+    renameKey(obj, "materital_product_name", "productName");
+    renameKey(obj, "qty", "quantity");
+    renameKey(obj, "myservice_refno", "serviceID");
   });
 
   return response;

@@ -382,6 +382,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         : ""
     );
+    console.log(datas);
     Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
       .then((response) => {
         if (response.data && response.data.code === 200) {
