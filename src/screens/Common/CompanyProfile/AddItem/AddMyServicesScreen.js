@@ -142,7 +142,6 @@ const AddMyServicesScreen = ({ route, navigation }) => {
     }
   };
   //#endregion 
-
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
