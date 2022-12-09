@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, Dimensions, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity } from "react-native";
+import {
+  Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList
+} from "react-native";
 import {
   Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading,
   Text, TextInput, Title, MD3Colors
@@ -19,11 +21,9 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../utils/apiconverter";
 import ImageViewer from "react-native-image-zoom-viewer";
-
-
+//import { FlatList } from "react-native-gesture-handler";
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
-
 
   const scrollRef = useRef();
 
@@ -379,21 +379,101 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchBrandsFromProductIds = (productData) => {
-    const productids = productData ? productData.map((data) => data.productID) : arrProductData[0].map((data) => data.productID);
+  const FetchBrandsFromProductIds = () => {
     let params = {
-      ProductID: productids.join(","),
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        designtype_refno: designTypeFullData.find((el) => {
+          return el.designTypeName === designType;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id
+      }
     };
-    Provider.getAll(`servicecatalogue/getbrandsbyproductids?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getbrandnamelist_materialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setBrandsFullData(response.data.data);
             const key = "brandID";
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
             setUniqueBrandsData(uniqueBrands);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
             setBrandsData(formattedData);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+
+  const FetchProductPriceOnBrandSelection = (brandID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        designtype_refno: designTypeFullData.find((el) => {
+          return el.designTypeName === designType;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        totalfoot: totalSqFt,
+        dealer_brand_refno: brandID
+      }
+    };
+    Provider.createDFCommon(Provider.API_URLS.getproductrate_by_brandrefno_materialcalculatorform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            //console.log('================0=================');
+            //console.log(response.data.data);
+            const newData = [...arrProductData[0]];
+            //console.log('================1=================');
+            //console.log(newData);
+            newData.map((k) => {
+              console.log('start loop');
+              const foundProduct = response.data.data.find((el) => el.productID == k.productID);
+              console.log('found product');
+              console.log(foundProduct);
+              if (foundProduct) {
+                k.brandID = foundProduct.brandID;
+                k.brandName = foundProduct.brandName;
+                k.price = foundProduct.price.toFixed(4);
+                k.amount = foundProduct.discount_rate;
+                k.discount_perc_rate = foundProduct.discount_perc_rate
+                k.discount_rate = foundProduct.discount_rate;
+                // if (k.formula) {
+                //   const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+                //   k.quantity = quants.toFixed(4);
+                //   if (k.price) {
+                //     k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+                //   } else {
+                //     k.amount = "0.0000";
+                //   }
+                // } else {
+                //   k.quantity = "";
+                //   k.amount = "0.0000";
+                // }
+              }
+            });
+
+            console.log('================2=================');
+            console.log(newData);
+            const amounts = newData.map((data) => data.amount);
+            if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
+              setTotal(0);
+            }
+            else {
+              setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
+            }
+            arrProductData[1](newData);
+
           }
         }
       })
@@ -415,45 +495,37 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         totalfoot: totalSqFt
       }
     };
-    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-
-            console.log(response.data.data);
 
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
 
-            // response.data.data.map((k) => {
-            //   tempArr.push({
-            //     productID: k.productID,
-            //     productName: k.productName,
-            //     brandID: 0,
-            //     brandName: "",
-            //     price: 0,
-            //     amount: 0,
-            //     quantity: parseFloat(k.quantity),
-            //     formula: k.formula.toFixed(4),
-            //   });
-            // });
+            response.data.data.map((k) => {
+              tempArr.push({
+                productID: k.productID,
+                productName: k.productName,
+                brandID: 0,
+                brandName: "",
+                price: 0,
+                amount: 0,
+                quantity: parseFloat(k.quantity),
+                formula: 0,
+              });
+            });
             // setTotal(totalTemp);
-            // arrProductData[1](tempArr);
+            arrProductData[1](tempArr);
 
-
-            // setBrandsData([]);
-            // setBrandsFullData([]);
-            // CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
-            // FirstCalculationSqFt(totalSqFt, response.data.data);
-            // FetchBrandsFromProductIds(tempArr);
-            // scrollRef.current?.scrollTo({
-            //   y: 0,
-            //   animated: true,
-            // });
+            autoScroll();
+            setBrandsData([]);
+            setBrandsFullData([]);
+            CalculateSqFt(0, 0, 0, 0, "ta", totalSqFt);
+            FirstCalculationSqFt(totalSqFt, response.data.data);
+            FetchBrandsFromProductIds();
           }
         }
         else {
@@ -463,8 +535,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       })
       .catch((e) => { });
   };
-
-
 
   const onServiceNameSelected = (selectedItem) => {
 
@@ -536,41 +606,50 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
+
+    const selecedBrand = uniqueBrandsData[parseInt(index)];
     setBrandName(selectedItem);
     setBNError(false);
-    const selecedBrand = uniqueBrandsData[parseInt(index)];
-    const appliedProducts = brandsFullData.filter((el) => {
-      return el.brandID === selecedBrand.brandID;
-    });
-    const newData = [...arrProductData[0]];
-    newData.map((k) => {
-      const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
-      if (foundProduct) {
-        k.brandID = foundProduct.brandID;
-        k.brandName = foundProduct.brandName;
-        k.price = foundProduct.price.toFixed(4);
-        if (k.formula) {
-          const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
-          k.quantity = quants.toFixed(4);
-          if (k.price) {
-            k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-          } else {
-            k.amount = "0.0000";
-          }
-        } else {
-          k.quantity = "";
-          k.amount = "0.0000";
-        }
-      }
-    });
-    const amounts = newData.map((data) => data.amount);
-    if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
-      setTotal(0);
-    }
-    else {
-      setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
-    }
-    arrProductData[1](newData);
+
+    FetchProductPriceOnBrandSelection(selecedBrand.brandID);
+
+
+    // const selecedBrand = uniqueBrandsData[parseInt(index)];
+    // const appliedProducts = brandsFullData.filter((el) => {
+    //   return el.brandID === selecedBrand.brandID;
+    // });
+
+
+
+    // const newData = [...arrProductData[0]];
+    // newData.map((k) => {
+    //   const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
+    //   if (foundProduct) {
+    //     k.brandID = foundProduct.brandID;
+    //     k.brandName = foundProduct.brandName;
+    //     k.price = foundProduct.price.toFixed(4);
+    //     if (k.formula) {
+    //       const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
+    //       k.quantity = quants.toFixed(4);
+    //       if (k.price) {
+    //         k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+    //       } else {
+    //         k.amount = "0.0000";
+    //       }
+    //     } else {
+    //       k.quantity = "";
+    //       k.amount = "0.0000";
+    //     }
+    //   }
+    // });
+    // const amounts = newData.map((data) => data.amount);
+    // if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
+    //   setTotal(0);
+    // }
+    // else {
+    //   setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
+    // }
+    // arrProductData[1](newData);
   };
 
   const InsertData = () => {
@@ -839,12 +918,21 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
+  const autoScroll = () => {
+    let offset = 100;
+    let i = setInterval(() => {
+      offset += windowHeight
+      scrollRef.current?.scrollTo({ x: 0, y: offset, animated: true })
+      clearInterval(i);
+    }, 2000)
+
+  }
 
   //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView ref={scrollRef} style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
           <HelperText type="error" visible={errorSN}>
@@ -914,6 +1002,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <HelperText type="error" visible={errorBN}>
               {communication.InvalidBrnadSelected}
             </HelperText>
+
             {arrProductData[0].map((k, i) => {
               return (
 
@@ -950,9 +1039,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 // removed from here
               );
             })}
+
           </View>
         </View>
-      </ScrollView>
+      </ScrollView >
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexAlignCenter]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
@@ -966,9 +1056,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
         <View style={[Styles.flex1]}>
-          <ScrollView ref={scrollRef}
-            style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
-            <View style={[Styles.flex1]}>
+
+          <ScrollView
+
+            style={[Styles.borderred, Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={[Styles.borderred, Styles.flex1]}>
               <AddMaterialSetupProducts arrProductData={arrProductData} />
             </View>
           </ScrollView>
@@ -998,7 +1090,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => { }} />
         </View>
       </Modal>
-    </View>
+    </View >
   );
 };
 
