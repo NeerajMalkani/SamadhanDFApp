@@ -87,6 +87,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [disableButton, setDisableButton] = useState(false);
+
   //#endregion 
 
   //#region Functions
@@ -481,6 +484,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   };
 
   const FetchProductsFromMaterialSetup = (callback) => {
+    setIsButtonLoading(true);
     let params = {
 
       data: {
@@ -497,6 +501,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -533,7 +538,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           setSnackbarVisible(true);
         }
       })
-      .catch((e) => { });
+      .catch((e) => { })
+      .finally((close)=>{setIsButtonLoading(false)})
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -990,7 +996,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <TextInput mode="flat" label="Total (Sq.Ft.)"
             onChangeText={onTotalSqFtChange} value={totalSqFt}
             editable={false} />
-          <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
+          <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails} loading={isButtonLoading} > 
             View Materials
           </Button>
 
