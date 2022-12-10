@@ -90,6 +90,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = useState(false);
 
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion 
 
   //#region Functions
@@ -434,41 +435,27 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            //console.log('================0=================');
-            //console.log(response.data.data);
             const newData = [...arrProductData[0]];
-            //console.log('================1=================');
-            //console.log(newData);
             newData.map((k) => {
-              console.log('start loop');
+              //console.log('===');
+              //console.log(k.productID);
               const foundProduct = response.data.data.find((el) => el.productID == k.productID);
-              console.log('found product');
-              console.log(foundProduct);
               if (foundProduct) {
+                //console.log('found');
                 k.brandID = foundProduct.brandID;
                 k.brandName = foundProduct.brandName;
-                k.price = foundProduct.price.toFixed(4);
-                k.amount = foundProduct.discount_rate;
-                k.discount_perc_rate = foundProduct.discount_perc_rate
-                k.discount_rate = foundProduct.discount_rate;
-                // if (k.formula) {
-                //   const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
-                //   k.quantity = quants.toFixed(4);
-                //   if (k.price) {
-                //     k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-                //   } else {
-                //     k.amount = "0.0000";
-                //   }
-                // } else {
-                //   k.quantity = "";
-                //   k.amount = "0.0000";
-                // }
+                k.price = foundProduct.price;
+                k.amount = foundProduct.amount;
+              }
+              else {
+                k.amount = "0";
               }
             });
-
-            console.log('================2=================');
-            console.log(newData);
+            //console.log('edited=============');
+            //console.log(newData);
             const amounts = newData.map((data) => data.amount);
+            //console.log('amount =================');
+            //console.log(amounts);
             if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
               setTotal(0);
             }
@@ -476,7 +463,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
             }
             arrProductData[1](newData);
-
           }
         }
       })
@@ -505,7 +491,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-
+            // console.log('start ====================');
+            // console.log(response.data.data);
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
@@ -524,7 +511,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             });
             // setTotal(totalTemp);
             arrProductData[1](tempArr);
-
+            // console.log('end ===================');
+            // console.log(tempArr);
             autoScroll();
             setBrandsData([]);
             setBrandsFullData([]);
@@ -538,8 +526,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           setSnackbarVisible(true);
         }
       })
-      .catch((e) => { })
-      .finally((close)=>{setIsButtonLoading(false)})
+      .catch((e) => { });
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -836,22 +823,22 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       let total = 0;
       const arrMaterialProducts = [...productData];
       arrMaterialProducts.map((k) => {
-        if (k.formula) {
-          k.quantity = (parseFloat(totArea.toString()) / parseFloat(k.formula)).toFixed(4);
-          if (k.price) {
-            k.amount = (0).toFixed(4);
-          } else {
-            k.amount = "0.0000";
-          }
+        // if (k.formula) {
+        //   k.quantity = (parseFloat(totArea.toString()) / parseFloat(k.formula)).toFixed(4);
+        //   if (k.price) {
+        //     k.amount = (0).toFixed(4);
+        //   } else {
+        //     k.amount = "0.0000";
+        //   }
 
-          total += parseFloat(k.amount);
-        } else {
-          k.quantity = "";
-          k.amount = "0.0000";
-        }
-
-        k.brandID = 0;
-        k.brandName = "";
+        //   total += parseFloat(k.amount);
+        // } else {
+        //   k.quantity = "33";
+        //   k.amount = "0.0000";
+        // }
+        total += parseFloat(k.amount);
+        // k.brandID = 0;
+        // k.brandName = "";
       });
       arrProductData[1](arrMaterialProducts);
       if (total > 0) {
@@ -872,18 +859,19 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           let total = 0;
           const arrMaterialProducts = [...arrProductData[0]];
           arrMaterialProducts.map((k) => {
-            if (k.formula) {
-              k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
-              if (k.price) {
-                k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-              } else {
-                k.amount = "0.0000";
-              }
-              total += parseFloat(k.amount);
-            } else {
-              k.quantity = "";
-              k.amount = "0.0000";
-            }
+            total += parseFloat(k.amount);
+            // if (k.formula) {
+            //   k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
+            //   if (k.price) {
+            //     k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
+            //   } else {
+            //     k.amount = "0.0000";
+            //   }
+            //   total += parseFloat(k.amount);
+            // } else {
+            //   k.quantity = "11";
+            //   k.amount = "0.0000";
+            // }
           });
           arrProductData[1](arrMaterialProducts);
           setTotal(parseFloat(total).toFixed(4));
@@ -909,7 +897,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 }
                 total += parseFloat(k.amount);
               } else {
-                k.quantity = "";
+                k.quantity = "22";
                 k.amount = "0.0000";
               }
             });
@@ -996,7 +984,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <TextInput mode="flat" label="Total (Sq.Ft.)"
             onChangeText={onTotalSqFtChange} value={totalSqFt}
             editable={false} />
-          <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails} loading={isButtonLoading} > 
+          <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
           </Button>
 
@@ -1010,6 +998,15 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             </HelperText>
 
             {arrProductData[0].map((k, i) => {
+              // console.log('======== product');
+              // console.log(k);
+              // console.log('======== product');
+              // console.log(k.quantity);
+              // console.log('===');
+              // console.log(k);
+              // console.log(k.quantity);
+              //let qty = k.quantity == 0 ? k.quantity : 0;
+              //console.log(qty == 0 ? qty : "false");
               return (
 
                 <Card key={i} elevation={3} style={[Styles.marginTop16]}>
@@ -1021,7 +1018,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                     <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
                       <View style={[Styles.width48per]}>
                         <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Quantity"
-                          value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                          value={parseFloat(k.quantity).toFixed(4).toString()} />
                       </View>
                       <View style={[Styles.width48per]}>
                         {
@@ -1031,7 +1028,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
                     </View>
                     {
-                      k.brandName != "" ?
+                      (k.brandName != "" && k.brandName != null) ?
                         <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
                           <View style={[Styles.width100per]}>
                             <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Product Amount"
