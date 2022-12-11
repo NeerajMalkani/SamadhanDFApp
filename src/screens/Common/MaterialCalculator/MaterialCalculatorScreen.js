@@ -90,7 +90,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = useState(false);
 
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion 
 
   //#region Functions

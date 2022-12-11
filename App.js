@@ -29,8 +29,8 @@ import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
 import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
 import FeedbackScreen from "./src/screens/FeedbackScreen";
 import UserProfileScreen from "./src/screens/UserProfile";
-import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
-import ContractorBasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
+//import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
+import BasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
 import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
 
 import AddProductScreen from "./src/screens/Admin/Master/AddItems/AddProductScreen";
@@ -389,7 +389,7 @@ export default function App() {
         <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
         <Tab.Screen
           name="UserProfile"
-          component={parseInt(userDetails[0].RoleID) === 4 ? DealerBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? ContractorBasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
+          component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
           options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
         />
       </Tab.Navigator>

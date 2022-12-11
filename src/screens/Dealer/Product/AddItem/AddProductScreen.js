@@ -12,11 +12,12 @@ import * as ImagePicker from "expo-image-picker";
 import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
+import { APIConverter } from "../../../../utils/apiconverter";
 
-let dealerID = 0;
+let dealerID = 0, groupID = 0;
 
 const AddDealerProductScreen = ({ route, navigation }) => {
-   //#region Variables
+  //#region Variables
   const [activityFullData, setActivityFullData] = React.useState([]);
 
   const [brandFullData, setBrandFullData] = React.useState([]);
@@ -42,6 +43,8 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   const [price, setPrice] = React.useState(route.params.type === "edit" ? route.params.data.price : "");
   const [errorP, setPError] = React.useState(false);
 
+  const [unitID, setUnitID] = React.useState("");
+  const [convertedUnitID, setConvertedUnitID] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
   const [errorUN, setUNError] = React.useState(false);
   const [unitName2, setUnitName2] = React.useState("");
@@ -60,85 +63,55 @@ const AddDealerProductScreen = ({ route, navigation }) => {
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
-      FetchActvityRoles();
+      groupID = JSON.parse(userData).Sess_group_refno;
+      FetchBrands();
     }
   };
 
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display && el.activityRoleName === "Dealer";
-            });
-            setActivityFullData(response.data.data);
-            if (route.params.type !== "edit") {
-              brandDDRef.current.reset();
-              setBrandName("");
-              setBrandData([]);
-              setBNError(false);
-              setProductsName("");
-              setProductsData([]);
-              setPNError(false);
-              setPrice("");
-              setPError(false);
-              setUnitName("");
-              setUnitName2("");
-              setProductImage("");
-              setImage(AWSImagePath + "placeholder-image.png");
-              setIsImageReplaced(false);
-              setPIError(false);
-              setIsButtonLoading(false);
-              setFilePath(null);
-              setUNError(false);
-              setUnitValue("");
-              setUVError(false);
-              setDescription("");
-              setDError(false);
-            }
-            FetchBrands(response.data.data);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
 
-  const FetchBrands = (activityData) => {
+
+  const FetchBrands = () => {
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID
+      }
     };
-    Provider.getAll(`dealerbrand/getbrandsetup?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getbrandnamedealerproductform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
+            response.data.data = APIConverter(response.data.data);
+            const brandData: any = [];
+            response.data.data.map((data: any, i: number) => {
+              brandData.push({
+                brandID: data.brandID,
+                brandName: data.brandName,
+                brandNameDisplay: `${data.brandName} (${data.categoryName})`
+              });
             });
-            setBrandFullData(response.data.data);
+
+            setBrandFullData(brandData);
             const brands = [];
             response.data.data.map((data) => {
-              brands.push(data.brandName + " (" + data.categoryName + ")");
+              brands.push(`${data.brandName} (${data.categoryName})`);
             });
             setBrandData(brands);
             if (route.params.type === "edit") {
               const selBrand = response.data.data.find((el) => {
-                return el.brandName === route.params.data.brandName;
+                return el.brandID === route.params.data.brandID;
               });
-              setBrandName(selBrand.brandName + " (" + selBrand.categoryName + ")");
-              setUnitName(selBrand.unitName);
-              setUnitName2(selBrand.unitName2);
-              route.params.data.serviceID = selBrand.serviceID;
-              route.params.data.categoryID = selBrand.categoryID;
-              FetchProductsFromCategory(null, activityData);
+
+              setBrandName(`${selBrand.brandName} (${selBrand.categoryName})`);
+              FetchProductsFromCategory(selBrand.brandID);
+              FetchUnitsFromProduct(selBrand.brandID);
             }
           }
         }
@@ -146,39 +119,47 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchProductsFromCategory = (selectedItem, activityData) => {
+  const FetchProductsFromCategory = (brandID) => {
     let params = {
-      ActivityID:
-        route.params.type === "edit"
-          ? activityData.find((el) => {
-            return el.activityRoleName === "Dealer";
-          }).id
-          : activityFullData.find((el) => {
-            return el.activityRoleName === "Dealer";
-          }).id,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : brandFullData.find((el) => {
-            return el.brandName + " (" + el.categoryName + ")" === selectedItem;
-          }).serviceID,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : brandFullData.find((el) => {
-            return el.brandName + " (" + el.categoryName + ")" === selectedItem;
-          }).categoryID,
+      data: {
+        Sess_UserRefno: dealerID,
+        Sess_group_refno: groupID,
+        brand_refno: brandID
+      }
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getproductnamedealerproductform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
+            response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchUnitsFromProduct = (brandID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        Sess_group_refno: groupID,
+        brand_refno: brandID
+      }
+    };
+    Provider.createDFCommon(Provider.API_URLS.getproductdatadealerproductform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setUnitID(response.data.data[0].unitID);
+            setUnitName(response.data.data[0].unitOfSale);
+            setUnitName2(response.data.data[0].convertedUnit);
+            setConvertedUnitID(response.data.data[0].convertedUnitID);
+            unitValue(response.data.data[0].convertedUnitID);
+            //setUnitValue(response.data.data[0].convertedUnitValue);
           }
         }
       })
@@ -195,12 +176,15 @@ const AddDealerProductScreen = ({ route, navigation }) => {
     setProductsName("");
     setPNError(false);
     setBNError(false);
+
     const selBrand = brandFullData.find((el) => {
-      return el.brandName + " (" + el.categoryName + ")" === text;
+      return el.brandNameDisplay === text;
     });
-    setUnitName(selBrand.unitName);
-    setUnitName2(selBrand.unitName2);
-    FetchProductsFromCategory(text);
+
+    //setUnitName(selBrand.unitName);
+    //setUnitName2(selBrand.unitName2);
+    FetchProductsFromCategory(selBrand.brandID);
+    FetchUnitsFromProduct(selBrand.brandID);
   };
 
   const onProductsNameSelected = (text) => {
@@ -249,22 +233,41 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    const datas = new FormData();
+    console.log('insert ========================');
     const params = {
-      DealerID: dealerID,
-      BrandID: brandFullData.find((el) => {
-        return el.brandName + " (" + el.categoryName + ")" === brandName;
-      }).brandID,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      Image: productImage,
-      Price: price,
-      UnitValue: unitValue,
-      Description: description,
-      Display: checked,
+      data: {
+        Sess_UserRefno: dealerID,
+        brand_refno: brandFullData.find((el) => {
+          return el.brandNameDisplay === brandName;
+        }).brandID,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        price: price,
+        sales_unit: unitName,
+        converted_unit_value: unitValue,
+        actual_unit_refno: unitID,
+        convert_unit_refno: convertedUnitID,
+        description: description,
+        view_status: checked ? "1" : "0",
+      }
     };
-    Provider.create("dealerproduct/insertproduct", params)
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "product_image",
+      filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
+        ? {
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
+        : ""
+    );
+    console.log(datas);
+    Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupcreate, datas)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -284,22 +287,39 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
+    const datas = new FormData();
     const params = {
-      ID: route.params.data.id,
-      DealerID: dealerID,
-      BrandID: brandFullData.find((el) => {
-        return el.brandName + " (" + el.categoryName + ")" === brandName;
-      }).brandID,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      Image: productImage,
-      Price: price,
-      UnitValue: unitValue,
-      Description: description,
-      Display: checked,
+
+      "data": {
+        "Sess_UserRefno": dealerID,
+        "company_product_refno": route.params.data.productID,
+        "brand_refno": brandFullData.find((el) => {
+          return el.brandNameDisplay === brandName;
+        }).brandID,
+        "product_refno": productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        "price": price,
+        "sales_unit": unitName,
+        "converted_unit_value": unitValue,
+        "actual_unit_refno": unitID,
+        "convert_unit_refno": convertedUnitID,
+        "description": description,
+        "view_status": checked ? "1" : "0"
+      }
     };
-    Provider.create("dealerproduct/updateproduct", params)
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "product_image",
+      filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
+        ? {
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
+        : ""
+    );
+    Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupupdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -386,7 +406,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   const ValidateDealerProduct = () => {
     let isValid = true;
     const objBrands = brandFullData.find((el) => {
-      return el.brandName && el.brandName + " (" + el.categoryName + ")" === brandName;
+      return el.brandName && el.brandNameDisplay === brandName;
     });
     if (brandName.length === 0 || !objBrands) {
       setBNError(true);
@@ -423,7 +443,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>

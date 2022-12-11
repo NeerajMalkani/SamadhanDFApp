@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Dimensions, ScrollView, Image } from "react-native";
+import FormData from "form-data";
+import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
 import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
@@ -7,23 +8,23 @@ import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
-import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
-import { creds } from "../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
+import { APIConverter } from "../../../utils/apiconverter";
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
-const ContractorBasicDetailsScreen = ({ route, navigation }) => {
+const BasicDetailsScreen = ({ route, navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
+  const [companyID, setCompanyID] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -55,12 +56,14 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
   const [cityFullData, setCityFullData] = React.useState([]);
   const [cityData, setCityData] = React.useState([]);
   const [cityName, setCityName] = React.useState("");
+  const [cityID, setCityID] = React.useState(0);
   const [errorCN, setCNError] = React.useState(false);
   const cityRef = useRef({});
 
   const [statesFullData, setStatesFullData] = React.useState([]);
   const [statesData, setStatesData] = React.useState([]);
   const [stateName, setStateName] = React.useState("");
+  const [stateID, setStateID] = React.useState(0);
   const [errorSN, setSNError] = React.useState(false);
 
   const [pincode, setPincode] = useState("");
@@ -83,13 +86,11 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
   const [ifscCodeInvalid, setIfscCodeInvalid] = useState("");
   const ifscCodeRef = useRef({});
 
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+
   const [cnPrefix, setCNPrefix] = useState("");
   const [cnPrefixInvalid, setCNPrefixInvalid] = useState("");
   const cnPrefixRef = useRef({});
-
-  const [qbnPrefix, setQBNPrefix] = useState("");
-  const [qbnPrefixInvalid, setQBNPrefixInvalid] = useState("");
-  const qbnPrefixRef = useRef({});
 
   const [ecPrefix, setECPrefix] = useState("");
   const [ecPrefixInvalid, setECPrefixInvalid] = useState("");
@@ -115,10 +116,9 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
- //#endregion 
+  //#endregion
 
- //#region Functions
-
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -127,15 +127,20 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
   let tempStateName = "";
+  let tempCityID = "";
   const FetchBasicDetails = () => {
     let params = {
-      UserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+      },
     };
-    Provider.getAll(`master/getuserprofile?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
+            setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
             setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
             setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
             setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
@@ -143,23 +148,26 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
             setLocation(response.data.data[0].locationName ? response.data.data[0].locationName : "");
             setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
             setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
+            setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
             tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
             setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
-            setPincode(response.data.data[0].pincode !== 0 ? response.data.data[0].pincode.toString() : "");
-            setAccountNo(response.data.data[0].accountNumber !== 0 ? response.data.data[0].accountNumber.toString() : "");
+            setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
+            tempCityID = response.data.data[0].cityID === null ? "" : response.data.data[0].cityID;
+            setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
+            setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
             setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
             setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
             setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
             setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
-            setQBNPrefix(response.data.data[0].quotationBudgetPrefix ? response.data.data[0].quotationBudgetPrefix : "");
             setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
             setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
             setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
+            setIsSwitchOn(response.data.data[0].showBrand ? (response.data.data[0].showBrand == "1" ? true : false) : false);
             setLogoImage(response.data.data[0].companyLogo);
             setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
             setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
           }
-          FetchStates();
+          FetchStates(response.data.data[0].stateID);
           setIsLoading(false);
         }
       })
@@ -168,44 +176,68 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
       });
   };
 
-  const FetchCities = (stateName, stateData) => {
-    let params = {
-      ID: stateData
-        ? stateData.find((el) => {
-            return el.stateName === stateName;
-          }).id
-        : statesFullData.find((el) => {
-            return el.stateName === stateName;
-          }).id,
-    };
-    Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+  const FetchStates = (stateID) => {
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails, null)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setCityFullData(response.data.data);
-            const cities = response.data.data.map((data) => data.cityName);
-            setCityData(cities);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
-
-  const FetchStates = () => {
-    Provider.getAll("master/getstates")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setStatesFullData(response.data.data);
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
-            if (tempStateName !== "") {
+
+            if (stateID != "") {
+              setStateName(
+                response.data.data.find((el) => {
+                  return el.stateID == stateID;
+                }).stateName
+              );
+            }
+            if (tempStateName) {
               FetchCities(tempStateName, response.data.data);
+            } else {
+              FetchCities(response.data.data.find((el) => {
+                return el.stateID == stateID;
+              }).stateName, response.data.data);
             }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
+  };
+
+  const FetchCities = (tempStateName, stateData) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        state_refno: stateData
+          ? stateData.find((el) => {
+            return el.stateName == tempStateName;
+          }).stateID
+          : statesFullData.find((el) => {
+            return el.stateName == tempStateName;
+          }).stateID,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setCityFullData(response.data.data);
+            const cities = response.data.data.map((data) => data.cityName);
+            setCityData(cities);
+            if (tempCityID) {
+              setCityName(
+                response.data.data.find((el) => {
+                  return el.cityID == tempCityID;
+                }).cityName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -216,7 +248,6 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     setCompanyName(text);
     setCompanyNameInvalid(false);
   };
-  
   const onContactNameChanged = (text) => {
     setContactName(text);
     setContactNameInvalid(false);
@@ -278,10 +309,6 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     setCNPrefix(text);
     setCNPrefixInvalid(false);
   };
-  const onQBNChanged = (text) => {
-    setQBNPrefix(text);
-    setQBNPrefixInvalid(false);
-  };
   const onECPChanged = (text) => {
     setECPrefix(text);
     setECPrefixInvalid(false);
@@ -313,89 +340,51 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  const uploadFile = () => {
-    if (!isImageReplaced) {
-      InsertData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: logoImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              InsertData();
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
-
   const InsertData = () => {
+    const datas = new FormData();
+    const stateData = statesFullData.find((el) => {
+      return el.stateName == stateName;
+    });
+    const cityData = cityFullData.find((el) => {
+      return el.cityName == cityName;
+    });
     const params = {
-      UserID: userID,
-      CompanyName: companyName,
-      CompanyLogo: logoImage ? logoImage : "",
-      ContactPersonName: contactName,
-      ContactPersonNumber: contactNumber,
-      AddressLine: address,
-      LocationName: location,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      GSTNumber: gstNumber,
-      PAN: panNumber,
-      AccountNumber: accountNo ? accountNo : 0,
-      BankName: bankName,
-      BranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      CompanyNamePrefix: cnPrefix,
-      QuotationBudgetPrefix: qbnPrefix,
-      EmployeeCodePrefix: ecPrefix,
-      PurchaseOrderPrefix: poPrefix,
-      SalesOrderPrefix: soPrefix,
-      ShowBrand: false,
+      Sess_UserRefno: userID,
+      company_refno: companyID,
+      company_name: companyName,
+      firstname: contactName,
+      mobile_no: contactNumber,
+      gst_no: gstNumber,
+      pan_no: panNumber,
+      location_name: location,
+      address: address,
+      state_refno: stateData ? stateData.stateID : "0",
+      district_refno: cityData ? cityData.cityID : "0",
+      pincode: pincode,
+      bank_account_no: accountNo,
+      bank_name: bankName,
+      bank_branch_name: bankBranchName,
+      ifsc_code: ifscCode,
+      if_create_brand: isSwitchOn ? 1 : 0,
+      company_name_prefix: cnPrefix,
+      quotation_no_prefix: "",
+      employee_code_prefix: ecPrefix,
+      po_prefix: poPrefix,
+      so_prefix: soPrefix,
     };
-    Provider.create("master/insertuserprofile", params)
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "company_logo",
+      filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
+        ? {
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
+        : ""
+    );
+    Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
       .then((response) => {
-        
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
@@ -418,13 +407,11 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
     const isValid = true;
 
     if (isValid) {
-      if (filePath !== null) {
-        uploadFile();
-      } else {
-        InsertData();
-      }
+      InsertData();
     }
   };
+
+  //#endregion
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -452,12 +439,12 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
-              <HelperText type="error" visible={addressInvalid}>
+              <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
+              <HelperText type="error" visible={locationInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={locationRef} mode="flat" dense label="Address" value={location} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
-              <HelperText type="error" visible={locationInvalid}>
+              <TextInput ref={locationRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+              <HelperText type="error" visible={addressInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
@@ -502,12 +489,12 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={cnPrefixRef} mode="flat" dense label="Company Name Prefix" value={cnPrefix} returnKeyType="next" onSubmitEditing={() => qbnPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom16]}>
+                <Subheading style={[Styles.flexGrow]}>Create Brand & Product</Subheading>
+                <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} />
+              </View>
+              <TextInput ref={cnPrefixRef} mode="flat" dense label="Company Name Prefix" value={cnPrefix} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
               <HelperText type="error" visible={cnPrefixInvalid}>
-                {communication.InvalidActivityName}
-              </HelperText>
-              <TextInput ref={qbnPrefixRef} mode="flat" dense label="Quotation / Budget No Prefix" value={qbnPrefix} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onQBNChanged} style={{ backgroundColor: "white" }} error={qbnPrefixInvalid} />
-              <HelperText type="error" visible={qbnPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
               <TextInput ref={ecPrefixRef} mode="flat" dense label="Employee Code Prefix" value={ecPrefix} returnKeyType="next" onSubmitEditing={() => poPrefixRef.current.focus()} onChangeText={onECPChanged} style={{ backgroundColor: "white" }} error={ecPrefixInvalid} />
@@ -543,16 +530,18 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
         return null;
     }
   };
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
+  const renderTabBar = (props) =>
+    <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary}
+      activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }}
+      labelStyle={[Styles.fontSize12, Styles.fontBold]} />;
+
   const [routes] = React.useState([
     { key: "companyDetails", title: "Company" },
     { key: "bankDetails", title: "Bank" },
     { key: "commonSetup", title: "Common" },
     { key: "logo", title: "Logo" },
   ]);
- //#endregion 
-
-
   return (
     isFocused && (
       <View style={[Styles.flex1]}>
@@ -562,7 +551,9 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : (
-          <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+          <TabView style={{ marginBottom: 64, }}
+            renderTabBar={renderTabBar} navigationState={{ index, routes }}
+            renderScene={renderScene} onIndexChange={setIndex} />
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
@@ -577,6 +568,7 @@ const ContractorBasicDetailsScreen = ({ route, navigation }) => {
       </View>
     )
   );
+
 };
 
-export default ContractorBasicDetailsScreen;
+export default BasicDetailsScreen;

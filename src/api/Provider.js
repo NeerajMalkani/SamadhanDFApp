@@ -251,6 +251,15 @@ class Provider {
     dealermyservicecreate: "dealermyservicecreate/",
     dealermyserviceupdate: "dealermyserviceupdate/",
     dealermyservicerefnocheck: "dealermyservicerefnocheck/",
+
+    dealercompanyproductrefnocheck: "dealercompanyproductrefnocheck/",
+    getproductdatadealerproductform: "getproductdatadealerproductform/",
+    dealerproductsetupcreate:"dealerproductsetupcreate/",
+    dealerproductsetupupdate: "dealerproductsetupupdate/",
+    getbrandnamedealerproductform:"getbrandnamedealerproductform/",
+    getproductnamedealerproductform:"getproductnamedealerproductform/",
+    
+
   };
 
   createDFCommon(resource, params) {

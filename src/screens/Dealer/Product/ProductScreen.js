@@ -11,12 +11,13 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let dealerID = 0;
+let dealerID = 0, ifBrandCreate = 0;
 
 const DealerProductScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -27,21 +28,28 @@ const DealerProductScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [brandName, setBrandName] = React.useState("");
+  const [brandPrefix, setBrandPrefix] = React.useState("");
   const [productName, setProductName] = React.useState("");
   const [image, setImage] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [unitValue, setUnitValue] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const [unitOfSale, setUnitOfSale] = React.useState("");
+  const [convertUnit, setUonvertUnit] = React.useState("");
+  const [display, setDisplay] = React.useState("");
+  const [announceStatus, setAnnounceStatus] = React.useState("");
+  const [approveStatus, setApproveStatus] = React.useState("");
 
   const refRBSheet = useRef();
 
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
+      ifBrandCreate = JSON.parse(userData).Sess_if_create_brand;
       FetchData();
     }
   };
@@ -52,13 +60,24 @@ const DealerProductScreen = ({ navigation }) => {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
+
     let params = {
-      DealerID: dealerID,
+      data: {
+        Sess_UserRefno: dealerID,
+        company_product_refno: "all",
+        Sess_if_create_brand: ifBrandCreate
+      }
     };
-    Provider.getAll(`dealerproduct/getproducts?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.dealercompanyproductrefnocheck, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            // console.log('=========start=============');
+            // console.log(response.data.data);
+            response.data.data = APIConverter(response.data.data);
+            console.log('=========updated=============');
+            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -105,20 +124,31 @@ const DealerProductScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.productName}
+          title={`${data.item.brandPrefix} ${data.item.productName}`}
           titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          description={"Brand: " + data.item.brandName}
           onPress={() => {
             refRBSheet.current.open();
             setBrandName(data.item.brandName);
+            setBrandPrefix(data.item.brandPrefix);
             setProductName(data.item.productName);
             setImage(data.item.image);
-            setPrice(data.item.price.toFixed(4));
-            setUnitValue(data.item.unitValue.toFixed(4));
+            setPrice(data.item.price);
+            setUnitValue(data.item.unitValue);
             setDescription(data.item.description);
+
+            setUnitOfSale(data.item.unitOfSale);
+            setUonvertUnit(data.item.convertUnitName);
+            setDisplay(data.item.display ? "Yes" : "No");
+            setAnnounceStatus(data.item.isPublish == "1" ? "Yes" : "No");
+            setApproveStatus(data.item.isApprove == "1" ? "Yes" : "No");
+
+
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
+          left={() => <Image source={{ uri: data.item.image }} style={[Styles.width56, Styles.height56]} />}
+          // left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+
         />
       </View>
     );
@@ -129,6 +159,8 @@ const DealerProductScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log('edit data =============');
+    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddDealerProductScreen", {
       type: "edit",
@@ -140,15 +172,15 @@ const DealerProductScreen = ({ navigation }) => {
         productID: data.item.productID,
         productName: data.item.productName,
         image: data.item.image,
-        price: data.item.price.toFixed(4),
-        unitValue: data.item.unitValue.toFixed(4),
+        price: data.item.price,
+        unitValue: data.item.convertedUnitValue,
         description: data.item.description,
         display: data.item.display,
       },
     });
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Product" />
@@ -188,15 +220,19 @@ const DealerProductScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View>
-          <Title style={[Styles.paddingHorizontal16]}>{productName}</Title>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={560} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View style={{ paddingBottom: 32 }}>
+          <Title style={[Styles.paddingHorizontal16]}>{`${brandPrefix} ${productName}`}</Title>
           <ScrollView>
             <List.Item title="Brand Name" description={brandName} />
             <List.Item title="Product Image" />
             <Image source={{ uri: image }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <List.Item title="Unit Of Sales" description={unitOfSale} />
+            <List.Item title="Converted Unit" description={convertUnit} />
+            <List.Item title="Display" description={display} />
+            <List.Item title="Announce Status" description={announceStatus} />
+            <List.Item title="Approve Status" description={approveStatus} />
             <List.Item title="Price" description={price} />
-            <List.Item title="Unit Value" description={unitValue} />
             <List.Item title="Description" description={description} />
           </ScrollView>
         </View>
