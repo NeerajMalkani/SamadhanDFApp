@@ -11,7 +11,9 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
 
-let userID = 0, Sess_group_refno = 0;
+let userID = 0,
+  Sess_group_refno = 0,
+  Sess_company_refno = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -20,15 +22,21 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   const [otherClients, setOtherClients] = React.useState([]);
   const [selectedData, setSelectedData] = React.useState([]);
-  const [otherClientsAutocomplete, setOtherClientsAutocomplete] = React.useState([]);
   const [selectedClient, setSelectedClient] = React.useState("");
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
-  const [errorSN, setSNError] = React.useState(false);
 
   const [clientsFullData, setClientsFullData] = React.useState([]);
   const [clients, setClients] = React.useState([]);
   const [clientName, setClientName] = React.useState("");
   const [errorCN, setCNError] = React.useState(false);
+
+  const [mobilenoData, setMobileNoData] = React.useState([]);
+  const [mobileno, setMobileNo] = React.useState("");
+  const [errorMN, setMNError] = React.useState(false);
+
+  const [companyData, setCompanyData] = React.useState([]);
+  const [companyName, setCompanyName] = React.useState("");
+  const [errorCON, setCONError] = React.useState(false);
 
   const [lengthFeet, setLengthFeet] = React.useState("1");
   const [lengthInches, setLengthInches] = React.useState("0");
@@ -37,7 +45,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [widthInches, setWidthInches] = React.useState("0");
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
   const refRBSheet = useRef();
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -48,75 +56,65 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      userID = JSON.parse(userData).UserID;
-      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
-      FetchImageGalleryProductDetail(JSON.parse(userData));
+      const userDataParsed = JSON.parse(userData);
+      userID = userDataParsed.UserID;
+      Sess_company_refno = userDataParsed.Sess_company_refno;
+      Sess_group_refno = userDataParsed.Sess_group_refno;
+      FetchImageGalleryProductDetail();
       if (route.params.isContractor) {
         FetchClients();
-        FetchOtherClients();
       }
     }
   };
 
-  const FetchImageGalleryProductDetail = (data: any) => {
-    debugger;
+  const FetchImageGalleryProductDetail = () => {
     let params = {
       data: {
-        Sess_UserRefno: data.UserID,
-        Sess_group_refno: data.Sess_group_refno,
-        service_refno: route.params.data.id,
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        service_refno: route.params.data.serviceID,
         designtype_refno: route.params.data.designTypeID,
         product_refno: route.params.data.productID,
-        designgallery_refno: route.params.data.designgallery_refno
+        designgallery_refno: route.params.data.id,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.Getgotoestimation, params)
-      .then((response: any) => {
+      .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setSelectedData(response.data.data[0]);
-            //setLoading(false);
           }
-        } else {
-          //setSnackMsg(communication.NoData);
-          //setSnackbarType("info");
-          //setOpen(true);
         }
-        //setLoading(false);
       })
       .catch((e) => {
-        //setLoading(false);
-        //setSnackMsg(communication.NetworkError);
-        //setSnackbarType("error");
-        //setOpen(true);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
       });
   };
 
   const AddMoreDesigns = () => {
-    debugger;
     const params = {
       data: {
-        "Sess_UserRefno": userID,
-        "Sess_group_refno": Sess_group_refno,
-        "clickaddmorecheck": "0",
-        "service_refno": route.params.data.id,
-        "designtype_refno": route.params.data.designTypeID,
-        "product_refno": route.params.data.productID,
-        "designgallery_refno": route.params.data.designgallery_refno,
-        "lengthfoot": lengthFeet,
-        "lengthinches": lengthInches,
-        "widthheightfoot": widthFeet,
-        "widthheightinches": widthInches,
-        "totalfoot": totalSqFt
-      }
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        clickaddmorecheck: "0",
+        service_refno: route.params.data.id,
+        designtype_refno: route.params.data.designTypeID,
+        product_refno: route.params.data.productID,
+        designgallery_refno: route.params.data.designgallery_refno,
+        lengthfoot: lengthFeet,
+        lengthinches: lengthInches,
+        widthheightfoot: widthFeet,
+        widthheightinches: widthInches,
+        totalfoot: totalSqFt,
+      },
     };
 
     Provider.createDFCommon(Provider.API_URLS.GetscEstimation, params)
       .then((response) => {
-        debugger;
         if (response.data && response.data.code === 200) {
-          debugger;
           navigation.navigate("ImageGalleryScreen");
           // if (number === "2") {
           //   if (from === "add") {
@@ -143,30 +141,31 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           //   FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
           // }
         } else {
-          setSnackMsg(communication.Error);
-          setSnackbarType("error");
-          setOpen(true);
+          // setSnackMsg(communication.Error);
+          // setSnackbarType("error");
+          // setOpen(true);
         }
       })
       .catch((e) => {
-        setSnackMsg(communication.NetworkError);
-        setSnackbarType("error");
-        setOpen(true);
+        // setSnackMsg(communication.NetworkError);
+        // setSnackbarType("error");
+        // setOpen(true);
       });
-
   };
 
   const FetchClients = () => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        client_user_refno: "all",
+      },
     };
-    Provider.getAll(`contractorquotationestimation/getclients?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.MyClientUserRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.serviceType === 3 || el.serviceType === 13 || el.serviceType === 23 || el.serviceType === 123;
-            });
+            response.data.data = APIConverter(response.data.data);
             setClientsFullData(response.data.data);
             let clientData = response.data.data.map((data) => data.companyName);
             setClients(clientData);
@@ -182,60 +181,69 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       });
   };
 
-  const FetchOtherClients = () => {
+  const FetchOtherClients = (selectedItem, type) => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        company_name: selectedItem,
+      },
     };
-    Provider.getAll(`contractorquotationestimation/getotherclients?${new URLSearchParams(params)}`)
+    if (type === "company") {
+      params.data.company_name = selectedItem;
+    } else {
+      params.data.mobile_no = selectedItem;
+    }
+    Provider.createDFCommon(type === "company" ? Provider.API_URLS.CompanyNameAutocompleteClientSearch : Provider.API_URLS.MobileNoAutocompleteClientSearch, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            setOtherClients(response.data.data);
             let clientData = [];
             response.data.data.map((data, i) => {
               clientData.push({
-                id: i.toString(),
-                title: data.companyName,
-                contact: data.contactMobileNumber,
-                clientID: data.id,
+                id: i,
+                title: type === "company" ? data.companyname_Result : data.mobile_no_Result,
               });
             });
-            setOtherClientsAutocomplete(clientData);
+            if (type === "company") {
+              setCompanyData(clientData);
+            } else {
+              setMobileNoData(clientData);
+            }
+          }
+        } else {
+          setCompanyData([]);
+          setMobileNoData([]);
+        }
+      })
+      .catch((e) => {
+        setCompanyData([]);
+        setMobileNoData([]);
+      });
+  };
+
+  const SearchClient = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        company_name_s: companyName,
+        mobile_no_s: mobileno,
+      },
+    };
+    console.log(params);
+    Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setOtherClients(response.data.data);
           }
         } else {
           setOtherClients([]);
-          setOtherClientsAutocomplete([]);
         }
       })
       .catch((e) => {
         setOtherClients([]);
-        setOtherClientsAutocomplete([]);
       });
-  };
-
-  const onClientNameSelected = (selectedItem) => {
-    setClientName(selectedItem);
-    setCNError(false);
-  };
-
-  const onLengthFeetSelected = (selectedItem) => {
-    setLengthFeet(selectedItem);
-    CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches);
-  };
-
-  const onLengthInchesSelected = (selectedItem) => {
-    setLengthInches(selectedItem);
-    CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches);
-  };
-
-  const onWidthFeetSelected = (selectedItem) => {
-    setWidthFeet(selectedItem);
-    CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches);
-  };
-
-  const onWidthInchesSelected = (selectedItem) => {
-    setWidthInches(selectedItem);
-    CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
   const FetchEstimationMaterialSetupData = (materialSetupID, from, userDesignEstimationID, labourCost) => {
@@ -258,7 +266,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchEstimationData = (userDesignEstimationID, from) => {
@@ -273,11 +281,10 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID, labourCost) => {
-    console.log('get estimation');
     const totAm = subtotal + subtotal * (5 / 100) + parseFloat(totalSqFt) * parseFloat(labourCost);
     const params = {
       UserID: userID,
@@ -317,13 +324,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 fetchData: route.params.fetchData,
                 clientID: route.params.isContractor
                   ? clientsFullData.find((el) => {
-                    return el.companyName === clientName;
-                  }).id
+                      return el.companyName === clientName;
+                    }).id
                   : 0,
               });
             }
           } else {
-            console.log(response.data.data[0].userDesignEstimationID);
             FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
           }
         } else {
@@ -340,17 +346,18 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       });
   };
 
-  const InsertOtherClient = () => {
+  const InsertOtherClient = (selectedID) => {
     const params = {
-      ID: parseInt(selectedClient),
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        client_user_refno: selectedID,
+      },
     };
-    Provider.create("contractorquotationestimation/insertotherclient", params)
+    Provider.createDFCommon(Provider.API_URLS.ClientAdd, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           refRBSheet.current.close();
           FetchClients();
-          FetchOtherClients();
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);
@@ -408,12 +415,44 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     return arrNumbers;
   };
 
-  function pad(n, width, z) {
-    z = z || "0";
-    n = n + "";
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-  }
-  //#endregion 
+  const onClientNameSelected = (selectedItem) => {
+    setClientName(selectedItem);
+    setCNError(false);
+  };
+
+  const onCompanyNameSelected = (selectedItem) => {
+    setCompanyName(selectedItem);
+    setCONError(false);
+    FetchOtherClients(selectedItem, "company");
+  };
+
+  const onMobileNumberSelected = (selectedItem) => {
+    setMobileNo(selectedItem);
+    setMNError(false);
+    FetchOtherClients(selectedItem, "mobile");
+  };
+
+  const onLengthFeetSelected = (selectedItem) => {
+    setLengthFeet(selectedItem);
+    CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches);
+  };
+
+  const onLengthInchesSelected = (selectedItem) => {
+    setLengthInches(selectedItem);
+    CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches);
+  };
+
+  const onWidthFeetSelected = (selectedItem) => {
+    setWidthFeet(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches);
+  };
+
+  const onWidthInchesSelected = (selectedItem) => {
+    setWidthInches(selectedItem);
+    CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
+  };
+
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -453,7 +492,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                   onPress={() => {
                     navigation.navigate("AddClient", {
                       type: "client",
-                      fetchData: FetchClients
+                      fetchData: FetchClients,
                     });
                   }}
                 >
@@ -498,10 +537,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           </Card.Content>
         ) : (
           <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
-            <Button mode="outlined" onPress={() => 
-            AddMoreDesigns()
-              //InsertDesignEstimationEnquiry("add", "1")
-            }>
+            <Button mode="outlined" onPress={() => AddMoreDesigns}>
               Add More
             </Button>
             <Button mode="contained" onPress={() => InsertDesignEstimationEnquiry("get", "1")}>
@@ -513,44 +549,102 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={640} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
           <View style={[Styles.flex1, Styles.backgroundColor, Styles.padding16]}>
-            <AutocompleteDropdown
-              clearOnFocus={false}
-              closeOnBlur={true}
-              direction="down"
-              suggestionsListContainerStyle={{ borderColor: theme.colors.border, borderWidth: 1 }}
-              inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorSN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
-              textInputProps={{
-                placeholder: "Client Name",
-                placeholderTextColor: errorSN ? theme.colors.error : theme.colors.textSecondary,
-              }}
-              renderItem={(item) => (
-                <View style={[Styles.paddingVertical8]}>
-                  <Text style={{ color: theme.colors.text, paddingHorizontal: 16 }}>{item ? item.title : ""}</Text>
-                  <Text style={{ color: theme.colors.textSecondary, paddingHorizontal: 16 }}>{item ? item.contact : ""}</Text>
-                </View>
-              )}
-              onClear={() => {
-                setIsButtonDisabled(true);
-                setSelectedClient("");
-              }}
-              onSelectItem={(item) => {
-                if (item) {
-                  setIsButtonDisabled(false);
-                  setSelectedClient(item ? item.clientID.toString() : "");
-                }
-              }}
-              dataSet={otherClientsAutocomplete}
-            />
-            <Button mode="contained" disabled={isButtonDisabled} style={[Styles.marginTop32]} onPress={() => InsertOtherClient()}>
-              Add to Client List
+            <View style={[Styles.flexColumn]}>
+              <AutocompleteDropdown
+                clearOnFocus={false}
+                closeOnBlur={true}
+                direction="down"
+                suggestionsListContainerStyle={{ borderColor: theme.colors.border, borderWidth: 1 }}
+                inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorCON ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
+                textInputProps={{
+                  placeholder: "Company Name",
+                  value: companyName,
+                  placeholderTextColor: errorCON ? theme.colors.error : theme.colors.textSecondary,
+                  onChangeText: onCompanyNameSelected,
+                }}
+                renderItem={(item) => (
+                  <View style={[Styles.paddingVertical16]}>
+                    <Text style={{ color: theme.colors.text, paddingHorizontal: 16 }}>{item ? item.title : ""}</Text>
+                  </View>
+                )}
+                onClear={() => {
+                  setIsButtonDisabled(true);
+                  setCompanyName("");
+                  setCompanyData([]);
+                }}
+                onSelectItem={(item) => {
+                  console.log(item);
+                  if (item) {
+                    setIsButtonDisabled(false);
+                    setCompanyName(item.title);
+                  }
+                }}
+                dataSet={companyData}
+              />
+              <HelperText type="error" visible={errorCON}>
+                {communication.InvalidClient}
+              </HelperText>
+              <AutocompleteDropdown
+                clearOnFocus={false}
+                closeOnBlur={true}
+                direction="down"
+                suggestionsListContainerStyle={{ borderColor: theme.colors.border, borderWidth: 1 }}
+                inputContainerStyle={{ backgroundColor: theme.colors.textLight, borderBottomColor: errorMN ? theme.colors.error : theme.colors.textfield, borderBottomWidth: 1 }}
+                textInputProps={{
+                  placeholder: "Mobile No",
+                  value: mobileno,
+                  placeholderTextColor: errorMN ? theme.colors.error : theme.colors.textSecondary,
+                  onChangeText: onMobileNumberSelected,
+                }}
+                renderItem={(item) => (
+                  <View style={[Styles.paddingVertical8]}>
+                    <Text style={{ color: theme.colors.text, paddingHorizontal: 16 }}>{item ? item.title : ""}</Text>
+                    <Text style={{ color: theme.colors.textSecondary, paddingHorizontal: 16 }}>{item ? item.contact : ""}</Text>
+                  </View>
+                )}
+                onClear={() => {
+                  setIsButtonDisabled(true);
+                  setMobileNo("");
+                  setMobileNoData([]);
+                }}
+                onSelectItem={(item) => {
+                  if (item) {
+                    setIsButtonDisabled(false);
+                    setMobileNo(item.title);
+                  }
+                }}
+                dataSet={mobilenoData}
+              />
+              <HelperText type="error" visible={errorMN}>
+                {communication.InvalidClient}
+              </HelperText>
+            </View>
+            <Button mode="contained" disabled={isButtonDisabled} style={[Styles.marginTop32, { zIndex: -1 }]} onPress={SearchClient}>
+              Search
             </Button>
+            <View style={[Styles.flexColumn, Styles.border1, Styles.marginTop16]}>
+              {otherClients &&
+                otherClients.map((v, k) => {
+                  return (
+                    <View style={[Styles.flexRow, Styles.padding16, Styles.flexAlignCenter, Styles.borderBottom1, { justifyContent: "space-between" }]}>
+                      <View style={[Styles.flexColumn]}>
+                        <Text style={{ color: theme.colors.text }}>{v.Search_company_name}</Text>
+                        <Text style={{ color: theme.colors.text }}>{v.Search_mobile_no}</Text>
+                      </View>
+                      <Button mode="contained" disabled={isButtonDisabled} onPress={() => InsertOtherClient(v.Search_user_refno)}>
+                        Add
+                      </Button>
+                    </View>
+                  );
+                })}
+            </View>
           </View>
         </ScrollView>
       </RBSheet>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-    </View >
+    </View>
   );
 };
 

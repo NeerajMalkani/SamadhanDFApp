@@ -195,9 +195,12 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
             if (tempStateName) {
               FetchCities(tempStateName, response.data.data);
             } else {
-              FetchCities(response.data.data.find((el) => {
-                return el.stateID == stateID;
-              }).stateName, response.data.data);
+              FetchCities(
+                response.data.data.find((el) => {
+                  return el.stateID == stateID;
+                }).stateName,
+                response.data.data
+              );
             }
           }
         }
@@ -374,7 +377,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
     datas.append("data", JSON.stringify(params));
     datas.append(
       "company_logo",
-      filePath != null
+      filePath && filePath != null && filePath.type && filePath.uri
         ? {
             name: "appimage1212.jpg",
             type: filePath.type + "/*",

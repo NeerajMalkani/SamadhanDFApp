@@ -14,19 +14,21 @@ export const APIConverter = (response, convertIDs) => {
       renameKey(obj, "category_refno", "categoryID");
       renameKey(obj, "service_refno", "serviceID");
       renameKey(obj, "brand_master_refno", "brandMasterID");
+      renameKey(obj, "product_refno", "productID");
+      renameKey(obj, "designtype_refno", "designTypeID");
     } else {
       renameKey(obj, "category_refno", "id");
       renameKey(obj, "service_refno", "id");
       renameKey(obj, "brand_master_refno", "id");
+      renameKey(obj, "product_refno", "id");
+      renameKey(obj, "designtype_refno", "id");
     }
 
-    renameKey(obj, "product_refno", "id");
     renameKey(obj, "group_refno", "id");
     renameKey(obj, "unit_category_refno", "id");
     renameKey(obj, "locationtype_refno", "id");
     renameKey(obj, "worklocation_refno", "id");
     renameKey(obj, "workfloor_refno", "id");
-    renameKey(obj, "designtype_refno", "id");
     renameKey(obj, "materials_setup_refno", "id");
     renameKey(obj, "designgallery_refno", "id");
     renameKey(obj, "department_refno", "id");

@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
-import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Subheading, Text, Title, Divider } from "react-native-paper";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
@@ -8,28 +8,18 @@ import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
 import Provider from "../api/Provider";
-import { BlurView } from "@react-native-community/blur";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
 import ImageViewer from "react-native-image-zoom-viewer";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LinearGradient from 'react-native-linear-gradient';
 import CreateSCCards from "../components/SCCards";
-// import FadingSlides from 'react-native-fading-slides';
-import { Touchable, ImageBackground } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import InsetShadow from "react-native-inset-shadow";
 import FadeCarousel from "rn-fade-carousel";
-// import { CustomCard } from '@tsamantanis/react-glassmorphism'
-// import '../../node_modules/@tsamantanis/react-glassmorphism/dist/index';
 export const navigationRef = createNavigationContainerRef();
-import { NullOrEmpty } from "../utils/validations";
 import { APIConverter } from "../utils/apiconverter";
 
-const windowWidth = Dimensions.get("window").width;
-let roleID = 0, userID = 0, groupRefNo = 0;
-let totUsers = 0;
+let roleID = 0,
+  userID = 0,
+  groupRefNo = 0;
 
 const HomeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -54,15 +44,15 @@ const HomeScreen = ({ route, navigation }) => {
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
   const slidesTwo = [
-    <Image source={require('../../assets/dreamone.jpg')} style={Styles.flex1} resizeMode="cover" />,
-    <Image source={require('../../assets/dreamtwo.jpg')} style={Styles.flex1} resizeMode="cover" />,
-    <Image source={require('../../assets/dreamthree.jpg')} style={Styles.flex1} resizeMode="cover" />,
-    <Image source={require('../../assets/dreamfour.jpg')} style={Styles.flex1} resizeMode="cover" />
+    <Image source={require("../../assets/dreamone.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamtwo.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamthree.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamfour.jpg")} style={Styles.flex1} resizeMode="cover" />,
   ];
 
   const LogoutUser = async () => {
@@ -78,7 +68,7 @@ const HomeScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_group_refno: groupRefNo
+        Sess_group_refno: groupRefNo,
       },
     };
     Provider.createDFDashboard(Provider.API_URLS.GetdashboardServicecatalogue, params)
@@ -108,7 +98,7 @@ const HomeScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_group_refno: groupRefNo
+        Sess_group_refno: groupRefNo,
       },
     };
     Provider.createDFDashboard(Provider.API_URLS.GetdashboardServicecatalogue, params)
@@ -153,38 +143,36 @@ const HomeScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_group_refno: groupRefNo
+        Sess_group_refno: groupRefNo,
       },
     };
     Provider.createDFDashboard(Provider.API_URLS.GetdashboardTotaluser, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          let totalUserCount = 0;
           setTotalUsers(response.data.data[0].TotalUsers);
           let usr_data = [
             {
               roleID: 0,
-              roleName: 'Dealer',
-              roleCount: response.data.data[0].TotalDealer
+              roleName: "Dealer",
+              roleCount: response.data.data[0].TotalDealer,
             },
             {
               roleID: 1,
-              roleName: 'Contractor',
-              roleCount: response.data.data[0].TotalContractor
+              roleName: "Contractor",
+              roleCount: response.data.data[0].TotalContractor,
             },
             {
               roleID: 2,
-              roleName: 'General User',
-              roleCount: response.data.data[0].TotalGeneralUser
+              roleName: "General User",
+              roleCount: response.data.data[0].TotalGeneralUser,
             },
             {
               roleID: 3,
-              roleName: 'Client',
-              roleCount: response.data.data[0].TotalClient
+              roleName: "Client",
+              roleCount: response.data.data[0].TotalClient,
             },
           ];
           setUserCountData(usr_data);
-
         }
         setIsLoading(false);
       })
@@ -200,14 +188,43 @@ const HomeScreen = ({ route, navigation }) => {
   const GetUserData = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      roleID = JSON.parse(userData).RoleID;
-      setUserRoleID(JSON.parse(userData).RoleID);
-      userID = JSON.parse(userData).UserID;
-      groupRefNo = JSON.parse(userData).Sess_group_refno;
+      const userDataParsed = JSON.parse(userData);
+      roleID = userDataParsed.RoleID;
+      userID = userDataParsed.UserID;
+      groupRefNo = userDataParsed.Sess_group_refno;
+      let roleName = "";
+      switch (roleID) {
+        case "1":
+          roleName = "Super Admin";
+          break;
+        case "2":
+          roleName = "Admin";
+          break;
+        case "3":
+          roleName = "General User";
+          break;
+        case "4":
+          roleName = "Dealer";
+          break;
+        case "5":
+          roleName = "Contractor";
+          break;
+        case "7":
+          roleName = "Employee";
+          break;
+        case "8":
+          roleName = "Client";
+          break;
+        case "9":
+          roleName = "Architect And Consultant (PMC)";
+          break;
+      }
+      setUserRoleID(roleID);
+      setUserRoleName(roleName);
       GetServiceCatalogue();
       FetchImageGalleryData();
-      GetUserCount(JSON.parse(userData).UserID, JSON.parse(userData).Sess_group_refno);
-      if (JSON.parse(userData).RoleID == 3) {
+      GetUserCount(userID, groupRefNo);
+      if (roleID == 3) {
         FillUserRoles();
       }
     }
@@ -242,21 +259,19 @@ const HomeScreen = ({ route, navigation }) => {
     hideDialog();
     setIsButtonLoading(true);
     const params = {
-      data:{
+      data: {
         Sess_UserRefno: userID,
         switchto_group_refno: userRoleData.filter((el) => {
           return el.roleName === roleName;
-        })[0].roleID
-      }
+        })[0].roleID,
+      },
     };
     Provider.createDFDashboard(Provider.API_URLS.Getdashboard_Userswitchto_Proceed, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           setUserRoleName(roleName);
           GetUserCount();
           GetUserDetails(userID);
-
         } else {
           setSnackbarText(communication.NoData);
           setIsSnackbarVisible(true);
@@ -321,13 +336,13 @@ const HomeScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupRefNo,
-      }
+      },
     };
     Provider.createDFDashboard(Provider.API_URLS.GetdashboardUserswitchto, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-
-          let d = [], userRoleNames = [];
+          let d = [],
+            userRoleNames = [];
           for (var key in response.data.data[0]) {
             if (response.data.data[0].hasOwnProperty(key)) {
               d.push({
@@ -341,7 +356,6 @@ const HomeScreen = ({ route, navigation }) => {
 
           setUserRoleData(d);
           setSwitchRoleNames(userRoleNames);
-
         } else {
           setSnackbarText(communication.NoData);
           setIsSnackbarVisible(true);
@@ -354,7 +368,7 @@ const HomeScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
@@ -395,8 +409,7 @@ const HomeScreen = ({ route, navigation }) => {
             <Divider />
           </View>
           <View style={[Styles.margin16, Styles.marginTop0, Styles.border1, Styles.borderRadius8, Styles.OverFlow, { height: 180 }]}>
-            <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }}
-              autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
+            <ImageSlider data={catalogueImages} timer={10000} activeIndicatorStyle={{ backgroundColor: theme.colors.primary }} autoPlay={true} onClick={() => setCatalogueImagesZoomVisible(true)} style={Styles.borderRadius16} />
           </View>
           <View style={[Styles.margin4, Styles.height96, Styles.border1, { position: "relative" }]}>
             <Image source={{ uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg" }} style={{ width: "100%", height: "100%" }} />
@@ -428,20 +441,13 @@ const HomeScreen = ({ route, navigation }) => {
 
           <View style={[Styles.width100per, Styles.padding16, Styles.positionRelative]}>
             <View style={[Styles.flex1, Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.OverFlow]}>
-              <FadeCarousel
-                elements={slidesTwo}
-                containerStyle={[Styles.flex1, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
-                fadeDuration={2000}
-                stillDuration={2000}
-                start={true}
-              />
+              <FadeCarousel elements={slidesTwo} containerStyle={[Styles.flex1, Styles.flexAlignCenter, Styles.flexJustifyCenter]} fadeDuration={2000} stillDuration={2000} start={true} />
               <View style={[Styles.width100per, Styles.height40, { backgroundColor: "rgba(0,0,0,0.4)", position: "absolute" }]}>
                 <Text style={[Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold]}>Design your Dream</Text>
               </View>
             </View>
 
             <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
-
               <View style={Styles.width50per}>
                 <Card
                   onPress={() => {
@@ -449,70 +455,56 @@ const HomeScreen = ({ route, navigation }) => {
                       navigation.navigate("ApprovedUserScreen", { type: "add" });
                     }
                   }}
-                  style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16,
-                  { backgroundColor: "#42c6a5" }]}
-
+                  style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}
                 >
-                  <Card.Title style={[Styles.width100per]} title={
-
-                    <View style={[Styles.flexSpaceBetween, Styles.flexRow, Styles.width100per]}>
-                      <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>
-                        <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>Users</Text>
+                  <Card.Title
+                    style={[Styles.width100per]}
+                    title={
+                      <View style={[Styles.flexSpaceBetween, Styles.flexRow, Styles.width100per]}>
+                        <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>
+                          <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>Users</Text>
+                        </View>
                       </View>
-                    </View>
-                  }
-                    right={(props) =>
+                    }
+                    right={(props) => (
                       <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite, Styles.marginEnd8]}>
                         <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>{totalUsers}</Text>
                       </View>
-                    }
-                    titleStyle={[Styles.textColorWhite]} />
-
+                    )}
+                    titleStyle={[Styles.textColorWhite]}
+                  />
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>{15}</Text>
                   <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>General Users</Text>
-
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
                   <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Contractors</Text>
-
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>28</Text>
                   <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Dealers</Text>
-
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>1</Text>
                   <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Architechts</Text>
-
                 </Card>
               </View>
 
               <View style={Styles.width50per}>
-                <Card onPress={() => {
-                  if (roleID == 1) {
-                    navigation.navigate("MaterialSetupScreen", { type: "add" });
-                  }
-                  else {
-                    navigation.navigate("MaterialCalculatorScreen", { type: "add" });
-                  }
-                }}
-                  style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}>
-
-                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite,]}>Material Calculator</Text>}
+                <Card
+                  onPress={() => {
+                    if (roleID == 1) {
+                      navigation.navigate("MaterialSetupScreen", { type: "add" });
+                    } else {
+                      navigation.navigate("MaterialCalculatorScreen", { type: "add" });
+                    }
+                  }}
+                  style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}
+                >
+                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
-                  <Image source={require('../../assets/material-calculator.png')}
-                    style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
-
+                  <Image source={require("../../assets/material-calculator.png")} style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
                 </Card>
                 <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1, Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
-
-                  {/* <Card.Title title="Job Your Dream"/> */}
                   <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Looking For Job</Text>
-
-                  <Image source={require('../../assets/job-seeker.png')}
-                    style={[Styles.width104, Styles.height104, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
-
+                  <Image source={require("../../assets/job-seeker.png")} style={[Styles.width104, Styles.height104, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
                 </Card>
               </View>
-
             </View>
-
           </View>
         </ScrollView>
       )}
@@ -521,7 +513,7 @@ const HomeScreen = ({ route, navigation }) => {
       </Snackbar>
       <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)} transparent={true}>
         <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
-          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => { }}>
+          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => {}}>
             View
           </Button>
           <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 104, backgroundColor: "white" }} onPress={() => setCatalogueImagesZoomVisible(false)}>
@@ -530,7 +522,7 @@ const HomeScreen = ({ route, navigation }) => {
           <ImageViewer imageUrls={catalogueImagesZoom} backgroundColor="transparent" style={{ height: 1920 }} />
         </View>
       </Modal>
-    </View >
+    </View>
   );
 };
 

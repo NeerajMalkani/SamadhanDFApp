@@ -200,6 +200,11 @@ class Provider {
     Getgotoestimation: "getgotoestimation/",
     MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
     MyDesignationRefnoCheck: "mydesignationrefnocheck/",
+    MyClientUserRefNoCheck: "myclientuserrefnocheck/",
+    CompanyNameAutocompleteClientSearch: "companynameautocompleteclientsearch/",
+    MobileNoAutocompleteClientSearch: "mobilenoautocompleteclientsearch/",
+    ClientSearch: "clientsearch/",
+    ClientAdd: "clientadd/",
 
     /******************************Dealer Brand************************************/
     DealerBrandMasterRefNoCheck: "dealerbrandmasterrefnocheck/",
@@ -232,21 +237,20 @@ class Provider {
     GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
 
-    getservicenamematerialcalculatorform : "getservicenamematerialcalculatorform/",
-    getcategorynamematerialcalculatorform : "getcategorynamematerialcalculatorform/",
-    getproductnamematerialcalculatorform : "getproductnamematerialcalculatorform/",
-    getproductdesigntypematerialcalculatorform : "getproductdesigntypematerialcalculatorform/",
-    getdesigntypeimagematerialcalculatorform : "getdesigntypeimagematerialcalculatorform/",
-    getsqftcalculation_materialcalculatorform : "getservicenamematerialcalculatorform/",
-    getviewmaterials_materialcalculatorform : "getviewmaterials_materialcalculatorform/",
-    getproductrate_by_brandrefno_materialcalculatorform : "getproductrate_by_brandrefno_materialcalculatorform/",
+    getservicenamematerialcalculatorform: "getservicenamematerialcalculatorform/",
+    getcategorynamematerialcalculatorform: "getcategorynamematerialcalculatorform/",
+    getproductnamematerialcalculatorform: "getproductnamematerialcalculatorform/",
+    getproductdesigntypematerialcalculatorform: "getproductdesigntypematerialcalculatorform/",
+    getdesigntypeimagematerialcalculatorform: "getdesigntypeimagematerialcalculatorform/",
+    getsqftcalculation_materialcalculatorform: "getservicenamematerialcalculatorform/",
+    getviewmaterials_materialcalculatorform: "getviewmaterials_materialcalculatorform/",
+    getproductrate_by_brandrefno_materialcalculatorform: "getproductrate_by_brandrefno_materialcalculatorform/",
     getbrandnamelist_materialcalculatorform: "getbrandnamelist_materialcalculatorform/",
 
     getservicenamedealermyserviceform: "getservicenamedealermyserviceform/",
     dealermyservicecreate: "dealermyservicecreate/",
     dealermyserviceupdate: "dealermyserviceupdate/",
     dealermyservicerefnocheck: "dealermyservicerefnocheck/",
-
   };
 
   createDFCommon(resource, params) {
