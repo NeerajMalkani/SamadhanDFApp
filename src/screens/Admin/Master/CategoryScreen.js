@@ -52,7 +52,7 @@ const CategoryScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) { 
           if (response.data.data) {
-            response.data.data = 4(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
+             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {

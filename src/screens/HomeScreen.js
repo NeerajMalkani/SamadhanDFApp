@@ -451,7 +451,7 @@ const HomeScreen = ({ route, navigation }) => {
               <View style={Styles.width50per}>
                 <Card
                   onPress={() => {
-                    if (roleID == 1) {
+                    if (roleID == 2) {
                       navigation.navigate("ApprovedUserScreen", { type: "add" });
                     }
                   }}
@@ -487,7 +487,9 @@ const HomeScreen = ({ route, navigation }) => {
               <View style={Styles.width50per}>
                 <Card
                   onPress={() => {
-                    if (roleID == 1) {
+                    console.log("roleid ======================");
+                    console.log(roleID);
+                    if (roleID == 2) {
                       navigation.navigate("MaterialSetupScreen", { type: "add" });
                     } else {
                       navigation.navigate("MaterialCalculatorScreen", { type: "add" });
@@ -495,7 +497,7 @@ const HomeScreen = ({ route, navigation }) => {
                   }}
                   style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}
                 >
-                  {roleID == 1 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
+                  {roleID == 2 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
                   {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require("../../assets/material-calculator.png")} style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
                 </Card>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
 import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -15,6 +15,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let ContractorID = 0;
 
+
 const ContractorDepartmentScreen = ({ navigation }) => {
   //#region Variables
 
@@ -26,8 +27,18 @@ const ContractorDepartmentScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [searchInput, setSearchInput] = useState("");
   //#endregion 
-
+  // const handleChange = (e) => {
+  //   e.preventDefault();
+  //   setSearchInput(e.target.value);
+  // };
+  
+  // if (searchInput.length > 0) {
+  //     countries.filter((country) => {
+  //     return country.name.match(searchInput);
+  // });
+  // }
   //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -132,7 +143,12 @@ const ContractorDepartmentScreen = ({ navigation }) => {
       },
     });
   };
- 
+  // QuickSearchToolbar.propTypes = {
+  //   clearSearch: PropTypes.func.isRequired,
+  //   onChange: PropTypes.func.isRequired,
+  //   value: PropTypes.string.isRequired,
+  // };
+  
 
   //#endregion 
 
@@ -145,7 +161,10 @@ const ContractorDepartmentScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+          <Searchbar style={[Styles.margin16]} placeholder="Search"onChange={onChangeSearch}
+   value={searchQuery} />
+  
+       
           <SwipeListView
             previewDuration={1000}
             previewOpenValue={-72}
