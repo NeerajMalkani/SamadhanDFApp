@@ -78,7 +78,7 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
             const fullData = response.data.data.map((o) => ({
               ...o,
               isChecked: arrProductData[0].find((el) => {
-                return el.productID == o.productID;
+                return el.id == o.id;
               })
                 ? true
                 : false,
@@ -144,7 +144,8 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
                 }
                 arrProductData[1](tempArrProductData);
                 let temp = productsFullData.map((u) => {
-                  if (k.productID === u.productID) {
+                  console.log(u);
+                  if (k.id === u.id) {
                     return { ...u, isChecked: !u.isChecked };
                   }
                   return u;

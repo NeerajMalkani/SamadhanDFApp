@@ -126,6 +126,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         group_refno: actID,
       },
     };
+ 
     Provider.createDFAdmin(Provider.API_URLS.ServiceNameServiceProduct, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -240,10 +241,10 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         product_refno: productDataParam
           ? productDataParam.find((el) => {
               return el.productName === selectedItem;
-            }).productID
+            }).id
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
-            }).productID,
+            }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.UnitNameSelectedForProduct, params)
@@ -387,7 +388,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         }).id,
         product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
-        }).productID,
+        }).id,
         unitcategoryrefno_unitrefno: selectedUnitID,
         with_material_rate: rum,
         without_material_rate: ruwm,

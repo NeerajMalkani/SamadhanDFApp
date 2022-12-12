@@ -73,11 +73,7 @@ const DealerProductScreen = ({ navigation }) => {
 
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            // console.log('=========start=============');
-            // console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
-            console.log('=========updated=============');
-            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -169,7 +165,7 @@ const DealerProductScreen = ({ navigation }) => {
         id: data.item.id,
         brandID: data.item.brandID,
         brandName: data.item.brandName,
-        productID: data.item.productID,
+        id: data.item.id,
         productName: data.item.productName,
         image: data.item.image,
         price: data.item.price,

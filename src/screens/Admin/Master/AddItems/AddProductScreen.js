@@ -206,6 +206,7 @@ const AddProductScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            
             let str = "";
             response.data.data.map((k, i) => {
               str += str === "" ? k.displayUnit : " / " + k.displayUnit;

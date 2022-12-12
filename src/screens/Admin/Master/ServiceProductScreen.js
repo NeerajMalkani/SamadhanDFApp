@@ -108,7 +108,7 @@ const ServiceProductScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.productID,
+        id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
         unitName: data.item.unitName,

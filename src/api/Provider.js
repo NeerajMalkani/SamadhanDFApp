@@ -173,7 +173,7 @@ class Provider {
     ServiceNamePopupMaterialSetup: "getservicename_popup_materialsetupform/",
     CategoryNamePopupMaterialSetup: "getcategoryname_popup_materialsetupform/",
     ProductListPopupMaterialSetup: "getproductlist_popup_materialsetupform/",
-    BrandNamelistPopupMaterialSetup: "getbrandnamelist_popup_materialsetupform/",
+    BrandNamelistPopupMaterialSetup: "getbrandnamelist_materialsetupform/",
     ProductRateBrandRefNoMaterialSetup: "getproductrate_by_brandrefno_materialsetupform/",
     MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
     MaterialsSetupCreate: "materialsetupcreate/",

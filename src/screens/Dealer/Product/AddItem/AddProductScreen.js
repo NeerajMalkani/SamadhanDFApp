@@ -14,7 +14,8 @@ import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 import { APIConverter } from "../../../../utils/apiconverter";
 
-let dealerID = 0, groupID = 0;
+let dealerID = 0,
+  groupID = 0;
 
 const AddDealerProductScreen = ({ route, navigation }) => {
   //#region Variables
@@ -63,7 +64,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -76,25 +77,23 @@ const AddDealerProductScreen = ({ route, navigation }) => {
     }
   };
 
-
-
   const FetchBrands = () => {
     let params = {
       data: {
-        Sess_UserRefno: dealerID
-      }
+        Sess_UserRefno: dealerID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getbrandnamedealerproductform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            const brandData: any = [];
-            response.data.data.map((data: any, i: number) => {
+            const brandData = [];
+            response.data.data.map((data, i) => {
               brandData.push({
                 brandID: data.brandID,
                 brandName: data.brandName,
-                brandNameDisplay: `${data.brandName} (${data.categoryName})`
+                brandNameDisplay: `${data.brandName} (${data.categoryName})`,
               });
             });
 
@@ -116,7 +115,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProductsFromCategory = (brandID) => {
@@ -124,8 +123,8 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: dealerID,
         Sess_group_refno: groupID,
-        brand_refno: brandID
-      }
+        brand_refno: brandID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getproductnamedealerproductform, params)
       .then((response) => {
@@ -138,7 +137,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchUnitsFromProduct = (brandID) => {
@@ -146,8 +145,8 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: dealerID,
         Sess_group_refno: groupID,
-        brand_refno: brandID
-      }
+        brand_refno: brandID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getproductdatadealerproductform, params)
       .then((response) => {
@@ -163,7 +162,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -181,8 +180,6 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       return el.brandNameDisplay === text;
     });
 
-    //setUnitName(selBrand.unitName);
-    //setUnitName2(selBrand.unitName2);
     FetchProductsFromCategory(selBrand.brandID);
     FetchUnitsFromProduct(selBrand.brandID);
   };
@@ -234,40 +231,35 @@ const AddDealerProductScreen = ({ route, navigation }) => {
 
   const InsertData = () => {
     const datas = new FormData();
-    console.log('insert ========================');
     const params = {
-      data: {
-        Sess_UserRefno: dealerID,
-        brand_refno: brandFullData.find((el) => {
-          return el.brandNameDisplay === brandName;
-        }).brandID,
-        product_refno: productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).id,
-        price: price,
-        sales_unit: unitName,
-        converted_unit_value: unitValue,
-        actual_unit_refno: unitID,
-        convert_unit_refno: convertedUnitID,
-        description: description,
-        view_status: checked ? "1" : "0",
-      }
+      Sess_UserRefno: dealerID,
+      brand_refno: brandFullData.find((el) => {
+        return el.brandNameDisplay === brandName;
+      }).brandID,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).id,
+      price: price,
+      sales_unit: unitName,
+      converted_unit_value: unitValue,
+      actual_unit_refno: unitID,
+      convert_unit_refno: convertedUnitID,
+      description: description,
+      view_status: checked ? "1" : "0",
     };
     datas.append("data", JSON.stringify(params));
     datas.append(
       "product_image",
       filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
-    console.log(datas);
     Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupcreate, datas)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -289,38 +281,36 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   const UpdateData = () => {
     const datas = new FormData();
     const params = {
-
-      "data": {
-        "Sess_UserRefno": dealerID,
-        "company_product_refno": route.params.data.productID,
-        "brand_refno": brandFullData.find((el) => {
-          return el.brandNameDisplay === brandName;
-        }).brandID,
-        "product_refno": productsFullData.find((el) => {
-          return el.productName === productsName;
-        }).id,
-        "price": price,
-        "sales_unit": unitName,
-        "converted_unit_value": unitValue,
-        "actual_unit_refno": unitID,
-        "convert_unit_refno": convertedUnitID,
-        "description": description,
-        "view_status": checked ? "1" : "0"
-      }
+      Sess_UserRefno: dealerID,
+      company_product_refno: route.params.data.id,
+      brand_refno: brandFullData.find((el) => {
+        return el.brandNameDisplay === brandName;
+      }).brandID,
+      product_refno: productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).id,
+      price: price,
+      sales_unit: unitName,
+      converted_unit_value: unitValue,
+      actual_unit_refno: unitID,
+      convert_unit_refno: convertedUnitID,
+      description: description,
+      view_status: checked ? "1" : "0",
     };
     datas.append("data", JSON.stringify(params));
     datas.append(
       "product_image",
       filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupupdate, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -443,7 +433,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       uploadFile();
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

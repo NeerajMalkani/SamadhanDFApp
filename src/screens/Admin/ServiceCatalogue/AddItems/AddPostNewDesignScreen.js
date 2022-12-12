@@ -211,12 +211,12 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setProductsFullData(response.data.data);
+            const products = response.data.data.map((data) => data.productName);
+            setProductsData(products);
             if (route.params.type === "edit") {
               FetchProductDataFromProduct(route.params.data.productName, response.data.data);
               FetchDesignTypeFromProduct(route.params.data.productName, response.data.data);
             }
-            const products = response.data.data.map((data) => data.productName);
-            setProductsData(products);
           }
         }
       })
@@ -230,10 +230,10 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         product_refno: productDataParams
           ? productDataParams.find((el) => {
               return el.productName === selectedItem;
-            }).productID
+            }).id
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
-            }).productID,
+            }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductDataNewDesign, params)
@@ -255,10 +255,10 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
         product_refno: productDataParams
           ? productDataParams.find((el) => {
               return el.productName === selectedItem;
-            }).productID
+            }).id
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
-            }).productID,
+            }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductDesignTypeNewDesign, params)
@@ -365,7 +365,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       }).id,
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
-      }).productID,
+      }).id,
       designtype_refno: designTypeFullData.find((el) => {
         return el.designTypeName === designTypeName;
       }).id,
@@ -384,6 +384,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     });
     Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignCreate, datas)
       .then((response) => {
+        console.log(response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -418,7 +419,7 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
       }).id,
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
-      }).productID,
+      }).id,
       designtype_refno: designTypeFullData.find((el) => {
         return el.designTypeName === designTypeName;
       }).id,
@@ -438,11 +439,11 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
             type: filePath.type + "/*",
             uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
           }
-        : null
+        : ""
     );
-    console.log(datas);
     Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignUpdate, datas)
       .then((response) => {
+        console.log(response.data.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");

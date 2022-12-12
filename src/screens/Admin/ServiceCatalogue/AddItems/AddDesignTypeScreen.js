@@ -231,7 +231,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       }).id,
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
-      }).productID,
+      }).id,
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));
@@ -277,7 +277,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       }).id,
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
-      }).productID,
+      }).id,
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));

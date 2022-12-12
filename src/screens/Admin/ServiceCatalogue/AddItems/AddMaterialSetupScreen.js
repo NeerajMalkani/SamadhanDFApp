@@ -198,10 +198,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         product_refno: productDataParams
           ? productDataParams.find((el) => {
               return el.productName === selectedItem;
-            }).productID
+            }).id
           : productsFullData.find((el) => {
               return el.productName === selectedItem;
-            }).productID,
+            }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductDesignTypeMaterialSetup, params)
@@ -219,7 +219,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const FetchBrandsFromProductIds = () => {
-    const productids = arrProductData[0].map((data) => data.productID);
+    const productids = arrProductData[0].map((data) => data.id);
     let params = {
       data: {
         Sess_UserRefno: "2",
@@ -242,7 +242,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   };
 
   const GetProductRateFromMaterialSetup = (index) => {
-    const productids = arrProductData[0].map((data) => data.productID);
+    const productids = arrProductData[0].map((data) => data.id);
     let params = {
       data: {
         Sess_UserRefno: "2",
@@ -258,7 +258,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             const appliedProducts = response.data.data;
             const newData = [...arrProductData[0]];
             newData.map((k) => {
-              const foundProduct = appliedProducts.find((el) => el.productID == k.productID);
+              const foundProduct = appliedProducts.find((el) => el.id == k.id);
               if (foundProduct) {
                 k.brandID = foundProduct.brandID;
                 k.brandName = foundProduct.brandName;
@@ -369,7 +369,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     let formula_parameter1 = new Object();
 
     arrProductData[0].map((k, i) => {
-      product_refno[(i + 1).toString()] = k.productID;
+      product_refno[(i + 1).toString()] = k.id;
       product_name[(i + 1).toString()] = k.productName;
       brand_name[(i + 1).toString()] = k.brandName;
       brand_refno[(i + 1).toString()] = k.brandID;
@@ -391,7 +391,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         }).id,
         cont_product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
-        }).productID,
+        }).id,
         designtype_refno: designTypeFullData.find((el) => {
           return el.designTypeName === designType;
         }).id,
@@ -409,7 +409,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         rate: rate,
         amount: amount,
         formula_parameter1: formula_parameter1,
-        subtotal: total.toFixed(4)
+        subtotal: total
       },
     };
 
@@ -444,7 +444,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     let formula_parameter1 = new Object();
 
     arrProductData[0].map((k, i) => {
-      product_refno[(i + 1).toString()] = k.productID;
+      product_refno[(i + 1).toString()] = k.id;
       product_name[(i + 1).toString()] = k.productName;
       brand_name[(i + 1).toString()] = k.brandName;
       brand_refno[(i + 1).toString()] = k.brandID;
@@ -467,7 +467,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         }).id,
         cont_product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
-        }).productID,
+        }).id,
         designtype_refno: designTypeFullData.find((el) => {
           return el.designTypeName === designType;
         }).id,
@@ -485,7 +485,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         rate: rate,
         amount: amount,
         formula_parameter1: formula_parameter1,
-        subtotal: total.toFixed(4)
+        subtotal: total
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupUpdate, params)
@@ -675,7 +675,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                         let brandsFullDataTemp = [...brandsFullData];
                         arrProductsTemp.splice(arrProductsTemp.indexOf(k), 1);
                         const allBrandsForProduct = brandsFullDataTemp.filter((el) => {
-                          return el.productID === k.productID;
+                          return el.id === k.id;
                         });
                         allBrandsForProduct.map((all) => {
                           const arrTemp = arrProductsTemp.filter((el) => {
