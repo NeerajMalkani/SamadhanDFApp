@@ -259,6 +259,27 @@ class Provider {
     getbrandnamedealerproductform:"getbrandnamedealerproductform/",
     getproductnamedealerproductform:"getproductnamedealerproductform/",
     
+    myemployeelist:"myemployeelist/",
+    aadharnoautocomplete: "aadharnoautocomplete/",
+    mobilenoautocomplete:"mobilenoautocomplete/",
+    employeesearch:"employeesearch/",
+    employeeadd:"employeeadd/",
+    employeecreate:"employeecreate/",
+    sendotptoemployee:"sendotptoemployee/",
+    employeeotpverify:"employeeotpverify/",
+    getemployeebasicdata:"getemployeebasicdata/",
+
+    employeebasicdataupdate:"employeebasicdataupdate/",
+    getbranchnameemployeeworkform:"getbranchnameemployeeworkform/",
+    getdepartmentnameemployeeworkform:"getdepartmentnameemployeeworkform/",
+    getdesignationnameemployeeworkform:"getdesignationnameemployeeworkform/",
+    getreportingtoemployeeworkform:"getreportingtoemployeeworkform/",
+    getemptypenameemployeeworkform:"getemptypenameemployeeworkform/",
+    getemployeeworkdata:"getemployeeworkdata/",
+    employeeworkdataupdate:"employeeworkdataupdate/",
+    getwagestypenameemployeeworkform:"getwagestypenameemployeeworkform/",
+    getemployeepaydata:"getemployeepaydata/",
+    employeepaydataupdate:"employeepaydataupdate/",
 
   };
 
