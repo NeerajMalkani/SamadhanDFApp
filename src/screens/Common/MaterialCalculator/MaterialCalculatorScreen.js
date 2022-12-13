@@ -88,7 +88,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const [disableButton, setDisableButton] = useState(false);
+  const [disableButton, setDisableButton] = React.useState(false);
 
   //#endregion 
 

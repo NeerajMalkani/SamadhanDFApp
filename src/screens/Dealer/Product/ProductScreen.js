@@ -11,7 +11,7 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { APIConverter } from "../../../utils/apiconverter";
+//import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0, ifBrandCreate = 0;
@@ -45,6 +45,45 @@ const DealerProductScreen = ({ navigation }) => {
   //#endregion 
 
   //#region Functions
+
+   const APIConverter = (response) => {
+    function renameKey(obj, oldKey, newKey) {
+      if (obj.hasOwnProperty(oldKey)) {
+        obj[newKey] = obj[oldKey];
+        if (newKey === "display") {
+          obj[newKey] = obj[newKey] == "1" ? true : false;
+        }
+        delete obj[oldKey];
+      }
+    }
+  
+    response.forEach((obj) => {
+  
+      renameKey(obj, "actual_unit_name", "unitOfSale");
+      renameKey(obj, "actual_unit_name_txt", "unitOfSaleText");
+      renameKey(obj, "actual_unit_refno", "unitID");
+      renameKey(obj, "brand_name", "brandName");
+      renameKey(obj, "brand_refno", "brandID");
+      renameKey(obj, "company_product_refno", "id");
+      renameKey(obj, "convert_unit_name", "convertUnitName");
+      renameKey(obj, "product_refno", "productID");
+      renameKey(obj, "product_name", "productName");
+
+      renameKey(obj, "brand_prefixname", "brandPrefix");
+      renameKey(obj, "convert_unit_refno", "convertedUnitID");
+      renameKey(obj, "converted_unit_value", "convertedUnitValue");
+      renameKey(obj, "isapprove", "isApprove");
+      renameKey(obj, "ispublish", "isPublish");
+      renameKey(obj, "product_image_url", "image");
+      renameKey(obj, "sales_unit", "unitOfSale");
+      renameKey(obj, "view_status", "display");
+
+      
+    });
+  
+    return response;
+  };
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -73,6 +112,7 @@ const DealerProductScreen = ({ navigation }) => {
 
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -155,7 +195,6 @@ const DealerProductScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log('edit data =============');
     console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddDealerProductScreen", {
@@ -165,7 +204,7 @@ const DealerProductScreen = ({ navigation }) => {
         id: data.item.id,
         brandID: data.item.brandID,
         brandName: data.item.brandName,
-        id: data.item.id,
+        productID: data.item.productID,
         productName: data.item.productName,
         image: data.item.image,
         price: data.item.price,
