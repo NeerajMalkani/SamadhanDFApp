@@ -281,10 +281,24 @@ class Provider {
     getemployeepaydata:"getemployeepaydata/",
     employeepaydataupdate:"employeepaydataupdate/",
 
+    MyBranchRefnocheck: "branchrefnocheck/",
+    MyFetchBranchtype: "getbranchtypebranchform/",
+    MyFetchBranchAssign: "getassignbranchadminbranchform/",
+    AddBranch: "branchcreate/",
+    EditBranch: "branchupdate/",
+    CompanyBranchForm: "getcompanynamebranchform/",
+    getassignbranchadminedit_branchform:"getassignbranchadminedit_branchform/",
+    FetchBranchAssignContactNo: "getassignbranchadmin_contactno_branchform/",
+    MyFetchRegionalOffice: "getparentbranchrefnobranchform/",
+    
   };
 
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
+  }
+
+  createDFCommonWithouParam(resource: string) {
+    return axios.post(`${BASE_URL}/${resource}`);
   }
 
   createDFCommonWithHeader(resource, params) {

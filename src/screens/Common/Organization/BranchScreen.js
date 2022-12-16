@@ -14,10 +14,11 @@ import { Styles } from "../../../styles/styles";
 import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
+import { APIConverter } from "../../../utils/apiconverter";
 
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let userID = 0;
+let userID = 0, companyID = 0, groupID = 0;
 
 const BranchListScreen = ({ navigation }) => {
 
@@ -40,7 +41,8 @@ const BranchListScreen = ({ navigation }) => {
   const [locationType, setLocationType] = React.useState("");
 
   const [locationName, setLocationName] = React.useState("");
-  const [branchAdmin, setBranchAdmin] = React.useState("");
+  const [inchargeName, setInchargeName] = React.useState("");
+  const [mobileNo, setMobileNo] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [gstNo, setGSTNo] = React.useState("");
 
@@ -59,6 +61,8 @@ const BranchListScreen = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      groupID = JSON.parse(userData).Sess_group_refno;
       FetchData();
     }
   };
@@ -75,11 +79,21 @@ const BranchListScreen = ({ navigation }) => {
     }
     let params = {
       AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        branch_refno: "all",
+        Sess_company_refno: companyID,
+        Sess_group_refno: groupID,
+      }
     };
-    Provider.getAll(`master/getuserbranches?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.MyBranchRefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log(response.data.data);
+            response.data.data = APIConverter(response.data.data, false, "addbranch");
+            // console.log('converted data=============');
+            // console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -129,22 +143,24 @@ const BranchListScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap, buttonType) => {
+    //console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("BranchEditScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        accountNo: data.item.accountNo,
-        address: data.item.address,
-        bankBranchName: data.item.bankBranchName,
+        accountNo: data.item.accountNumber,
+        address: data.item.addressLine,
+        bankBranchName: data.item.branchName,
         bankName: data.item.bankName,
-        branchAdmin: data.item.branchAdmin,
+        branchAdmin: data.item.branchInchargeName,
         branchAdminID: data.item.branchAdminID,
         branchType: data.item.branchType,
+
         branchTypeID: data.item.branchTypeID,
         cityID: data.item.cityID,
-        contactPersonNo: data.item.contactPersonNo,
+        contactPersonNo: data.item.branchInchargeContactNo,
         display: data.item.display,
         gstNo: data.item.gstNo,
         id: data.item.id,
@@ -164,20 +180,20 @@ const BranchListScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
         <List.Item
-          title={data.item.locationName}
+          title={data.item.branchInchargeName}
           titleStyle={{ fontSize: 18 }}
-          description={`Location Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType}\nAdmin: ${NullOrEmpty(data.item.branchAdmin) ? "" : data.item.branchAdmin} `}
+          description={`Mobile: ${NullOrEmpty(data.item.branchInchargeContactNo) ? "" : data.item.branchInchargeContactNo}\nLocation Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType} `}
           onPress={() => {
-
+            //console.log(data.item);
             refRBSheet.current.open();
+            setInchargeName(data.item.branchInchargeName);
+            setMobileNo(data.item.branchInchargeContactNo);
             setLocationName(data.item.locationName);
             setLocationType(data.item.branchType);
-            setBranchAdmin(data.item.branchAdmin);
-            setAddress(data.item.address);
+            setAddress(data.item.addressLine);
             setGSTNo(data.item.gstNo);
             setPANNo(data.item.panNo);
             setDispaly(data.item.display ? "Yes" : "No");
-
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="office-building" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -225,18 +241,18 @@ const BranchListScreen = ({ navigation }) => {
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
 
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} />
+      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
 
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{locationName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{inchargeName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Mobile No" description={mobileNo} />
             <List.Item title="Location Type" description={locationType} />
-            <List.Item title="Branch Admin" description={branchAdmin} />
             <List.Item title="Address" description={address} />
             <List.Item title="GST No" description={gstNo} />
             <List.Item title="PAN No" description={panNo} />

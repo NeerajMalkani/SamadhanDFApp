@@ -487,8 +487,6 @@ const HomeScreen = ({ route, navigation }) => {
               <View style={Styles.width50per}>
                 <Card
                   onPress={() => {
-                    console.log("roleid ======================");
-                    console.log(roleID);
                     if (roleID == 2) {
                       navigation.navigate("MaterialSetupScreen", { type: "add" });
                     } else {

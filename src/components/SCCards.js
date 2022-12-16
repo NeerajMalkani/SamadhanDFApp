@@ -2,7 +2,6 @@ import { Button, Card, Subheading, Title } from "react-native-paper";
 import { Styles } from "../styles/styles";
 
 const CreateSCCards = ({ image, title, id, subttitle, data, cardImageClick, cardClick, buttonData }) => {
-  console.log(data);
   return (
     <Card
       style={[Styles.marginTop16, Styles.borderRadius8, Styles.OverFlow, Styles.padding0]}

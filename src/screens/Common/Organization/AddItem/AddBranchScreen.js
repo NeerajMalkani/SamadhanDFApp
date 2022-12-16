@@ -14,8 +14,9 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
+import { APIConverter } from "../../../../utils/apiconverter";
 const windowWidth = Dimensions.get("window").width;
-let userID = 0;
+let userID = 0, companyID = 0, groupID = 0;
 
 const BranchEditScreen = ({ route, navigation }) => {
   const isFocused = useIsFocused();
@@ -56,15 +57,15 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [contactPersonNoInvalid, setContactPersonNoInvalid] = useState("");
   const contactPersonNoRef = useRef({});
 
-  const [gstNo, setGSTNo] = useState(route.params.type === "edit" ? route.params.data.gstNo.toString() : "");
+  const [gstNo, setGSTNo] = useState(route.params.type === "edit" ? route.params.data.gstNo : "");
   const [gstNoInvalid, setGSTNoInvalid] = useState("");
   const gstNoRef = useRef({});
 
-  const [panNo, setPANNo] = useState("");
+  const [panNo, setPANNo] = useState(route.params.type === "edit" ? route.params.data.panNo : "");
   const [panNoInvalid, setPANNoInvalid] = useState("");
   const panNoRef = useRef({});
 
-  const [display, setDisplay] = useState("");
+  const [display, setDisplay] = useState(route.params.type === "edit" ? route.params.data.display : false);
   const [displayID, setDisplayID] = useState("");
   const [displayInvalid, setDisplayInvalid] = useState("");
   const displayRef = useRef({});
@@ -127,7 +128,23 @@ const BranchEditScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      FetchActvityRoles();
+      companyID = JSON.parse(userData).Sess_company_refno;
+      groupID = JSON.parse(userData).Sess_group_refno;
+
+      FetchCompanyName();
+      FetchBranchType();
+      FetchStates();
+
+      if (route.params.type === "edit") {
+        FetchAssignBranchAdmin(route.params.data.branchAdminID);
+        if(route.params.data.branchTypeID == 3) {
+          FetchRegionalOffice(route.params.data.branchTypeID);
+          setShowRO(true);
+        }
+      }
+      else {
+        FetchAssignBranchAdmin();
+      }
       setIsLoading(false);
     }
   };
@@ -138,15 +155,19 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   const FetchCompanyName = () => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID
+      }
     };
-    Provider.getAll(`master/getusercompany?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.CompanyBranchForm, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, false, "addbranch");
             setCompanyName(response.data.data[0].companyName);
-            setPANNo(response.data.data[0].pan);
-            setCompanyNameId(response.data.data[0].companyID)
+            setCompanyNameId(response.data.data[0].companyID);
+            //setPANNo(response.data.data[0].pan);
           }
         }
       })
@@ -154,19 +175,26 @@ const BranchEditScreen = ({ route, navigation }) => {
   };
 
   const FetchCities = (stateName, stateData) => {
+
     let params = {
-      ID: stateData
-        ? stateData.find((el) => {
-          return el.stateName === stateName;
-        }).id
-        : statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
+      data: {
+        Sess_UserRefno: userID,
+        state_refno: stateData
+          ? stateData.find((el) => {
+            return el.stateName === stateName;
+          }).stateID
+          : statesFullData.find((el) => {
+            return el.stateName === stateName;
+          }).stateID
+      }
     };
-    Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+
+    Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+
             setCityFullData(response.data.data);
             const cities = response.data.data.map((data) => data.cityName);
             setCityData(cities);
@@ -175,8 +203,8 @@ const BranchEditScreen = ({ route, navigation }) => {
 
               setCityID(route.params.data.cityID);
 
-              let s = response.data.data.filter((el: any) => {
-                return el.id === route.params.data.cityID;
+              let s = response.data.data.filter((el) => {
+                return el.cityID === route.params.data.cityID;
               });
               setCityName(s[0].cityName);
             }
@@ -187,19 +215,19 @@ const BranchEditScreen = ({ route, navigation }) => {
   };
 
   const FetchStates = () => {
-    Provider.getAll("master/getstates")
+    Provider.createDFCommonWithouParam(Provider.API_URLS.GetStateDetails)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setStatesFullData(response.data.data);
             const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
+
             if (route.params.type === "edit" && route.params.data.stateID > 0) {
-
               setStatesID(route.params.data.stateID);
-
-              let s = response.data.data.filter((el: any) => {
-                return el.id === route.params.data.stateID;
+              let s = response.data.data.filter((el) => {
+                return el.stateID === route.params.data.stateID;
               });
               setStateName(s[0].stateName);
               FetchCities(s[0].stateName, response.data.data);
@@ -214,38 +242,22 @@ const BranchEditScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
-      .then((response: any) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el: any) => {
-              return el.display && el.activityRoleName === "Contractor";
-            });
-            setArnID(response.data.data[0].id);
-          }
-          FetchCompanyName();
-          FetchAssignBranchAdmin();
-          FetchStates();
-          FetchBranchType(response.data.data[0].id);
-          FetchRegionalOffice();
-        }
-      })
-      .catch((e) => { });
-  };
-
   const FetchBranchType = (arnID) => {
     let params = {
-      ActivityID: arnID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        Sess_group_refno: groupID
+      }
     };
-    Provider.getAll(`master/getuserbranchtypes?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.MyFetchBranchtype, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, false, "addbranch");
             const bt = response.data.data.map((data) => data.branchType);
             setBranchTypeData(bt);
             setBranchTypeFullData(response.data.data);
-
             if (route.params.type === "edit" && route.params.data.branchTypeID > 0) {
               setBranchTypeID(route.params.data.branchTypeID);
               setBranchTypeName(route.params.data.branchType);
@@ -256,21 +268,31 @@ const BranchEditScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchRegionalOffice = () => {
+  const FetchRegionalOffice = (branchTypeID) => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        Sess_group_refno: groupID,
+        locationtype_refno: branchTypeID
+
+      }
     };
-    Provider.getAll(`master/getbranchregionalofficelists?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.MyFetchRegionalOffice, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data);
+
             const ro = response.data.data.map((data) => data.locationName);
             setRegionalOfficeData(ro);
             setRegionalOfficeFullData(response.data.data);
+
             if (route.params.type === "edit" && route.params.data.regionalOfficeID > 0) {
               setShowRO(true);
               setRegionalOfficeID(route.params.data.cityID);
-              let s = response.data.data.filter((el: any) => {
+              let s = response.data.data.filter((el) => {
                 return el.id === route.params.data.regionalOfficeID;
               });
               setRegionalOfficeName(s[0].locationName);
@@ -281,26 +303,67 @@ const BranchEditScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-
-  const FetchAssignBranchAdmin = () => {
-
+  const FetchBranchInchargeContactNo = (assignBranchAdminID) => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        incharge_user_refno: assignBranchAdminID,
+      }
     };
-    Provider.getAll(`master/getbranchadmins?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.FetchBranchAssignContactNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            setContactPersonNo(response.data.data[0].incharge_mobile_no);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+
+  const FetchAssignBranchAdmin = (inchargeID = null) => {
+    let params = null, url = "";
+    if (inchargeID == null) {
+      url = Provider.API_URLS.MyFetchBranchAssign;
+      params = {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_company_refno: companyID,
+        }
+      };
+    }
+    else {
+      url = Provider.API_URLS.getassignbranchadminedit_branchform;
+      params = {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_company_refno: companyID,
+          incharge_user_refno: inchargeID
+        }
+      }
+    }
+
+    Provider.createDFCommon(url, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            //response.data.data);
+            response.data.data = APIConverter(response.data.data);
+
             setAssignBranchAdminFullData(response.data.data);
             const ba = response.data.data.map((data) => data.employeeName);
             setAssignBranchAdminData(ba);
+
             if (route.params.type === "edit" && route.params.data.branchAdminID > 0) {
+              
               setAssignBranchAdminID(route.params.data.branchAdminID);
-              let e = response.data.data.filter((el: any) => {
+              let e = response.data.data.filter((el) => {
                 return el.id === route.params.data.branchAdminID;
               });
               setAssignBranchAdminName(e[0].employeeName);
-              setContactPersonNo(e[0].mobileNo);
+              //setContactPersonNo(e[0].mobileNo);
             }
           }
         }
@@ -337,7 +400,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   const onPanNoChanged = (text) => {
     setPANNo(text);
-    setPANNo(false);
+    setPANNoInvalid(false);
   };
 
   const onDispalyChanged = (selectedItem) => {
@@ -358,15 +421,15 @@ const BranchEditScreen = ({ route, navigation }) => {
   const onBranchTypeSelected = (selectedItem) => {
     setBranchTypeName(selectedItem);
     setBTError(false);
-
-    let bt = branchTypeFullData.filter((el: any) => {
+    let bt = branchTypeFullData.filter((el) => {
       return el.branchType === selectedItem;
     });
 
     setRegionalOfficeInvalid("");
     setROError(false);
 
-    if (bt[0].id == 3) {
+    if (bt[0].branchTypeID == 3) {
+      FetchRegionalOffice(bt[0].branchTypeID);
       setShowRO(true);
     }
     else {
@@ -387,10 +450,11 @@ const BranchEditScreen = ({ route, navigation }) => {
     setAssignBranchAdminName(selectedItem);
     setBAError(false);
 
-    let e = assignBranchAdminFullData.filter((el: any) => {
+    let e = assignBranchAdminFullData.filter((el) => {
       return el.employeeName === selectedItem;
     });
-    setContactPersonNo(e[0].mobileNo);
+    //setContactPersonNo(e[0].mobileNo);
+    FetchBranchInchargeContactNo(e[0].id);
   };
 
 
@@ -431,45 +495,44 @@ const BranchEditScreen = ({ route, navigation }) => {
   //#region Functions
 
   const InsertData = () => {
-
     let roID = 0;
     if (showRO) {
       roID = regionalOfficeFullData.find((el) => {
         return el.locationName && el.locationName === regionalOfficeName;
       }).id;
     }
-
     const params = {
-      CompanyID: companyNameId,
-      BranchTypeID: branchTypeFullData.filter((el: any) => {
-        return el.branchType === branchTypeName;
-      })[0].id,
-      BranchAdminID: assignBranchAdminFullData.filter((el: any) => {
-        return el.employeeName === assignBranchAdminName;
-      })[0].id,
-      ContactPersonNo: contactPersonNo,
-      GSTNo: gstNo,
-      PANNo: panNo,
-      Display: checked,
-      LocationName: branchLocationName,
-      Address: address,
-      StateID: statesFullData.find((el) => {
-        return el.stateName && el.stateName === stateName;
-      }).id,
-      CityID: cityFullData.find((el) => {
-        return el.cityName && el.cityName === cityName;
-      }).id,
-      Pincode: pincode == "" ? 0 : pincode,
-      AccountNo: accountNo,
-      BankName: bankName,
-      BankBranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      AddedByUserID: userID,
-      RegionalOfficeID: roID,
-
+      data: {
+        Sess_UserRefno: userID,
+        company_refno: companyID,
+        parent_branch_refno: roID == 0 ? "0" : roID,
+        incharge_user_refno: assignBranchAdminFullData.filter((el) => {
+          return el.employeeName === assignBranchAdminName;
+        })[0].id,
+        locationtype_refno: branchTypeFullData.filter((el) => {
+          return el.branchType === branchTypeName;
+        })[0].branchTypeID,
+        location_name: branchTypeName,
+        address: address,
+        pincode: pincode == "" ? 0 : pincode,
+        district_refno: cityFullData.find((el) => {
+          return el.cityName && el.cityName === cityName;
+        }).cityID,
+        state_refno: statesFullData.find((el) => {
+          return el.stateName && el.stateName === stateName;
+        }).stateID,
+        gst_no: gstNo,
+        pan_no: panNo,
+        bank_account_no: accountNo,
+        bank_name: bankName,
+        bank_branch_name: bankBranchName,
+        ifsc_code: ifscCode,
+        view_status: checked ? "1" : "0",
+      }
     };
-    Provider.create("master/insertuserbranch", params)
+    Provider.createDFCommon(Provider.API_URLS.AddBranch, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -497,36 +560,40 @@ const BranchEditScreen = ({ route, navigation }) => {
     }
 
     const params = {
-      CompanyID: companyNameId,
-      BranchTypeID: branchTypeFullData.filter((el: any) => {
-        return el.branchType === branchTypeName;
-      })[0].id,
-      BranchAdminID: assignBranchAdminFullData.filter((el: any) => {
-        return el.employeeName === assignBranchAdminName;
-      })[0].id,
-      ContactPersonNo: contactPersonNo,
-      GSTNo: gstNo,
-      PANNo: panNo,
-      Display: checked,
-      LocationName: branchLocationName,
-      Address: address,
-      StateID: statesFullData.find((el) => {
-        return el.stateName && el.stateName === stateName;
-      }).id,
-      CityID: cityFullData.find((el) => {
-        return el.cityName && el.cityName === cityName;
-      }).id,
-      Pincode: pincode == "" ? 0 : pincode,
-      AccountNo: accountNo,
-      BankName: bankName,
-      BankBranchName: bankBranchName,
-      IFSCCode: ifscCode,
-      AddedByUserID: userID,
-      RegionalOfficeID: roID,
-      ID: route.params.data.id
+
+      data: {
+        Sess_UserRefno: userID,
+        branch_refno: route.params.data.id,
+        company_refno: companyID,
+        parent_branch_refno: roID == 0 ? "0" : roID,
+        incharge_user_refno: assignBranchAdminFullData.filter((el) => {
+          return el.employeeName === assignBranchAdminName;
+        })[0].id,
+        locationtype_refno: branchTypeFullData.filter((el) => {
+          return el.branchType === branchTypeName;
+        })[0].branchTypeID,
+
+        location_name: branchTypeName,
+        address: address == undefined ? "" : address,
+        pincode: pincode == "" ? 0 : pincode,
+        district_refno: cityFullData.find((el) => {
+          return el.cityName && el.cityName === cityName;
+        }).cityID,
+        state_refno: statesFullData.find((el) => {
+          return el.stateName && el.stateName === stateName;
+        }).stateID,
+
+        gst_no: gstNo,
+        pan_no: panNo,
+        bank_account_no: accountNo,
+        bank_name: bankName,
+        bank_branch_name: bankBranchName,
+        ifsc_code: ifscCode,
+        view_status: checked ? "1" : "0",
+      }
 
     };
-    Provider.create("master/updateuserbranch", params)
+    Provider.createDFCommon(Provider.API_URLS.EditBranch, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -694,7 +761,9 @@ const BranchEditScreen = ({ route, navigation }) => {
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
             <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
-              Submit
+              {
+                route.params.type === "edit" ? "Update" : "Submit"
+              }
             </Button>
           </Card.Content>
         </View>
