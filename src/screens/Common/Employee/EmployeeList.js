@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems, RenderHiddenMultipleItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 import SearchNAdd from "./AddItems/SearchNAdd";
@@ -20,7 +20,7 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 let userID = 0;
 const EmployeeListScreen = ({ navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [employeeID, setEmployeeID] = React.useState("");
@@ -35,7 +35,7 @@ const EmployeeListScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const [employeeName, setEmployeeName] = React.useState("");
-  
+
   const [mobileNo, setMobileNo] = React.useState("");
   const [branch, setBranch] = React.useState("");
   const [department, setDepartment] = React.useState("");
@@ -47,9 +47,9 @@ const EmployeeListScreen = ({ navigation }) => {
 
   const refRBSheet = useRef();
 
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -71,7 +71,7 @@ const EmployeeListScreen = ({ navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuseremployeelist?${new URLSearchParams(params)}`)
+    Provider.getAll(Provider.API_URLS.myemployeelist, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -101,11 +101,11 @@ const EmployeeListScreen = ({ navigation }) => {
   };
 
   const SubmitVerify = () => {
-    Provider.create("master/updateemployeeverification", 
-    { 
-      EmployeeID: employeeID, 
-      OTP: otp
-    })
+    Provider.create("master/updateemployeeverification",
+      {
+        EmployeeID: employeeID,
+        OTP: otp
+      })
       .then((response) => {
         console.log(response);
         if (response.data && response.data.code === 200) {
@@ -156,7 +156,7 @@ const EmployeeListScreen = ({ navigation }) => {
   };
   const EditCallback = (data, rowMap, buttonType) => {
 
-    if(buttonType == "otp") {
+    if (buttonType == "otp") {
       setEmployeeID(data.item.id);
       setOTP(data.item.otp.toString());
       showDialog();
@@ -167,7 +167,7 @@ const EmployeeListScreen = ({ navigation }) => {
         type: "edit",
         fetchData: FetchData,
         data: {
-           id: data.item.id,
+          id: data.item.id,
         },
       });
     }
@@ -181,7 +181,7 @@ const EmployeeListScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={`Mob.: ${NullOrEmpty(data.item.mobileNo) ? "" : data.item.mobileNo}\nProfile Status: ${NullOrEmpty(data.item.profileStatus) ? "" : data.item.profileStatus} `}
           onPress={() => {
-            
+
             refRBSheet.current.open();
             setEmployeeName(data.item.employeeName);
             setMobileNo(data.item.mobileNo);
@@ -196,14 +196,14 @@ const EmployeeListScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
-        
+
       </View>
     );
   };
 
   const OnOTPSend = () => {
     let isValid = true;
-    
+
     if (otp.trim() === "") {
       setOtpError(true);
       isValid = false;
@@ -261,26 +261,26 @@ const EmployeeListScreen = ({ navigation }) => {
 
       {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} /> */}
       <FAB.Group
-          open={open}
-          icon={open ? 'window-minimize' : 'account-search'}
-          actions={[
-            {
-              icon: 'magnify-plus',
-              label: 'Search Employee',
-              onPress:SearchEmployee,
-            },
-            {
-              icon: 'account-plus',
-              label: 'Add Employee',
-              onPress:AddEmployee,
-            },
-          ]}
-          onStateChange={onStateChange}
-          onPress={() => {
-            if (open) {
-              // do something if the speed dial is open
-            }
-          }}
+        open={open}
+        icon={open ? 'window-minimize' : 'account-search'}
+        actions={[
+          {
+            icon: 'magnify-plus',
+            label: 'Search Employee',
+            onPress: SearchEmployee,
+          },
+          {
+            icon: 'account-plus',
+            label: 'Add Employee',
+            onPress: AddEmployee,
+          },
+        ]}
+        onStateChange={onStateChange}
+        onPress={() => {
+          if (open) {
+            // do something if the speed dial is open
+          }
+        }}
       />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
@@ -290,45 +290,45 @@ const EmployeeListScreen = ({ navigation }) => {
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{employeeName}</Title>
-          <ScrollView style={{marginBottom: 64}}>
+          <ScrollView style={{ marginBottom: 64 }}>
             <List.Item title="Mobile No" description={mobileNo} />
             <List.Item title="Branch" description={branch} />
             <List.Item title="Department" description={department} />
             <List.Item title="Designation" description={designation} />
-            <List.Item title="Profile Status" description={NullOrEmpty(profileStatus) ? "" : profileStatus ? "Complete":"Incomplete"} />
-            <List.Item title="Login Status" description={NullOrEmpty(loginStatus) ? "" : loginStatus ? "Yes":"No"} />
-            <List.Item title="Verify Status" description={NullOrEmpty(verifyStatus) ? "" : verifyStatus ? "Verified":"Not Verified"} />
+            <List.Item title="Profile Status" description={NullOrEmpty(profileStatus) ? "" : profileStatus ? "Complete" : "Incomplete"} />
+            <List.Item title="Login Status" description={NullOrEmpty(loginStatus) ? "" : loginStatus ? "Yes" : "No"} />
+            <List.Item title="Verify Status" description={NullOrEmpty(verifyStatus) ? "" : verifyStatus ? "Verified" : "Not Verified"} />
           </ScrollView>
         </View>
       </RBSheet>
 
-        <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog} style={[Styles.borderRadius8]}>
-            <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>EMPLOYEE OTP NO VERIFICATION & LOGIN ACTIVATION</Dialog.Title>
-            <Dialog.Content>
-              <View style={[Styles.flexRow, Styles.flexJustifyCenter,  Styles.flexAlignCenter, Styles.marginTop16]}>
-                <Text >Enter OTP No:</Text>
-              <TextInput 
-              mode="flat"
-              value={otp} 
-              onChangeText={onOTPChange}
-              error={otpError}
-                  style={[Styles.marginHorizontal12,Styles.width80,Styles.height40,  Styles.borderRadius4, Styles.backgroundSecondaryColor]}  
-                />
-              </View>
-              <View>
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog} style={[Styles.borderRadius8]}>
+          <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>EMPLOYEE OTP NO VERIFICATION & LOGIN ACTIVATION</Dialog.Title>
+          <Dialog.Content>
+            <View style={[Styles.flexRow, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.marginTop16]}>
+              <Text >Enter OTP No:</Text>
+              <TextInput
+                mode="flat"
+                value={otp}
+                onChangeText={onOTPChange}
+                error={otpError}
+                style={[Styles.marginHorizontal12, Styles.width80, Styles.height40, Styles.borderRadius4, Styles.backgroundSecondaryColor]}
+              />
+            </View>
+            <View>
               <HelperText type="error" visible={otpError} style={[Styles.textCenter]}>
-              {communication.InvalidOTP}
-            </HelperText> 
-              </View>
-              <Card.Content style={[Styles.marginTop16]}>
-          <Button mode="contained" onPress={OnOTPSend}>
-          Submit & Verify
-          </Button>
-          </Card.Content>
-            </Dialog.Content>
-          </Dialog>
-        </Portal>
+                {communication.InvalidOTP}
+              </HelperText>
+            </View>
+            <Card.Content style={[Styles.marginTop16]}>
+              <Button mode="contained" onPress={OnOTPSend}>
+                Submit & Verify
+              </Button>
+            </Card.Content>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
