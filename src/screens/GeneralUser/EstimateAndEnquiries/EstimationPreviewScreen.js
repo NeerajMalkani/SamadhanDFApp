@@ -12,8 +12,7 @@ import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
 
 let userID = 0,
-  Sess_group_refno = 0,
-  Sess_company_refno = 0;
+  Sess_group_refno = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -58,7 +57,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     if (userData !== null) {
       const userDataParsed = JSON.parse(userData);
       userID = userDataParsed.UserID;
-      Sess_company_refno = userDataParsed.Sess_company_refno;
       Sess_group_refno = userDataParsed.Sess_group_refno;
       FetchImageGalleryProductDetail();
       if (route.params.isContractor) {
@@ -157,7 +155,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno: Sess_company_refno,
+        Sess_group_refno: Sess_group_refno,
         client_user_refno: "all",
       },
     };
@@ -229,10 +227,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         mobile_no_s: mobileno,
       },
     };
-    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setOtherClients(response.data.data);
@@ -573,7 +569,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                   setCompanyData([]);
                 }}
                 onSelectItem={(item) => {
-                  console.log(item);
                   if (item) {
                     setIsButtonDisabled(false);
                     setCompanyName(item.title);
