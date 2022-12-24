@@ -6,24 +6,24 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 
-const AddCategoryNameScreen = ({ route, navigation }) => {
+const AddSubCategoryNameScreen = ({ route, navigation }) => {
   //#region Variables
-  const [categoryNameError, setCategoryNameError] = React.useState(false);
-  const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  
+  const [transactionTypeFullData, setTransactionTypeFullData] = React.useState([]);
+  const [transactionTypeData, setTransactionTypeData] = React.useState([]);
+  const [transactionTypeName, setTransactionTypeName] = React.useState(route.params.type === "edit" ? route.params.data.TransactionType : "");
+  const [errorTTN, setTTNError] = React.useState(false);
 
-  const [transactionTypeName, setTransactionTypeName] = useState([
-    {
-      title: "Sucess",
-      isChecked: route.params.type === "edit" && route.params.data.transactionType && route.params.data.transactionType.toString().includes("1") ? true : false,
-    },
-    {
-      title: "Expenses",
-      isChecked: route.params.type === "edit" && route.params.data.transactionType && route.params.data.transactionType.toString().includes("2") ? true : false,
-    },
-    
-  ]);
-  const [transactionTypeNameInvalid, setTransactionTypeNameInvalid] = useState(false);
+  const [categoryFullData, setCategoryFullData] = React.useState([]);
+  const [categoryData, setCategoryData] = React.useState([]);
+  const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
+  const [errorCT, setCTError] = React.useState(false);
+
+  const [subCategoryNameError, setSubCategoryNameError] = React.useState(false);
+  const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.subCategoryName : "");
+
+  const [notesError, setNotesError] = React.useState(false);
+  const [notes, setNotes] = React.useState(route.params.type === "edit" ? route.params.data.Notes.toString() : "");
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
@@ -34,9 +34,24 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
-  const onCategoryNameChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+  const onTransactionTypeName = (selectedItem) => {
+    setTransactionTypeName(selectedItem);
+    setTTNError(false);
+  };
+
+  const onCategoryNameSelected = (selectedItem) => {
+    setCategoryName(selectedItem);
+    setCTError(false);
+  };
+
+  const onSubCategoryNameChanged = (text) => {
+    setSubCategoryName(text);
+    setSubCategoryNameError(false);
+  };
+
+  const onNotesChanged = (text) => {
+    setNotes(text);
+    setNotesError(false);
   };
 
   const InsertActivityName = () => {
@@ -119,30 +134,23 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Category Name" value={categoryName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={categoryNameError} />
-          <HelperText type="error" visible={categoryNameError}>
+        <View style={[Styles.padding16]}>
+          <Dropdown label="Transaction Type" data={transactionTypeData} onSelected={onTransactionTypeName} isError={errorTTN} selectedItem={transactionTypeName} />
+          <HelperText type="error" visible={errorTTN}>
+            {communication.InvalidTransactionTypeName}
+          </HelperText>
+          <Dropdown label="Category Name" data={categoryData} onSelected={onCategoryNameSelected} isError={errorCT} selectedItem={categoryName} />
+          <HelperText type="error" visible={errorCT}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <View key={i} style={[Styles.flex1]}>
-              <Checkbox.Item
-                label={k.title}
-                position="Transaction Type Name"
-                style={[Styles.paddingHorizontal0]}
-                labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
-                color={theme.colors.primary}
-                status={k.isChecked ? "checked" : "unchecked"}
-                onPress={() => {
-                  let temp = serviceTypeRoles.map((u) => {
-                    if (k.title === u.title) {
-                      return { ...u, isChecked: !u.isChecked };
-                    }
-                    return u;
-                  });
-                  setTransactionTypeNameInvalid(false);
-                  setTransactionTypeName(temp);
-                }}
-              />
-            </View>
+          <TextInput mode="flat" label="Sub Category Name" value={subCategoryName} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onSubCategoryNameChanged} style={{ backgroundColor: "white" }} error={subCategoryNameError} />
+          <HelperText type="error" visible={subCategoryNameError}>
+            {communication.InvalidSubCategoryName}
+          </HelperText>
+          <TextInput  mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onNotesChanged} style={{ backgroundColor: "white" }} error={notesError} />
+          <HelperText type="error" visible={notesError}>
+            {communication.InvalidNotes}
+          </HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item
               label="Display"
@@ -171,5 +179,5 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddCategoryNameScreen;
+export default AddSubCategoryNameScreen;
 

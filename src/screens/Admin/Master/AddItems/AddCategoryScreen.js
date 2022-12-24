@@ -11,7 +11,7 @@ import { communication } from "../../../../utils/communication";
 const AddCategoryScreen = ({ route, navigation }) => {
   //#region Variables
 
-  const [activityFullData, setActivityFullData] = React.useState([]);
+  ``const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [errorAN, setANError] = React.useState(false);
@@ -20,7 +20,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [errorSN, setSNError] = React.useState(false);
-
+``
   const [unitOfSalesData, setUnitOfSalesData] = React.useState([]);
   const [unitOfSalesName, setUnitOfSalesName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
   const [errorUN, setUNError] = React.useState(false);
