@@ -102,4 +102,5 @@ export const communication = {
   InvalidCompanyClient: "Enter a valid Client name",
   InvalidTotalArea: "Please enter valid total area",
   NoMaterial: "No Material/Product for this Design"
+ 
 };

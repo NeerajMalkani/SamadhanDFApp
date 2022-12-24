@@ -131,6 +131,7 @@ import EditProductForProduction from "./src/screens/Manufacture/AddItems/EditPro
 import ProductionOrderList from "./src/screens/Manufacture/ProductionOrderList";
 import AddProductOrderList from "./src/screens/Manufacture/AddItems/AddProductOrderList";
 import EditProductOrderList from "./src/screens/Manufacture/AddItems/EditProductOrderList";
+import CategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/CategoryName";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -300,6 +301,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DeclinedUserScreen" component={DeclinedUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PendingUserScreen" component={PendingUserScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApiMaster" component={ApiMaster} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryNameScreen" component={CategoryNameScreen} />
             </Drawer.Navigator>
           );
         case 3:
@@ -484,6 +486,8 @@ export default function App() {
               <Stack.Screen name="AddProductOrderList" component={AddProductOrderList} options={{ headerTitle: "Add Product Order List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EditProductOrderList" component={EditProductOrderList} options={{ headerTitle: "Edit Product Order List ", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddProductionStatus" component={AddProductionStatus} options={{ headerTitle: "Add Production Status", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+
+              <Stack.Screen name="CategoryNameScreen" component={CategoryNameScreen} options={{ headerTitle: "Category Name", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

@@ -161,6 +161,27 @@ export const MenuItemsAdmin = [
       },
     ],
   },
+  {
+    title: "Pockey Dairy Master",
+    icon: "format-list-bulleted",
+    type: "accordian",
+    index: 4,
+    roleID: 2,
+    items: [
+      {
+        title: "Category Name",
+        type: "accordian",
+        index: 40,
+        navigation: "CategoryNameScreen",
+      },
+      // {
+      //   title: "BOQ Enquiry",
+      //   type: "accordian",
+      //   index: 41,
+      //   //navigation: "BOQEnquiryScreen",
+      // },
+    ],
+  },
 ];
 
 export const MenuItemsGeneralUser = [
