@@ -247,6 +247,12 @@ export const MenuItemsGeneralUser = [
         navigation: "GSubCategoryScreen",
       },
       {
+        title: "My Contacts",
+        type: "accordian",
+        index: 11,
+        navigation: "GMyContactsScreen",
+      },
+      {
         title: "Budget Setup",
         type: "accordian",
         index: 11,
