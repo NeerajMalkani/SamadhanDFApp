@@ -15,11 +15,12 @@ import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { NullOrEmpty } from "../../../utils/validations";
+import { APIConverter } from "../../../utils/apiconverter";
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0;
+let userID = 0, groupID = 0;
 
-let st_ID = 0, ci_ID = 0;
+let st_ID = 0, ct_ID = 0;
 
 const UserProfile = ({ route, navigation }) => {
     //#region Variables
@@ -81,33 +82,36 @@ const UserProfile = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = React.useState(true);
     //#endregion
 
-     //#region Functions
+    //#region Functions
     const GetUserID = async () => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
+            groupID = JSON.parse(userData).Sess_group_refno;
             FetchBasicDetails();
         }
     };
     let tempStateName = "";
     const FetchBasicDetails = () => {
         let params = {
-            UserID: userID,
+            data: {
+                Sess_UserRefno: userID,
+                Sess_group_refno: groupID
+            }
         };
-        Provider.getAll(`master/getusergeneralprofile?${new URLSearchParams(params)}`)
+        Provider.createDFCommon(Provider.API_URLS.getuserprofile, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-
                         if (response.data.data[0] != null) {
+                            response.data.data = APIConverter(response.data.data);
                             setCompanyName(!NullOrEmpty(response.data.data[0].companyName) ? response.data.data[0].companyName : "");
                             setContactName(!NullOrEmpty(response.data.data[0].contactPersonName) ? response.data.data[0].contactPersonName : "");
-                            setContactNumber(!NullOrEmpty(response.data.data[0].contactPersonNumber) ? response.data.data[0].contactPersonNumber : "");
+                            setContactNumber(!NullOrEmpty(response.data.data[0].Mobile) ? response.data.data[0].Mobile : "");
                             setGSTNumber(!NullOrEmpty(response.data.data[0].gstNumber) ? response.data.data[0].gstNumber : "");
                             setPANNumber(!NullOrEmpty(response.data.data[0].pan) ? response.data.data[0].pan : "");
                             setAddress(!NullOrEmpty(response.data.data[0].addressLine) ? response.data.data[0].addressLine : "");
                             setPincode(!NullOrEmpty(response.data.data[0].pincode) ? response.data.data[0].pincode.toString() : "");
-
                             if (!NullOrEmpty(response.data.data[0].stateID)) {
                                 st_ID = response.data.data[0].stateID;
                             }
@@ -126,10 +130,11 @@ const UserProfile = ({ route, navigation }) => {
     };
 
     const FetchStates = () => {
-        Provider.getAll("master/getstates")
+        Provider.createDFCommon(Provider.API_URLS.GetStateDetails, null)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
+                        response.data.data = APIConverter(response.data.data);
                         setStatesFullData(response.data.data);
 
                         const states = response.data.data.map((data) => data.stateName);
@@ -138,10 +143,12 @@ const UserProfile = ({ route, navigation }) => {
                         const stateData: any = [];
                         response.data.data.map((data: any, i: number) => {
                             stateData.push({
-                                id: data.id,
+                                id: data.stateID,
                                 label: data.stateName,
                             });
                         });
+
+                        console.log(st_ID);
                         if (st_ID > 0) {
                             let a = stateData.filter((el) => {
                                 return el.id === st_ID;
@@ -158,13 +165,16 @@ const UserProfile = ({ route, navigation }) => {
 
     const FetchCities = (stateID) => {
         let params = {
-            ID: stateID
-
+            data: {
+                Sess_UserRefno: userID,
+                state_refno: stateID,
+            }
         };
-        Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+        Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
+                        response.data.data = APIConverter(response.data.data);
                         setCityFullData(response.data.data);
                         const cities = response.data.data.map((data) => data.cityName);
                         setCityData(cities);
@@ -172,7 +182,7 @@ const UserProfile = ({ route, navigation }) => {
                         const cityData: any = [];
                         response.data.data.map((data: any, i: number) => {
                             cityData.push({
-                                id: data.id,
+                                id: data.cityID,
                                 label: data.cityName,
                             });
                         });
@@ -254,19 +264,23 @@ const UserProfile = ({ route, navigation }) => {
 
     const InsertData = () => {
         const params = {
-            UserID: userID,
-            CompanyName: companyName,
-            ContactPersonName: contactName,
-            ContactPersonNumber: contactNumber,
-            AddressLine: address,
-            StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-            CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-            Pincode: pincode ? pincode : 0,
-            GSTNumber: gstNumber,
-            PAN: panNumber,
-            ShowBrand: false,
+
+            data: {
+                Sess_UserRefno: userID,
+                Sess_group_refno: groupID,
+                company_name: companyName,
+                contact_person: contactName,
+                contact_person_mobile_no: contactNumber,
+                address: address,
+                state_refno: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
+                district_refno: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
+                pincode: pincode ? pincode : 0,
+                gst_no: gstNumber,
+                pan_no: panNumber
+            }
+
         };
-        Provider.create("master/updategeneraluserprofile", params)
+        Provider.createDFCommon(Provider.API_URLS.userprofileupdate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     setSnackbarColor(theme.colors.success);
@@ -297,8 +311,8 @@ const UserProfile = ({ route, navigation }) => {
             }
         }
     };
- //#endregion 
- 
+    //#endregion 
+
     return (
         <View style={[Styles.flex1]}>
             <Header navigation={navigation} title="Update Profile" isDrawer="false" />

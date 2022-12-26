@@ -39,13 +39,14 @@ const CategoryNameScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        group_refno: "all",
+        pck_category_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
+    Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -95,14 +96,14 @@ const CategoryNameScreen = ({ navigation }) => {
         <List.Item
         title={data.item.categoryName}
         titleStyle={{ fontSize: 18 }}
-        description={"Display: " + (data.item.display ? "Yes" : "No")}
-        onPress={() => {
-          refRBSheet.current.open();
-          setTransactionTypeName(data.item.transactionTypeName);
-          setCategoryName(data.item.categoryName);
-        }}
+        description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
+        // onPress={() => {
+        //   refRBSheet.current.open();
+        //   setTransactionTypeName(data.item.transactionTypeName);
+        //   setCategoryName(data.item.categoryName);
+        // }}
         left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
       />
     </View>
     );
@@ -113,14 +114,18 @@ const CategoryNameScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log('edit data==============');
+    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddCategoryNameScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
+        categoryName: data.item.categoryName,
         display: data.item.display,
+        pckCategoryID: data.item.pckCategoryID,
+        transactionTypeName: data.item.transactionTypeName
       },
     });
   };
@@ -128,7 +133,7 @@ const CategoryNameScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Category Name " />
+      <Header navigation={navigation} title="Category" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />

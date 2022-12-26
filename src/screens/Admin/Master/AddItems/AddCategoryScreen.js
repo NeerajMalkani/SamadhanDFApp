@@ -11,7 +11,7 @@ import { communication } from "../../../../utils/communication";
 const AddCategoryScreen = ({ route, navigation }) => {
   //#region Variables
 
-  ``const [activityFullData, setActivityFullData] = React.useState([]);
+  const [activityFullData, setActivityFullData] = React.useState([]);
   const [activityData, setActivityData] = React.useState([]);
   const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [errorAN, setANError] = React.useState(false);

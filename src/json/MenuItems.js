@@ -169,17 +169,17 @@ export const MenuItemsAdmin = [
     roleID: 2,
     items: [
       {
-        title: "Category Name",
+        title: "Category",
         type: "accordian",
         index: 40,
         navigation: "CategoryNameScreen",
       },
-      // {
-      //   title: "BOQ Enquiry",
-      //   type: "accordian",
-      //   index: 41,
-      //   //navigation: "BOQEnquiryScreen",
-      // },
+      {
+        title: "Sub Category",
+        type: "accordian",
+        index: 41,
+        navigation: "SubCategoryNameScreen",
+      },
     ],
   },
 ];

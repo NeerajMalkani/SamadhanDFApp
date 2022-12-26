@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
+import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
@@ -28,8 +29,10 @@ const SubCategoryNameScreen = ({ navigation }) => {
   const [categoryName, setCategoryName] = React.useState("");
   const [subCategoryName, setSubCategoryName] = React.useState("");
   const [notes, setNotes] = React.useState("");
+  const [display, setDisplay] = React.useState(false);
+  const refRBSheet = useRef();
 
-  
+
   //#endregion
 
   //#region Functions
@@ -42,10 +45,10 @@ const SubCategoryNameScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: "2",
-        group_refno: "all",
+        pck_sub_category_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.GroupFromRefNo, params)
+    Provider.createDFAdmin(Provider.API_URLS.pcksubcategoryrefnocheck_appadmin, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -94,22 +97,26 @@ const SubCategoryNameScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-        title={data.item.categoryName}
-        titleStyle={{ fontSize: 18 }}
-        description={"Display: " + (data.item.display ? "Yes" : "No")}
-        onPress={() => {
-          refRBSheet.current.open();
-          setTransactionTypeName(data.item.transactionTypeName);
-          setCategoryName(data.item.categoryName);
-          setSubCategoryName(data.item.categoryName);
-          setNotes(data.item.categoryName);
-        }}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-      />
-    </View>
+          title={data.item.subCategoryName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          description={`Transaction Type: ${data.item.transactionTypeName}\nCategory: ${data.item.categoryName}`}
+          onPress={() => {
+            refRBSheet.current.open();
+            setTransactionTypeName(data.item.transactionTypeName);
+            setCategoryName(data.item.categoryName);
+            setSubCategoryName(data.item.subCategoryName);
+            setNotes(data.item.notes);
+            setDisplay(data.item.display);
+
+
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
     );
   };
 
@@ -124,7 +131,13 @@ const SubCategoryNameScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
+        transtypeID:data.item.transtypeID,
+        transactionTypeName:data.item.transactionTypeName,
+        categoryName:data.item.categoryName,
+        pckCategoryID:data.item.pckCategoryID,
+        subCategoryName:data.item.subCategoryName,
+        subcategoryID:data.item.subcategoryID,
+        notes:data.item.notes,
         display: data.item.display,
       },
     });
@@ -133,7 +146,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Sub Category Name " />
+      <Header navigation={navigation} title="Sub Category" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -162,6 +175,19 @@ const SubCategoryNameScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={380} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{subCategoryName}</Title>
+          <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Transaction Type" description={transactionTypeName} />
+            <List.Item title="Category" description={categoryName} />
+            <List.Item title="Notes" description={notes} />
+            <List.Item title="Display" description={display ? "Yes" : "No"} />
+          </ScrollView>
+        </View>
+      </RBSheet>
+
     </View>
   );
 };

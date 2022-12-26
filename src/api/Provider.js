@@ -290,6 +290,17 @@ class Provider {
     getassignbranchadminedit_branchform:"getassignbranchadminedit_branchform/",
     FetchBranchAssignContactNo: "getassignbranchadmin_contactno_branchform/",
     MyFetchRegionalOffice: "getparentbranchrefnobranchform/",
+    getuserprofile:"getuserprofile/",
+    userprofileupdate:"userprofileupdate/",
+    pckcategoryrefnocheck_appadmin:"pckcategoryrefnocheck_appadmin/",
+    pckcategorynamecreate_appadmin: "pckcategorynamecreate_appadmin/",
+    gettransactiontype_pckcategoryform_appadmin:"gettransactiontype_pckcategoryform_appadmin/",
+    pckcategorynameupdate_appadmin:"pckcategorynameupdate_appadmin/",
+    pcksubcategoryrefnocheck_appadmin:"pcksubcategoryrefnocheck_appadmin/",
+    gettransactiontype_pcksubcategoryform_appadmin:"gettransactiontype_pcksubcategoryform_appadmin/",
+    getpckcategoryname_pcksubcategoryform_appadmin:"getpckcategoryname_pcksubcategoryform_appadmin/",
+    pcksubcategorynamecreate_appadmin:"pcksubcategorynamecreate_appadmin/",
+    pcksubcategorynameupdate_appadmin:"pcksubcategorynameupdate_appadmin/",
     
   };
 

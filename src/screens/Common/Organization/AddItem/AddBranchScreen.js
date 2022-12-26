@@ -591,7 +591,6 @@ const BranchEditScreen = ({ route, navigation }) => {
         ifsc_code: ifscCode,
         view_status: checked ? "1" : "0",
       }
-
     };
     Provider.createDFCommon(Provider.API_URLS.EditBranch, params)
       .then((response) => {
