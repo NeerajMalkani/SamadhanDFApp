@@ -135,6 +135,10 @@ import CategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/CategoryNa
 import AddCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/AddCategoryName";
 import SubCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/SubCategoryName";
 import AddSubCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/AddSubCategoryName";
+import GCategoryNameScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GCategoryName";
+import AddGCategoryNameScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGCategoryName";
+import GSubCategoryNameScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GSubCategoryName";
+import AddGSubCategoryNameScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGSubCategoryName";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -314,8 +318,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryNameScreen" component={CategoryName} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SubCategoryScreen" component={SubCategoryName} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />

@@ -238,13 +238,13 @@ export const MenuItemsGeneralUser = [
         title: "Category Name",
         type: "accordian",
         index: 11,
-        navigation: "CategoryNameScreen",
+        navigation: "GCategoryNameScreen",
       },
       {
         title: "Sub Category Name",
         type: "accordian",
         index: 11,
-        navigation: "SubCategoryScreen",
+        navigation: "GSubCategoryScreen",
       },
       {
         title: "Budget Setup",
