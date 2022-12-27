@@ -2,11 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
-import { communication } from "../../../utils/communication";
+import Provider from "../../../../../api/Provider";
+import { Styles } from "../../../../../styles/styles";
+import { theme } from "../../../../../theme/apptheme";
+import { APIConverter } from "../../../../../utils/apiconverter";
+import { communication } from "../../../../../utils/communication";
 
 let userID = 0, groupID = 0;
 const AddGSubCategoryNameScreen = ({ route, navigation }) => {
@@ -68,7 +68,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         Sess_UserRefno: userID,
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.gettransactiontype_pcksubcategoryform_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -107,7 +107,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: transactionType
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -180,7 +180,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
 
       },
     }
-    Provider.createDFAdmin(Provider.API_URLS.pcksubcategorynamecreate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pcksubcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -219,7 +219,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
       }
     }
 
-    Provider.createDFAdmin(Provider.API_URLS.pcksubcategorynameupdate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pcksubcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

@@ -244,7 +244,7 @@ export const MenuItemsGeneralUser = [
         title: "Sub Category Name",
         type: "accordian",
         index: 11,
-        navigation: "GSubCategoryScreen",
+        navigation: "GSubCategoryNameScreen",
       },
       {
         title: "My Contacts",

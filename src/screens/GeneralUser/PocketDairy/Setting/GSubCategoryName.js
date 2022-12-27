@@ -1,17 +1,18 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
 import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
-import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
+import Provider from "../../../../api/Provider";
+import Header from "../../../../components/Header";
+import { RenderHiddenItems } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import NoItems from "../../../components/NoItems";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
-
+import NoItems from "../../../../components/NoItems";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
+let userID = 0, groupID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const GSubCategoryNameScreen = ({ navigation }) => {
@@ -44,11 +45,11 @@ const GSubCategoryNameScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         pck_sub_category_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.pcksubcategoryrefnocheck_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pcksubcategoryrefnocheck_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -79,8 +80,18 @@ const GSubCategoryNameScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
+
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+    }
+    FetchData();
+  };
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -111,7 +122,6 @@ const GSubCategoryNameScreen = ({ navigation }) => {
             setNotes(data.item.notes);
             setDisplay(data.item.display);
 
-
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -121,23 +131,23 @@ const GSubCategoryNameScreen = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddSubCategoryNameScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddGSubCategoryNameScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddSubCategoryNameScreen", {
+    navigation.navigate("AddGSubCategoryNameScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        transtypeID:data.item.transtypeID,
-        transactionTypeName:data.item.transactionTypeName,
-        categoryName:data.item.categoryName,
-        pckCategoryID:data.item.pckCategoryID,
-        subCategoryName:data.item.subCategoryName,
-        subcategoryID:data.item.subcategoryID,
-        notes:data.item.notes,
+        transtypeID: data.item.transtypeID,
+        transactionTypeName: data.item.transactionTypeName,
+        categoryName: data.item.categoryName,
+        pckCategoryID: data.item.pckCategoryID,
+        subCategoryName: data.item.subCategoryName,
+        subcategoryID: data.item.subcategoryID,
+        notes: data.item.notes,
         display: data.item.display,
       },
     });

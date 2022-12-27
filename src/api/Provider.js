@@ -301,6 +301,15 @@ class Provider {
     getpckcategoryname_pcksubcategoryform_appadmin:"getpckcategoryname_pcksubcategoryform_appadmin/",
     pcksubcategorynamecreate_appadmin:"pcksubcategorynamecreate_appadmin/",
     pcksubcategorynameupdate_appadmin:"pcksubcategorynameupdate_appadmin/",
+    pckcategoryrefnocheck_user:"pckcategoryrefnocheck_user/",
+    gettransactiontype_pckcategoryform_user:"gettransactiontype_pckcategoryform_user/",
+    pckcategorynamecreate_user:"pckcategorynamecreate_user/",
+    pckcategorynameupdate_user:"pckcategorynameupdate_user/",
+    pcksubcategoryrefnocheck_user:"pcksubcategoryrefnocheck_user/",
+    gettransactiontype_pcksubcategoryform_user:"gettransactiontype_pcksubcategoryform_user/",
+    getpckcategoryname_pcksubcategoryform_user:"getpckcategoryname_pcksubcategoryform_user/",
+    pcksubcategorynamecreate_user:"pcksubcategorynamecreate_user/",
+    pcksubcategorynameupdate_user:"pcksubcategorynameupdate_user/",
     
   };
 

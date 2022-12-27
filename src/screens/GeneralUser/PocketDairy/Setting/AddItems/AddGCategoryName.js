@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
-import { communication } from "../../../utils/communication";
+import Provider from "../../../../../api/Provider";
+import { Styles } from "../../../../../styles/styles";
+import { theme } from "../../../../../theme/apptheme";
+import { APIConverter } from "../../../../../utils/apiconverter";
+import { communication } from "../../../../../utils/communication";
 
 const AddGCategoryNameScreen = ({ route, navigation }) => {
   //#region Variables
   const [categoryNameError, setCategoryNameError] = React.useState(false);
   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-
 
 
   const [transactionTypeName, setTransactionTypeName] = useState([
@@ -43,7 +42,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.gettransactiontype_pckcategoryform_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -116,7 +115,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       }
     };
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynamecreate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -155,7 +154,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     }
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynameupdate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

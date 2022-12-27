@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
-import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
+import Provider from "../../../../api/Provider";
+import Header from "../../../../components/Header";
+import { RenderHiddenItems } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import NoItems from "../../../components/NoItems";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
+import NoItems from "../../../../components/NoItems";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -26,7 +27,10 @@ const GCategoryNameScreen = ({ navigation }) => {
 
   const [transactionTypeName, setTransactionTypeName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  
+  const [createdBy, setCreateBy] = React.useState("");
+  const [display, setDisplay] = React.useState(false);
+  const refRBSheet = useRef();
+
   //#endregion
 
   //#region Functions
@@ -42,12 +46,12 @@ const GCategoryNameScreen = ({ navigation }) => {
         pck_category_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pckcategoryrefnocheck_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
             response.data.data = APIConverter(response.data.data);
+            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -92,32 +96,34 @@ const GCategoryNameScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-        title={data.item.categoryName}
-        titleStyle={{ fontSize: 18 }}
-        description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
-        // onPress={() => {
-        //   refRBSheet.current.open();
-        //   setTransactionTypeName(data.item.transactionTypeName);
-        //   setCategoryName(data.item.categoryName);
-        // }}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-      />
-    </View>
+          title={data.item.categoryName}
+          titleStyle={{ fontSize: 18 }}
+          description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
+          onPress={() => {
+            refRBSheet.current.open();
+
+            setTransactionTypeName(data.item.transactionTypeName);
+            setCategoryName(data.item.categoryName);
+            setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
+            setDisplay(data.item.display);
+
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddCategoryNameScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddGCategoryNameScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log('edit data==============');
-    console.log(data);
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddCategoryNameScreen", {
+    navigation.navigate("AddGCategoryNameScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
@@ -162,6 +168,16 @@ const GCategoryNameScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={320} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{categoryName}</Title>
+          <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Transaction Type" description={transactionTypeName} />
+            <List.Item title="Created By " description={createdBy} />
+            <List.Item title="Display" description={display ? "Yes" : "No"} />
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };
