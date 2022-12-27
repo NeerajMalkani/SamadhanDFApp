@@ -7,17 +7,29 @@ import { theme } from "../../../../../theme/apptheme";
 import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
 
-const AddGMyContactsScreen = ({ route, navigation }) => {
+const AddGMyBankScreen = ({ route, navigation }) => {
   //#region Variables
-  const [nameError, setNameError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.name : "");
-
-  const [mobileNoError, setMobileNoError] = React.useState(false);
-  const [mobileNo, setMobileNo] = React.useState(route.params.type === "edit" ? route.params.data.mobileNo : "");
-
-  const [remarkError, setRemarkError] = React.useState(false);
-  const [remarkName, setRemarkName] = React.useState(route.params.type === "edit" ? route.params.data.remarkName : "");
+  const [bankNameError, setBankNameError] = React.useState(false);
+  const [bankName, setBankName] = React.useState(route.params.type === "edit" ? route.params.data.bankName : "");
+  const [bankAccountNoError, setBankAccountNoError] = React.useState(false);
+  const [bankAccountNo, setBankAccountNo] = React.useState(route.params.type === "edit" ? route.params.data.bankAccountNo : "");
+  const [openingBalanceError, setOpeningBalanceError] = React.useState(false);
+  const [openingBalance, setOpeningBalance] = React.useState(route.params.type === "edit" ? route.params.data.openingBalance : "");
+  const [remarksError, setRemarksError] = React.useState(false);
+  const [remarks, setRemarks] = React.useState(route.params.type === "edit" ? route.params.data.remarks : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [cardType, setCardType] = useState([
+    {
+      title: "Debit Card",
+      isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("1") ? true : false,
+      id: "1",
+    },
+    {
+      title: "Credit Card",
+      isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("2") ? true : false,
+      id: "2",
+    },
+  ]);
 
   useEffect(() => {
 
@@ -33,7 +45,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.gettransactiontype_pckcategoryform_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -72,9 +84,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       });
   };
 
-  const [transactionTypeNameInvalid, setTransactionTypeNameInvalid] = useState(false);
-
-
+  const [cardTypeInvalid, setCardTypeInvalid] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
@@ -86,11 +96,23 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
-  const onCategoryNameChanged = (text) => {
+  const onBankNameChanged = (text) => {
     setCategoryName(text);
     setCategoryNameError(false);
   };
 
+  const onBankAccountNoChanged = (text) => {
+    setCategoryName(text);
+    setCategoryNameError(false);
+  };
+  const onOpeningBalanceChanged = (text) => {
+    setCategoryName(text);
+    setCategoryNameError(false);
+  };
+  const onRemarksChanged = (text) => {
+    setCategoryName(text);
+    setCategoryNameError(false);
+  };
   const InsertCategoryName = () => {
     let tt = [];
     transactionTypeName.map((k, i) => {
@@ -106,7 +128,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       }
     };
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynamecreate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -145,7 +167,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     }
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynameupdate_appadmin, params)
+    Provider.createDFCommon(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -201,16 +223,53 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label=" Name" value={name} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={nameError} />
-          <HelperText type="error" visible={nameError}>
-            {communication.InvalidCategoryName}
+          <TextInput mode="flat" label="Bank Name" value={bankName} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameError} />
+          <HelperText type="error" visible={bankNameError}>
+            {communication.InvalidBankName}
           </HelperText>
-          <TextInput mode="flat" label="Mobile No" value={mobileNo} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={mobileNoError} />
-          <HelperText type="error" visible={mobileNoError}>
-            {communication.InvalidMobileNo}
+          <TextInput mode="flat" label="Bank Account No" value={bankAccountNo} onChangeText={onBankAccountNoChanged} style={{ backgroundColor: "white" }} error={bankAccountNoError} />
+          <HelperText type="error" visible={bankAccountNoError}>
+            {communication.InvalidBankAccountNo}
           </HelperText>
-          <TextInput mode="flat" label="Remarks" value={remarkName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={remarkError} />
-          <HelperText type="error" visible={remarkError}>
+          <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Card Type</Subheading>
+          <View style={[Styles.flexRow]}>
+            {cardType.map((k, i) => {
+              return (
+                <View key={i} style={[Styles.flex1]}>
+                  <Checkbox.Item
+                    label={k.title}
+                    position="leading"
+                    style={[Styles.paddingHorizontal0]}
+                    labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
+                    color={theme.colors.primary}
+                    status={k.isChecked ? "checked" : "unchecked"}
+                    onPress={() => {
+                      let temp = cardType.map((u) => {
+                        if (k.title === u.title) {
+                          return { ...u, isChecked: !u.isChecked };
+                        }
+                        return u;
+                      });
+                      setCardTypeInvalid(false);
+                      setCardType(temp);
+                    }}
+                  />
+                </View>
+
+              );
+
+            })}
+
+          </View>
+          <HelperText type="error" visible={cardTypeInvalid}>
+            Please select Card Type
+          </HelperText>
+          <TextInput mode="flat" label="Opening Balance" value={openingBalance} onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceError} />
+          <HelperText type="error" visible={openingBalanceError}>
+            {communication.InvalidOpeningBalance}
+          </HelperText>
+          <TextInput mode="flat" label="Remarks" value={remarks} onChangeText={onRemarksChanged} style={{ backgroundColor: "white" }} error={remarksError} />
+          <HelperText type="error" visible={remarksError}>
             {communication.InvalidRemarks}
           </HelperText>
           <View style={[Styles.flexRow, Styles.marginTop16]}>
@@ -242,5 +301,5 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   );
 };
 
-export default AddGMyContactsScreen;
+export default AddGMyBankScreen;
 

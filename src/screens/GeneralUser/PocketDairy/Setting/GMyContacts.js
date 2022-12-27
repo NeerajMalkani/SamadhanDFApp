@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
-import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl,ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar,Title  } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
-import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
-import { RenderHiddenItems } from "../../../components/ListActions";
+import Provider from "../../../../api/Provider";
+import Header from "../../../../components/Header";
+import { RenderHiddenItems } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import NoItems from "../../../components/NoItems";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
+import NoItems from "../../../../components/NoItems";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
+import { APIConverter } from "../../../../utils/apiconverter";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -23,11 +24,11 @@ const GMyContactsScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
+  const refRBSheet = useRef();
  
   const [name, setName] = React.useState("");
-  const [mobileNo, setMObileNo] = React.useState("");
-  const [remark, setRemarks] = React.useState("");
+  const [mobileNo, setMobileNo] = React.useState("");
+  const [remark, setRemark] = React.useState("");
   
   //#endregion
 
@@ -99,13 +100,14 @@ const GMyContactsScreen = ({ navigation }) => {
         title={data.item.name}
         titleStyle={{ fontSize: 18 }}
         description={`Display: ${data.item.display ? "Yes" : "No"} `}
-        // onPress={() => {
-        //   refRBSheet.current.open();
-        //   setTransactionTypeName(data.item.transactionTypeName);
-        //   setCategoryName(data.item.categoryName);
-        // }}
+        onPress={() => {
+          refRBSheet.current.open();
+          setName(data.item.name);
+          setMobileNo(data.item.mobileNo);
+          setRemark(data.item.remark);
+        }}
         left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
       />
     </View>
     );
@@ -125,8 +127,8 @@ const GMyContactsScreen = ({ navigation }) => {
       data: {
         id: data.item.id,
         name: data.item.Name,
-        name: data.item.mobileNo,
-        name: data.item.remark,
+        mobileNo: data.item.mobileNo,
+        remark: data.item.remark,
         display: data.item.display,
       },
     });
@@ -164,6 +166,17 @@ const GMyContactsScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>{name}</Title>
+          <ScrollView>
+            <List.Item title="Name" description={name} />
+            <List.Item title="Mobile No" description={mobileNo} />
+            <List.Item title="Remarks" description={remark} />
+           
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };

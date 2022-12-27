@@ -253,6 +253,12 @@ export const MenuItemsGeneralUser = [
         navigation: "GMyContactsScreen",
       },
       {
+        title: "My Bank",
+        type: "accordian",
+        index: 11,
+        navigation: "GMyBankScreen",
+      },
+      {
         title: "Budget Setup",
         type: "accordian",
         index: 11,
