@@ -25,7 +25,6 @@ const GMyBankScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-
   const [bankName, setBankName] = React.useState("");
   const [bankAccountNo, setBankAccountNo] = React.useState("");
   const [cardType, setCardType] = React.useState("");
@@ -54,7 +53,6 @@ const GMyBankScreen = ({ navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -134,7 +132,7 @@ const GMyBankScreen = ({ navigation }) => {
         categoryName: data.item.categoryName,
         display: data.item.display,
         pckCategoryID: data.item.pckCategoryID,
-        transactionTypeName: data.item.transactionTypeName
+        transactionTypeName: data.item.transactionTypeName,
       },
     });
   };
