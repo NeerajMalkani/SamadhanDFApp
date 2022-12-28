@@ -154,6 +154,17 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "parent_branch_refno", "regionalOfficeID");
     renameKey(obj, "employee_name", "employeeName");
     renameKey(obj, "employee_user_refno", "id");
+
+    renameKey(obj, "contact_person", "contactPersonName");
+    renameKey(obj, "contact_person_mobile_no", "Mobile");
+    renameKey(obj, "createby_user_refno", "createbyID");
+    renameKey(obj, "pck_category_refno", "pckCategoryID");
+    renameKey(obj, "transactiontype_name", "transactionTypeName");
+    renameKey(obj, "pck_transtype_refno", "transtypeID");
+    renameKey(obj, "pck_transtype_name", "transTypeName");
+    renameKey(obj, "pck_sub_category_refno", "subcategoryID");
+    renameKey(obj, "pck_category_name", "categoryName");
+    renameKey(obj, "sub_category_name", "subCategoryName");
   });
 
   return response;

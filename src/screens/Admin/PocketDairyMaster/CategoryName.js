@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
+import React, { useEffect } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
+import { FAB, List, Searchbar, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -10,12 +9,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const AddSourceList = ({ navigation }) => {
-   //#region Variables
+const CategoryNameScreen = ({ navigation }) => {
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -25,33 +24,30 @@ const AddSourceList = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [date, setDate] = useState(new Date());
-  const [dateInvalid, setDateInvalid] = useState("");
-  const dateRef = useRef({});
-
-  const [entryType, setEntryType] = React.useState("");
+  const [transactionTypeName, setTransactionTypeName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
-  const [receiptMode, setReceiptMode] = React.useState("");
-  const [amount, setAmount] = React.useState("");
-  const [attachment, setAttachment] = React.useState("");
-  const [display, setDisplay] = React.useState("");
+  
+  //#endregion
 
- 
-  const refRBSheet = useRef();
- //#endregion 
-
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        pck_category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -88,7 +84,7 @@ const AddSourceList = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.categoryName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -96,56 +92,48 @@ const AddSourceList = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.entryType}
-          titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName}\nSub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
-          onPress={() => {
-            refRBSheet.current.open();
-            setDate(data.item.date)
-            setEntryType(data.item.entryType);
-            setCategoryName(data.item.categoryName);
-            setSubCategoryName(data.item.subCategoryName);
-            setReceiptMode(data.item.receiptMode);
-            setAmount(data.item.amount);
-            setAttachment(data.item.attachment);
-            setDisplay(data.item.display ? "Yes" : "No");
-          }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-        />
-      </View>
+        title={data.item.categoryName}
+        titleStyle={{ fontSize: 18 }}
+        description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
+        // onPress={() => {
+        //   refRBSheet.current.open();
+        //   setTransactionTypeName(data.item.transactionTypeName);
+        //   setCategoryName(data.item.categoryName);
+        // }}
+        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+      />
+    </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddSource", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddCategoryNameScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log('edit data==============');
+    console.log(data);
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddSource", {
+    navigation.navigate("AddCategoryNameScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        date: data.item.date,
-        entryType: data.item.entryType,
         categoryName: data.item.categoryName,
-        subCategoryName: data.item.subCategoryName,
-        receiptMode: data.item.receiptMode,
-        amount: data.item.amount,
-        attachment: data.item.attachment,
         display: data.item.display,
+        pckCategoryID: data.item.pckCategoryID,
+        transactionTypeName: data.item.transactionTypeName
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Source List" />
+      <Header navigation={navigation} title="Category" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -158,16 +146,9 @@ const AddSourceList = ({ navigation }) => {
             previewOpenValue={-72}
             previewRowKey="1"
             previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
+            refreshControl={<RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => FetchData()} />}
             data={listSearchData[0]}
+            useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
@@ -181,23 +162,8 @@ const AddSourceList = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View>
-          <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
-          <ScrollView>
-          <List.Item title="Date" description={date} />
-          <List.Item title="Entry Type " description={entryType} />
-            <List.Item title="Category Name" description={categoryName} />
-            <List.Item title="Sub Category Name" description={subCategoryName} />
-            <List.Item title="Receipt Mode Type" description={receiptMode} />
-            <List.Item title="Amount" description={amount} />
-            <List.Item title="Attachment" description={attachment} />
-            <List.Item title="Display" description={display} />
-          </ScrollView>
-        </View>
-      </RBSheet>
     </View>
   );
 };
 
-export default AddSourceList;
+export default CategoryNameScreen;

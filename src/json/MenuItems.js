@@ -161,6 +161,27 @@ export const MenuItemsAdmin = [
       },
     ],
   },
+  {
+    title: "Pockey Dairy Master",
+    icon: "format-list-bulleted",
+    type: "accordian",
+    index: 4,
+    roleID: 2,
+    items: [
+      {
+        title: "Category",
+        type: "accordian",
+        index: 40,
+        navigation: "CategoryNameScreen",
+      },
+      {
+        title: "Sub Category",
+        type: "accordian",
+        index: 41,
+        navigation: "SubCategoryNameScreen",
+      },
+    ],
+  },
 ];
 
 export const MenuItemsGeneralUser = [
@@ -217,13 +238,25 @@ export const MenuItemsGeneralUser = [
         title: "Category Name",
         type: "accordian",
         index: 11,
-        navigation: "CategoryNameScreen",
+        navigation: "GCategoryNameScreen",
       },
       {
         title: "Sub Category Name",
         type: "accordian",
         index: 11,
-        navigation: "SubCategoryScreen",
+        navigation: "GSubCategoryNameScreen",
+      },
+      {
+        title: "My Contacts",
+        type: "accordian",
+        index: 11,
+        navigation: "GMyContactsScreen",
+      },
+      {
+        title: "My Bank",
+        type: "accordian",
+        index: 11,
+        navigation: "GMyBankScreen",
       },
       {
         title: "Budget Setup",

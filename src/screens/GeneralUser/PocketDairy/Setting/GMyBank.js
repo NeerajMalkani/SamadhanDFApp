@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
@@ -10,12 +9,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../../components/NoItems";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
-import {NullOrEmpty} from "../../../../utils/validations";
+import { APIConverter } from "../../../../utils/apiconverter";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const SubCategoryScreen = ({ navigation }) => {
-   //#region Variables
+const GMyBankScreen = ({ navigation }) => {
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -25,26 +25,36 @@ const SubCategoryScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [modeTypeName, setModeTypeName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
-  const [display, setDisplay] = React.useState("");
 
- 
+  const [bankName, setBankName] = React.useState("");
+  const [bankAccountNo, setBankAccountNo] = React.useState("");
+  const [cardType, setCardType] = React.useState("");
+  const [openingBalance, setOpeningBalance] = React.useState("");
+  const [remarks, setRemarks] = React.useState("");
+  const [display, setDisplay] = React.useState(false);
   const refRBSheet = useRef();
- //#endregion 
 
- //#region Functions
+  //#endregion
+
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        pck_category_refno: "all",
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.pckcategoryrefnocheck_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -81,7 +91,7 @@ const SubCategoryScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.categoryName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -91,16 +101,17 @@ const SubCategoryScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.modeTypeName}
+          title={data.item.bankName}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName}\nSub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
+          description={`Bank Account No: ${data.item.bankAccountNo}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
           onPress={() => {
             refRBSheet.current.open();
-            setModeTypeName(data.item.modeTypeName);
-            setCategoryName(data.item.categoryName);
-            setSubCategoryName(data.item.subCategoryName);
-            setDisplay(data.item.display ? "Yes" : "No");
-
+            setBankName(data.item.bankName);
+            setBankAccountNo(data.item.bankAccountNo);
+            setCardType(data.item.cardType);
+            setOpeningBalance(data.item.openingBalance);
+            setRemarks(data.item.remarks);
+            setDisplay(data.item.display);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -110,31 +121,28 @@ const SubCategoryScreen = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddSubCategoryName", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddGMyBankScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddSubCategoryName", {
+    navigation.navigate("AddGMyBankScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
         categoryName: data.item.categoryName,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
         display: data.item.display,
+        pckCategoryID: data.item.pckCategoryID,
+        transactionTypeName: data.item.transactionTypeName
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Sub Category Name" />
+      <Header navigation={navigation} title="Bank List" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -147,16 +155,9 @@ const SubCategoryScreen = ({ navigation }) => {
             previewOpenValue={-72}
             previewRowKey="1"
             previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
+            refreshControl={<RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => FetchData()} />}
             data={listSearchData[0]}
+            useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
@@ -170,15 +171,16 @@ const SubCategoryScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={320} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{modeTypeName}</Title>
-          <ScrollView>
-            <List.Item title="Mode Type Name" description={modeTypeName} />
-            <List.Item title="Category Name" description={categoryName} />
-            <List.Item title=" Sub Category Name" description={subCategoryName} />
-            <List.Item title="Display" description={display} />
-           
+          <Title style={[Styles.paddingHorizontal16]}>{bankName}</Title>
+          <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Bank Name" description={bankName} />
+            <List.Item title="Bank Account No " description={bankAccountNo} />
+            <List.Item title="Card Type Name " description={cardType} />
+            <List.Item title="Opening Balance " description={openingBalance} />
+            <List.Item title="Remarks " description={remarks} />
+            <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>
         </View>
       </RBSheet>
@@ -186,4 +188,4 @@ const SubCategoryScreen = ({ navigation }) => {
   );
 };
 
-export default SubCategoryScreen;
+export default GMyBankScreen;

@@ -15,9 +15,11 @@ import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { NullOrEmpty } from "../../../utils/validations";
+import { APIConverter } from "../../../utils/apiconverter";
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0;
+let userID = 0,
+  groupID = 0;
 
 let st_ID = 0,
   ci_ID = 0;

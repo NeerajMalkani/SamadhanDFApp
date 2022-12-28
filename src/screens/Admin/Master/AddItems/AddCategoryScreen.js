@@ -20,7 +20,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [errorSN, setSNError] = React.useState(false);
-
+``
   const [unitOfSalesData, setUnitOfSalesData] = React.useState([]);
   const [unitOfSalesName, setUnitOfSalesName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
   const [errorUN, setUNError] = React.useState(false);

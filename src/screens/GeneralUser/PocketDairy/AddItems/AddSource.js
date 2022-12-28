@@ -14,42 +14,26 @@ const AddSource = ({ route, navigation }) => {
 
   //#region Variables
 
-  const [date, setDate] = useState(new Date());
-  const [dateInvalid, setDateInvalid] = useState("");
-  const dateRef = useRef({});
+  const [entryTypeError, setEntryTypeError] = React.useState(false);
+  const [entryType, setEntryType] = React.useState(route.params.type === "edit" ? route.params.data.entryType : "");
 
-  const [entryTypeNameData, setEntryTypeNameData] = React.useState([]);
-  const [entryTypeName, setEntryTypeName] = React.useState([]);
-  //   const [entryTypeName, setEntryTypeName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [errorET, setETError] = React.useState(false);
+  const [amountError, setAmountError] = React.useState(false);
+  const [amount, settAmount] = React.useState(route.params.type === "edit" ? route.params.data.amount : "");
 
- 
-  const [categoryNameData, setCategoryNameData] = React.useState([]);
-  const [categoryName, setCategoryName] = React.useState([]);
+  const [receiptModeData, setReceiptModeData] = React.useState([]);
+  const [receiptMode, setReceiptMode] = React.useState([]);
   //   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [errorCN, setCNError] = React.useState(false);
+  const [errorRM, setRMError] = React.useState(false);
+
+  const [sourceData, setSourceData] = React.useState([]);
+  const [source, setSource] = React.useState([]);
+  //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  const [errorSS, setSSError] = React.useState(false);
 
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
   const [subCategoryName, setSubCategoryName] = React.useState([]);
   //   const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [errorSCN, setSCNError] = React.useState(false);
-
-  const [payModeData, setpayModeData] = React.useState([]);
-  const [payMode, setPayMode] = React.useState([]);
-  //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-  const [errorPM, setPMError] = React.useState(false);
-
-  const [amountError, setAmountError] = React.useState(false);
-  const [amount, settAmount] = React.useState(route.params.type === "edit" ? route.params.data.amount : "");
-
-  const [notesError, setNotesError] = React.useState(false);
-  const [notes, setNotes] = React.useState(route.params.type === "edit" ? route.params.data.notes : "");
-
-  const [logoImage, setLogoImage] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState("");
-  const [image, setImage] = useState(AWSImagePath + "placeholder-image.png");
-  const [filePath, setFilePath] = useState(null);
-  const [errorLogo, setLogoError] = useState(false);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -132,12 +116,7 @@ const AddSource = ({ route, navigation }) => {
     FetchUnitOfSales();
   }, []);
 
-  const onEntryTypeName = (selectedItem) => {
-    setEntryTypeName(selectedItem);
-    setETError(false);
-  };
-
-  const onCategoryNameChanged = (selectedItem) => {
+  const onReceiptModeChanged = (selectedItem) => {
     setCNError(selectedItem);
     setCNError(false);
   };
@@ -147,7 +126,7 @@ const AddSource = ({ route, navigation }) => {
     setSCNError(false);
   };
 
-  const onPayModeChanged = (text) => {
+  const onSourceChanged = (text) => {
     setPayMode(text);
     setPMError(false);
   };
@@ -157,10 +136,7 @@ const AddSource = ({ route, navigation }) => {
     setAmountError(false);
   };
 
-  const onNotes = (text) => {
-    setNotes(text);
-    notesError(false);
-  };
+  
 
   const InsertData = () => {
     let arrunitOfSalesName = [];
@@ -299,142 +275,35 @@ const AddSource = ({ route, navigation }) => {
     }
   };
 
-  const chooseFile = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      setLogoError(false);
-      const arrExt = result.uri.split(".");
-      const unique_id = uuid.v4();
-      setLogoImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
-      setImage(result.uri);
-      setFilePath(result);
-      setIsImageReplaced(true);
-    }
-  };
-
-  const uploadFile = () => {
-    if (!isImageReplaced) {
-      UpdateData();
-    } else {
-      if (filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: logoImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              UpdateData();
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        setSnackbarText(communication.NoImageSelectedError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      }
-    }
-  };
   //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <View>
-            <DateTimePicker style={Styles.backgroundColorWhite} label="Date" type="date" value={date} onChangeDate={setDate} />
-          </View>
-
-          <Dropdown label="Entry Type Name" data={entryTypeNameData} onSelected={onEntryTypeName} isError={errorET} selectedItem={entryTypeName} />
-          <HelperText type="error" visible={errorET}>
-            {communication.InvalidModeTypeName}
+        <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <HelperText type="error" visible={entryTypeError}>
+            {communication.InvalidEntryType}
+          </HelperText>
+          <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
+          <HelperText type="error" visible={amountError}>
+            {communication.InvalidAmount}
           </HelperText>
 
-          <Dropdown label="Category Name" data={categoryNameData} onSelected={onCategoryNameChanged} isError={errorCN} selectedItem={categoryName} />
-          <HelperText type="error" visible={errorCN}>
-            {communication.InvalidCategoryName}
+          <Dropdown label="Receipt Mode" data={receiptModeData} onSelected={onReceiptModeChanged} isError={errorRM} selectedItem={receiptMode} />
+          <HelperText type="error" visible={errorRM}>
+            {communication.InvalidReceiptMode}
+          </HelperText>
+
+          <Dropdown label="Source / Receipt " data={sourceData} onSelected={onSourceChanged} isError={errorSS} selectedItem={source} />
+          <HelperText type="error" visible={errorSS}>
+            {communication.InvalidSource}
           </HelperText>
 
           <Dropdown label="Sub Category Name" data={subCategoryNameData} onSelected={onSubCategoryNameChanged} isError={errorSCN} selectedItem={subCategoryName} />
           <HelperText type="error" visible={errorSCN}>
             {communication.InvalidSubCategoryName}
           </HelperText>
-
-          <Dropdown label="Pay Mode" data={payModeData} onSelected={onPayModeChanged} isError={errorPM} selectedItem={payMode} />
-          <HelperText type="error" visible={errorPM}>
-            {communication.InvalidSubCategoryName}
-          </HelperText>
-
-
-          <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
-          <HelperText type="error" visible={amountError}>
-            {communication.InvalidBudgetAmount}
-          </HelperText>
-
-          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotes} style={{ backgroundColor: "white" }} error={notesError} />
-          <HelperText type="error" visible={notesError}>
-            {communication.InvalidBudgetAmount}
-          </HelperText>
-
-          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-              <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
-              <Button mode="text" onPress={chooseFile}>
-                {filePath !== null ? "Replace" : "Choose Image"}
-              </Button>
-            </View>
-            <HelperText type="error" visible={errorLogo}>
-              {communication.InvalidDesignImage}
-            </HelperText>
-
-          <View style={{ width: 160 }}>
-            <Checkbox.Item
-              label="Display"
-              color={theme.colors.primary}
-              position="leading"
-              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
-              status={checked ? "checked" : "unchecked"}
-              onPress={() => {
-                setChecked(!checked);
-              }}
-            />
-          </View>
-
         </View>
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>

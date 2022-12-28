@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
+import { ActivityIndicator, View, LogBox, RefreshControl,ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar,Title  } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
@@ -10,12 +9,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../../components/NoItems";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
-import {NullOrEmpty} from "../../../../utils/validations";
+import { APIConverter } from "../../../../utils/apiconverter";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const CategoryNameScreen = ({ navigation }) => {
-   //#region Variables
+const GMyContactsScreen = ({ navigation }) => {
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -24,25 +24,33 @@ const CategoryNameScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
-  const [modeTypeName, setModeTypeName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [display, setDisplay] = React.useState("");
- 
   const refRBSheet = useRef();
- //#endregion 
+ 
+  const [name, setName] = React.useState("");
+  const [mobileNo, setMobileNo] = React.useState("");
+  const [remark, setRemark] = React.useState("");
+  
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        pck_category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -79,7 +87,7 @@ const CategoryNameScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.categoryName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
         })
       );
     }
@@ -87,51 +95,49 @@ const CategoryNameScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.modeTypeName}
-          titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName} `}
-          onPress={() => {
-            refRBSheet.current.open();
-            setModeTypeName(data.item.modeTypeName);
-            setCategoryName(data.item.categoryName);
-            setDisplay(data.item.display ? "Yes" : "No");
-
-          }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-        />
-      </View>
+        title={data.item.name}
+        titleStyle={{ fontSize: 18 }}
+        description={`Display: ${data.item.display ? "Yes" : "No"} `}
+        onPress={() => {
+          refRBSheet.current.open();
+          setName(data.item.name);
+          setMobileNo(data.item.mobileNo);
+          setRemark(data.item.remark);
+        }}
+        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+        right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+      />
+    </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddCategoryName", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddGMyContactsScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log('edit data==============');
+    console.log(data);
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddCategoryName", {
+    navigation.navigate("AddGMyContactsScreen", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
-        categoryName: data.item.categoryName,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
+        name: data.item.Name,
+        mobileNo: data.item.mobileNo,
+        remark: data.item.remark,
         display: data.item.display,
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Category Name" />
+      <Header navigation={navigation} title="Contacts List" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -144,16 +150,9 @@ const CategoryNameScreen = ({ navigation }) => {
             previewOpenValue={-72}
             previewRowKey="1"
             previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
+            refreshControl={<RefreshControl colors={[theme.colors.primary]} refreshing={refreshing} onRefresh={() => FetchData()} />}
             data={listSearchData[0]}
+            useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
@@ -169,11 +168,11 @@ const CategoryNameScreen = ({ navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{modeTypeName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{name}</Title>
           <ScrollView>
-            <List.Item title="Mode Type Name" description={modeTypeName} />
-            <List.Item title="Category Name" description={categoryName} />
-            <List.Item title="Display" description={display} />
+            <List.Item title="Name" description={name} />
+            <List.Item title="Mobile No" description={mobileNo} />
+            <List.Item title="Remarks" description={remark} />
            
           </ScrollView>
         </View>
@@ -182,4 +181,4 @@ const CategoryNameScreen = ({ navigation }) => {
   );
 };
 
-export default CategoryNameScreen;
+export default GMyContactsScreen;
