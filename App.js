@@ -29,7 +29,6 @@ import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
 import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
 import FeedbackScreen from "./src/screens/FeedbackScreen";
 import UserProfileScreen from "./src/screens/UserProfile";
-//import DealerBasicDetailsScreen from "./src/screens/Dealer/CompanyProfile/BasicDetailsScreen";
 import BasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
 import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
 
@@ -78,7 +77,6 @@ import AddCommonDesignationScreen from "./src/screens/Common/Organization/AddIte
 import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
 import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
 import ClientScreen from "./src/screens/Common/Client/ClientScreen";
-import AddClientScreen from "./src/screens/Common/Client/AddItems/AddClientScreen";
 import ClientEditScreen from "./src/screens/Common/Client/AddItems/ClientEdit";
 import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
 import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
@@ -94,17 +92,13 @@ import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
 import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
 import Demo from "./src/screens/GeneralUser/Demo";
-import SearchClient from "./src/screens/Common/Client/AddItems/Search";
-import AddClient from "./src/screens/Common/Client/AddItems/Add";
+import SearchClientScreen from "./src/screens/Common/Client/AddItems/SearchClientScreen";
+import AddClientScreen from "./src/screens/Common/Client/AddItems/AddClientScreen";
 import SearchEmployee from "./src/screens/Common/Employee/AddItems/SearchEmployee";
 import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
-// import CategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/CategoryName";
-// import AddCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddCategoryName";
-// import SubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/SubCategoryName";
-// import AddSubCategoryName from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddSubCategoryName";
 import BudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/BudgetSetup";
 import AddBudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddBudgetSetup";
 import AddExpensesList from "./src/screens/GeneralUser/PocketDairy/AddExpensesList";
@@ -453,7 +447,7 @@ export default function App() {
               <Stack.Screen name="ImageGalleryWorkLocationScreen" component={ImageGalleryWorkLocationScreen} options={{ headerTitle: "Image Gallery", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EstimationPreviewScreen" component={EstimationPreviewScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GetEstimationScreen" component={GetEstimationScreen} options={{ headerTitle: "Design Estimation", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Search & Add Client", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+
               <Stack.Screen name="EmployeeEditScreen" component={EmployeeEditScreen} options={{ headerTitle: "Employee Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ClientEditScreen" component={ClientEditScreen} options={{ headerTitle: "Client Basic Edit", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{ headerShown: false }} />
@@ -464,16 +458,16 @@ export default function App() {
               <Stack.Screen name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
               <Stack.Screen name="MaterialCalculatorScreen" component={MaterialCalculatorScreen} options={{ headerTitle: "Material Calculator", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="Demo" component={Demo} />
-              <Stack.Screen name="SearchClient" component={SearchClient} options={{ headerTitle: "Search Client", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddClient" component={AddClient} options={{ headerTitle: "Add Client", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+
+              <Stack.Screen name="SearchClientScreen" component={SearchClientScreen} options={{ headerTitle: "Search Client", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddClientScreen" component={AddClientScreen} options={{ headerTitle: "Add Client", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+
               <Stack.Screen name="SearchEmployee" component={SearchEmployee} options={{ headerTitle: "Search Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddEmployee" component={AddEmployee} options={{ headerTitle: "Add Employee", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="SendRateCard" component={SendRateCard} options={{ headerShown: false }} />
               <Stack.Screen name="BranchEditScreen" component={BranchEditScreen} options={{ headerTitle: "Add Branch", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddSendRateCard" component={AddSendRateCard} options={{ headerTitle: "Add Send Rate card ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              {/* <Stack.Screen name="AddCategoryName" component={AddCategoryName} options={{ headerTitle: "Add Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="SubCategoryName" component={SubCategoryName} options={{ headerTitle: "Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
-              {/* <Stack.Screen name="AddSubCategoryName" component={AddSubCategoryName} options={{ headerTitle: "Add Sub Category Name ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
+
               <Stack.Screen name="BudgetSetup" component={BudgetSetup} options={{ headerTitle: "Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddBudgetSetup" component={AddBudgetSetup} options={{ headerTitle: " Add Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddExpensesList" component={AddExpensesList} options={{ headerTitle: " Add Expenses List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -493,7 +487,7 @@ export default function App() {
               <Stack.Screen name="ProductforProduction" component={ProductforProduction} options={{ headerTitle: "Product For Production ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddProduction" component={AddProduction} options={{ headerTitle: "Add Production For Production", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="EditProductForProduction" component={EditProductForProduction} options={{ headerTitle: "Edit Production For Production", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-           
+
               <Stack.Screen name="EditProductionStatus" component={EditProductionStatus} options={{ headerTitle: "Edit  Production Status", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
 
               <Stack.Screen name="ProductionOrderList" component={ProductionOrderList} options={{ headerTitle: "Production Order List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -512,7 +506,7 @@ export default function App() {
               <Stack.Screen name="AddGMyContactsScreen" component={AddGMyContactsScreen} options={{ headerTitle: "Add My Contacts", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GMyBankScreen" component={GMyBankScreen} options={{ headerTitle: " My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddGMyBankScreen" component={AddGMyBankScreen} options={{ headerTitle: " Add My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-            </Stack.Navigator> 
+            </Stack.Navigator>
           </NavigationContainer>
         )}
       </PaperProvider>

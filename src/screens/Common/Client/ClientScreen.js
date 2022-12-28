@@ -8,15 +8,17 @@ import Header from "../../../components/Header";
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import EntypoIcon from "react-native-vector-icons/Entypo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
-// import Search from '../Client/AddItems/Search';
-// import Add from "../Client/AddItems/Add";
+import { APIConverter } from "../../../utils/apiconverter";
+
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let userID = 0;
+let userID = 0,
+  Sess_group_refno = 0;
 const ClientScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
 
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -36,18 +38,19 @@ const ClientScreen = ({ navigation }) => {
   const [pincode, setPincode] = React.useState("");
   const [gstNumber, setGstNumber] = React.useState("");
   const [pan, setPan] = React.useState("");
-  const [serviceType, setServiceType] = React.useState(0);
   const [addedBy, setAddedBy] = React.useState(false);
   const [display, setDisplay] = React.useState(false);
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      userID = JSON.parse(userData).UserID;
+      const userDataParsed = JSON.parse(userData);
+      userID = userDataParsed.UserID;
+      Sess_group_refno = userDataParsed.Sess_group_refno;
       FetchData();
     }
   };
@@ -59,18 +62,23 @@ const ClientScreen = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        client_user_refno: "all",
+      },
     };
-    Provider.getAll(`contractorquotationestimation/getclients?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.MyClientUserRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            listData[1](lisData);
+            listSearchData[1](lisData);
           }
         } else {
           listData[1]([]);
@@ -107,72 +115,55 @@ const ClientScreen = ({ navigation }) => {
     }
   };
 
-  // const AddCallback = () => {
-  //   navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchData });
-  // };
-
   const SearchClient = () => {
-    navigation.navigate("SearchClient", { type: "add", fetchData: FetchData });
+    navigation.navigate("SearchClientScreen", { type: "add", fetchData: FetchData });
   };
   const AddClient = () => {
-    navigation.navigate("AddClient", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddClientScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-      navigation.navigate("ClientEditScreen", {
-        type: "edit",
-        fetchData: FetchData,
-        data: {
-           id: data.item.id,
-        },
-      });
+    navigation.navigate("AddClientScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.client_user_refno,
+        companyName: data.item.companyName,
+        contactPerson: data.item.contactPersonName,
+        contactMobileNumber: data.item.Mobile,
+        address1: data.item.addressLine,
+        cityName: data.item.cityName,
+        stateName: data.item.stateName,
+        pincode: data.item.pincode,
+        gstNumber: data.item.gstNumber,
+        pan: data.item.pan,
+        serviceType: data.item.client_role_refno,
+        addedBy: data.item.createbyID == 0 ? true : false,
+        display: data.item.display,
+      },
+    });
   };
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.companyName}
+          title={data.item.companyName !== "" ? data.item.companyName : data.item.contactPersonName}
           titleStyle={{ fontSize: 18 }}
-          description={"Mob.: " + data.item.contactMobileNumber}
+          description={"Mob.: " + data.item.Mobile}
           onPress={() => {
-            let serviceTypeRole = "";
-            switch(data.item.serviceType){
-              case 1:
-                serviceTypeRole = "Vendor";
-               break; 
-               case 2:
-                serviceTypeRole = "Supplier";
-               break; 
-               case 3:
-                serviceTypeRole = "Client";
-               break; 
-               case 12:
-                serviceTypeRole = "Vendor, Supplier";
-               break; 
-               case 13:
-                serviceTypeRole = "Vendor, Client";
-               break; 
-               case 23:
-                serviceTypeRole = "Supplier, Client";
-               break; 
-               case 123:
-                serviceTypeRole = "Vendor, Supplier, Client";
-               break; 
-            }
             refRBSheet.current.open();
             setCompanyName(data.item.companyName);
-            setContactPerson(data.item.contactPerson);
-            setContactMobileNumber(data.item.contactMobileNumber);
-            setAddress1(data.item.address1);
+            setContactPerson(data.item.contactPersonName);
+            setContactMobileNumber(data.item.Mobile);
+            setAddress1(data.item.addressLine);
             setStateName(data.item.stateName);
             setCityName(data.item.cityName);
             setPincode(data.item.pincode);
             setGstNumber(data.item.gstNumber);
             setPan(data.item.pan);
-            setServiceType(serviceTypeRole);
-            setAddedBy(data.item.addedBy);
+            setAddedBy(data.item.createbyID);
             setDisplay(data.item.display);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
@@ -182,11 +173,11 @@ const ClientScreen = ({ navigation }) => {
     );
   };
 
-    const [state, setState] = React.useState({ open: false });
-  
-    const onStateChange = ({ open }) => setState({ open });
-  
-    const { open } = state;
+  const [state, setState] = React.useState({ open: false });
+
+  const onStateChange = ({ open }) => setState({ open });
+
+  const { open } = state;
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Clients" />
@@ -222,37 +213,27 @@ const ClientScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="account-search" onPress={AddCallback} /> */}
       <FAB.Group
-          open={open}
-          icon={open ? 'window-minimize' : 'account-search'}
-          actions={[
-            
-            {
-              icon: 'magnify-plus',
-              label: 'Search Client',
-              onPress:SearchClient,
-            },
-            {
-              icon: 'account-plus',
-              label: 'Add Client',
-              onPress:AddClient,
-            },
-          ]}
-          onStateChange={onStateChange}
-          onPress={() => {
-            if (open) {
-              // do something if the speed dial is open
-            }
-          }}
-        />
+        open={open}
+        icon={open ? () => <EntypoIcon name="cross" color={theme.colors.textLight} size={24}></EntypoIcon> : () => <EntypoIcon name="plus" color={theme.colors.textLight} size={24}></EntypoIcon>}
+        actions={[
+          { icon: "magnify", small: false, color: theme.colors.text, labelTextColor: theme.colors.text, label: "Search Client", onPress: SearchClient },
+          { icon: "account-plus-outline", color: theme.colors.text, labelTextColor: theme.colors.text, small: false, label: "Add Client", onPress: AddClient },
+        ]}
+        onStateChange={onStateChange}
+        onPress={() => {
+          if (open) {
+            // do something if the speed dial is open
+          }
+        }}
+      />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{companyName}</Title>
-          <ScrollView style={{marginBottom: 64}}>
+          <ScrollView style={{ marginBottom: 64 }}>
             <List.Item title="Contact Person" description={contactPerson} />
             <List.Item title="Contact Mobile No" description={contactMobileNumber} />
             <List.Item title="Address" description={address1} />
@@ -261,8 +242,7 @@ const ClientScreen = ({ navigation }) => {
             <List.Item title="Pincode" description={pincode} />
             <List.Item title="GST" description={gstNumber} />
             <List.Item title="PAN" description={pan} />
-            <List.Item title="Service Type" description={serviceType} />
-            <List.Item title="Created Or Added" description={addedBy == 1 ? "Create" : "Add"} />
+            <List.Item title="Created Or Added" description={addedBy == 0 ? "Add" : "Create"} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>
         </View>

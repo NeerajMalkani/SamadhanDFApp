@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl,ScrollView } from "react-native";
-import { FAB, List, Searchbar, Snackbar,Title  } from "react-native-paper";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../../api/Provider";
 import Header from "../../../../components/Header";
@@ -25,11 +25,11 @@ const GMyContactsScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
   const refRBSheet = useRef();
- 
+
   const [name, setName] = React.useState("");
   const [mobileNo, setMobileNo] = React.useState("");
   const [remark, setRemark] = React.useState("");
-  
+
   //#endregion
 
   //#region Functions
@@ -49,7 +49,6 @@ const GMyContactsScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -95,21 +94,21 @@ const GMyContactsScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-        title={data.item.name}
-        titleStyle={{ fontSize: 18 }}
-        description={`Display: ${data.item.display ? "Yes" : "No"} `}
-        onPress={() => {
-          refRBSheet.current.open();
-          setName(data.item.name);
-          setMobileNo(data.item.mobileNo);
-          setRemark(data.item.remark);
-        }}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-      />
-    </View>
+          title={data.item.name}
+          titleStyle={{ fontSize: 18 }}
+          description={`Display: ${data.item.display ? "Yes" : "No"} `}
+          onPress={() => {
+            refRBSheet.current.open();
+            setName(data.item.name);
+            setMobileNo(data.item.mobileNo);
+            setRemark(data.item.remark);
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
     );
   };
 
@@ -118,8 +117,6 @@ const GMyContactsScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log('edit data==============');
-    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddGMyContactsScreen", {
       type: "edit",
@@ -173,7 +170,6 @@ const GMyContactsScreen = ({ navigation }) => {
             <List.Item title="Name" description={name} />
             <List.Item title="Mobile No" description={mobileNo} />
             <List.Item title="Remarks" description={remark} />
-           
           </ScrollView>
         </View>
       </RBSheet>

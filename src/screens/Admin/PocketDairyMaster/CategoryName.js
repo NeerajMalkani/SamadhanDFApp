@@ -26,7 +26,7 @@ const CategoryNameScreen = ({ navigation }) => {
 
   const [transactionTypeName, setTransactionTypeName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
-  
+
   //#endregion
 
   //#region Functions
@@ -46,7 +46,6 @@ const CategoryNameScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -92,20 +91,20 @@ const CategoryNameScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-        <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-        title={data.item.categoryName}
-        titleStyle={{ fontSize: 18 }}
-        description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
-        // onPress={() => {
-        //   refRBSheet.current.open();
-        //   setTransactionTypeName(data.item.transactionTypeName);
-        //   setCategoryName(data.item.categoryName);
-        // }}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-      />
-    </View>
+          title={data.item.categoryName}
+          titleStyle={{ fontSize: 18 }}
+          description={`Transaction Type: ${data.item.transactionTypeName}\nDisplay: ${data.item.display ? "Yes" : "No"} `}
+          // onPress={() => {
+          //   refRBSheet.current.open();
+          //   setTransactionTypeName(data.item.transactionTypeName);
+          //   setCategoryName(data.item.categoryName);
+          // }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
     );
   };
 
@@ -114,8 +113,6 @@ const CategoryNameScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log('edit data==============');
-    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddCategoryNameScreen", {
       type: "edit",
@@ -125,7 +122,7 @@ const CategoryNameScreen = ({ navigation }) => {
         categoryName: data.item.categoryName,
         display: data.item.display,
         pckCategoryID: data.item.pckCategoryID,
-        transactionTypeName: data.item.transactionTypeName
+        transactionTypeName: data.item.transactionTypeName,
       },
     });
   };

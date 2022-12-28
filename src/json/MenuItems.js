@@ -433,10 +433,10 @@ export const MenuItemsDealer = [
     roleID: 4,
     items: [
       {
-        title: "Client List",
+        title: "Client",
         type: "accordian",
         index: 50,
-        //navigation: "ClientListScreen",
+        navigation: "ClientScreen",
       },
     ],
   },
@@ -539,7 +539,7 @@ export const MenuItemsContractor = [
         type: "accordian",
         index: 40,
         //navigation: "ClientListScreen",
-        navigation:"RateCardSetup"
+        navigation: "RateCardSetup",
       },
       {
         title: "Send Rate Card",
@@ -958,10 +958,10 @@ export const MenuItemsManufacture = [
       // },
       {
         title: "Production Status",
-          type: "accordian",
-          index: 40,
-          navigation: "ProductionStatus",
-      }
+        type: "accordian",
+        index: 40,
+        navigation: "ProductionStatus",
+      },
     ],
   },
   {
@@ -1007,5 +1007,3 @@ export const MenuItemsManufacture = [
     ],
   },
 ];
-
-

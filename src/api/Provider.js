@@ -205,6 +205,8 @@ class Provider {
     MobileNoAutocompleteClientSearch: "mobilenoautocompleteclientsearch/",
     ClientSearch: "clientsearch/",
     ClientAdd: "clientadd/",
+    ClientCreate: "clientcreate/",
+    ClientUpdate: "clientupdate/",
 
     /******************************Dealer Brand************************************/
     DealerBrandMasterRefNoCheck: "dealerbrandmasterrefnocheck/",

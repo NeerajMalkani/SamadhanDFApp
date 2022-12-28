@@ -51,7 +51,6 @@ const GCategoryNameScreen = ({ navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -108,7 +107,6 @@ const GCategoryNameScreen = ({ navigation }) => {
             setCategoryName(data.item.categoryName);
             setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
             setDisplay(data.item.display);
-
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -131,7 +129,7 @@ const GCategoryNameScreen = ({ navigation }) => {
         categoryName: data.item.categoryName,
         display: data.item.display,
         pckCategoryID: data.item.pckCategoryID,
-        transactionTypeName: data.item.transactionTypeName
+        transactionTypeName: data.item.transactionTypeName,
       },
     });
   };

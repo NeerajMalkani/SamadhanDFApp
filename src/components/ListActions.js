@@ -31,19 +31,11 @@ export const CreateActionButtons = (icon, color, callback) => {
   );
 };
 export const RenderHiddenItems = (data, rowMap, callbacks) => {
-  return (
-    <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]} >
-      {CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap))}
-    </View>
-  );
+  return <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>{CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap))}</View>;
 };
 
 export const RenderHiddenItemGeneric = (iconName, data, rowMap, callbacks) => {
-  return (
-    <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]} >
-      {CreateActionButtons(iconName, theme.multicolors.yellow, () => callbacks[0](data, rowMap))}
-    </View>
-  );
+  return <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>{CreateActionButtons(iconName, theme.multicolors.yellow, () => callbacks[0](data, rowMap))}</View>;
 };
 
 export const RenderHiddenMultipleItems = (data, rowMap, callbacks) => {
@@ -52,6 +44,5 @@ export const RenderHiddenMultipleItems = (data, rowMap, callbacks) => {
       {CreateActionButtons("edit", theme.multicolors.yellow, () => callbacks[0](data, rowMap, "edit"))}
       {CreateActionButtons("send", theme.multicolors.blue, () => callbacks[0](data, rowMap, "otp"))}
     </View>
-    
   );
 };
