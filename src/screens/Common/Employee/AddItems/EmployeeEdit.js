@@ -22,25 +22,29 @@ import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { color } from "react-native-reanimated";
-import { PaperSelect } from 'react-native-paper-select';
+import { PaperSelect } from "react-native-paper-select";
 
-export const selectValidator = (value: any) => {
+export const selectValidator = (value) => {
   if (!value || value.length <= 0) {
-    return 'Please select a value.';
+    return "Please select a value.";
   }
 
-  return '';
+  return "";
 };
 
-let st_ID = 0, ct_ID = 0, bg_ID = 0, b_ID = 0, d_ID = 0, de_ID = 0;
+let st_ID = 0,
+  ct_ID = 0,
+  bg_ID = 0,
+  b_ID = 0,
+  d_ID = 0,
+  de_ID = 0;
 let rpt = 0;
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const EmployeeEditScreen = ({ route, navigation }) => {
-
-   //#region Variables
+  //#region Variables
   const [ETRadioButtons, setETRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -93,7 +97,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         setWagesTypeID(r.value);
       }
     });
-
   }
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -106,10 +109,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [empType, setEmpType] = React.useState();
 
   const [reporting, setReporting] = useState({
-    value: '',
+    value: "",
     list: [],
     selectedList: [],
-    error: '',
+    error: "",
   });
 
   const [wType, setWType] = React.useState();
@@ -273,8 +276,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#region Functions
   const GetUserID = async () => {
-    const 
-    userData = await AsyncStorage.getItem("user");
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       setBloodGroupFullData(BloodGroup);
@@ -286,7 +288,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const FetchBasicDetails = () => {
     let params = {
       ID: route.params.data.id,
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -296,7 +298,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             let reporting_data = response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
             if (!NullOrEmpty(employee_data)) {
-
               setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
               setEemployeeCode(!NullOrEmpty(employee_data.employeeCode) ? employee_data.employeeCode : "");
               setMobileNo(!NullOrEmpty(employee_data.mobileNo) ? employee_data.mobileNo : "");
@@ -343,7 +344,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               if (!NullOrEmpty(employee_data.branchID)) {
                 setBranchID(employee_data.branchID);
                 b_ID = employee_data.branchID;
-
               }
               if (!NullOrEmpty(employee_data.departmentID)) {
                 setDepartmentID(employee_data.departmentID);
@@ -368,7 +368,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : 0);
               }
               if (!NullOrEmpty(employee_data.wagesType)) {
-
                 {
                   wagesRadioButtons.map((r) => {
                     r.selected = false;
@@ -394,7 +393,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             }
 
             if (!NullOrEmpty(bankDetails_data)) {
-
               setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
               setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
               setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
@@ -422,12 +420,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchCities = (stateID) => {
     let params = {
-      ID: stateID
+      ID: stateID,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-
           if (response.data.data) {
             setCityFullData(response.data.data);
 
@@ -439,14 +436,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               });
               setCityName(a[0].cityName);
               setCityID(a[0].id);
-            }
-            else {
+            } else {
               setCityName("");
               setCityID(0);
             }
-
-          }
-          else {
+          } else {
             setCityFullData([]);
             setCityData([]);
             setCityName("");
@@ -454,8 +448,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             ct_ID = 0;
             setCityID(0);
           }
-        }
-        else {
+        } else {
           setCityFullData([]);
           setCityData([]);
           setCityName("");
@@ -464,7 +457,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           setCityID(0);
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchStates = () => {
@@ -472,7 +465,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setStatesFullData(response.data.data);
 
             const states = response.data.data.map((data) => data.stateName);
@@ -493,7 +485,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const BloodGroupDropdown = () => {
@@ -514,10 +506,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setBranchFullData(response.data.data);
 
             const branch = response.data.data.map((data) => data.locationName);
@@ -534,7 +524,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDepartments = () => {
@@ -561,7 +551,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDesignations = () => {
@@ -584,11 +574,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               setDesignationName(b[0].designationName);
               setDesignationID(b[0].designationID);
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReportingEmployee = () => {
@@ -599,21 +588,23 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
+            const rd = [];
+            response.data.data.map((data) => {
+              rd.push({ _id: data.id.toString(), value: data.employee });
+            });
 
-            const ct = []; response.data.data.map((data) => {
-
+            const ct = [];
+            response.data.data.map((data) => {
               if (data.id.toString() == rpt.toString()) {
-                ct.push({ _id: data.id.toString(), value: data.employee, });
+                ct.push({ _id: data.id.toString(), value: data.employee });
               }
-
             });
             setReporting({ ...reporting, list: rd, selectedList: ct });
             setReportingFullData(rd);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   //#endregion
@@ -744,7 +735,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
-  
   const chooseFile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -871,14 +861,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const UpdateReportingAuthority = () => {
-
-    let rptId="";
-      if (!NullOrEmpty(reporting.selectedList)) {
-
-        reporting.selectedList.map((r) => {
-          rptId+= r._id+",";
-        });
-      }
+    let rptId = "";
+    if (!NullOrEmpty(reporting.selectedList)) {
+      reporting.selectedList.map((r) => {
+        rptId += r._id + ",";
+      });
+    }
 
     const params = {
       EmployeeID: route.params.data.id,
@@ -890,9 +878,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         debugger;
         if (response.data && response.data.code === 200) {
-
         }
-        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
+        setTimeout(() => {
+          navigation.navigate("EmployeeListScreen");
+        }, 500);
       })
       .catch((e) => {
         console.log(e);
@@ -900,7 +889,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         setSnackMsg(communication.NetworkError);
         setOpen(true);
         setButtonLoading(false);
-        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
+        setTimeout(() => {
+          navigation.navigate("EmployeeListScreen");
+        }, 500);
       });
   };
 
@@ -1022,12 +1013,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               <PaperSelect
                 label="Reporting Employees"
                 value={reporting.value}
-                onSelection={(value: any) => {
+                onSelection={(value) => {
                   setReporting({
                     ...reporting,
                     value: value.text,
                     selectedList: value.selectedList,
-                    error: '',
+                    error: "",
                   });
                 }}
                 arrayList={[...reporting.list]}
@@ -1035,7 +1026,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 errorText={reporting.error}
                 multiEnable={true}
                 textInputMode="flat"
-                searchStyle={{ iconColor: '#6c736e' }}
+                searchStyle={{ iconColor: "#6c736e" }}
                 searchPlaceholder="Search Employee"
                 modalCloseButtonText="Cancel"
                 modalDoneButtonText="Done"

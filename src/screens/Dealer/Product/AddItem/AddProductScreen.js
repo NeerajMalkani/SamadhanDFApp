@@ -308,10 +308,8 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         : ""
     );
-    console.log(datas);
     Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupupdate, datas)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();

@@ -8,7 +8,7 @@ import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
-import { List } from 'react-native-paper';
+import { List } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../../components/ListActions";
@@ -73,7 +73,6 @@ const Search = ({ route, navigation }) => {
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
 
-
   const [serviceTypeRoles, setServiceTypeRoles] = useState([
     {
       title: "Vendor",
@@ -116,18 +115,18 @@ const Search = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCities = (stateName, stateData) => {
     let params = {
       ID: stateData
         ? stateData.find((el) => {
-          return el.stateName === stateName;
-        }).id
+            return el.stateName === stateName;
+          }).id
         : statesFullData.find((el) => {
-          return el.stateName === stateName;
-        }).id,
+            return el.stateName === stateName;
+          }).id,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -139,7 +138,7 @@ const Search = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -232,7 +231,6 @@ const Search = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    console.log('inser begin');
     let arrServiceTypeRole = [];
     serviceTypeRoles.map((k, i) => {
       if (k.isChecked) {
@@ -259,7 +257,6 @@ const Search = ({ route, navigation }) => {
     };
     Provider.create("contractorquotationestimation/insertclient", params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("client");
           navigation.goBack();
@@ -272,7 +269,6 @@ const Search = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log('message printing');
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -287,16 +283,13 @@ const Search = ({ route, navigation }) => {
 
     Provider.create("master/insertnewemployee", params)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           // redirect to employee list.
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Employee Added successfully");
           setSnackbarVisible(true);
           navigation.navigate("EmployeeListScreen", { type: "add", fetchData: FetchData });
-
         } else {
-
           setSnackbarColor(theme.colors.error);
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);
@@ -356,7 +349,6 @@ const Search = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    console.log("start");
     let isValid = true;
     if (companyName.length === 0) {
       setCompanyNameInvalid(true);
@@ -392,10 +384,8 @@ const Search = ({ route, navigation }) => {
       setServiceTypeInvalid(true);
       isValid = false;
     }
-    console.log(isValid);
     if (isValid) {
       if (route.params.type === "edit" || route.params.type === "client") {
-        console.log('insert start');
         InsertData();
       }
     }
@@ -405,9 +395,7 @@ const Search = ({ route, navigation }) => {
     let isValid = false;
     if (!NullOrEmpty(aadharNo.trim()) || !NullOrEmpty(mobileNo.trim())) {
       isValid = true;
-    }
-    else {
-
+    } else {
       if (NullOrEmpty(aadharNo.trim())) {
         setAadharNoInvalid(true);
       }
@@ -426,7 +414,7 @@ const Search = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
       MobileNo: mobileNo.trim(),
-      AadharNo: aadharNo.trim()
+      AadharNo: aadharNo.trim(),
     };
 
     Provider.getAll(`contractorquotationestimation/getotherclients?${new URLSearchParams(params)}`)
@@ -485,7 +473,9 @@ const Search = ({ route, navigation }) => {
   /*list accordian*/
   const [expanded, setExpanded] = React.useState(true);
 
-  const handlePress = () => { return setExpanded(!expanded), LayoutAnimation.easeInEaseOut() };
+  const handlePress = () => {
+    return setExpanded(!expanded), LayoutAnimation.easeInEaseOut();
+  };
 
   const design = (
     <>
@@ -552,11 +542,8 @@ const Search = ({ route, navigation }) => {
                       }}
                     />
                   </View>
-
                 );
-
               })}
-
             </View>
             <View style={{ width: 160 }}>
               <Checkbox.Item label="Display" position="leading" style={[Styles.paddingHorizontal0]} labelStyle={[Styles.textLeft, Styles.paddingStart4]} color={theme.colors.primary} status={checked ? "checked" : "unchecked"} onPress={() => setChecked(!checked)} />
@@ -570,7 +557,7 @@ const Search = ({ route, navigation }) => {
         </ScrollView>
       </View>
     </>
-  )
+  );
   return design;
-}
+};
 export default Search;

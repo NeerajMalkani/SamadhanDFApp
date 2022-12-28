@@ -384,7 +384,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     });
     Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignCreate, datas)
       .then((response) => {
-        console.log(response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -443,7 +442,6 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
     );
     Provider.createDFAdminWithHeader(Provider.API_URLS.NewDesignUpdate, datas)
       .then((response) => {
-        console.log(response.data.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");

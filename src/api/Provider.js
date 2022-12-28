@@ -254,32 +254,32 @@ class Provider {
 
     dealercompanyproductrefnocheck: "dealercompanyproductrefnocheck/",
     getproductdatadealerproductform: "getproductdatadealerproductform/",
-    dealerproductsetupcreate:"dealerproductsetupcreate/",
+    dealerproductsetupcreate: "dealerproductsetupcreate/",
     dealerproductsetupupdate: "dealerproductsetupupdate/",
-    getbrandnamedealerproductform:"getbrandnamedealerproductform/",
-    getproductnamedealerproductform:"getproductnamedealerproductform/",
-    
-    myemployeelist:"myemployeelist/",
-    aadharnoautocomplete: "aadharnoautocomplete/",
-    mobilenoautocomplete:"mobilenoautocomplete/",
-    employeesearch:"employeesearch/",
-    employeeadd:"employeeadd/",
-    employeecreate:"employeecreate/",
-    sendotptoemployee:"sendotptoemployee/",
-    employeeotpverify:"employeeotpverify/",
-    getemployeebasicdata:"getemployeebasicdata/",
+    getbrandnamedealerproductform: "getbrandnamedealerproductform/",
+    getproductnamedealerproductform: "getproductnamedealerproductform/",
 
-    employeebasicdataupdate:"employeebasicdataupdate/",
-    getbranchnameemployeeworkform:"getbranchnameemployeeworkform/",
-    getdepartmentnameemployeeworkform:"getdepartmentnameemployeeworkform/",
-    getdesignationnameemployeeworkform:"getdesignationnameemployeeworkform/",
-    getreportingtoemployeeworkform:"getreportingtoemployeeworkform/",
-    getemptypenameemployeeworkform:"getemptypenameemployeeworkform/",
-    getemployeeworkdata:"getemployeeworkdata/",
-    employeeworkdataupdate:"employeeworkdataupdate/",
-    getwagestypenameemployeeworkform:"getwagestypenameemployeeworkform/",
-    getemployeepaydata:"getemployeepaydata/",
-    employeepaydataupdate:"employeepaydataupdate/",
+    myemployeelist: "myemployeelist/",
+    aadharnoautocomplete: "aadharnoautocomplete/",
+    mobilenoautocomplete: "mobilenoautocomplete/",
+    employeesearch: "employeesearch/",
+    employeeadd: "employeeadd/",
+    employeecreate: "employeecreate/",
+    sendotptoemployee: "sendotptoemployee/",
+    employeeotpverify: "employeeotpverify/",
+    getemployeebasicdata: "getemployeebasicdata/",
+
+    employeebasicdataupdate: "employeebasicdataupdate/",
+    getbranchnameemployeeworkform: "getbranchnameemployeeworkform/",
+    getdepartmentnameemployeeworkform: "getdepartmentnameemployeeworkform/",
+    getdesignationnameemployeeworkform: "getdesignationnameemployeeworkform/",
+    getreportingtoemployeeworkform: "getreportingtoemployeeworkform/",
+    getemptypenameemployeeworkform: "getemptypenameemployeeworkform/",
+    getemployeeworkdata: "getemployeeworkdata/",
+    employeeworkdataupdate: "employeeworkdataupdate/",
+    getwagestypenameemployeeworkform: "getwagestypenameemployeeworkform/",
+    getemployeepaydata: "getemployeepaydata/",
+    employeepaydataupdate: "employeepaydataupdate/",
 
     MyBranchRefnocheck: "branchrefnocheck/",
     MyFetchBranchtype: "getbranchtypebranchform/",
@@ -287,17 +287,16 @@ class Provider {
     AddBranch: "branchcreate/",
     EditBranch: "branchupdate/",
     CompanyBranchForm: "getcompanynamebranchform/",
-    getassignbranchadminedit_branchform:"getassignbranchadminedit_branchform/",
+    getassignbranchadminedit_branchform: "getassignbranchadminedit_branchform/",
     FetchBranchAssignContactNo: "getassignbranchadmin_contactno_branchform/",
     MyFetchRegionalOffice: "getparentbranchrefnobranchform/",
-    
   };
 
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
 
-  createDFCommonWithouParam(resource: string) {
+  createDFCommonWithouParam(resource) {
     return axios.post(`${BASE_URL}/${resource}`);
   }
 

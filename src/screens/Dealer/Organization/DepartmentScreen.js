@@ -24,7 +24,7 @@ const DealerDepartmentScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -44,19 +44,14 @@ const DealerDepartmentScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        "Sess_UserRefno": DealerID,
-        "Sess_CompanyAdmin_UserRefno": "all"
-      }
+        Sess_UserRefno: DealerID,
+        Sess_CompanyAdmin_UserRefno: "all",
+      },
     };
-    console.log(params)
     Provider.createDFCommon(Provider.API_URLS.MyDepartmentRefnoCheck, params)
-    // Provider.getAll(`master/getuserdepartments?${new URLSearchParams(params)}`)
       .then((response) => {
-        console.log(response.data)
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-  
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -120,11 +115,11 @@ const DealerDepartmentScreen = ({ navigation }) => {
         id: data.item.id,
         departmentName: data.item.departmentName,
         display: data.item.display,
-        uid: DealerID
+        uid: DealerID,
       },
     });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

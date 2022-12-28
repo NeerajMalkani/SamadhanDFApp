@@ -14,7 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let dealerID = 0, ifBrandCreate = 0;
+let dealerID = 0,
+  ifBrandCreate = 0;
 
 const DealerProductScreen = ({ navigation }) => {
   //#region Variables
@@ -42,11 +43,11 @@ const DealerProductScreen = ({ navigation }) => {
 
   const refRBSheet = useRef();
 
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
-   const APIConverter = (response) => {
+  const APIConverter = (response) => {
     function renameKey(obj, oldKey, newKey) {
       if (obj.hasOwnProperty(oldKey)) {
         obj[newKey] = obj[oldKey];
@@ -56,9 +57,8 @@ const DealerProductScreen = ({ navigation }) => {
         delete obj[oldKey];
       }
     }
-  
+
     response.forEach((obj) => {
-  
       renameKey(obj, "actual_unit_name", "unitOfSale");
       renameKey(obj, "actual_unit_name_txt", "unitOfSaleText");
       renameKey(obj, "actual_unit_refno", "unitID");
@@ -77,10 +77,8 @@ const DealerProductScreen = ({ navigation }) => {
       renameKey(obj, "product_image_url", "image");
       renameKey(obj, "sales_unit", "unitOfSale");
       renameKey(obj, "view_status", "display");
-
-      
     });
-  
+
     return response;
   };
 
@@ -104,15 +102,13 @@ const DealerProductScreen = ({ navigation }) => {
       data: {
         Sess_UserRefno: dealerID,
         company_product_refno: "all",
-        Sess_if_create_brand: ifBrandCreate
-      }
+        Sess_if_create_brand: ifBrandCreate,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.dealercompanyproductrefnocheck, params)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -178,13 +174,10 @@ const DealerProductScreen = ({ navigation }) => {
             setDisplay(data.item.display ? "Yes" : "No");
             setAnnounceStatus(data.item.isPublish == "1" ? "Yes" : "No");
             setApproveStatus(data.item.isApprove == "1" ? "Yes" : "No");
-
-
           }}
           left={() => <Image source={{ uri: data.item.image }} style={[Styles.width56, Styles.height56]} />}
           // left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-
         />
       </View>
     );
@@ -195,7 +188,6 @@ const DealerProductScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddDealerProductScreen", {
       type: "edit",
@@ -214,7 +206,7 @@ const DealerProductScreen = ({ navigation }) => {
       },
     });
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

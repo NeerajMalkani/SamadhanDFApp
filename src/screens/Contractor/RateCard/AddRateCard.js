@@ -8,12 +8,14 @@ import { communication } from "../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Provider from "../../../api/Provider";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
 
-let s_ID = 0, c_ID = 0, p_ID = 0, u_ID = 0;
+let s_ID = 0,
+  c_ID = 0,
+  p_ID = 0,
+  u_ID = 0;
 let userID = 0;
 const AddRateCard = ({ route, navigation }) => {
-
   const [acivityName, setActivityName] = React.useState("Contractor");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -57,11 +59,9 @@ const AddRateCard = ({ route, navigation }) => {
   const [ruwm, setRUWM] = React.useState(route.params.type === "edit" ? route.params.data.rateWithoutMaterials : "");
   const [ruwmht, setRUWMHT] = React.useState("Only Labour cost");
 
-
   const [arum, setARUM] = React.useState(route.params.type === "edit" ? route.params.data.altRateWithMaterials : "");
 
   const [aruwm, setARUWM] = React.useState(route.params.type === "edit" ? route.params.data.altRateWithoutMaterials : "");
-
 
   const [errorAUOS, setErrorAUOS] = React.useState(false);
   const [auos, setAUOS] = React.useState("");
@@ -96,8 +96,7 @@ const AddRateCard = ({ route, navigation }) => {
       userID = JSON.parse(userData).UserID;
       if (route.params.type === "edit") {
         FetchData("edit", route.params.data.rateCardID);
-      }
-      else {
+      } else {
         FetchServiceName();
       }
     }
@@ -127,11 +126,10 @@ const AddRateCard = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCategory = (arnID, serviceNameID, callbackFunction = null) => {
-
     let params = {
       ActivityID: arnID,
       ServiceID: serviceNameID,
@@ -140,7 +138,6 @@ const AddRateCard = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setCategoriesFullData(response.data.data);
 
             const category = response.data.data.map((data) => data.categoryName);
@@ -159,7 +156,7 @@ const AddRateCard = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProductsFromCategory = (selectedItem) => {
@@ -169,27 +166,26 @@ const AddRateCard = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.serviceID
           : servicesFullData.find((el) => {
-            return el.serviceName === serviceName;
-          }).serviceID,
+              return el.serviceName === serviceName;
+            }).serviceID,
       CategoryID:
         route.params.type === "edit"
           ? route.params.data.categoryID
           : categoriesFullData.find((el) => {
-            return el.categoryName === selectedItem;
-          }).id,
+              return el.categoryName === selectedItem;
+            }).id,
     };
     Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchUnitsFromProductID = (selectedItem, selectedUnitID) => {
@@ -198,19 +194,18 @@ const AddRateCard = ({ route, navigation }) => {
         route.params.type === "edit"
           ? route.params.data.id
           : productsFullData.find((el) => {
-            return el.productName === selectedItem;
-          }).productID,
+              return el.productName === selectedItem;
+            }).productID,
     };
     Provider.getAll(`master/getproductunitbyid?${new URLSearchParams(params)}`)
       .then((response) => {
-     
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setUnitFullData(response.data.data);
             const units = response.data.data.map((data) => data.unitName);
             setUnitsData(units);
 
-            let product = productsFullData.filter((el: any) => {
+            let product = productsFullData.filter((el) => {
               return el.productName === selectedItem;
             });
             if (selectedUnitID == response.data.data[0].unitID) {
@@ -222,22 +217,20 @@ const AddRateCard = ({ route, navigation }) => {
 
               setARUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
               setARUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
-            }
-            else if (selectedUnitID == response.data.data[1].unitID) {
+            } else if (selectedUnitID == response.data.data[1].unitID) {
               setUnitName(response.data.data[1].unitName);
               setSelectedUnitID(response.data.data[1].unitID);
 
               setRUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
               setRUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
 
-              setARUM(((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate) * response.data.data[0].conversionRate).toFixed(2).toString());
-              setARUWM(((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate) * response.data.data[0].conversionRate).toFixed(2).toString());
+              setARUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate * response.data.data[0].conversionRate).toFixed(2).toString());
+              setARUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate * response.data.data[0].conversionRate).toFixed(2).toString());
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchData = (from, RateCardID) => {
@@ -254,10 +247,9 @@ const AddRateCard = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             FetchServiceName();
-            FetchCategory(4, response.data.data[0].serviceID, (categoryList: any) => {
-              let ca: CategoryModel | undefined = categoryList.find((el: any) => el.categoryName === route.params.data.categoryName);
+            FetchCategory(4, response.data.data[0].serviceID, (categoryList) => {
+              let ca = categoryList.find((el) => el.categoryName === route.params.data.categoryName);
               if (ca !== undefined) {
-
                 setHSN(ca.hsnsacCode);
                 setGST(ca.gstRate.toString());
               }
@@ -266,7 +258,6 @@ const AddRateCard = ({ route, navigation }) => {
             });
 
             FetchUnitsFromProductID(route.params.data.productName, route.params.data.selectedUnitID);
-
           }
         } else {
           listData[1]([]);
@@ -362,61 +353,52 @@ const AddRateCard = ({ route, navigation }) => {
     setUnitName(selectedItem);
     setUNError(false);
 
-    let unit = unitFullData.filter((el: any) => {
+    let unit = unitFullData.filter((el) => {
       return el.unitName === selectedItem;
     });
-    let product = productsFullData.filter((el: any) => {
+    let product = productsFullData.filter((el) => {
       return el.productName === productsName;
     });
-  
-    if (unit[0].unitID == unitFullData[0].unitID) {
 
+    if (unit[0].unitID == unitFullData[0].unitID) {
       setRUM(product[0].rateWithMaterials.toString());
       setRUWM(product[0].rateWithoutMaterials.toString());
 
       setARUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
       setARUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
-    }
-    else if (unit[0].unitID == unitFullData[1].unitID) {
-
+    } else if (unit[0].unitID == unitFullData[1].unitID) {
       setRUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
       setRUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
 
-      setARUM(((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate) * unitFullData[0].conversionRate).toFixed(2).toString());
-      setARUWM(((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate) * unitFullData[0].conversionRate).toFixed(2).toString());
+      setARUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
+      setARUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
     }
-
   };
 
   const ChanegRateUnit = (rum, ruwm) => {
-    let unit = unitFullData.filter((el: any) => {
+    let unit = unitFullData.filter((el) => {
       return el.unitName === unitName;
     });
 
-    let ratewithmaterial = rum, ratewithoutmaterial = ruwm;
+    let ratewithmaterial = rum,
+      ratewithoutmaterial = ruwm;
 
     if (unit[0].unitID == unitFullData[0].unitID) {
-
       setRUM(ratewithmaterial.toString());
       setRUWM(ratewithoutmaterial.toString());
 
       setARUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
       setARUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
-    }
-    else if (unit[0].unitID == unitFullData[1].unitID) {
-
+    } else if (unit[0].unitID == unitFullData[1].unitID) {
       setRUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
       setRUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
 
-      setARUM(((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate) * unitFullData[0].conversionRate).toFixed(2).toString());
-      setARUWM(((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate) * unitFullData[0].conversionRate).toFixed(2).toString());
+      setARUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
+      setARUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
     }
-
-
-  }
+  };
 
   const onRUMChanged = (text) => {
-
     setRUM(text);
     setRUMHT("Materials + Labour cost");
     setErrorRUM(false);
@@ -486,16 +468,14 @@ const AddRateCard = ({ route, navigation }) => {
     if (isValid) {
       if (route.params.type === "edit") {
         UpdateData();
-      }
-      else {
+      } else {
         InsertData();
       }
-
     }
   };
 
   const InsertData = () => {
-    let x = unitFullData.filter((el: any) => {
+    let x = unitFullData.filter((el) => {
       return el.unitName === unitName;
     });
 
@@ -511,7 +491,7 @@ const AddRateCard = ({ route, navigation }) => {
       CategoryID: categoriesFullData.find((el) => {
         return el.categoryName === categoriesName;
       }).id,
-      SelectedUnitID: unitFullData.filter((el: any) => {
+      SelectedUnitID: unitFullData.filter((el) => {
         return el.unitName === unitName;
       })[0].unitID,
       UnitOfSalesID: 0,
@@ -523,7 +503,7 @@ const AddRateCard = ({ route, navigation }) => {
       ShortSpecification: shortSpec,
       Specification: spec,
       Display: display === "Yes" ? true : false,
-      ContractorID: userID
+      ContractorID: userID,
     };
     Provider.create("master/insertupdatecontractorratecard", params)
       .then((response) => {
@@ -546,7 +526,6 @@ const AddRateCard = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-
     const params = {
       RateCardID: route.params.data.rateCardID,
       ProductID: productsFullData.find((el) => {
@@ -559,7 +538,7 @@ const AddRateCard = ({ route, navigation }) => {
       CategoryID: categoriesFullData.find((el) => {
         return el.categoryName === categoriesName;
       }).id,
-      SelectedUnitID: unitFullData.filter((el: any) => {
+      SelectedUnitID: unitFullData.filter((el) => {
         return el.unitName === unitName;
       })[0].unitID,
       UnitOfSalesID: 0,
@@ -571,7 +550,7 @@ const AddRateCard = ({ route, navigation }) => {
       ShortSpecification: shortSpec,
       Specification: spec,
       Display: display === "Yes" ? true : false,
-      ContractorID: userID
+      ContractorID: userID,
     };
     Provider.create("master/insertupdatecontractorratecard", params)
       .then((response) => {
@@ -593,11 +572,9 @@ const AddRateCard = ({ route, navigation }) => {
       });
   };
 
-
-
   const design = (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" >
+      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16, Styles.backgroundColorWhite]}>
           <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
 
@@ -637,18 +614,14 @@ const AddRateCard = ({ route, navigation }) => {
 
           <Checkbox.Item
             label="Display"
-
             position="leading"
             labelStyle={{ textAlign: "left", paddingLeft: 8 }}
             status={checked ? "checked" : "unchecked"}
             onPress={() => {
               setChecked(!checked);
             }}
-
           />
-
         </View>
-
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
@@ -660,5 +633,5 @@ const AddRateCard = ({ route, navigation }) => {
     </View>
   );
   return design;
-}
+};
 export default AddRateCard;

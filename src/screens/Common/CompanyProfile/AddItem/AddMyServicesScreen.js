@@ -22,7 +22,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -46,7 +46,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -70,9 +70,9 @@ const AddMyServicesScreen = ({ route, navigation }) => {
         service_refno: servicesFullData.find((el) => {
           return el.serviceName === serviceName;
         }).id,
-        view_status: checked ? "1" : "0"
-      }
-    }
+        view_status: checked ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.dealermyservicecreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -94,16 +94,14 @@ const AddMyServicesScreen = ({ route, navigation }) => {
   };
 
   const UpdateMyServicesName = () => {
-    console.log('start update');
-    console.log(servicesFullData);
     let params = {
       data: {
         Sess_UserRefno: userID,
         myservice_refno: route.params.data.serviceID,
         service_refno: route.params.data.id,
-        view_status: checked ? "1" : "0"
-      }
-    }
+        view_status: checked ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.dealermyserviceupdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -141,7 +139,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
   return (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">

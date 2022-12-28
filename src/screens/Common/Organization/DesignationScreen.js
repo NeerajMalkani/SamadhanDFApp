@@ -10,14 +10,14 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
 import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let ContractorID = 0;
 
 const ContractorDesignationScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -27,15 +27,15 @@ const ContractorDesignationScreen = ({ navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-        ContractorID = JSON.parse(userData).UserID;
-        FetchData();
+      ContractorID = JSON.parse(userData).UserID;
+      FetchData();
     }
   };
 
@@ -48,17 +48,14 @@ const ContractorDesignationScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: ContractorID,
-        mydesignation_refno: "all"
-      }
+        mydesignation_refno: "all",
+      },
     };
-    Provider.createDFCommon(Provider.API_URLS.MyDesignationRefnoCheck,params)
+    Provider.createDFCommon(Provider.API_URLS.MyDesignationRefnoCheck, params)
       .then((response) => {
-        console.log(response)
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data);
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data)
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -104,9 +101,12 @@ const ContractorDesignationScreen = ({ navigation }) => {
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 92 }]}>
-        <List.Item title={data.item.designationName} titleStyle={{ fontSize: 18 }} 
-        description={`Display.: ${NullOrEmpty(data.item.display) ? "No" : (data.item.display ? "Yes" : "No")}\nReporting Authority: ${NullOrEmpty(data.item.reportingAuthority) ? "No" : (data.item.reportingAuthority ? "Yes" : "No")} `}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />} />
+        <List.Item
+          title={data.item.designationName}
+          titleStyle={{ fontSize: 18 }}
+          description={`Display.: ${NullOrEmpty(data.item.display) ? "No" : data.item.display ? "Yes" : "No"}\nReporting Authority: ${NullOrEmpty(data.item.reportingAuthority) ? "No" : data.item.reportingAuthority ? "Yes" : "No"} `}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
+        />
       </View>
     );
   };
@@ -126,12 +126,12 @@ const ContractorDesignationScreen = ({ navigation }) => {
         designationName: data.item.designationName,
         display: data.item.display,
         reportingAuthority: data.item.reportingAuthority,
-        uid: ContractorID
+        uid: ContractorID,
       },
     });
   };
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Designations" />

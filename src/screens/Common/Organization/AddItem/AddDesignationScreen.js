@@ -8,7 +8,8 @@ import { communication } from "../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
 
-let ContractorID = 0, companyID = 0;
+let ContractorID = 0,
+  companyID = 0;
 const AddContractorDesignationScreen = ({ route, navigation }) => {
   //#region Variables
   const [designationFullData, setDesignationFullData] = React.useState([]);
@@ -28,7 +29,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  //#endregion 
+  //#endregion
 
   //#region Functions
   const GetUserID = async () => {
@@ -47,10 +48,9 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: ContractorID,
-        designation_refno: "all"
+        designation_refno: "all",
       },
     };
-    console.log(params)
     Provider.createDFAdmin(Provider.API_URLS.DesignationRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -63,12 +63,10 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
             //fetching fulldata from api
             const designation = response.data.data.map((data) => data.designationName);
             setDesignationData(designation);
-
-          
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const onDesignationSelected = (selectedItem) => {
@@ -80,14 +78,14 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: ContractorID,
-        Sess_company_refno:companyID,
+        Sess_company_refno: companyID,
         designation_refno: designationFullData.find((el) => {
           return el.designationName === designationName;
         }).id,
         view_status: checked ? "1" : "0",
-        reporting_status: reportingAuthority ? "1" : "0"
-      }
-    }
+        reporting_status: reportingAuthority ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.DesignationCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -118,10 +116,9 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
           return el.designationName === designationName;
         }).id,
         view_status: checked ? "1" : "0",
-        reporting_status: reportingAuthority ? "1" : "0"
-      }
-    }
-    console.log(params)
+        reporting_status: reportingAuthority ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.DesignationUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -156,7 +153,7 @@ const AddContractorDesignationScreen = ({ route, navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

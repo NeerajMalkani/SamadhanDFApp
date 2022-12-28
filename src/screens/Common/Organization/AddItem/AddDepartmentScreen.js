@@ -22,7 +22,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -36,24 +36,20 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     GetUserID();
-    console.log("department id check");
-    console.log(route.params.data.departmentID);
   }, []);
 
   const FetchDepartments = () => {
     let params = {
       data: {
         Sess_UserRefno: ContractorID,
-        department_refno: "all"
+        department_refno: "all",
       },
     };
 
     Provider.createDFAdmin(Provider.API_URLS.DepartmentRefNoCheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          console.log(response.data)
           if (response.data.data) {
-
             response.data.data = APIConverter(response.data.data);
             response.data.data = response.data.data.filter((el) => {
               return el.display;
@@ -64,18 +60,15 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const onDepartmentSelected = (selectedItem) => {
-    console.log("select department : " + selectedItem);
-    console.log(selectedItem);
     setDepartmentName(selectedItem);
     setDepartmentError(false);
   };
 
   const InsertDepartment = () => {
-    console.log("start")
     let params = {
       data: {
         Sess_UserRefno: ContractorID,
@@ -83,12 +76,11 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
           return el.departmentName === departmentName;
         }).id,
 
-        view_status: checked ? "1" : "0"
-      }
-    }
+        view_status: checked ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.DepartmentCreate, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -101,7 +93,6 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log("4");
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -116,13 +107,11 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
         department_refno: departmentFullData.find((el) => {
           return el.departmentName === departmentName;
         }).id,
-        view_status: checked ? "1" : "0"
-      }
-    }
-    console.log(params);
+        view_status: checked ? "1" : "0",
+      },
+    };
     Provider.createDFCommon(Provider.API_URLS.DepartmentUpdate, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -156,8 +145,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
     }
   };
 
-  //#endregion 
-
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>

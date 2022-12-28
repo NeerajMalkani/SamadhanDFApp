@@ -1,11 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import {
-  Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList
-} from "react-native";
-import {
-  Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading,
-  Text, TextInput, Title, MD3Colors
-} from "react-native-paper";
+import { Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList } from "react-native";
+import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -14,7 +9,7 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import AddMaterialSetupProducts from "../../Admin/ServiceCatalogue/AddItems/AddMaterialSetupProducts";
 import { AWSImagePath } from "../../../utils/paths";
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import styles from "react-native-inset-shadow/src/styles";
 import { scrollTo } from "react-native-reanimated/lib/reanimated2/NativeMethods";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -24,7 +19,6 @@ import ImageViewer from "react-native-image-zoom-viewer";
 //import { FlatList } from "react-native-gesture-handler";
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
-
   const scrollRef = useRef();
 
   //#region Variables
@@ -81,7 +75,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const [total, setTotal] = React.useState(0);
 
-  let userID = 0, groupID = 0;
+  let userID = 0,
+    groupID = 0;
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
@@ -90,7 +85,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = React.useState(false);
 
-  //#endregion 
+  //#endregion
 
   //#region Functions
   // const LengthRoute = () => (
@@ -157,7 +152,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   //   </>
   // );
 
-
   const onTotalAreaChanged = (text) => {
     ResetLengthWidth();
     setTotalArea(text);
@@ -174,23 +168,14 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-
-      indicatorStyle={{ backgroundColor: '#FFF89A' }}
-      style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]}
-      activeColor={'#F5CB44'}
-      inactiveColor={'#F4F4F4'}
-    />
-  );
+  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: "#FFF89A" }} style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]} activeColor={"#F5CB44"} inactiveColor={"#F4F4F4"} />;
 
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'length', title: 'Length / Width' },
-    { key: 'total', title: 'Total Area' },
+    { key: "length", title: "Length / Width" },
+    { key: "total", title: "Total Area" },
   ]);
 
   // const renderScene = SceneMap({
@@ -200,20 +185,16 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const renderScene = ({ route }) => {
     switch (route.key) {
-      case 'length':
+      case "length":
         return (
-          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
             <View style={[Styles.flexAlignSelfStart]}>
-              <IconButton
-                icon="gesture-swipe-left"
-                color={theme.colors.textfield}
-                size={22}
-              />
+              <IconButton icon="gesture-swipe-left" color={theme.colors.textfield} size={22} />
             </View>
             <View style={Styles.paddingHorizontal16}>
               <Subheading>Length</Subheading>
 
-              <View style={[Styles.flexRow, Styles.flexAlignCenter,]}>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
                 <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
                   <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
                 </View>
@@ -235,25 +216,18 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
               </View>
             </View>
-
           </View>
         );
-      case 'total':
+      case "total":
         return (
-          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
             <View style={[Styles.flexAlignSelfEnd]}>
-              <IconButton
-                icon="gesture-swipe-right"
-                color={theme.colors.textfield}
-                size={22}
-              />
+              <IconButton icon="gesture-swipe-right" color={theme.colors.textfield} size={22} />
             </View>
             <View style={Styles.paddingHorizontal16}>
               <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
               <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-                <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea}
-                  returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]}
-                />
+                <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
               </View>
             </View>
           </View>
@@ -272,8 +246,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_group_refno: groupID
-      }
+        Sess_group_refno: groupID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getservicenamematerialcalculatorform, params)
       .then((response) => {
@@ -286,7 +260,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCategoriesFromServices = (serviceName) => {
@@ -296,8 +270,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         service_refno: servicesFullData.find((el) => {
           return el.serviceName === serviceName;
-        }).id
-      }
+        }).id,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getcategorynamematerialcalculatorform, params)
       .then((response) => {
@@ -310,7 +284,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDesignImage = (designID) => {
@@ -318,8 +292,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
-        designtype_refno: designID
-      }
+        designtype_refno: designID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getdesigntypeimagematerialcalculatorform, params)
       .then((response) => {
@@ -330,7 +304,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProductsFromCategory = (categoryName) => {
@@ -340,9 +314,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         category_refno: categoriesFullData.find((el) => {
           return el.categoryName === categoryName;
-        }).id
-      }
-
+        }).id,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getproductnamematerialcalculatorform, params)
       .then((response) => {
@@ -355,7 +328,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDesignTypeFromProduct = (selectedItem) => {
@@ -365,8 +338,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         product_refno: productsFullData.find((el) => {
           return el.productName === selectedItem;
-        }).id
-      }
+        }).id,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getproductdesigntypematerialcalculatorform, params)
       .then((response) => {
@@ -379,7 +352,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBrandsFromProductIds = () => {
@@ -392,8 +365,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         }).id,
         product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
-        }).id
-      }
+        }).id,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getbrandnamelist_materialcalculatorform, params)
       .then((response) => {
@@ -409,9 +382,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
-
 
   const FetchProductPriceOnBrandSelection = (brandID) => {
     let params = {
@@ -425,53 +397,42 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           return el.productName === productsName;
         }).id,
         totalfoot: totalSqFt,
-        dealer_brand_refno: brandID
-      }
+        dealer_brand_refno: brandID,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getproductrate_by_brandrefno_materialcalculatorform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             const newData = [...arrProductData[0]];
             newData.map((k) => {
-              //console.log('===');
-              //console.log(k.productID);
               const foundProduct = response.data.data.find((el) => el.productID == k.productID);
               if (foundProduct) {
-                //console.log('found');
                 k.brandID = foundProduct.brandID;
                 k.brandName = foundProduct.brandName;
                 k.price = foundProduct.price;
                 k.amount = foundProduct.amount;
-              }
-              else {
+              } else {
                 k.amount = "0";
               }
             });
-            //console.log('edited=============');
-            //console.log(newData);
             const amounts = newData.map((data) => data.amount);
-            //console.log('amount =================');
-            //console.log(amounts);
             if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
               setTotal(0);
-            }
-            else {
+            } else {
               setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
             }
             arrProductData[1](newData);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProductsFromMaterialSetup = (callback) => {
     setIsButtonLoading(true);
     let params = {
-
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
@@ -481,17 +442,14 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
         }).id,
-        totalfoot: totalSqFt
-      }
+        totalfoot: totalSqFt,
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            // console.log('start ====================');
-            // console.log(response.data.data);
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
@@ -510,8 +468,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             });
             // setTotal(totalTemp);
             arrProductData[1](tempArr);
-            // console.log('end ===================');
-            // console.log(tempArr);
             autoScroll();
             setBrandsData([]);
             setBrandsFullData([]);
@@ -519,17 +475,15 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             FirstCalculationSqFt(totalSqFt, response.data.data);
             FetchBrandsFromProductIds();
           }
-        }
-        else {
+        } else {
           setSnackbarText(communication.NoMaterial);
           setSnackbarVisible(true);
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const onServiceNameSelected = (selectedItem) => {
-
     setServiceName(selectedItem);
 
     categoriesDDRef.current.reset();
@@ -598,20 +552,16 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
-
     const selecedBrand = uniqueBrandsData[parseInt(index)];
     setBrandName(selectedItem);
     setBNError(false);
 
     FetchProductPriceOnBrandSelection(selecedBrand.brandID);
 
-
     // const selecedBrand = uniqueBrandsData[parseInt(index)];
     // const appliedProducts = brandsFullData.filter((el) => {
     //   return el.brandID === selecedBrand.brandID;
     // });
-
-
 
     // const newData = [...arrProductData[0]];
     // newData.map((k) => {
@@ -787,7 +737,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const GetMaterialDetails = () => {
     FetchProductsFromMaterialSetup();
-  }
+  };
 
   const OpenProductDialog = () => {
     refRBSheet.current.open();
@@ -801,21 +751,20 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     return arrNumbers;
   };
 
-
   const onTotalSqFtChange = (text) => {
     setTotalArea(text);
   };
 
   const ResetTotalArea = () => {
     setTotalArea("");
-  }
+  };
 
   const ResetLengthWidth = () => {
     setWidthFeet("1");
     setLengthFeet("1");
     setLengthInches("0");
     setWidthInches("0");
-  }
+  };
 
   const FirstCalculationSqFt = (totArea, productData) => {
     if (productData.length > 0) {
@@ -842,12 +791,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       arrProductData[1](arrMaterialProducts);
       if (total > 0) {
         setTotal(parseFloat(total).toFixed(4));
-      }
-      else {
+      } else {
         setTotal(0);
       }
     }
-  }
+  };
 
   const CalculateSqFt = (lf, li, wf, wi, type, ta, txtChange) => {
     if (type == "lw") {
@@ -878,8 +826,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       } else {
         setTotalSqft(0);
       }
-    }
-    else if (type == "ta") {
+    } else if (type == "ta") {
       if (ta > 0) {
         setTotalSqft(parseFloat(ta).toFixed(4));
         if (txtChange == true) {
@@ -905,8 +852,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       }
-    }
-    else {
+    } else {
       setTotalSqft(0);
     }
   };
@@ -914,14 +860,13 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const autoScroll = () => {
     let offset = 100;
     let i = setInterval(() => {
-      offset += windowHeight
-      scrollRef.current?.scrollTo({ x: 0, y: offset, animated: true })
+      offset += windowHeight;
+      scrollRef.current?.scrollTo({ x: 0, y: offset, animated: true });
       clearInterval(i);
-    }, 2000)
+    }, 2000);
+  };
 
-  }
-
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -948,17 +893,19 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           </HelperText>
 
           <View style={[Styles.flexRow, Styles.flexAlignEnd]}>
-            <TouchableOpacity style={[Styles.height100per, Styles.width100per]} onPress={() => {
-              setImageToZoom([
-                {
-                  url: designImage,
-                },
-              ]);
-              setIsZoomShow(true);
-            }}>
+            <TouchableOpacity
+              style={[Styles.height100per, Styles.width100per]}
+              onPress={() => {
+                setImageToZoom([
+                  {
+                    url: designImage,
+                  },
+                ]);
+                setIsZoomShow(true);
+              }}
+            >
               <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
             </TouchableOpacity>
-
           </View>
 
           <View style={[Styles.height325, Styles.marginTop16]}>
@@ -971,18 +918,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
             /> */}
 
-            <TabView
-              renderTabBar={renderTabBar}
-              navigationState={{ index, routes }}
-              renderScene={renderScene}
-              onIndexChange={setIndex}
-              initialLayout={{ width: layout.width }}
-            />
-
+            <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)"
-            onChangeText={onTotalSqFtChange} value={totalSqFt}
-            editable={false} />
+          <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
           </Button>
@@ -997,17 +935,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             </HelperText>
 
             {arrProductData[0].map((k, i) => {
-              // console.log('======== product');
-              // console.log(k);
-              // console.log('======== product');
-              // console.log(k.quantity);
-              // console.log('===');
-              // console.log(k);
-              // console.log(k.quantity);
-              //let qty = k.quantity == 0 ? k.quantity : 0;
-              //console.log(qty == 0 ? qty : "false");
               return (
-
                 <Card key={i} elevation={3} style={[Styles.marginTop16]}>
                   <Card.Content>
                     <View style={[Styles.flexRow, Styles.borderBottom1, Styles.marginBottom4, Styles.paddingHorizontal4, Styles.flexAlignStart]}>
@@ -1016,35 +944,26 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                     </View>
                     <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
                       <View style={[Styles.width48per]}>
-                        <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Quantity"
-                          value={parseFloat(k.quantity).toFixed(4).toString()} />
+                        <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Quantity" value={parseFloat(k.quantity).toFixed(4).toString()} />
                       </View>
-                      <View style={[Styles.width48per]}>
-                        {
-                          k.price > 0 ? <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Rate" value={k.price ? parseFloat(k.price).toFixed(4) : ""} /> : null
-                        }
-                      </View>
-
+                      <View style={[Styles.width48per]}>{k.price > 0 ? <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Rate" value={k.price ? parseFloat(k.price).toFixed(4) : ""} /> : null}</View>
                     </View>
-                    {
-                      (k.brandName != "" && k.brandName != null) ?
-                        <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
-                          <View style={[Styles.width100per]}>
-                            <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Product Amount"
-                              value={k.amount} />
-                          </View>
-                        </View> : null
-                    }
+                    {k.brandName != "" && k.brandName != null ? (
+                      <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+                        <View style={[Styles.width100per]}>
+                          <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Product Amount" value={k.amount} />
+                        </View>
+                      </View>
+                    ) : null}
                   </Card.Content>
                 </Card>
 
                 // removed from here
               );
             })}
-
           </View>
         </View>
-      </ScrollView >
+      </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexAlignCenter]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
@@ -1058,10 +977,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={windowHeight - 96} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" } }}>
         <View style={[Styles.flex1]}>
-
-          <ScrollView
-
-            style={[Styles.borderred, Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView style={[Styles.borderred, Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
             <View style={[Styles.borderred, Styles.flex1]}>
               <AddMaterialSetupProducts arrProductData={arrProductData} />
             </View>
@@ -1089,10 +1005,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
             Close
           </Button>
-          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => { }} />
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => {}} />
         </View>
       </Modal>
-    </View >
+    </View>
   );
 };
 

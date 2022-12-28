@@ -6,14 +6,13 @@ import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AddRateCardProducts from "./AddRateCardProducts";
 let userID = 0;
 
 const AddSendRateCard = ({ route, navigation }) => {
-
   //#region Variables
   const [selectedID, setSelectedID] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -43,25 +42,22 @@ const AddSendRateCard = ({ route, navigation }) => {
   const windowHeight = Dimensions.get("window").height;
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  //#endregion 
+  //#endregion
 
   useEffect(() => {
     GetUserID();
   }, []);
 
   const GetUserID = async () => {
-    const
-      userData = await AsyncStorage.getItem("user");
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       if (route.params.type === "edit") {
         setSelectedID(route.params.data.id);
         FetchRateCardByID(route.params.data.id);
-      }
-      else {
+      } else {
         FetchCompanyName("");
       }
-
     }
   };
 
@@ -71,23 +67,21 @@ const AddSendRateCard = ({ route, navigation }) => {
 
   //#region Functions
 
-  const FetchRateCardByID = (id: number) => {
+  const FetchRateCardByID = (id) => {
     let params = {
       ID: id,
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getcontractorsentratecardbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setClientNameID(response.data.data[0].clientID);
             setUnitSalesName(response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter");
             setChecked(response.data.data[0].inclusiveMaterials);
 
             FetchCompanyName(response.data.data[0].clientID);
             FetchProductsByID(id, response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter");
-
           }
         }
         setIsLoading(false);
@@ -104,19 +98,18 @@ const AddSendRateCard = ({ route, navigation }) => {
 
   const FetchCompanyName = (clientID) => {
     let params = {
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getcontractorclientlist?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setClientNameFullData(response.data.data);
             const client = response.data.data.map((data) => data.companyName);
             setClientNameData(client);
 
             if (clientID !== "") {
-              let d = response.data.data.filter((el: any) => {
+              let d = response.data.data.filter((el) => {
                 return el.id == clientID;
               });
               setClientName(d[0].companyName);
@@ -124,7 +117,6 @@ const AddSendRateCard = ({ route, navigation }) => {
               setCName(d[0].contactPerson);
               setClientNumber(d[0].contactMobileNumber);
             }
-
           }
         }
         setIsLoading(false);
@@ -139,13 +131,13 @@ const AddSendRateCard = ({ route, navigation }) => {
       });
   };
 
-  const FetchProductsByID = (selectedID: number, selectedUnit) => {
+  const FetchProductsByID = (selectedID, selectedUnit) => {
     let params = {
       ContractorID: userID,
-      RateCardMappingID: selectedID
+      RateCardMappingID: selectedID,
     };
     Provider.getAll(`master/getcontractorratecardproductsbyid?${new URLSearchParams(params)}`)
-      .then((response: any) => {
+      .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             let arr = [];
@@ -171,8 +163,7 @@ const AddSendRateCard = ({ route, navigation }) => {
                 rate: selectedUnit == "Foot" ? item.footRate : item.meterRate,
                 //altRate: selectedUnit == "Foot" ? item.meterRate : item.footRate,
                 altUnit: selectedUnit == "Foot" ? item.unit2Name : item.unit1Name,
-                altRate: selectedUnit == "Foot" ? (parseFloat(item.footRate) * parseFloat(item.meterConversion)).toFixed(2) : (parseFloat(item.meterRate) * parseFloat(item.footConversion)).toFixed(2)
-
+                altRate: selectedUnit == "Foot" ? (parseFloat(item.footRate) * parseFloat(item.meterConversion)).toFixed(2) : (parseFloat(item.meterRate) * parseFloat(item.footConversion)).toFixed(2),
               });
             });
             arrProductData[1](arr);
@@ -180,7 +171,7 @@ const AddSendRateCard = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const onClientNameSelected = (selectedItem) => {
@@ -193,7 +184,6 @@ const AddSendRateCard = ({ route, navigation }) => {
 
     setCName(c[0].contactPerson);
     setClientNumber(c[0].contactMobileNumber);
-
   };
 
   const onUnitSaleSelected = (selectedItem) => {
@@ -205,15 +195,13 @@ const AddSendRateCard = ({ route, navigation }) => {
 
       setUSError(false);
     }
-
   };
 
   const resetProducts = () => {
     if (unitSalesName === "Meter") {
       setUnitSalesName("Foot");
       updatedUnit = "Foot";
-    }
-    else {
+    } else {
       setUnitSalesName("Meter");
       updatedUnit = "Meter";
     }
@@ -229,13 +217,11 @@ const AddSendRateCard = ({ route, navigation }) => {
     if (unitSalesName === "Meter") {
       setUnitSalesName("Meter");
       updatedUnit = "Meter";
-    }
-    else {
+    } else {
       setUnitSalesName("Foot");
       updatedUnit = "Foot";
     }
     arrProductData[0].map((item, i) => {
-
       let rate = item.rate;
       let unit = item.unit;
       let selectedUnit = 0;
@@ -244,9 +230,7 @@ const AddSendRateCard = ({ route, navigation }) => {
       item.altRate = rate;
       item.altUnit = unit;
       item.selectedUnitID = updatedUnit === "Meter" ? item.unit2ID : item.unit1ID;
-
     });
-
 
     setIsDialogVisible(false);
   };
@@ -261,8 +245,7 @@ const AddSendRateCard = ({ route, navigation }) => {
 
     if (arrProductData[0].length !== 0 && isValid) {
       InsertUpdateData();
-    }
-    else {
+    } else {
       setSnackbarVisible(true);
       setSnackbarColor(theme.colors.error);
       setSnackbarText("Please select all mandatory fields");
@@ -284,22 +267,24 @@ const AddSendRateCard = ({ route, navigation }) => {
       });
     });
 
-    let contractorRateCardMapping = [{
-      ID: selectedID,
-      ClientID: clientNameFullData.filter((el) => {
-        return el.companyName === clientName;
-      })[0].id,
-      SelectedUnitID: unitSalesName == "Foot" ? 1 : 2,
-      UnitOfSalesID: 0,
-      InclusiveMaterials: checked,
-      AddedByUserID: userID
-    }];
+    let contractorRateCardMapping = [
+      {
+        ID: selectedID,
+        ClientID: clientNameFullData.filter((el) => {
+          return el.companyName === clientName;
+        })[0].id,
+        SelectedUnitID: unitSalesName == "Foot" ? 1 : 2,
+        UnitOfSalesID: 0,
+        InclusiveMaterials: checked,
+        AddedByUserID: userID,
+      },
+    ];
 
     let contractorRateCardMappingItems = productArr;
 
     let params = {
       contractorRateCardMapping: contractorRateCardMapping,
-      contractorRateCardMappingItems: contractorRateCardMappingItems
+      contractorRateCardMappingItems: contractorRateCardMappingItems,
     };
 
     Provider.create("master/insertupdatesendratecard", params)
@@ -321,7 +306,7 @@ const AddSendRateCard = ({ route, navigation }) => {
       });
   };
 
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -345,12 +330,7 @@ const AddSendRateCard = ({ route, navigation }) => {
               backgroundColor="#000"
               
               ></IconButton> */}
-              <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]}
-                icon={'account-multiple-plus'}
-                size={35}
-                color="#198754"></IconButton>
-
-
+              <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]} icon={"account-multiple-plus"} size={35} color="#198754"></IconButton>
             </View>
           </View>
           <TextInput mode="flat" dense label="Client Name" value={cName} disabled></TextInput>
@@ -365,7 +345,7 @@ const AddSendRateCard = ({ route, navigation }) => {
           <HelperText type="error" visible={errorUS}>
             {communication.InvalidSalesUnit}
           </HelperText>
-          <View >
+          <View>
             <Checkbox.Item
               label="Inclusive Material"
               position="leading"
@@ -376,7 +356,6 @@ const AddSendRateCard = ({ route, navigation }) => {
                 if (arrProductData[0].length == 0) {
                   setChecked(!checked);
                 }
-
               }}
             />
           </View>
@@ -392,7 +371,6 @@ const AddSendRateCard = ({ route, navigation }) => {
         </View>
 
         <View style={[Styles.padding16]}>
-
           {arrProductData[0].map((k, i) => {
             return (
               <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
@@ -434,7 +412,6 @@ const AddSendRateCard = ({ route, navigation }) => {
       </Snackbar>
     </View>
   );
-
 };
 
 export default AddSendRateCard;

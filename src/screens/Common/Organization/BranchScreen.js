@@ -16,12 +16,12 @@ import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
 
-
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let userID = 0, companyID = 0, groupID = 0;
+let userID = 0,
+  companyID = 0,
+  groupID = 0;
 
 const BranchListScreen = ({ navigation }) => {
-
   //#region Variables
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -46,14 +46,12 @@ const BranchListScreen = ({ navigation }) => {
   const [address, setAddress] = React.useState("");
   const [gstNo, setGSTNo] = React.useState("");
 
-
   const [panNo, setPANNo] = React.useState("");
   const [display, setDispaly] = React.useState("");
   const [action, setAction] = React.useState("");
 
-
   const refRBSheet = useRef();
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -84,16 +82,13 @@ const BranchListScreen = ({ navigation }) => {
         branch_refno: "all",
         Sess_company_refno: companyID,
         Sess_group_refno: groupID,
-      }
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.MyBranchRefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             response.data.data = APIConverter(response.data.data, false, "addbranch");
-            // console.log('converted data=============');
-            // console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -121,7 +116,6 @@ const BranchListScreen = ({ navigation }) => {
 
   useEffect(() => {
     GetUserID();
-
   }, []);
 
   const onChangeSearch = (query) => {
@@ -137,13 +131,11 @@ const BranchListScreen = ({ navigation }) => {
     }
   };
 
-
   const AddCallback = () => {
     navigation.navigate("BranchEditScreen", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap, buttonType) => {
-    //console.log(data);
     rowMap[data.item.key].closeRow();
     navigation.navigate("BranchEditScreen", {
       type: "edit",
@@ -173,7 +165,6 @@ const BranchListScreen = ({ navigation }) => {
         stateID: data.item.stateID,
       },
     });
-
   };
 
   const RenderItems = (data) => {
@@ -184,7 +175,6 @@ const BranchListScreen = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={`Mobile: ${NullOrEmpty(data.item.branchInchargeContactNo) ? "" : data.item.branchInchargeContactNo}\nLocation Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType} `}
           onPress={() => {
-            //console.log(data.item);
             refRBSheet.current.open();
             setInchargeName(data.item.branchInchargeName);
             setMobileNo(data.item.branchInchargeContactNo);
@@ -198,12 +188,11 @@ const BranchListScreen = ({ navigation }) => {
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="office-building" />}
           right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
-
       </View>
     );
   };
 
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -260,7 +249,6 @@ const BranchListScreen = ({ navigation }) => {
           </ScrollView>
         </View>
       </RBSheet>
-
     </View>
   );
 };

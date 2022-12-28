@@ -144,7 +144,6 @@ const AddMaterialSetupProducts = ({ arrProductData }) => {
                 }
                 arrProductData[1](tempArrProductData);
                 let temp = productsFullData.map((u) => {
-                  console.log(u);
                   if (k.id === u.id) {
                     return { ...u, isChecked: !u.isChecked };
                   }

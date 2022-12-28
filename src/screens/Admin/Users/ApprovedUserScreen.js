@@ -37,10 +37,8 @@ const DeclinedUserScreen = ({ navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [selectedID, setSelectedID] = React.useState(0);
 
-
-
   const refRBSheet = useRef();
-  //#endregion 
+  //#endregion
 
   //#region Functions
   useEffect(() => {
@@ -64,13 +62,11 @@ const DeclinedUserScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        group_refno: "all"
-      }
+        group_refno: "all",
+      },
     };
-    console.log(params);
     Provider.createDFAdmin("getuserapprovelist/", params)
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -111,7 +107,6 @@ const DeclinedUserScreen = ({ navigation }) => {
     }
   };
 
-
   //update
   const hideDialog = () => setIsDialogVisible(false);
 
@@ -121,8 +116,8 @@ const DeclinedUserScreen = ({ navigation }) => {
     const params = {
       data: {
         Sess_UserRefno: userID,
-        user_refno: selectedID
-      }
+        user_refno: selectedID,
+      },
     };
     Provider.createDFAdmin("userdeclinestatus/", params)
       .then((response) => {
@@ -141,22 +136,19 @@ const DeclinedUserScreen = ({ navigation }) => {
       });
   };
 
-
   //approveModel
   const openDeclineModel = () => {
     refRBSheet.current.close();
     setIsDialogVisible(true);
-  }
-
+  };
 
   const RenderItems = (data) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
         <List.Item
-          title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(',')[0]}
+          title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(",")[0]}
           titleStyle={{ fontSize: 18 }}
           description={`Activity Role: ${NullOrEmpty(data.item.group_name) ? "" : data.item.group_name}\nCompany: ${NullOrEmpty(data.item.company_name) ? "" : data.item.company_name}`}
-
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
           onPress={() => {
             refRBSheet.current.open();
@@ -165,21 +157,13 @@ const DeclinedUserScreen = ({ navigation }) => {
             setCompanyName(data.item.company_name);
             setMobileNo(data.item.mobile_no);
             setGroupName(data.item.group_name);
-
           }}
-          right={() => (
-            <Icon
-              style={{ marginVertical: 12, marginRight: 12 }}
-              size={30}
-              color={theme.colors.textSecondary}
-              name="eye"
-            />
-          )}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -224,16 +208,14 @@ const DeclinedUserScreen = ({ navigation }) => {
             <List.Item title="Activity Name" description={groupname} />
             <List.Item title="Company Name" description={company} />
             <List.Item title="Mobile No" description={mobile} />
-
           </ScrollView>
         </View>
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button color={theme.colors.error} mode="contained" onPress={openDeclineModel} >
+            <Button color={theme.colors.error} mode="contained" onPress={openDeclineModel}>
               Decline
             </Button>
           </Card.Content>
-
         </View>
       </RBSheet>
       <Portal>
@@ -249,7 +231,6 @@ const DeclinedUserScreen = ({ navigation }) => {
         </Dialog>
       </Portal>
     </View>
-
   );
 };
 

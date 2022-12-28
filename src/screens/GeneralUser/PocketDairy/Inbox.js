@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
-import { FAB, Title ,List,ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
+import { FAB, Title, List, ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
@@ -22,27 +22,31 @@ import { BloodGroup } from "../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { color } from "react-native-reanimated";
-import { PaperSelect } from 'react-native-paper-select';
+import { PaperSelect } from "react-native-paper-select";
 import NoItems from "../../../components/NoItems";
 import RBSheet from "react-native-raw-bottom-sheet";
 
-export const selectValidator = (value: any) => {
+export const selectValidator = (value) => {
   if (!value || value.length <= 0) {
-    return 'Please select a value.';
+    return "Please select a value.";
   }
 
-  return '';
+  return "";
 };
 
-let st_ID = 0, ct_ID = 0, bg_ID = 0, b_ID = 0, d_ID = 0, de_ID = 0;
+let st_ID = 0,
+  ct_ID = 0,
+  bg_ID = 0,
+  b_ID = 0,
+  d_ID = 0,
+  de_ID = 0;
 let rpt = 0;
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
 const EmployeeEditScreen = ({ route, navigation }) => {
-
-   //#region Variables
+  //#region Variables
   const [ETRadioButtons, setETRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -95,7 +99,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         setWagesTypeID(r.value);
       }
     });
-
   }
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -108,10 +111,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [empType, setEmpType] = React.useState();
 
   const [reporting, setReporting] = useState({
-    value: '',
+    value: "",
     list: [],
     selectedList: [],
-    error: '',
+    error: "",
   });
 
   const [wType, setWType] = React.useState();
@@ -287,15 +290,14 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [categoryName, setCategoryName] = React.useState("");
   const [subCategoryName, setSubCategoryName] = React.useState("");
   const [display, setDisplay] = React.useState("");
- 
+
   const refRBSheet = useRef();
 
   //#endregion
 
   //#region Functions
   const GetUserID = async () => {
-    const 
-    userData = await AsyncStorage.getItem("user");
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       setBloodGroupFullData(BloodGroup);
@@ -307,7 +309,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const FetchBasicDetails = () => {
     let params = {
       ID: route.params.data.id,
-      AddedByUserID: userID
+      AddedByUserID: userID,
     };
     Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -317,7 +319,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             let reporting_data = response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
             if (!NullOrEmpty(employee_data)) {
-
               setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
               setEemployeeCode(!NullOrEmpty(employee_data.employeeCode) ? employee_data.employeeCode : "");
               setMobileNo(!NullOrEmpty(employee_data.mobileNo) ? employee_data.mobileNo : "");
@@ -364,7 +365,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               if (!NullOrEmpty(employee_data.branchID)) {
                 setBranchID(employee_data.branchID);
                 b_ID = employee_data.branchID;
-
               }
               if (!NullOrEmpty(employee_data.departmentID)) {
                 setDepartmentID(employee_data.departmentID);
@@ -389,7 +389,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : 0);
               }
               if (!NullOrEmpty(employee_data.wagesType)) {
-
                 {
                   wagesRadioButtons.map((r) => {
                     r.selected = false;
@@ -415,7 +414,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             }
 
             if (!NullOrEmpty(bankDetails_data)) {
-
               setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
               setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
               setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
@@ -443,12 +441,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchCities = (stateID) => {
     let params = {
-      ID: stateID
+      ID: stateID,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-
           if (response.data.data) {
             setCityFullData(response.data.data);
 
@@ -460,14 +457,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               });
               setCityName(a[0].cityName);
               setCityID(a[0].id);
-            }
-            else {
+            } else {
               setCityName("");
               setCityID(0);
             }
-
-          }
-          else {
+          } else {
             setCityFullData([]);
             setCityData([]);
             setCityName("");
@@ -475,8 +469,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             ct_ID = 0;
             setCityID(0);
           }
-        }
-        else {
+        } else {
           setCityFullData([]);
           setCityData([]);
           setCityName("");
@@ -485,7 +478,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           setCityID(0);
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchStates = () => {
@@ -493,7 +486,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setStatesFullData(response.data.data);
 
             const states = response.data.data.map((data) => data.stateName);
@@ -514,7 +506,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const BloodGroupDropdown = () => {
@@ -535,10 +527,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     };
     Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             setBranchFullData(response.data.data);
 
             const branch = response.data.data.map((data) => data.locationName);
@@ -555,7 +545,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDepartments = () => {
@@ -582,7 +572,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDesignations = () => {
@@ -605,11 +595,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               setDesignationName(b[0].designationName);
               setDesignationID(b[0].designationID);
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReportingEmployee = () => {
@@ -620,21 +609,23 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            const rd = []; response.data.data.map((data) => { rd.push({ _id: data.id.toString(), value: data.employee, }); });
+            const rd = [];
+            response.data.data.map((data) => {
+              rd.push({ _id: data.id.toString(), value: data.employee });
+            });
 
-            const ct = []; response.data.data.map((data) => {
-
+            const ct = [];
+            response.data.data.map((data) => {
               if (data.id.toString() == rpt.toString()) {
-                ct.push({ _id: data.id.toString(), value: data.employee, });
+                ct.push({ _id: data.id.toString(), value: data.employee });
               }
-
             });
             setReporting({ ...reporting, list: rd, selectedList: ct });
             setReportingFullData(rd);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   //#endregion
@@ -765,7 +756,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   //#endregion
 
-  
   const chooseFile = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -892,14 +882,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const UpdateReportingAuthority = () => {
-
-    let rptId="";
-      if (!NullOrEmpty(reporting.selectedList)) {
-
-        reporting.selectedList.map((r) => {
-          rptId+= r._id+",";
-        });
-      }
+    let rptId = "";
+    if (!NullOrEmpty(reporting.selectedList)) {
+      reporting.selectedList.map((r) => {
+        rptId += r._id + ",";
+      });
+    }
 
     const params = {
       EmployeeID: route.params.data.id,
@@ -911,9 +899,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         debugger;
         if (response.data && response.data.code === 200) {
-
         }
-        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
+        setTimeout(() => {
+          navigation.navigate("EmployeeListScreen");
+        }, 500);
       })
       .catch((e) => {
         console.log(e);
@@ -921,7 +910,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         setSnackMsg(communication.NetworkError);
         setOpen(true);
         setButtonLoading(false);
-        setTimeout(() => { navigation.navigate("EmployeeListScreen") }, 500)
+        setTimeout(() => {
+          navigation.navigate("EmployeeListScreen");
+        }, 500);
       });
   };
 
@@ -968,7 +959,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setCategoryName(data.item.categoryName);
             setSubCategoryName(data.item.subCategoryName);
             setDisplay(data.item.display ? "Yes" : "No");
-
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -999,157 +989,156 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     });
   };
 
-//#endregion
+  //#endregion
 
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "settlement":
         return (
           <View style={[Styles.flex1]}>
-          {isLoading ? (
-            <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
-            </View>
-          ) : listData[0].length > 0 ? (
-            <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-              <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-              <SwipeListView
-                previewDuration={1000}
-                previewOpenValue={-72}
-                previewRowKey="1"
-                previewOpenDelay={1000}
-                refreshControl={
-                  <RefreshControl
-                    colors={[theme.colors.primary]}
-                    refreshing={refreshing}
-                    onRefresh={() => {
-                      FetchData();
-                    }}
-                  />
-                }
-                data={listSearchData[0]}
-                disableRightSwipe={true}
-                rightOpenValue={-72}
-                renderItem={(data) => RenderItems(data)}
-                renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
-              />
-            </View>
-          ) : (
-            <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
-          )}
-          <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
-          <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
-            {snackbarText}
-          </Snackbar>
-          <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-            <View>
-              <Title style={[Styles.paddingHorizontal16]}>{modeTypeName}</Title>
-              <ScrollView>
-                <List.Item title="Mode Type Name" description={modeTypeName} />
-                <List.Item title="Category Name" description={categoryName} />
-                <List.Item title=" Sub Category Name" description={subCategoryName} />
-                <List.Item title="Display" description={display} />
-               
-              </ScrollView>
-            </View>
-          </RBSheet>
-        </View>
+            {isLoading ? (
+              <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+              </View>
+            ) : listData[0].length > 0 ? (
+              <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+                <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+                <SwipeListView
+                  previewDuration={1000}
+                  previewOpenValue={-72}
+                  previewRowKey="1"
+                  previewOpenDelay={1000}
+                  refreshControl={
+                    <RefreshControl
+                      colors={[theme.colors.primary]}
+                      refreshing={refreshing}
+                      onRefresh={() => {
+                        FetchData();
+                      }}
+                    />
+                  }
+                  data={listSearchData[0]}
+                  disableRightSwipe={true}
+                  rightOpenValue={-72}
+                  renderItem={(data) => RenderItems(data)}
+                  renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+                />
+              </View>
+            ) : (
+              <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+            )}
+            <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+              {snackbarText}
+            </Snackbar>
+            <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+              <View>
+                <Title style={[Styles.paddingHorizontal16]}>{modeTypeName}</Title>
+                <ScrollView>
+                  <List.Item title="Mode Type Name" description={modeTypeName} />
+                  <List.Item title="Category Name" description={categoryName} />
+                  <List.Item title=" Sub Category Name" description={subCategoryName} />
+                  <List.Item title="Display" description={display} />
+                </ScrollView>
+              </View>
+            </RBSheet>
+          </View>
         );
       case "lending":
-        // return (
-        //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-        //     <View style={[Styles.padding16]}>
-        //       <Dropdown label="Branch" data={branchData} onSelected={onBranchChanged} isError={errorBranch} selectedItem={branchName} reference={branchRef} />
+      // return (
+      //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+      //     <View style={[Styles.padding16]}>
+      //       <Dropdown label="Branch" data={branchData} onSelected={onBranchChanged} isError={errorBranch} selectedItem={branchName} reference={branchRef} />
 
-        //       <Dropdown label="Department" data={departmentData} onSelected={onDepartmentChanged} isError={errorDepartment} selectedItem={departmentName} reference={departmentRef} />
+      //       <Dropdown label="Department" data={departmentData} onSelected={onDepartmentChanged} isError={errorDepartment} selectedItem={departmentName} reference={departmentRef} />
 
-        //       <Dropdown label="Designation" data={designationData} onSelected={onDesignationChanged} isError={errorDesignation} selectedItem={designationName} reference={designationRef} />
+      //       <Dropdown label="Designation" data={designationData} onSelected={onDesignationChanged} isError={errorDesignation} selectedItem={designationName} reference={designationRef} />
 
-        //       <View style={Styles.marginTop16}>
-        //         <Text>Employee Type</Text>
-        //       </View>
+      //       <View style={Styles.marginTop16}>
+      //         <Text>Employee Type</Text>
+      //       </View>
 
-        //       <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={ETRadioButtons} onPress={onPressETRadioButton} />
+      //       <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={ETRadioButtons} onPress={onPressETRadioButton} />
 
-        //       <View style={[Styles.marginTop24, Styles.marginBottom8]}>
-        //         <Text>Reporting to</Text>
-        //       </View>
+      //       <View style={[Styles.marginTop24, Styles.marginBottom8]}>
+      //         <Text>Reporting to</Text>
+      //       </View>
 
-        //       <PaperSelect
-        //         label="Reporting Employees"
-        //         value={reporting.value}
-        //         onSelection={(value: any) => {
-        //           setReporting({
-        //             ...reporting,
-        //             value: value.text,
-        //             selectedList: value.selectedList,
-        //             error: '',
-        //           });
-        //         }}
-        //         arrayList={[...reporting.list]}
-        //         selectedArrayList={reporting.selectedList}
-        //         errorText={reporting.error}
-        //         multiEnable={true}
-        //         textInputMode="flat"
-        //         searchStyle={{ iconColor: '#6c736e' }}
-        //         searchPlaceholder="Search Employee"
-        //         modalCloseButtonText="Cancel"
-        //         modalDoneButtonText="Done"
-        //       />
+      //       <PaperSelect
+      //         label="Reporting Employees"
+      //         value={reporting.value}
+      //         onSelection={(value: any) => {
+      //           setReporting({
+      //             ...reporting,
+      //             value: value.text,
+      //             selectedList: value.selectedList,
+      //             error: '',
+      //           });
+      //         }}
+      //         arrayList={[...reporting.list]}
+      //         selectedArrayList={reporting.selectedList}
+      //         errorText={reporting.error}
+      //         multiEnable={true}
+      //         textInputMode="flat"
+      //         searchStyle={{ iconColor: '#6c736e' }}
+      //         searchPlaceholder="Search Employee"
+      //         modalCloseButtonText="Cancel"
+      //         modalDoneButtonText="Done"
+      //       />
 
-        //       <View>
-        //         <DateTimePicker style={Styles.backgroundColorWhite} label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
-        //       </View>
-        //     </View>
-        //   </ScrollView>
-        // );
+      //       <View>
+      //         <DateTimePicker style={Styles.backgroundColorWhite} label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
+      //       </View>
+      //     </View>
+      //   </ScrollView>
+      // );
       case "company":
-        // return (
-        //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-        //     <View style={[Styles.padding16]}>
-        //       <View style={Styles.marginTop16}>
-        //         <Text>Wages Type</Text>
-        //       </View>
+      // return (
+      //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+      //     <View style={[Styles.padding16]}>
+      //       <View style={Styles.marginTop16}>
+      //         <Text>Wages Type</Text>
+      //       </View>
 
-        //       <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={wagesRadioButtons} onPress={onPressWagesRadioButton} />
+      //       <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={wagesRadioButtons} onPress={onPressWagesRadioButton} />
 
-        //       <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
+      //       <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
 
-        //       <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
+      //       <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
 
-        //       <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
-        //       {/* <HelperText type="error" visible={accountNoInvalid}>
-        //         {communication.InvalidActivityName}
-        //       </HelperText> */}
-        //       <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
-        //       {/* <HelperText type="error" visible={bankNameInvalid}>
-        //         {communication.InvalidActivityName}
-        //       </HelperText> */}
-        //       <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
-        //       {/* <HelperText type="error" visible={bankBranchNameInvalid}>
-        //         {communication.InvalidActivityName}
-        //       </HelperText> */}
-        //       <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
-        //       {/* <HelperText type="error" visible={ifscCodeInvalid}>
-        //         {communication.InvalidActivityName}
-        //       </HelperText> */}
-        //     </View>
-        //   </ScrollView>
-        // );
+      //       <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+      //       {/* <HelperText type="error" visible={accountNoInvalid}>
+      //         {communication.InvalidActivityName}
+      //       </HelperText> */}
+      //       <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+      //       {/* <HelperText type="error" visible={bankNameInvalid}>
+      //         {communication.InvalidActivityName}
+      //       </HelperText> */}
+      //       <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+      //       {/* <HelperText type="error" visible={bankBranchNameInvalid}>
+      //         {communication.InvalidActivityName}
+      //       </HelperText> */}
+      //       <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+      //       {/* <HelperText type="error" visible={ifscCodeInvalid}>
+      //         {communication.InvalidActivityName}
+      //       </HelperText> */}
+      //     </View>
+      //   </ScrollView>
+      // );
       case "photo":
-        // return (
-        //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-        //     <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-        //       <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
-        //       <Button mode="text" onPress={chooseFile}>
-        //         {filePath !== null ? "Replace" : "Choose Image"}
-        //       </Button>
-        //     </View>
-        //     <HelperText type="error" visible={errorLogo}>
-        //       {communication.InvalidDesignImage}
-        //     </HelperText>
-        //   </ScrollView>
-        // );
+      // return (
+      //   <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+      //     <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+      //       <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+      //       <Button mode="text" onPress={chooseFile}>
+      //         {filePath !== null ? "Replace" : "Choose Image"}
+      //       </Button>
+      //     </View>
+      //     <HelperText type="error" visible={errorLogo}>
+      //       {communication.InvalidDesignImage}
+      //     </HelperText>
+      //   </ScrollView>
+      // );
       default:
         return null;
     }

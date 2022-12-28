@@ -1,4 +1,4 @@
-export const APIConverter = (response, convertIDs, type?: string) => {
+export const APIConverter = (response, convertIDs, type) => {
   function renameKey(obj, oldKey, newKey) {
     if (obj.hasOwnProperty(oldKey)) {
       obj[newKey] = obj[oldKey];
@@ -154,7 +154,6 @@ export const APIConverter = (response, convertIDs, type?: string) => {
     renameKey(obj, "parent_branch_refno", "regionalOfficeID");
     renameKey(obj, "employee_name", "employeeName");
     renameKey(obj, "employee_user_refno", "id");
-    
   });
 
   return response;
