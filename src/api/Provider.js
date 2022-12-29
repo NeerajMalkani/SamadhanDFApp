@@ -5,6 +5,7 @@ const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
 const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
 const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
 const BASE_URL_Dashboard = "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
+const BASE_URL_PocketDiary = "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
 
 class Provider {
   //#region Old API's
@@ -292,10 +293,9 @@ class Provider {
     getassignbranchadminedit_branchform: "getassignbranchadminedit_branchform/",
     FetchBranchAssignContactNo: "getassignbranchadmin_contactno_branchform/",
     MyFetchRegionalOffice: "getparentbranchrefnobranchform/",
-
-    getuserprofile: "getuserprofile/",
-    userprofileupdate: "userprofileupdate/",
-    pckcategoryrefnocheck_appadmin: "pckcategoryrefnocheck_appadmin/",
+    getuserprofile:"getuserprofile/",
+    userprofileupdate:"userprofileupdate/",
+    pckcategoryrefnocheck_appadmin:"pckcategoryrefnocheck_appadmin/",
     pckcategorynamecreate_appadmin: "pckcategorynamecreate_appadmin/",
     gettransactiontype_pckcategoryform_appadmin: "gettransactiontype_pckcategoryform_appadmin/",
     pckcategorynameupdate_appadmin: "pckcategorynameupdate_appadmin/",
@@ -313,7 +313,15 @@ class Provider {
     getpckcategoryname_pcksubcategoryform_user: "getpckcategoryname_pcksubcategoryform_user/",
     pcksubcategorynamecreate_user: "pcksubcategorynamecreate_user/",
     pcksubcategorynameupdate_user: "pcksubcategorynameupdate_user/",
+    pckmycontactrefnocheck: "pckmycontactrefnocheck/",
+    pckmycontactscreate: "pckmycontactscreate/",
+    pckmycontactsupdate: "pckmycontactsupdate/",
+
   };
+
+  createDFPocketDairy(resource: string, params) {
+    return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params);
+  }
 
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);

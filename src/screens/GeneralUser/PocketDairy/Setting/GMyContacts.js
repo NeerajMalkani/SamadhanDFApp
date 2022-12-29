@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
 import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
@@ -12,6 +13,7 @@ import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import RBSheet from "react-native-raw-bottom-sheet";
 
+let userID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const GMyContactsScreen = ({ navigation }) => {
@@ -27,9 +29,9 @@ const GMyContactsScreen = ({ navigation }) => {
   const refRBSheet = useRef();
 
   const [name, setName] = React.useState("");
-  const [mobileNo, setMobileNo] = React.useState("");
-  const [remark, setRemark] = React.useState("");
-
+  const [mobileNo, setMObileNo] = React.useState("");
+  const [remark, setRemarks] = React.useState("");
+  
   //#endregion
 
   //#region Functions
@@ -41,14 +43,15 @@ const GMyContactsScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        pck_category_refno: "all",
+        Sess_UserRefno: userID,
+        pck_mycontact_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -76,8 +79,16 @@ const GMyContactsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+    }
+    FetchData();
+  };
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -96,17 +107,16 @@ const GMyContactsScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.name}
+          title={data.item.contactName}
           titleStyle={{ fontSize: 18 }}
-          description={`Display: ${data.item.display ? "Yes" : "No"} `}
-          onPress={() => {
-            refRBSheet.current.open();
-            setName(data.item.name);
-            setMobileNo(data.item.mobileNo);
-            setRemark(data.item.remark);
-          }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          description={`Mobile No: ${data.item.contactPhoneno}\nDisplay: ${data.item.display ? "Yes" : "No"}`}
+          // onPress={() => {
+          //   refRBSheet.current.open();
+          //   setTransactionTypeName(data.item.transactionTypeName);
+          //   setCategoryName(data.item.categoryName);
+          // }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="card-account-mail" />}
+        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
@@ -123,9 +133,10 @@ const GMyContactsScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        name: data.item.Name,
-        mobileNo: data.item.mobileNo,
-        remark: data.item.remark,
+        contactName: data.item.contactName,
+        contactPhoneno: data.item.contactPhoneno,
+        mycontactID: data.item.mycontactID,
+        remarks: data.item.remarks,
         display: data.item.display,
       },
     });

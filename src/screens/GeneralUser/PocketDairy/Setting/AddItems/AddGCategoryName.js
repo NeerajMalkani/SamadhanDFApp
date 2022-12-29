@@ -42,7 +42,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -115,7 +115,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       }
     };
-    Provider.createDFCommon(Provider.API_URLS.pckcategorynamecreate_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -154,7 +154,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     }
-    Provider.createDFCommon(Provider.API_URLS.pckcategorynameupdate_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

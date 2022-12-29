@@ -49,7 +49,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
         pck_sub_category_refno: "all",
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.pcksubcategoryrefnocheck_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pcksubcategoryrefnocheck_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {

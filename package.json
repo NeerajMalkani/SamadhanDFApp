@@ -44,6 +44,7 @@
     "react-native-autocomplete-input": "^5.1.0",
     "react-native-aws3": "0.0.9",
     "react-native-collapsible": "^1.6.0",
+    "react-native-contacts": "^7.0.5",
     "react-native-dropdown-picker": "^5.4.2",
     "react-native-fading-slides": "^0.2.0",
     "react-native-gesture-handler": "~2.5.0",

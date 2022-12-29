@@ -1,78 +1,28 @@
+
+import { ScrollView, View, PermissionsAndroid } from "react-native";
+import Contacts from 'react-native-contacts';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading } from "react-native-paper";
+
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading, Icon } from "react-native-paper";
 import Provider from "../../../../../api/Provider";
 import { Styles } from "../../../../../styles/styles";
 import { theme } from "../../../../../theme/apptheme";
 import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
+let userID = 0;
 
 const AddGMyContactsScreen = ({ route, navigation }) => {
   //#region Variables
   const [nameError, setNameError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.name : "");
+  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.contactName : "");
 
   const [mobileNoError, setMobileNoError] = React.useState(false);
-  const [mobileNo, setMobileNo] = React.useState(route.params.type === "edit" ? route.params.data.mobileNo : "");
+  const [mobileNo, setMobileNo] = React.useState(route.params.type === "edit" ? route.params.data.contactPhoneno : "");
 
   const [remarkError, setRemarkError] = React.useState(false);
-  const [remarkName, setRemarkName] = React.useState(route.params.type === "edit" ? route.params.data.remarkName : "");
+  const [remarkName, setRemarkName] = React.useState(route.params.type === "edit" ? route.params.data.remarks : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-
-  useEffect(() => {
-
-    let isEdit = route.params.type === "edit" ? true : false;
-
-    FetchTransactionType(isEdit);
-  }, []);
-
-  const FetchTransactionType = (edit) => {
-
-    let params = {
-      data: {
-        Sess_UserRefno: "2",
-      },
-    };
-    Provider.createDFAdmin(Provider.API_URLS.gettransactiontype_pckcategoryform_appadmin, params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
-
-            const stateData: any = [];
-            response.data.data.map((data: any, i: number) => {
-              let checked = false;
-              if (edit && route.params.data.transactionTypeName.includes(data.transTypeName)) {
-                checked = true;
-              }
-
-              stateData.push({
-                title: data.transTypeName,
-                isChecked: checked,
-                id: data.transtypeID
-              });
-            });
-            setTransactionTypeName(stateData);
-          }
-        } else {
-          listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-        }
-        //setIsLoading(false);
-        setRefreshing(false);
-      })
-      .catch((e) => {
-        //setIsLoading(false);
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-        setRefreshing(false);
-      });
-  };
-
-  const [transactionTypeNameInvalid, setTransactionTypeNameInvalid] = useState(false);
 
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -80,33 +30,49 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-
-
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
 
   //#region Functions
-  const onCategoryNameChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+    }
+  };
+
+
+  const onNameChanged = (text) => {
+    setName(text);
+    setNameError(false);
+  };
+
+  const onMobileNoChanged = (text) => {
+    setMobileNo(text);
+    setMobileNoError(false);
+  };
+
+  const onRemarkChanged = (text) => {
+    setRemarkName(text);
+    setRemarkError(false);
   };
 
   const InsertCategoryName = () => {
-    let tt = [];
-    transactionTypeName.map((k, i) => {
-      if (k.isChecked) {
-        tt.push(k.id);
-      }
-    });
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        category_name: categoryName,
-        pck_transtype_refno: tt,
+        Sess_UserRefno: userID,
+        contact_name: name,
+        contact_phoneno: mobileNo,
+        remarks: remarkName,
         view_status: checked ? "1" : "0",
       }
     };
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynamecreate_appadmin, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactscreate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -129,23 +95,17 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
-    let tt = [];
-    transactionTypeName.map((k, i) => {
-      if (k.isChecked) {
-        tt.push(k.id);
-      }
-    });
-
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        pck_category_refno: route.params.data.pckCategoryID,
-        category_name: categoryName,
-        pck_transtype_refno: tt,
+        Sess_UserRefno: userID,
+        pck_mycontact_refno: route.params.data.mycontactID,
+        contact_name: name,
+        contact_phoneno: mobileNo,
+        remarks: remarkName,
         view_status: checked ? "1" : "0",
       },
     }
-    Provider.createDFAdmin(Provider.API_URLS.pckcategorynameupdate_appadmin, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactsupdate, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -169,21 +129,15 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
 
   const ValidateActivityName = () => {
     let isValid = true;
-    if (categoryName.length === 0) {
-      setCategoryNameError(true);
+
+    if (name.trim() === "") {
+      setNameError(true);
       isValid = false;
     }
 
-    let tt = [];
-    transactionTypeName.map((k, i) => {
-      if (k.isChecked) {
-        tt.push(k.id);
-      }
-    });
-
-    if (tt.length == 0) {
+    if (mobileNo.trim() === "") {
+      setMobileNoError(true);
       isValid = false;
-      setTransactionTypeNameInvalid(true);
     }
 
     if (isValid) {
@@ -201,15 +155,24 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label=" Name" value={name} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={nameError} />
+          <Card.Content>
+            <Button
+              icon={'card-account-phone-outline'}
+              mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
+              load from contacts
+            </Button>
+          </Card.Content>
+        </View>
+        <View style={[Styles.padding16]}>
+          <TextInput mode="flat" label=" Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={nameError} />
           <HelperText type="error" visible={nameError}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="Mobile No" value={mobileNo} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={mobileNoError} />
+          <TextInput mode="flat" label="Mobile No" keyboardType="number-pad" value={mobileNo} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoError} />
           <HelperText type="error" visible={mobileNoError}>
             {communication.InvalidMobileNo}
           </HelperText>
-          <TextInput mode="flat" label="Remarks" value={remarkName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={remarkError} />
+          <TextInput mode="flat" label="Remarks" value={remarkName} onChangeText={onRemarkChanged} style={{ backgroundColor: "white" }} error={remarkError} />
           <HelperText type="error" visible={remarkError}>
             {communication.InvalidRemarks}
           </HelperText>

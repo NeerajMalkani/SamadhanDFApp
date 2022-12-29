@@ -68,7 +68,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         Sess_UserRefno: userID,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pcksubcategoryform_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.gettransactiontype_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -107,7 +107,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: transactionType
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -180,7 +180,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
 
       },
     }
-    Provider.createDFCommon(Provider.API_URLS.pcksubcategorynamecreate_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pcksubcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
@@ -219,7 +219,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
       }
     }
 
-    Provider.createDFCommon(Provider.API_URLS.pcksubcategorynameupdate_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pcksubcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {

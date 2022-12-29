@@ -164,7 +164,13 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "pck_transtype_name", "transTypeName");
     renameKey(obj, "pck_sub_category_refno", "subcategoryID");
     renameKey(obj, "pck_category_name", "categoryName");
-    renameKey(obj, "sub_category_name", "subCategoryName");
+    renameKey(obj, "sub_category_name", "subCategoryName");    
+    renameKey(obj, "contact_person", "contactPersonName");
+    renameKey(obj, "contact_person_mobile_no", "MobileNo");
+    renameKey(obj, "contact_name", "contactName");
+    renameKey(obj, "contact_phoneno", "contactPhoneno");
+    renameKey(obj, "pck_mycontact_refno", "mycontactID");
+    
   });
 
   return response;
