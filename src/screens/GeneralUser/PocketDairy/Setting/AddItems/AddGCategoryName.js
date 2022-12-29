@@ -13,7 +13,6 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
-
   const [transactionTypeName, setTransactionTypeName] = useState([
     {
       title: "Source",
@@ -25,18 +24,15 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
       isChecked: route.params.type === "edit" && route.params.data.transactionType && route.params.data.transactionType.toString().includes("2") ? true : false,
       id: "2",
     },
-
   ]);
 
   useEffect(() => {
-
     let isEdit = route.params.type === "edit" ? true : false;
 
     FetchTransactionType(isEdit);
   }, []);
 
   const FetchTransactionType = (edit) => {
-
     let params = {
       data: {
         Sess_UserRefno: "2",
@@ -48,8 +44,8 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
 
-            const stateData: any = [];
-            response.data.data.map((data: any, i: number) => {
+            const stateData = [];
+            response.data.data.map((data, i) => {
               let checked = false;
               if (edit && route.params.data.transactionTypeName.includes(data.transTypeName)) {
                 checked = true;
@@ -58,7 +54,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
               stateData.push({
                 title: data.transTypeName,
                 isChecked: checked,
-                id: data.transtypeID
+                id: data.transtypeID,
               });
             });
             setTransactionTypeName(stateData);
@@ -83,13 +79,10 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
 
   const [transactionTypeNameInvalid, setTransactionTypeNameInvalid] = useState(false);
 
-
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
-
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
@@ -113,7 +106,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         category_name: categoryName,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
-      }
+      },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
@@ -153,7 +146,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
       },
-    }
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
@@ -238,11 +231,8 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
                     }}
                   />
                 </View>
-
               );
-
             })}
-
           </View>
           <HelperText type="error" visible={transactionTypeNameInvalid}>
             Please select Transaction Type
@@ -278,4 +268,3 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
 };
 
 export default AddGCategoryNameScreen;
-

@@ -1,14 +1,11 @@
-
-import { ScrollView, View, PermissionsAndroid } from "react-native";
-import Contacts from 'react-native-contacts';
+import { ScrollView, View } from "react-native";
+import * as Contacts from "expo-contacts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading, Icon } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../../api/Provider";
 import { Styles } from "../../../../../styles/styles";
 import { theme } from "../../../../../theme/apptheme";
-import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
 let userID = 0;
 
@@ -24,8 +21,8 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   const [remarkName, setRemarkName] = React.useState(route.params.type === "edit" ? route.params.data.remarks : "");
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
-
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
@@ -45,7 +42,6 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       userID = JSON.parse(userData).UserID;
     }
   };
-
 
   const onNameChanged = (text) => {
     setName(text);
@@ -70,7 +66,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         contact_phoneno: mobileNo,
         remarks: remarkName,
         view_status: checked ? "1" : "0",
-      }
+      },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactscreate, params)
       .then((response) => {
@@ -104,7 +100,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         remarks: remarkName,
         view_status: checked ? "1" : "0",
       },
-    }
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactsupdate, params)
       .then((response) => {
         setIsButtonLoading(false);
@@ -149,6 +145,32 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       }
     }
   };
+
+  const PhoneClicked = (contact) => {
+    setName(contact.name);
+    setMobileNo(contact.phoneNumbers[0].number);
+  };
+
+  const ShowContactList = () => {
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === "granted") {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.PhoneNumbers],
+        });
+
+        if (data.length > 0) {
+          const arrPhones = [];
+          data.map((k, i) => {
+            if (Array.isArray(k.phoneNumbers)) {
+              arrPhones.push(k);
+            }
+          });
+          navigation.navigate("PhoneContacts", { phoneNumbers: arrPhones, callback: PhoneClicked });
+        }
+      }
+    })();
+  };
   //#endregion
 
   return (
@@ -156,9 +178,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <Card.Content>
-            <Button
-              icon={'card-account-phone-outline'}
-              mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
+            <Button icon={"card-account-phone-outline"} mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ShowContactList}>
               load from contacts
             </Button>
           </Card.Content>
@@ -206,4 +226,3 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
 };
 
 export default AddGMyContactsScreen;
-

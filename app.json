@@ -36,8 +36,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.diamondframes.samadhan",
-      "useNextNotificationsApi": true
+      "package": "com.diamondframes.samadhan"
     },
     "web": {
       "favicon": "./assets/favicon.png"

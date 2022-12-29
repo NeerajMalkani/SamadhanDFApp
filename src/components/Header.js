@@ -1,6 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { theme } from "../theme/apptheme";
 import { TouchableNativeFeedback, View } from "react-native";
 import { Title } from "react-native-paper";
@@ -27,7 +25,7 @@ const Header = ({ navigation, title, isDrawer }) => {
               navigation.dispatch(DrawerActions.toggleDrawer());
             }}
           >
-            <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
+            <Icon name="menu" size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>
       )}
@@ -39,7 +37,7 @@ const Header = ({ navigation, title, isDrawer }) => {
             LogoutUser();
           }}
         >
-          <FontAwesomeIcon icon={faPowerOff} size={24} color={theme.colors.textLight} />
+          <Icon name="logout" size={24} color={theme.colors.textLight} />
         </View>
       </TouchableNativeFeedback>
     </View>

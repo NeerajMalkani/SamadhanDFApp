@@ -137,6 +137,7 @@ import GMyContactsScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GMy
 import AddGMyContactsScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGMyContacts";
 import GMyBankScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GMyBank";
 import AddGMyBankScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGMyBank";
+import PhoneContacts from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/PhoneContacts";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -145,7 +146,6 @@ let menuItems = [];
 
 export default function App() {
   const userDetails = React.useState(null);
-  const [active, setActive] = useState(false);
   const SetUser = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -506,6 +506,7 @@ export default function App() {
               <Stack.Screen name="AddGMyContactsScreen" component={AddGMyContactsScreen} options={{ headerTitle: "Add Contacts", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GMyBankScreen" component={GMyBankScreen} options={{ headerTitle: " My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddGMyBankScreen" component={AddGMyBankScreen} options={{ headerTitle: " Add My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="PhoneContacts" component={PhoneContacts} options={{ headerTitle: "Phone Contact", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}

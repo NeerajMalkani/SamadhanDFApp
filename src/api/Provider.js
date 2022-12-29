@@ -293,9 +293,9 @@ class Provider {
     getassignbranchadminedit_branchform: "getassignbranchadminedit_branchform/",
     FetchBranchAssignContactNo: "getassignbranchadmin_contactno_branchform/",
     MyFetchRegionalOffice: "getparentbranchrefnobranchform/",
-    getuserprofile:"getuserprofile/",
-    userprofileupdate:"userprofileupdate/",
-    pckcategoryrefnocheck_appadmin:"pckcategoryrefnocheck_appadmin/",
+    getuserprofile: "getuserprofile/",
+    userprofileupdate: "userprofileupdate/",
+    pckcategoryrefnocheck_appadmin: "pckcategoryrefnocheck_appadmin/",
     pckcategorynamecreate_appadmin: "pckcategorynamecreate_appadmin/",
     gettransactiontype_pckcategoryform_appadmin: "gettransactiontype_pckcategoryform_appadmin/",
     pckcategorynameupdate_appadmin: "pckcategorynameupdate_appadmin/",
@@ -316,10 +316,9 @@ class Provider {
     pckmycontactrefnocheck: "pckmycontactrefnocheck/",
     pckmycontactscreate: "pckmycontactscreate/",
     pckmycontactsupdate: "pckmycontactsupdate/",
-
   };
 
-  createDFPocketDairy(resource: string, params) {
+  createDFPocketDairy(resource, params) {
     return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params);
   }
 

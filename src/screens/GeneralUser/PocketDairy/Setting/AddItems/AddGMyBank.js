@@ -32,14 +32,12 @@ const AddGMyBankScreen = ({ route, navigation }) => {
   ]);
 
   useEffect(() => {
-
     let isEdit = route.params.type === "edit" ? true : false;
 
     FetchTransactionType(isEdit);
   }, []);
 
   const FetchTransactionType = (edit) => {
-
     let params = {
       data: {
         Sess_UserRefno: "2",
@@ -51,8 +49,8 @@ const AddGMyBankScreen = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
 
-            const stateData: any = [];
-            response.data.data.map((data: any, i: number) => {
+            const stateData = [];
+            response.data.data.map((data, i) => {
               let checked = false;
               if (edit && route.params.data.transactionTypeName.includes(data.transTypeName)) {
                 checked = true;
@@ -61,7 +59,7 @@ const AddGMyBankScreen = ({ route, navigation }) => {
               stateData.push({
                 title: data.transTypeName,
                 isChecked: checked,
-                id: data.transtypeID
+                id: data.transtypeID,
               });
             });
             setTransactionTypeName(stateData);
@@ -89,8 +87,6 @@ const AddGMyBankScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
-
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
@@ -126,7 +122,7 @@ const AddGMyBankScreen = ({ route, navigation }) => {
         category_name: categoryName,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
-      }
+      },
     };
     Provider.createDFCommon(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
@@ -166,7 +162,7 @@ const AddGMyBankScreen = ({ route, navigation }) => {
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
       },
-    }
+    };
     Provider.createDFCommon(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
@@ -255,11 +251,8 @@ const AddGMyBankScreen = ({ route, navigation }) => {
                     }}
                   />
                 </View>
-
               );
-
             })}
-
           </View>
           <HelperText type="error" visible={cardTypeInvalid}>
             Please select Card Type
@@ -302,4 +295,3 @@ const AddGMyBankScreen = ({ route, navigation }) => {
 };
 
 export default AddGMyBankScreen;
-

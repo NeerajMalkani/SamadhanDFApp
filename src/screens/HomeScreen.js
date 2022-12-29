@@ -1,9 +1,7 @@
 import React from "react";
-import { ScrollView, TouchableNativeFeedback, View, Modal, Dimensions, Image } from "react-native";
-import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Headline, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
-import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
+import { ScrollView, TouchableNativeFeedback, View, Modal, Image } from "react-native";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
@@ -14,9 +12,9 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreateSCCards from "../components/SCCards";
 import FadeCarousel from "rn-fade-carousel";
-export const navigationRef = createNavigationContainerRef();
 import { APIConverter } from "../utils/apiconverter";
 
+export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
   userID = 0,
   groupRefNo = 0;
@@ -375,7 +373,7 @@ const HomeScreen = ({ route, navigation }) => {
       <View style={[Styles.width100per, Styles.height64, Styles.primaryBgColor, Styles.borderBottomRadius8, Styles.flexRow, Styles.flexAlignCenter, Styles.paddingHorizontal16]}>
         <TouchableNativeFeedback>
           <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.toggleDrawer()}>
-            <FontAwesomeIcon icon={faBarsStaggered} size={24} color={theme.colors.textLight} />
+            <Icon name="menu" size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundColor]} source={require("../../assets/defaultIcon.png")} />
@@ -385,7 +383,7 @@ const HomeScreen = ({ route, navigation }) => {
         </View>
         <TouchableNativeFeedback>
           <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
-            <FontAwesomeIcon icon={faPowerOff} size={24} color={theme.colors.textLight} />
+            <Icon name="logout" size={24} color={theme.colors.textLight} />
           </View>
         </TouchableNativeFeedback>
       </View>
@@ -496,7 +494,6 @@ const HomeScreen = ({ route, navigation }) => {
                   style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}
                 >
                   {roleID == 2 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
-                  {/* <Card.Title title="Material calculator" style={[Styles.fontSize10]}/> */}
                   <Image source={require("../../assets/material-calculator.png")} style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
                 </Card>
                 <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1, Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
