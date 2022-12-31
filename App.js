@@ -137,7 +137,13 @@ import GMyContactsScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GMy
 import AddGMyContactsScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGMyContacts";
 import GMyBankScreen from "./src/screens/GeneralUser/PocketDairy/Setting/GMyBank";
 import AddGMyBankScreen from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/AddGMyBank";
-import PhoneContacts from "./src/screens/GeneralUser/PocketDairy/Setting/AddItems/PhoneContacts";
+import ABrandConversationValue from "./src/screens/Admin/ProductionUnitMaster/BrandConversationValue";
+import AddBrandConversationValue from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddBrandConversationValue";
+import WidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/WidthOfGPCoil";
+import AddWidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddWidthOfGpCoil";
+import MassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/MassOfZincCoating";
+import AddMassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddMassOfZincCoating";
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -308,6 +314,9 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApiMaster" component={ApiMaster} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryNameScreen" component={CategoryNameScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SubCategoryNameScreen" component={SubCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ABrandConversationValue" component={ABrandConversationValue} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WidthOfGpCoil" component={WidthOfGpCoil} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MassOfZincCoating" component={MassOfZincCoating} />
             </Drawer.Navigator>
           );
         case 3:
@@ -506,8 +515,14 @@ export default function App() {
               <Stack.Screen name="AddGMyContactsScreen" component={AddGMyContactsScreen} options={{ headerTitle: "Add Contacts", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GMyBankScreen" component={GMyBankScreen} options={{ headerTitle: " My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddGMyBankScreen" component={AddGMyBankScreen} options={{ headerTitle: " Add My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="PhoneContacts" component={PhoneContacts} options={{ headerTitle: "Phone Contact", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-            </Stack.Navigator>
+              <Stack.Screen name="ABrandConversationValue" component={ABrandConversationValue} options={{ headerTitle: "Brand Conversation Value", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddBrandConversationValue" component={AddBrandConversationValue} options={{ headerTitle: "Add Brand Conversation Value", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="WidthOfGpCoil" component={WidthOfGpCoil} options={{ headerTitle: "Width Of Gp Coil", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddWidthOfGpCoil" component={AddWidthOfGpCoil} options={{ headerTitle: "Add Width Of Gp Coil", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="MassOfZincCoating" component={MassOfZincCoating} options={{ headerTitle: "Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddMassOfZincCoating" component={AddMassOfZincCoating} options={{ headerTitle: "Add Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              
+            </Stack.Navigator> 
           </NavigationContainer>
         )}
       </PaperProvider>

@@ -162,6 +162,33 @@ export const MenuItemsAdmin = [
     ],
   },
   {
+    title: "Production Unit Master",
+    icon: "format-list-bulleted",
+    type: "accordian",
+    index: 4,
+    roleID: 2,
+    items: [
+      {
+        title: "Brand Conversation Value",
+        type: "accordian",
+        index: 40,
+        navigation: "ABrandConversationValue",
+      },
+      {
+        title: "Width Of Gp Coil",
+        type: "accordian",
+        index: 41,
+        navigation: "WidthOfGpCoil",
+      },
+      {
+        title: "Mass Of Zinc Coating",
+        type: "accordian",
+        index: 41,
+        navigation: "MassOfZincCoating",
+      },
+    ],
+  },
+  {
     title: "Pockey Dairy Master",
     icon: "format-list-bulleted",
     type: "accordian",

@@ -286,9 +286,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [modeTypeName, setModeTypeName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
+  const [date, setDate] = React.useState("");
+  const [paymentMode, setDate] = React.useState("");
+  const [contactName, setContactName] = React.useState("");
+  const [contactPhoneNo, setContactPhoneNo] = React.useState("");
   const [display, setDisplay] = React.useState("");
 
   const refRBSheet = useRef();
@@ -1147,7 +1148,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [routes] = React.useState([
     { key: "settlement", title: "Settlement" },
     { key: "lending", title: "Lending" },
-    { key: "company", title: "Company" },
+    // { key: "company", title: "Company" },
   ]);
 
   return (

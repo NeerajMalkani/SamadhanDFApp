@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -10,12 +10,12 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const AddExpensesList = ({ navigation }) => {
-   //#region Variables
+const ABrandConversationValue = ({ navigation }) => {
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -25,30 +25,34 @@ const AddExpensesList = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [date, setDate] = useState(new Date());
-  const [dateInvalid, setDateInvalid] = useState("");
-  const dateRef = useRef({});
-
-  const [entryType, setEntryType] = React.useState("");
-  const [amount, setAmount] = React.useState("");
-  const [paymentMode, setPaymentMode] = React.useState("");
-  const [expenses, setExpenses] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
  
+  const [serviceName, setServiceName] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
+  const [brandName, setBrandName] = React.useState("");
+  const [conversionValue, setConversionValue] = React.useState("");
+  const [display, setDisplay] = React.useState(false);
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
-        if (response.data && response.data.code === 200) {
+        if (response.data && response.data.code === 200) { 
           if (response.data.data) {
+             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
+            response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -95,16 +99,17 @@ const AddExpensesList = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.entryType}
+          title={data.item.serviceName}
           titleStyle={{ fontSize: 18 }}
-          description={`Sub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
           onPress={() => {
             refRBSheet.current.open();
-            setEntryType(data.item.entryType);
-            setAmount(data.item.amount);
-            setPaymentMode(data.item.paymentMode);
-            setExpenses(data.item.expenses);
-            setSubCategoryName(data.item.subCategoryName);
+            setServiceName(data.item.serviceName);
+            setCategoryName(data.item.categoryName);
+            setBrandName(data.item.brandName);
+            setConversionValue(data.item.conversionValue);
+            setDisplay(data.item.display);
+           
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -114,31 +119,31 @@ const AddExpensesList = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddExpenses", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddBrandConversationValue", { type: "add", fetchData: FetchData });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("AddExpenses", {
+    navigation.navigate("AddBrandConversationValue", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
+        unitName: data.item.unitName ? data.item.unitName.join(",") : "",
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
+        gstRate: data.item.gstRate,
         display: data.item.display,
       },
     });
   };
- //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Expenses List" />
+      <Header navigation={navigation} title="Brand Conversion Value" />
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -176,14 +181,13 @@ const AddExpensesList = ({ navigation }) => {
       </Snackbar>
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
           <ScrollView>
-         
-          <List.Item title="Entry Type " description={entryType} />
-          <List.Item title="Amount" description={amount} />
-          <List.Item title="Payment Mode" description={paymentMode} />
-          <List.Item title="Expenses / Payment" description={expenses} />
-          <List.Item title="Sub Category Name" description={subCategoryName} />
+            <List.Item title="Service Name" description={serviceName} />
+            <List.Item title="Category Name" description={categoryName} />
+            <List.Item title="Brand Name" description={brandName} />
+            <List.Item title="Conversion Value" description={conversionValue} />
+            <List.Item title="Display" description={display} />
           </ScrollView>
         </View>
       </RBSheet>
@@ -191,4 +195,4 @@ const AddExpensesList = ({ navigation }) => {
   );
 };
 
-export default AddExpensesList;
+export default ABrandConversationValue;
