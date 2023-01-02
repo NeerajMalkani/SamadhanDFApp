@@ -16,6 +16,17 @@ export const APIConverter = (response, convertIDs, type) => {
       renameKey(obj, "pan_no", "panNo");
       renameKey(obj, "company_refno", "companyID");
     }
+    if (type == "ratecard") {
+      renameKey(obj, "actual_unit_value", "actualUnitValue");
+      renameKey(obj, "actual_unitname", "actualUnitName");
+      renameKey(obj, "convert_unit_value", "convertUnitValue");
+      renameKey(obj, "convert_unitname", "convertUnitName");
+      renameKey(obj, "selectedUnit", "selectedUnit");
+      renameKey(obj, "with_material_alternate_rate", "withMaterialAlternateRate");
+      renameKey(obj, "without_material_alternate_rate", "withoutMaterialAlternateRate");
+      renameKey(obj, "group_refno", "groupID");
+
+    }
 
     if (convertIDs) {
       renameKey(obj, "category_refno", "categoryID");
@@ -170,7 +181,9 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "contact_name", "contactName");
     renameKey(obj, "contact_phoneno", "contactPhoneno");
     renameKey(obj, "pck_mycontact_refno", "mycontactID");
-    
+    renameKey(obj, "contractor_product_refno", "contractorProductID");
+
+
   });
 
   return response;

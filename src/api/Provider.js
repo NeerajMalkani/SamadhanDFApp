@@ -6,6 +6,7 @@ const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
 const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
 const BASE_URL_Dashboard = "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
 const BASE_URL_PocketDiary = "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
+const BASE_URL_Contractor = "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
 
 class Provider {
   //#region Old API's
@@ -316,6 +317,18 @@ class Provider {
     pckmycontactrefnocheck: "pckmycontactrefnocheck/",
     pckmycontactscreate: "pckmycontactscreate/",
     pckmycontactsupdate: "pckmycontactsupdate/",
+    contractorproductrefnocheck: "contractorproductrefnocheck/",
+    getservicenameratecardform: "getservicenameratecardform/",
+    getcategorynameratecardform: "getcategorynameratecardform/",
+    getcategorydataratecardform: "getcategorydataratecardform/",
+    getproductnameratecardform: "getproductnameratecardform/",
+    getunitofsaleratecardform: "getunitofsaleratecardform/",
+    getmaterialratedataratecardform: "getmaterialratedataratecardform/",
+    getmaterialratedata_unitofsaleonchange_ratecardform: "getmaterialratedata_unitofsaleonchange_ratecardform/",
+    getmaterialratedata_withmaterialrateblur_ratecardform: "getmaterialratedata_withmaterialrateblur_ratecardform/",
+    getmaterialratedata_withoutmaterialrateblur_ratecardform: "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
+    ratecardcreate: "ratecardcreate/",
+    ratecardupdate: "ratecardupdate/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -348,6 +361,10 @@ class Provider {
     } else {
       return axios.post(`${BASE_URL_Admin}/${resource}`);
     }
+  }
+
+  createDFContractor(resource: string, params) {
+    return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
   }
 
   createDFAdminWithHeader(resource, params) {

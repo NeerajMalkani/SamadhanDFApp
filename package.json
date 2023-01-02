@@ -12,6 +12,7 @@
   "dependencies": {
     "@date-io/date-fns": "^2.16.0",
     "@eliav2/react-native-collapsible-view": "^1.4.0",
+    "@expo/configure-splash-screen": "^0.6.0",
     "@expo/vector-icons": "^13.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",

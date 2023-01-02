@@ -2,20 +2,23 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { View, Text, HelperText, ScrollView } from "react-native";
-import { TextInput, Checkbox, Card, Button } from "react-native-paper";
+import { TextInput, Checkbox, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
 import DropDown from "react-native-paper-dropdown";
 import { communication } from "../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Provider from "../../../api/Provider";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
+import { APIConverter } from "../../../utils/apiconverter";
 
 let s_ID = 0,
   c_ID = 0,
   p_ID = 0,
   u_ID = 0;
-let userID = 0;
+let userID = 0, groupID = 0;
 const AddRateCard = ({ route, navigation }) => {
+
+  const [sno, setsno] = React.useState("");
   const [acivityName, setActivityName] = React.useState("Contractor");
 
   const [servicesFullData, setServicesFullData] = React.useState([]);
@@ -41,7 +44,9 @@ const AddRateCard = ({ route, navigation }) => {
   const [unitFullData, setUnitFullData] = React.useState([]);
   const [unitsData, setUnitsData] = React.useState([]);
   const [selectedUnitID, setSelectedUnitID] = React.useState(0);
-  const [unitName, setUnitName] = React.useState(route.params.type === "edit" ? (route.params.data.selectedUnitID == route.params.data.unit2ID ? route.params.data.unit2Name : route.params.data.unit1Name) : "");
+  const [unitName, setUnitName] = React.useState("");
+  const [prevUnitName, setPrevUnitName] = React.useState("");
+
   const [errorUN, setUNError] = React.useState(false);
   const unitDDRef = useRef({});
 
@@ -78,7 +83,7 @@ const AddRateCard = ({ route, navigation }) => {
   const [display, setDisplay] = React.useState("Yes");
   const [arnID, setArnID] = useState(0);
 
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [checked, setChecked] = React.useState(true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -86,16 +91,29 @@ const AddRateCard = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
 
+  const [actualUnitName, setactualUnitName] = React.useState("");
+  const [convertedUnitName, setconvertedUnitName] = React.useState("");
+
+  const [actualUnitValue, setactualUnitValue] = React.useState("");
+  const [convertedUnitValue, setconvertedUnitValue] = React.useState("");
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+
+
   useEffect(() => {
     GetUserID();
   }, []);
+
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
       if (route.params.type === "edit") {
-        FetchData("edit", route.params.data.rateCardID);
+        FetchData(route.params.data.contractorProductID);
       } else {
         FetchServiceName();
       }
@@ -104,12 +122,16 @@ const AddRateCard = ({ route, navigation }) => {
 
   const FetchServiceName = () => {
     let params = {
-      ContractorID: userID,
+      data: {
+        Sess_UserRefno: userID,
+      }
     };
-    Provider.getAll(`master/getcontractoractiveservices?${new URLSearchParams(params)}`)
+    Provider.createDFContractor(Provider.API_URLS.getservicenameratecardform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
 
             const serviceName = response.data.data.map((data) => data.serviceName);
@@ -119,145 +141,255 @@ const AddRateCard = ({ route, navigation }) => {
               let b = response.data.data.filter((el) => {
                 return el.id === s_ID;
               });
-
-              setServiceName(b[0].locationName);
-              setServiceNameID(b[0].id);
+              setServiceName(b[0].serviceName);
             }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchCategory = (arnID, serviceNameID, callbackFunction = null) => {
+  const FetchCategory = (serviceNameID) => {
     let params = {
-      ActivityID: arnID,
-      ServiceID: serviceNameID,
+      data: {
+        Sess_UserRefno: userID,
+        service_refno: serviceNameID
+      }
     };
-    Provider.getAll(`master/getcategoriesbyserviceid?${new URLSearchParams(params)}`)
+    Provider.createDFContractor(Provider.API_URLS.getcategorynameratecardform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setCategoriesFullData(response.data.data);
 
             const category = response.data.data.map((data) => data.categoryName);
             setCategoriesData(category);
-            if (callbackFunction !== null) {
-              callbackFunction(response.data.data);
-            }
-            // if (c_ID > 0) {
-            //   let b = response.data.data.filter((el) => {
-            //     return el.id === c_ID;
-            //   });
 
-            //   setCategory(b[0].locationName);
-            //   setCategoryID(b[0].id);
-            // }
+            if (c_ID > 0) {
+              let b = response.data.data.filter((el) => {
+                return el.id === c_ID;
+              });
+
+              setCategoriesName(b[0].categoryName);
+              setCategoryID(b[0].id);
+            }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchProductsFromCategory = (selectedItem) => {
+  const FetchHsnCode = (categoryID) => {
     let params = {
-      ActivityID: 4,
-      ServiceID:
-        route.params.type === "edit"
-          ? route.params.data.serviceID
-          : servicesFullData.find((el) => {
-              return el.serviceName === serviceName;
-            }).serviceID,
-      CategoryID:
-        route.params.type === "edit"
-          ? route.params.data.categoryID
-          : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+      data: {
+        Sess_UserRefno: userID,
+        category_refno: categoryID
+      }
     };
-    Provider.getAll(`master/getproductsbycategoryid?${new URLSearchParams(params)}`)
+    Provider.createDFContractor(Provider.API_URLS.getcategorydataratecardform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data);
+            setHSN(response.data.data[0].hsnsacCode);
+            setGST(response.data.data[0].gstRate);
+            setCNError(false);
+            setHSNError(false);
+            setGSTError(false);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchProductsFromCategory = (categoryID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        category_refno: categoryID
+      }
+    };
+    Provider.createDFContractor(Provider.API_URLS.getproductnameratecardform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+
             setProductsFullData(response.data.data);
             const products = response.data.data.map((data) => data.productName);
             setProductsData(products);
-          }
-        }
-      })
-      .catch((e) => {});
-  };
 
-  const FetchUnitsFromProductID = (selectedItem, selectedUnitID) => {
-    let params = {
-      ProductID:
-        route.params.type === "edit"
-          ? route.params.data.id
-          : productsFullData.find((el) => {
-              return el.productName === selectedItem;
-            }).productID,
-    };
-    Provider.getAll(`master/getproductunitbyid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            setUnitFullData(response.data.data);
-            const units = response.data.data.map((data) => data.unitName);
-            setUnitsData(units);
+            if (p_ID > 0) {
+              let b = response.data.data.filter((el) => {
+                return el.id === p_ID;
+              });
 
-            let product = productsFullData.filter((el) => {
-              return el.productName === selectedItem;
-            });
-            if (selectedUnitID == response.data.data[0].unitID) {
-              setUnitName(response.data.data[0].unitName);
-              setSelectedUnitID(response.data.data[0].unitID);
-
-              setRUM(product[0].rateWithMaterials.toString());
-              setRUWM(product[0].rateWithoutMaterials.toString());
-
-              setARUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
-              setARUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
-            } else if (selectedUnitID == response.data.data[1].unitID) {
-              setUnitName(response.data.data[1].unitName);
-              setSelectedUnitID(response.data.data[1].unitID);
-
-              setRUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
-              setRUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate).toFixed(2).toString());
-
-              setARUM((parseFloat(product[0].rateWithMaterials) * response.data.data[1].conversionRate * response.data.data[0].conversionRate).toFixed(2).toString());
-              setARUWM((parseFloat(product[0].rateWithoutMaterials) * response.data.data[1].conversionRate * response.data.data[0].conversionRate).toFixed(2).toString());
+              setProductsName(b[0].productName);
             }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchData = (from, RateCardID) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
-      setSnackbarColor(theme.colors.success);
-      setSnackbarVisible(true);
-    }
+  const FetchUnitsFromProductID = (serviceProductNameID) => {
     let params = {
-      RateCardID: RateCardID,
+      data: {
+        Sess_UserRefno: userID,
+        product_refno: serviceProductNameID
+      }
     };
-    Provider.getAll(`master/getcontractorratecardbyid?${new URLSearchParams(params)}`)
+    Provider.createDFContractor(Provider.API_URLS.getunitofsaleratecardform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data);
+            setUnitFullData(response.data.data);
+            const units = response.data.data.map((data) => data.displayUnit);
+            setUnitsData(units);
+            if (u_ID != null) {
+              let b = response.data.data.filter((el) => {
+                return el.unitId === u_ID;
+              });
+
+              setUnitName(b[0].displayUnit);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const fetchServiceProductRate = (categoryID, productID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        category_refno: categoryID,
+        product_refno: productID
+      }
+    };
+    Provider.createDFContractor(Provider.API_URLS.getmaterialratedataratecardform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data, false, "ratecard");
+            setRUM(response.data.data[0].rateWithMaterials);
+            setRUWM(response.data.data[0].rateWithoutMaterials);
+            setARUM(response.data.data[0].withMaterialAlternateRate.toString());
+            setARUWM(response.data.data[0].withoutMaterialAlternateRate.toString());
+            setShortSpec(response.data.data[0].shortSpecification);
+            setSpec(response.data.data[0].specification);
+
+            setactualUnitName(response.data.data[0].actualUnitName);
+            setconvertedUnitName(response.data.data[0].convertUnitName);
+            setactualUnitValue(response.data.data[0].actualUnitValue);
+            setconvertedUnitValue(response.data.data[0].convertUnitValue);
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const fetchUnitOfSaleNameChanges = (categoryID, productID, unitID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        category_refno: categoryID,
+        product_refno: productID,
+        unitcategoryrefno_unitrefno: unitID
+      }
+    };
+
+
+    Provider.createDFContractor(Provider.API_URLS.getmaterialratedata_unitofsaleonchange_ratecardform, params)
+      .then((response) => {
+        setPrevUnitName(unitName);
+        hideDialog();
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data, false, "ratecard");
+            setsno(response.data.data[0].sno);
+
+            setRUM(response.data.data[0].rateWithMaterials);
+            setRUWM(response.data.data[0].rateWithoutMaterials);
+
+            setARUM(response.data.data[0].withMaterialAlternateRate);
+            setARUWM(response.data.data[0].withoutMaterialAlternateRate);
+            setactualUnitName(response.data.data[0].actualUnitName);
+            setconvertedUnitName(response.data.data[0].convertUnitName);
+            setactualUnitValue(response.data.data[0].actualUnitValue);
+            setconvertedUnitValue(response.data.data[0].convertUnitValue);
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const updateRate = () => {
+
+    fetchUnitOfSaleNameChanges(categoriesFullData.find((el) => {
+      return el.categoryName === categoriesName;
+    }).id,
+      productsFullData.find((el) => {
+        return el.productName === productsName;
+      }).id,
+      unitFullData.filter((el) => {
+        return el.displayUnit === unitName;
+      })[0].unitId
+    );
+  }
+
+  const FetchData = (RateCardID) => {
+    let params = {
+      RateCardID: RateCardID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        contractor_product_refno: RateCardID
+      }
+    };
+    Provider.createDFContractor(Provider.API_URLS.contractorproductrefnocheck, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data, true, "ratecard");
+
+            s_ID = response.data.data[0].serviceID;
             FetchServiceName();
-            FetchCategory(4, response.data.data[0].serviceID, (categoryList) => {
-              let ca = categoryList.find((el) => el.categoryName === route.params.data.categoryName);
-              if (ca !== undefined) {
-                setHSN(ca.hsnsacCode);
-                setGST(ca.gstRate.toString());
-              }
+            c_ID = response.data.data[0].categoryID;
+            FetchCategory(response.data.data[0].serviceID);
+            FetchHsnCode(response.data.data[0].categoryID);
+            p_ID = response.data.data[0].productID;
+            FetchProductsFromCategory(response.data.data[0].categoryID);
+            u_ID = response.data.data[0].unitId;
+            FetchUnitsFromProductID(response.data.data[0].productID);
 
-              FetchProductsFromCategory(categoriesName);
-            });
+            setRUM(response.data.data[0].rateWithMaterials);
+            setRUWM(response.data.data[0].rateWithoutMaterials);
 
-            FetchUnitsFromProductID(route.params.data.productName, route.params.data.selectedUnitID);
+            setARUM(response.data.data[0].with_material_rate_alternate_rate);
+            setARUWM(response.data.data[0].without_material_rate_alternate_rate);
+
+            //setsno(response.data.data[0].sno);
+
+            setactualUnitName(response.data.data[0].actualUnitName);
+            setconvertedUnitName(response.data.data[0].convertUnitName);
+            setactualUnitValue(response.data.data[0].actualUnitValue);
+            setconvertedUnitValue(response.data.data[0].convertUnitValue);
+
+            setShortSpec(response.data.data[0].shortSpecification);
+            //setSpec(response.data.data[0].specification);
+
+            setChecked(response.data.data[0].display);
+
           }
         } else {
           listData[1]([]);
@@ -282,7 +414,7 @@ const AddRateCard = ({ route, navigation }) => {
     setServiceName(selectedItem);
     serviceID = servicesFullData.find((el) => {
       return el.serviceName === selectedItem;
-    }).serviceID;
+    }).id;
     categoriesDDRef.current.reset();
     setCategoriesData([]);
     setUnitsData([]);
@@ -295,7 +427,7 @@ const AddRateCard = ({ route, navigation }) => {
     setConversionUnitSelected("");
     setAUOS("");
     setSNError(false);
-    FetchCategory(4, serviceID);
+    FetchCategory(serviceID);
   };
 
   const onCategoriesNameSelected = (selectedItem) => {
@@ -306,33 +438,22 @@ const AddRateCard = ({ route, navigation }) => {
     }).id;
 
     productsDDRef.current.reset();
-    setHSN(
-      categoriesFullData.find((el) => {
-        return el.categoryName === selectedItem;
-      }).hsnsacCode
-    );
-    setGST(
-      categoriesFullData
-        .find((el) => {
-          return el.categoryName === selectedItem;
-        })
-        .gstRate.toFixed(2)
-    );
-    setCNError(false);
-    setHSNError(false);
-    setGSTError(false);
+
     setUnitName("");
     setProductsName("");
     setUnitSelected("");
     setConversionUnitSelected("");
     setAUOS("");
-    FetchProductsFromCategory(selectedItem);
+    FetchHsnCode(categoryID);
+    FetchProductsFromCategory(categoryID);
   };
 
   const onProductsNameSelected = (selectedItem) => {
     setProductsName(selectedItem);
     let productID = 0;
     unitDDRef.current.reset();
+
+
     let p = productsFullData.find((el) => {
       return el.productName === selectedItem;
     });
@@ -343,77 +464,81 @@ const AddRateCard = ({ route, navigation }) => {
     setConversionUnitSelected("");
     setAUOS("");
 
-    setShortSpec(p.shortSpecification);
-    setSpec(p.specification);
-
-    FetchUnitsFromProductID(selectedItem, p.selectedUnitID);
+    FetchUnitsFromProductID(p.id);
+    fetchServiceProductRate(categoriesFullData.find((el) => {
+      return el.categoryName === categoriesName;
+    }).id, p.id);
   };
 
   const onUnitNameSelected = (selectedItem) => {
     setUnitName(selectedItem);
     setUNError(false);
-
-    let unit = unitFullData.filter((el) => {
-      return el.unitName === selectedItem;
-    });
-    let product = productsFullData.filter((el) => {
-      return el.productName === productsName;
-    });
-
-    if (unit[0].unitID == unitFullData[0].unitID) {
-      setRUM(product[0].rateWithMaterials.toString());
-      setRUWM(product[0].rateWithoutMaterials.toString());
-
-      setARUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
-      setARUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
-    } else if (unit[0].unitID == unitFullData[1].unitID) {
-      setRUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
-      setRUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate).toFixed(2).toString());
-
-      setARUM((parseFloat(product[0].rateWithMaterials) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
-      setARUWM((parseFloat(product[0].rateWithoutMaterials) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
-    }
+    showDialog();
   };
 
-  const ChanegRateUnit = (rum, ruwm) => {
-    let unit = unitFullData.filter((el) => {
-      return el.unitName === unitName;
-    });
 
-    let ratewithmaterial = rum,
-      ratewithoutmaterial = ruwm;
 
-    if (unit[0].unitID == unitFullData[0].unitID) {
-      setRUM(ratewithmaterial.toString());
-      setRUWM(ratewithoutmaterial.toString());
+  const ChanegRateUnit = (rate, actualUnitValue, convertUnitValue, type) => {
+    let params = null;
+    let url = Provider.API_URLS.getmaterialratedata_withmaterialrateblur_ratecardform;
+    params = {
+      data: {
+        Sess_UserRefno: userID,
+        sno: sno,
+        with_material_rate: rate,
+        actual_unit_value: actualUnitValue,
+        convert_unit_value: convertUnitValue
+      }
+    };
 
-      setARUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
-      setARUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
-    } else if (unit[0].unitID == unitFullData[1].unitID) {
-      setRUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
-      setRUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate).toFixed(2).toString());
-
-      setARUM((parseFloat(ratewithmaterial) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
-      setARUWM((parseFloat(ratewithoutmaterial) * unitFullData[1].conversionRate * unitFullData[0].conversionRate).toFixed(2).toString());
+    if (type == "without_material") {
+      url = Provider.API_URLS.getmaterialratedata_withoutmaterialrateblur_ratecardform;
+      params = {
+        data: {
+          Sess_UserRefno: userID,
+          sno: sno,
+          without_material_rate: rate,
+          actual_unit_value: actualUnitValue,
+          convert_unit_value: convertUnitValue
+        }
+      };
     }
+
+    Provider.createDFContractor(url, params)
+      .then((response: any) => {
+
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, false, "ratecard");
+
+            if (type == "with_material") {
+              setARUM(response.data.data[0].withMaterialAlternateRate);
+            }
+            else if (type == "without_material") {
+              setARUWM(response.data.data[0].withoutMaterialAlternateRate);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
   };
 
   const onRUMChanged = (text) => {
     setRUM(text);
     setRUMHT("Materials + Labour cost");
     setErrorRUM(false);
-    // if (text > 0) {
-    //   ChanegRateUnit(text, ruwm);
-    // }
+
+    ChanegRateUnit(text, actualUnitValue, convertedUnitValue, "with_material");
+
   };
 
   const onRUWMChanged = (text) => {
     setRUWM(text);
     setRUWMHT("Only Labour cost");
     setErrorRUWM(false);
-    // if (text > 0) {
-    //   ChanegRateUnit(rum, text);
-    // }
+
+    ChanegRateUnit(rum, actualUnitValue, convertedUnitValue, "without_material");
+
   };
 
   const ValidateData = () => {
@@ -480,32 +605,34 @@ const AddRateCard = ({ route, navigation }) => {
     });
 
     const params = {
-      RateCardID: 0,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      ActivityID: 4,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).serviceID,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      SelectedUnitID: unitFullData.filter((el) => {
-        return el.unitName === unitName;
-      })[0].unitID,
-      UnitOfSalesID: 0,
-      RateWithMaterials: rum,
-      RateWithoutMaterials: ruwm,
-      AltRateWithMaterials: arum,
-      AltRateWithoutMaterials: aruwm,
-      AlternateUnitOfSales: 0,
-      ShortSpecification: shortSpec,
-      Specification: spec,
-      Display: display === "Yes" ? true : false,
-      ContractorID: userID,
+
+      data: {
+        Sess_UserRefno: userID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        unitcategoryrefno_unitrefno: unitFullData.filter((el) => {
+          return el.displayUnit === unitName;
+        })[0].unitId,
+        unit_conversion_value: actualUnitValue,
+        with_material_rate: rum,
+        with_material_alternate_rate: arum,
+        without_material_rate: ruwm,
+        without_material_alternate_rate: aruwm,
+        short_desc: shortSpec,
+        specification: spec,
+        view_status: checked ? "1" : "0",
+      }
+
     };
-    Provider.create("master/insertupdatecontractorratecard", params)
+    Provider.createDFContractor(Provider.API_URLS.ratecardcreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -525,37 +652,39 @@ const AddRateCard = ({ route, navigation }) => {
       });
   };
 
+
+
   const UpdateData = () => {
     const params = {
-      RateCardID: route.params.data.rateCardID,
-      ProductID: productsFullData.find((el) => {
-        return el.productName === productsName;
-      }).productID,
-      ActivityID: 4,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).serviceID,
-      CategoryID: categoriesFullData.find((el) => {
-        return el.categoryName === categoriesName;
-      }).id,
-      SelectedUnitID: unitFullData.filter((el) => {
-        return el.unitName === unitName;
-      })[0].unitID,
-      UnitOfSalesID: 0,
-      RateWithMaterials: rum,
-      RateWithoutMaterials: ruwm,
-      AltRateWithMaterials: arum,
-      AltRateWithoutMaterials: aruwm,
-      AlternateUnitOfSales: 0,
-      ShortSpecification: shortSpec,
-      Specification: spec,
-      Display: display === "Yes" ? true : false,
-      ContractorID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        contractor_product_refno: route.params.data.contractorProductID,
+        service_refno: servicesFullData.find((el) => {
+          return el.serviceName === serviceName;
+        }).id,
+        category_refno: categoriesFullData.find((el) => {
+          return el.categoryName === categoriesName;
+        }).id,
+        product_refno: productsFullData.find((el) => {
+          return el.productName === productsName;
+        }).id,
+        unitcategoryrefno_unitrefno: unitFullData.filter((el) => {
+          return el.displayUnit === unitName;
+        })[0].unitId,
+        unit_conversion_value: actualUnitValue,
+        with_material_rate: rum,
+        with_material_alternate_rate: arum,
+        without_material_rate: ruwm,
+        without_material_alternate_rate: aruwm,
+        short_desc: shortSpec,
+        specification: spec,
+        view_status: checked ? "1" : "0"
+      }
     };
-    Provider.create("master/insertupdatecontractorratecard", params)
+    Provider.createDFContractor(Provider.API_URLS.ratecardupdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
+          route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.ExistsError);
@@ -593,9 +722,6 @@ const AddRateCard = ({ route, navigation }) => {
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>With Material</Text>
             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
               <TextInput value={rum} keyboardType="decimal-pad" onEndEditing={onRUMChanged} error={errorRUM} style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              {/* <HelperText type={errorRUM ? "error" : "info"} visible={true}>
-                {rumht}
-              </HelperText> */}
               <TextInput value={arum} error={errorRUWM} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
             </View>
           </View>
@@ -603,9 +729,6 @@ const AddRateCard = ({ route, navigation }) => {
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>Without Material</Text>
             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
               <TextInput value={ruwm} onEndEditing={onRUWMChanged} keyboardType="decimal-pad" style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              {/* <HelperText type={errorRUWM ? "error" : "info"} visible={true}>
-                {ruwmht}
-              </HelperText> */}
               <TextInput value={aruwm} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
             </View>
           </View>
@@ -630,6 +753,24 @@ const AddRateCard = ({ route, navigation }) => {
           </Button>
         </Card.Content>
       </View>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to change Unit of Sales? If OK, then automatically changed all values. Please after changed check the all values</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={updateRate}>Ok</Button>
+            <Button onPress={() => {
+              hideDialog();
+
+              setUnitName("asdfads");
+              setPrevUnitName("");
+
+            }}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
   return design;

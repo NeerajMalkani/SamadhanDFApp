@@ -14,11 +14,12 @@ import { Styles } from "../../../styles/styles";
 import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
+import { APIConverter } from "../../../utils/apiconverter";
 // import SearchNAdd from "../../../AddItems/SearchNAdd";
 
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-let userID = 0;
+let userID = 0, groupID = 0;
 
 const RateCardSetup = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false);
@@ -37,6 +38,7 @@ const RateCardSetup = ({ navigation }) => {
   const [serviceName, setServiceName] = React.useState("");
 
   const [category, setCategory] = React.useState("");
+  const [productName, setProductName] = React.useState("");
   const [serviceProductName, setServiceProductName] = React.useState("");
   const [unit, setUnit] = React.useState("");
   const [rate, setRate] = React.useState("");
@@ -46,6 +48,9 @@ const RateCardSetup = ({ navigation }) => {
 
   const [altRateWithMaterials, setAltRateWithMaterials] = React.useState("");
   const [altRateWithoutMaterials, setAltRateWithoutMaterials] = React.useState("");
+
+  const [altRateWithMaterialsUnit, setAltRateWithMaterialsUnit] = React.useState("");
+  const [altRateWithoutMaterialsUnit, setAltRateWithoutMaterialsUnit] = React.useState("");
 
   const [specification, setSpecification] = React.useState("");
   const [shortSpecification, setShortSpecification] = React.useState("");
@@ -61,6 +66,7 @@ const RateCardSetup = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
       FetchData();
     }
   };
@@ -76,12 +82,18 @@ const RateCardSetup = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      ContractorID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        contractor_product_refno: "all"
+      }
     };
-    Provider.getAll(`master/getcontractorratecardlist?${new URLSearchParams(params)}`)
+    Provider.createDFContractor(Provider.API_URLS.contractorproductrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, false, "ratecard");
+            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -165,31 +177,32 @@ const RateCardSetup = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        rateCardID: data.item.id,
-        id: data.item.productID,
-        activityRoleName: data.item.activityRoleName,
-        activityID: data.item.activityID,
-        serviceName: data.item.serviceName,
-        serviceID: data.item.serviceID,
-        unitName: data.item.unitName,
-        unitOfSalesID: data.item.unitOfSalesID,
-        categoryName: data.item.categoryName,
-        productName: data.item.productName,
-        categoryID: data.item.categoryID,
-        hsnsacCode: data.item.hsnsacCode,
-        unit1ID: data.item.unit1ID,
-        unit2ID: data.item.unit2ID,
-        unit1Name: data.item.unit1Name,
-        unit2Name: data.item.unit2Name,
-        selectedUnitID: data.item.selectedUnitID,
-        // gstRate: data.item.gstRate.toFixed(2),
-        rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
-        rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
-        altRateWithMaterials: data.item.altRateWithMaterials.toFixed(2),
-        altRateWithoutMaterials: data.item.altRateWithoutMaterials.toFixed(2),
-        shortSpecification: data.item.shortSpecification,
-        specification: data.item.specification,
-        display: data.item.display,
+        contractorProductID: data.item.contractorProductID,
+        // rateCardID: data.item.id,
+        // id: data.item.productID,
+        // activityRoleName: data.item.activityRoleName,
+        // activityID: data.item.activityID,
+        // serviceName: data.item.serviceName,
+        // serviceID: data.item.serviceID,
+        // unitName: data.item.unitName,
+        // unitOfSalesID: data.item.unitOfSalesID,
+        // categoryName: data.item.categoryName,
+        // productName: data.item.productName,
+        // categoryID: data.item.categoryID,
+        // hsnsacCode: data.item.hsnsacCode,
+        // unit1ID: data.item.unit1ID,
+        // unit2ID: data.item.unit2ID,
+        // unit1Name: data.item.unit1Name,
+        // unit2Name: data.item.unit2Name,
+        // selectedUnitID: data.item.selectedUnitID,
+        // // gstRate: data.item.gstRate.toFixed(2),
+        // rateWithMaterials: data.item.rateWithMaterials.toFixed(2),
+        // rateWithoutMaterials: data.item.rateWithoutMaterials.toFixed(2),
+        // altRateWithMaterials: data.item.altRateWithMaterials.toFixed(2),
+        // altRateWithoutMaterials: data.item.altRateWithoutMaterials.toFixed(2),
+        // shortSpecification: data.item.shortSpecification,
+        // specification: data.item.specification,
+        // display: data.item.display,
       },
     });
   };
@@ -204,23 +217,28 @@ const RateCardSetup = ({ navigation }) => {
           onPress={() => {
 
             refRBSheet.current.open();
+
             setServiceName(data.item.serviceName);
             setCategory(data.item.categoryName);
-            setServiceProductName(data.item.serviceProductName);
+            setProductName(data.item.productName);
+            //setServiceProductName(data.item.serviceProductName);
 
-            setSpecification(data.item.specification);
+            //setSpecification(data.item.specification);
             setShortSpecification(data.item.shortSpecification);
-
-            setUnit(data.item.selectedUnitName);
+            setUnit(data.item.actualUnitName);
 
             setRateWithMaterials(data.item.rateWithMaterials);
             setRateWithoutMaterials(data.item.rateWithoutMaterials);
-            setAltRateWithMaterials(data.item.altRateWithMaterials);
-            setAltRateWithoutMaterials(data.item.altRateWithoutMaterials);
 
-            setRate(data.item.rate);
-            setAlternativeRate(data.item.alternativeRate);
-            setMaterial(data.item.material);
+            setAltRateWithMaterials(data.item.rateWithMaterials);
+            setAltRateWithoutMaterials(data.item.without_material_rate_alternate_rate);
+
+            setAltRateWithMaterialsUnit(data.item.with_material_rate_alternate_unit);
+            setAltRateWithoutMaterialsUnit(data.item.without_material_rate_alternate_unit);
+
+            // setRate(data.item.rate);
+            // setAlternativeRate(data.item.alternativeRate);
+            // setMaterial(data.item.material);
             setDispaly(data.item.display == true ? "Yes" : "No");
 
           }}
@@ -277,23 +295,22 @@ const RateCardSetup = ({ navigation }) => {
 
       <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{productName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category" description={category} />
-            <List.Item title="Service Product Name" description={serviceProductName} />
             <List.Item title="Unit" description={unit} />
             <View style={[Styles.padding16]}>
-              <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter]} >
+              <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter, Styles.borderred]} >
                 <DataTable.Header>
-                  <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]}>Rate Unit</DataTable.Title>
-                  <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]} numeric>Alt Rate Unit</DataTable.Title>
+                  <DataTable.Title style={[{ flex: 1, justifyContent: 'flex-start' }]}>Rate Unit</DataTable.Title>
+                  <DataTable.Title style={[{ flex: 1, justifyContent: 'flex-start' }]} numeric>Alt Rate Unit</DataTable.Title>
                   <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]} numeric>Material</DataTable.Title>
                 </DataTable.Header>
 
                 <DataTable.Row>
-                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{rateWithMaterials}</DataTable.Cell>
-                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric>{altRateWithMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'flex-start' }]}>{rateWithMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'flex-start', width: 150 }]} numeric>{altRateWithMaterials} / {altRateWithMaterialsUnit}</DataTable.Cell>
                   <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric><Button
                     mode="contained"
                     labelStyle={[{ textTransform: "capitalize" }]}
@@ -305,8 +322,8 @@ const RateCardSetup = ({ navigation }) => {
                 </DataTable.Row>
 
                 <DataTable.Row>
-                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{rateWithoutMaterials}</DataTable.Cell>
-                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric>{altRateWithoutMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'flex-start' }]}>{rateWithoutMaterials}</DataTable.Cell>
+                  <DataTable.Cell style={[{ flex: 1, justifyContent: 'flex-start' }]} numeric>{altRateWithoutMaterials} / {altRateWithoutMaterialsUnit}</DataTable.Cell>
                   <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]} numeric><Button
                     mode="contained"
                     labelStyle={[{ textTransform: "capitalize" }]}
@@ -320,7 +337,7 @@ const RateCardSetup = ({ navigation }) => {
               </DataTable>
             </View>
             <List.Item title="Short Specification" description={shortSpecification} />
-            <List.Item title="Specification" description={specification} />
+            {/* <List.Item title="Specification" description={specification} /> */}
             <List.Item title="Display" description={display} />
             {/* <List.Item title="Verify Status" description={NullOrEmpty(action) ? "" : verifyStatus ? "Verified":"Not Verified"} /> */}
           </ScrollView>

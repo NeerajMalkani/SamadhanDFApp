@@ -36,10 +36,18 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.diamondframes.samadhan"
+      "package": "com.diamondframes.samadhan",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "34190087-2801-4064-9e37-acd0a46ad280"
+      }
     }
   }
 }
