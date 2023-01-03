@@ -22,22 +22,57 @@ const AddSource = ({ route, navigation }) => {
 
   const [receiptModeData, setReceiptModeData] = React.useState([]);
   const [receiptMode, setReceiptMode] = React.useState([]);
-  //   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  //   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
   const [errorRM, setRMError] = React.useState(false);
 
   const [sourceData, setSourceData] = React.useState([]);
   const [source, setSource] = React.useState([]);
-  //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.payMode : "");
   const [errorSS, setSSError] = React.useState(false);
 
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
   const [subCategoryName, setSubCategoryName] = React.useState([]);
-  //   const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  //   const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.subCategoryName : "");
   const [errorSCN, setSCNError] = React.useState(false);
+
+  const [receivedFormData, setReceivedFormData] = React.useState([]);
+  const [receivedForm, setReceivedForm] = React.useState([]);
+  //   const [receivedForm, setReceivedForm] = React.useState(route.params.type === "edit" ? route.params.data.receivedForm : "");
+  const [errorRF, setRFError] = React.useState(false);
+
+  const [depositeTypeData, setDepositeTypeData] = React.useState([]);
+  const [depositeType, setDepositeType] = React.useState([]);
+  //   const [depositeType, setDepositeType] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  const [errorDT, setDTError] = React.useState(false);
+
+  const [myBankListData, setMyBankListData] = React.useState([]);
+  const [myBankList, setMyBankList] = React.useState([]);
+  //   const [myBankList, setMyBankList] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
+  const [errorBL, setBLError] = React.useState(false);
+
+  const [chequeNoError, setChequeNoError] = React.useState(false);
+  const [chequeNo, setChequeNo] = React.useState(route.params.type === "edit" ? route.params.data.chequeNo : "");
+
+  const [chequeDate, setChequeDate] = useState(new Date());
+  const [chequeDateInvalid, setChequeDateInvalid] = useState("");
+  const chequeDateRef = useRef({});
+
+  const [repaymentDate, setRepaymentDate] = useState(new Date());
+  const [repaymentDateInvalid, setRepaymentDateInvalid] = useState("");
+  const repaymentDateRef = useRef({});
+
+  const [image, setImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = React.useState(route.params.type === "edit" ? { name: route.params.data.designImage } : null);
+  const [designImage, setDesignImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : "");
+  const [errorDI, setDIError] = React.useState(false);
+
+  const [notesError, setNotesError] = React.useState(false);
+  const [notes, setNotes] = React.useState(route.params.type === "edit" ? route.params.data.notes : "");
+
+  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
   const ref_input2 = useRef();
   const ref_input3 = useRef();
   //#endregion 
@@ -126,6 +161,19 @@ const AddSource = ({ route, navigation }) => {
     setSCNError(false);
   };
 
+  const onReceivedFormChanged = (text) => {
+    setReceivedForm(text);
+    setRFError(false);
+  };
+  const onDepositeTypeChanged = (text) => {
+    setDepositeType(text);
+    setDTError(false);
+  };
+  const onBankListChanged = (text) => {
+    setMyBankList(text);
+    setBLError(false);
+  };
+
   const onSourceChanged = (text) => {
     setPayMode(text);
     setPMError(false);
@@ -136,7 +184,25 @@ const AddSource = ({ route, navigation }) => {
     setAmountError(false);
   };
 
-  
+  const chooseFile = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setDIError(false);
+      const arrExt = result.uri.split(".");
+      const unique_id = uuid.v4();
+      setDesignImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setImage(result.uri);
+      setFilePath(result);
+      if (route.params.type === "edit") {
+        setIsImageReplaced(true);
+      }
+    }
+  };
 
   const InsertData = () => {
     let arrunitOfSalesName = [];
@@ -285,6 +351,7 @@ const AddSource = ({ route, navigation }) => {
           <HelperText type="error" visible={entryTypeError}>
             {communication.InvalidEntryType}
           </HelperText>
+
           <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>
             {communication.InvalidAmount}
@@ -304,6 +371,63 @@ const AddSource = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSCN}>
             {communication.InvalidSubCategoryName}
           </HelperText>
+
+          <Dropdown label="Recevied Form" data={receivedFormData} onSelected={onReceivedFormChanged} isError={errorRF} selectedItem={receivedForm} />
+          <HelperText type="error" visible={errorRF}>
+            {communication.InvalidReceivedForm}
+          </HelperText>
+
+          <Dropdown label="Deposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+          <HelperText type="error" visible={errorDT}>
+            {communication.InvalidDepositeType}
+          </HelperText>
+
+          <Dropdown label="My Bank List" data={myBankListData} onSelected={onBankListChanged} isError={errorBL} selectedItem={myBankList} />
+          <HelperText type="error" visible={errorBL}>
+            {communication.InvalidBankName}
+          </HelperText>
+
+ <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={chequeNoError} />
+          <HelperText type="error" visible={chequeNoError}>
+            {communication.InvalidChequeNo}
+          </HelperText>
+
+          <View >
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate}/>
+              </View>
+
+              <View>
+                <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
+              </View>
+
+              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+            <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+            <Button mode="text" onPress={chooseFile}>
+              {filePath !== null ? "Replace" : "Choose Image"}
+            </Button>
+          </View>
+          <HelperText type="error" visible={errorDI}>
+            {communication.InvalidDesignImage}
+          </HelperText>
+
+          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={notesError} />
+          <HelperText type="error" visible={notesError}>
+            {communication.InvalidNotes}
+          </HelperText>
+
+          <View style={{ width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              position="leading"
+              style={{ paddingHorizontal: 2 }}
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+              color={theme.colors.primary}
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+              }}
+            />
+          </View>
         </View>
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>

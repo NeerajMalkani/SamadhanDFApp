@@ -287,7 +287,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [date, setDate] = React.useState("");
-  const [paymentMode, setDate] = React.useState("");
+  const [paymentMode, setPaymentMode] = React.useState("");
   const [contactName, setContactName] = React.useState("");
   const [contactPhoneNo, setContactPhoneNo] = React.useState("");
   const [display, setDisplay] = React.useState("");
