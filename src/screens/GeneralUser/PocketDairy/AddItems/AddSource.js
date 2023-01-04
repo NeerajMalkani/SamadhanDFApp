@@ -1,5 +1,5 @@
-import React, { useEffect, useRef ,useState} from "react";
-import { ScrollView,Image, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { ScrollView, Image, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -347,7 +347,7 @@ const AddSource = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-        <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={entryTypeError} />
           <HelperText type="error" visible={entryTypeError}>
             {communication.InvalidEntryType}
           </HelperText>
@@ -387,20 +387,20 @@ const AddSource = ({ route, navigation }) => {
             {communication.InvalidBankName}
           </HelperText>
 
- <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={chequeNoError} />
+          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={chequeNoError} />
           <HelperText type="error" visible={chequeNoError}>
             {communication.InvalidChequeNo}
           </HelperText>
 
           <View >
-                <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate}/>
-              </View>
+            <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
+          </View>
 
-              <View>
-                <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
-              </View>
+          <View>
+            <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
+          </View>
 
-              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
             <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
             <Button mode="text" onPress={chooseFile}>
               {filePath !== null ? "Replace" : "Choose Image"}
