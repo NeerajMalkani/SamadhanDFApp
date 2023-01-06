@@ -10,12 +10,14 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+let userID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const AddSourceList = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -37,18 +39,35 @@ const AddSourceList = ({ navigation }) => {
   const [attachment, setAttachment] = React.useState("");
   const [display, setDisplay] = React.useState("");
 
- 
-  const refRBSheet = useRef();
- //#endregion 
 
- //#region Functions
+  const refRBSheet = useRef();
+  //#endregion 
+
+  //#region Functions
+
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_trans_refno: "all"
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.pckaddsource_pcktransrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -78,7 +97,7 @@ const AddSourceList = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {
@@ -98,19 +117,19 @@ const AddSourceList = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.entryType}
+          title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName}\nSub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
+          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
-            setDate(data.item.date)
-            setEntryType(data.item.entryType);
-            setCategoryName(data.item.categoryName);
-            setSubCategoryName(data.item.subCategoryName);
-            setReceiptMode(data.item.receiptMode);
+            setDate(data.item.pck_trans_date)
+            setEntryType(data.item.pck_entrytype_name);
+            setCategoryName(data.item.pck_category_name);
+            setSubCategoryName(data.item.pck_sub_category_name);
+            setReceiptMode(data.item.pck_mode_name);
             setAmount(data.item.amount);
-            setAttachment(data.item.attachment);
-            setDisplay(data.item.display ? "Yes" : "No");
+            setAttachment(data.item.attach_receipt_url);
+            setDisplay(data.item.view_status == "1" ? "Yes" : "No");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -141,7 +160,7 @@ const AddSourceList = ({ navigation }) => {
       },
     });
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
@@ -185,8 +204,8 @@ const AddSourceList = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
           <ScrollView>
-          <List.Item title="Date" description={date} />
-          <List.Item title="Entry Type " description={entryType} />
+            <List.Item title="Date" description={date} />
+            <List.Item title="Entry Type " description={entryType} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="Sub Category Name" description={subCategoryName} />
             <List.Item title="Receipt Mode Type" description={receiptMode} />

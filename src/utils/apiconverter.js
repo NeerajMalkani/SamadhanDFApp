@@ -28,6 +28,10 @@ export const APIConverter = (response, convertIDs, type) => {
 
     }
 
+    if (type == "pkt_subcat") {
+      renameKey(obj, "pck_sub_category_refno", "id");
+    }
+
     if (convertIDs) {
       renameKey(obj, "category_refno", "categoryID");
       renameKey(obj, "service_refno", "serviceID");
@@ -175,13 +179,15 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "pck_transtype_name", "transTypeName");
     renameKey(obj, "pck_sub_category_refno", "subcategoryID");
     renameKey(obj, "pck_category_name", "categoryName");
-    renameKey(obj, "sub_category_name", "subCategoryName");    
+    renameKey(obj, "sub_category_name", "subCategoryName");
     renameKey(obj, "contact_person", "contactPersonName");
     renameKey(obj, "contact_person_mobile_no", "MobileNo");
     renameKey(obj, "contact_name", "contactName");
     renameKey(obj, "contact_phoneno", "contactPhoneno");
     renameKey(obj, "pck_mycontact_refno", "mycontactID");
     renameKey(obj, "contractor_product_refno", "contractorProductID");
+    renameKey(obj, "pck_mode_refno", "pckModeID");
+    renameKey(obj, "pck_mode_name", "pckModeName");
 
 
   });

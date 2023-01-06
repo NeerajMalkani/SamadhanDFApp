@@ -1,3 +1,6 @@
+import moment from "moment";
+import uuid from "react-native-uuid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Image, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
@@ -9,42 +12,50 @@ import { communication } from "../../../../utils/communication";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { AWSImagePath } from "../../../../utils/paths";
+import { APIConverter } from "../../../../utils/apiconverter";
+import { common } from "@material-ui/core/colors";
+
+let userID = 0, groupID = 0, companyID = 0, branchID = 0;
 
 const AddSource = ({ route, navigation }) => {
 
   //#region Variables
 
   const [entryTypeError, setEntryTypeError] = React.useState(false);
-  const [entryType, setEntryType] = React.useState(route.params.type === "edit" ? route.params.data.entryType : "");
+  const [entryType, setEntryType] = React.useState("");
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState(route.params.type === "edit" ? route.params.data.amount : "");
 
   const [receiptModeData, setReceiptModeData] = React.useState([]);
+  const [receiptModeFullData, setReceiptModeFullData] = React.useState([]);
   const [receiptMode, setReceiptMode] = React.useState([]);
   //   const [categoryName, setCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
   const [errorRM, setRMError] = React.useState(false);
 
+  const [sourceFullData, setSourceFullData] = React.useState([]);
   const [sourceData, setSourceData] = React.useState([]);
   const [source, setSource] = React.useState([]);
-  //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.payMode : "");
   const [errorSS, setSSError] = React.useState(false);
 
+  const [subCategoryNameFullData, setSubCategoryNameFullData] = React.useState([]);
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
   const [subCategoryName, setSubCategoryName] = React.useState([]);
-  //   const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.subCategoryName : "");
   const [errorSCN, setSCNError] = React.useState(false);
 
+  const [receivedFormFullData, setReceivedFormFullData] = React.useState([]);
   const [receivedFormData, setReceivedFormData] = React.useState([]);
   const [receivedForm, setReceivedForm] = React.useState([]);
   //   const [receivedForm, setReceivedForm] = React.useState(route.params.type === "edit" ? route.params.data.receivedForm : "");
   const [errorRF, setRFError] = React.useState(false);
 
+  const [depositeTypeFullData, setDepositeTypeFullData] = React.useState([]);
   const [depositeTypeData, setDepositeTypeData] = React.useState([]);
   const [depositeType, setDepositeType] = React.useState([]);
   //   const [depositeType, setDepositeType] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
   const [errorDT, setDTError] = React.useState(false);
 
+  const [myBankListFullData, setMyBankListFullData] = React.useState([]);
   const [myBankListData, setMyBankListData] = React.useState([]);
   const [myBankList, setMyBankList] = React.useState([]);
   //   const [myBankList, setMyBankList] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
@@ -55,10 +66,12 @@ const AddSource = ({ route, navigation }) => {
 
   const [chequeDate, setChequeDate] = useState(new Date());
   const [chequeDateInvalid, setChequeDateInvalid] = useState("");
+  const [chequeDateError, setChequeDateError] = React.useState(false);
   const chequeDateRef = useRef({});
 
   const [repaymentDate, setRepaymentDate] = useState(new Date());
   const [repaymentDateInvalid, setRepaymentDateInvalid] = useState("");
+  const [repaymentDateError, setRepaymentDateError] = React.useState(false);
   const repaymentDateRef = useRef({});
 
   const [image, setImage] = React.useState(route.params.type === "edit" ? route.params.data.designImage : AWSImagePath + "placeholder-image.png");
@@ -75,70 +88,192 @@ const AddSource = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const ref_input2 = useRef();
   const ref_input3 = useRef();
+
+  const [receivedStatus, setReceivedStatus] = React.useState(false);
+  const [depositTypeStatus, setDepositTypeStatus] = React.useState(false);
+  const [bankListStatus, setBankListStatus] = React.useState(false);
+  const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
+  const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
+  const [paymentReminderStatus, setPaymentReminderStatus] = React.useState(false);
+  const [commonStatus, setCommonStatus] = React.useState(false);
+  const [buttonStatus, setButtonStatus] = React.useState(true);
+
+  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("");
   //#endregion 
 
   //#region Functions
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      branchID = JSON.parse(userData).Sess_branch_refno;
+      FetchEntryType();
+    }
+  };
+
+
+  const FetchEntryType = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setActivityFullData(response.data.data);
-            const activities = response.data.data.map((data) => data.activityRoleName);
-            setActivityData(activities);
+
+            setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
+            setEntryType(response.data.data[0].pck_entrytype_name);
+            FetchRecepientMode(response.data.data[0].pck_entrytype_refno);
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchServices = () => {
-    Provider.getAll("master/getservices")
+  const FetchRecepientMode = (pktEntryTypeID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_transtype_refno: pktEntryTypeID,
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentmodetype, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
+            response.data.data = APIConverter(response.data.data);
+            setReceiptModeFullData(response.data.data);
+            const receiptMode = response.data.data.map((data) => data.pckModeName);
+            setReceiptModeData(receiptMode);
+
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchUnitOfSales = () => {
-    Provider.getAll("master/getunitofsales")
+  const FetchReceptCategory = (receiptModeID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        pck_mode_refno: receiptModeID,
+        pck_entrytype_refno: pktEntryTypeID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddsourceform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            let allUnits = "";
-            if (route.params.type === "edit") {
-              const arrunitOfSalesNameNew = [];
-              unitOfSalesName.split(",").map((o) => {
-                const objTemp = response.data.data.find((el) => {
-                  return o.trim() === el.displayUnit;
-                });
-                if (objTemp) {
-                  arrunitOfSalesNameNew.push(objTemp.id);
-                }
-              });
-              allUnits = arrunitOfSalesNameNew.length > 0 ? arrunitOfSalesNameNew.join(",") : "";
-            }
-            const unitofsales = response.data.data.map((o) => ({
-              ...o,
-              isChecked: allUnits !== "" ? allUnits.split(",").indexOf(o.id.toString()) !== -1 : false,
-            }));
+            response.data.data = APIConverter(response.data.data);
+            setSourceFullData(response.data.data);
+            const category = response.data.data.map((data) => data.categoryName);
+            setSourceData(category);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
 
-            setUnitOfSalesData(unitofsales);
+  const FetchReceptSubCategory = (categoryID) => {
+
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        pck_category_refno: categoryID,
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddsourceform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+
+            setSubCategoryNameFullData(response.data.data);
+
+            const subCategory = response.data.data.map((data) => data.subCategoryName);
+            setSubCategoryNameData(subCategory);
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchBankList = () => {
+    console.log('calling bank======');
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString(),
+        pck_entrytype_refno: pktEntryTypeID
+      }
+    }
+    console.log(params);
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            console.log(response.data.data);
+            setMyBankListFullData(response.data.data);
+
+            const bank = response.data.data.map((data) => data.bankName);
+            setMyBankListData(bank);
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchReceiverList = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            setReceivedFormFullData(response.data.data);
+            const receiverList = response.data.data.map((data) => data.contactName);
+            setReceivedFormData(receiverList);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchDepositType = () => {
+    console.log('deposit ');
+    let params = {
+      data: {
+        Sess_UserRefno: userID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckdeposittype, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            console.log(response.data.data);
+            setDepositeTypeFullData(response.data.data);
+            const depostiType = response.data.data.map((data) => data.deposit_type_name);
+            setDepositeTypeData(depostiType);
           }
         }
       })
@@ -146,25 +281,156 @@ const AddSource = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    FetchActvityRoles();
-    FetchServices();
-    FetchUnitOfSales();
+    GetUserID();
   }, []);
 
   const onReceiptModeChanged = (selectedItem) => {
-    setCNError(selectedItem);
-    setCNError(false);
+    setReceiptMode(selectedItem);
+    setRMError(false);
+    resetFields();
+
+    let a = receiptModeFullData.filter((el) => {
+      return el.pckModeName === selectedItem;
+    });
+
+    FetchReceptCategory(a[0].pckModeID);
+
+  };
+
+  const onSourceChanged = (text) => {
+    setSource(text);
+    setSSError(false);
+    resetFields();
+
+    let a = sourceFullData.filter((el) => {
+      return el.categoryName === text;
+    });
+
+    FetchReceptSubCategory(a[0].pckCategoryID);
+
   };
 
   const onSubCategoryNameChanged = (text) => {
+    resetFields();
     setSubCategoryName(text);
     setSCNError(false);
+    setCommonStatus(true);
+    setButtonStatus(false);
+
+    let mode = receiptModeFullData.filter((el) => {
+      return el.pckModeName === receiptMode;
+    });
+
+    let category = sourceFullData.filter((el) => {
+      return el.categoryName === source;
+    });
+
+    let subcat = subCategoryNameFullData.filter((el) => {
+      return el.subCategoryName === text;
+    });
+
+    // console.log(receiptModeFullData);
+    // console.log(mode[0].pckModeID);
+    // console.log(category[0].pckCategoryID);
+    // console.log(subcat[0].subcategoryID);
+
+    if (mode[0].pckModeID == "1") {
+      // console.log('Cash================');
+      // cash withdrawal
+      if (subcat[0].subcategoryID == "1") {
+        FetchBankList();
+        setBankListStatus(true);
+        setChequeNoStatus(true);
+      }
+      // atm withdrawal
+      else if (subcat[0].subcategoryID == "2") {
+        FetchBankList();
+        setBankListStatus(true);
+      }
+      // Phone Book
+      else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
+        setReceivedStatus(true);
+        setPaymentReminderStatus(true);
+        FetchReceiverList();
+      }
+      // My Business
+      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11" || subcat[0].subcategoryID == "12" ||
+        subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16" || subcat[0].subcategoryID == "17" ||
+        subcat[0].subcategoryID == "18") {
+        setReceivedStatus(true);
+        FetchReceiverList();
+      }
+
+    }
+    else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+      // console.log('UPI================');
+      if (subcat[0].subcategoryID == "7") {
+        setReceivedStatus(true);
+        FetchReceiverList();
+        FetchBankList();
+        setBankListStatus(true);
+        setPaymentReminderStatus(true);
+      }
+      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11" || subcat[0].subcategoryID == "12"
+        || subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16"
+        || subcat[0].subcategoryID == "17" || subcat[0].subcategoryID == "18") {
+        setReceivedStatus(true);
+        FetchReceiverList();
+        FetchBankList();
+        setBankListStatus(true);
+      }
+    }
+    else if (mode[0].pckModeID == "3") {
+      // console.log('Cheque================');
+      if (subcat[0].subcategoryID == "7") {
+        setReceivedStatus(true);
+        FetchReceiverList();
+        setDepositTypeStatus(true);
+        FetchDepositType();
+
+      }
+      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11"
+        || subcat[0].subcategoryID == "12"
+        || subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16"
+        || subcat[0].subcategoryID == "17" || subcat[0].subcategoryID == "18"
+      ) {
+        setReceivedStatus(true);
+        FetchReceiverList();
+        setDepositTypeStatus(true);
+        FetchDepositType();
+      }
+    }
+
   };
+
+  const resetFields = () => {
+
+    setReceivedStatus(false);
+    setDepositTypeStatus(false);
+    setBankListStatus(false);
+    setChequeNoStatus(false);
+    setChequeDateStatus(false);
+    setPaymentReminderStatus(false);
+    setCommonStatus(false);
+    setButtonStatus(true);
+
+  }
 
   const onReceivedFormChanged = (text) => {
     setReceivedForm(text);
     setRFError(false);
   };
+
+  const onChequeNoChange = (text) => {
+    setChequeNo(text);
+    setChequeNoError(false);
+  };
+
+  const onNotesChange = (text) => {
+    setNotes(text);
+    setNotesError(false);
+  };
+
   const onDepositeTypeChanged = (text) => {
     setDepositeType(text);
     setDTError(false);
@@ -174,13 +440,9 @@ const AddSource = ({ route, navigation }) => {
     setBLError(false);
   };
 
-  const onSourceChanged = (text) => {
-    setPayMode(text);
-    setPMError(false);
-  };
 
   const onAmount = (text) => {
-    setAmount(text);
+    settAmount(text);
     setAmountError(false);
   };
 
@@ -205,26 +467,87 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    let arrunitOfSalesName = [];
-    unitOfSalesData.map((o) => {
-      if (o.isChecked) {
-        arrunitOfSalesName.push(o.id);
+    let contactID = "", bankID = "", depositID = "";
+    if (receivedFormFullData.length > 0) {
+      contactID = receivedFormFullData.filter((el) => {
+        return el.contactName === receivedForm;
+      })[0].mycontactID;
+    }
+
+    if (myBankListFullData.length > 0) {
+      bankID = myBankListFullData.filter((el) => {
+        return el.bankName === myBankList;
+      })[0].bank_refno;
+    }
+
+    if (depositeTypeFullData.length > 0) {
+      depositID = depositeTypeFullData.filter((el) => {
+        return el.deposit_type_name === depositeType;
+      })[0].deposit_type_refno;
+    }
+
+    const datas = new FormData();
+   const params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_entrytype_refno: pktEntryTypeID,
+        pck_mode_refno: receiptModeFullData.filter((el) => {
+          return el.pckModeName === receiptMode;
+        })[0].pckModeID,
+        pck_category_refno: sourceFullData.filter((el) => {
+          return el.categoryName === source;
+        })[0].pckCategoryID,
+        pck_sub_category_refno: subCategoryNameFullData.filter((el) => {
+          return el.subCategoryName === subCategoryName;
+        })[0].subcategoryID,
+
+        amount: amount.trim(),
+        notes: notes.trim(),
+        view_status: checked ? "1" : "0"
       }
-    });
-    Provider.create("master/insertcategory", {
-      CategoryName: name,
-      RoleID: activityFullData.find((el) => {
-        return el.activityRoleName === acivityName;
-      }).id,
-      ServiceID: servicesFullData.find((el) => {
-        return el.serviceName === serviceName;
-      }).id,
-      HSNSACCode: hsn,
-      GSTRate: parseFloat(gst),
-      UnitID: arrunitOfSalesName.join(","),
-      Display: checked,
-    })
+
+    };
+
+    if (receivedStatus) {
+      params.data.pck_mycontact_refno = contactID;
+    }
+
+    if (depositTypeStatus) {
+      params.data.deposit_type_refno = depositID;
+    }
+
+    if (bankListStatus) {
+      params.data.pck_mybank_refno = bankID;
+    }
+
+    if (chequeNoStatus) {
+      params.data.cheque_no = chequeNo.trim();
+    }
+
+    if (chequeDateStatus) {
+      params.data.cheque_date = chequeDate == "" ? "" : moment(chequeDate).format("DD-MM-YYYY");
+    }
+
+    if (paymentReminderStatus) {
+      params.data.reminder_date = repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
+    }
+
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "attach_receipt",
+      filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
+        ? {
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
+        : ""
+    );
+    console.log(params);
+     //console.log(datas);
+    Provider.createDFPocketDairy(Provider.API_URLS.pckaddsourcecreate, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -299,39 +622,58 @@ const AddSource = ({ route, navigation }) => {
 
   const ValidateData = () => {
     let isValid = true;
-    if (name.length === 0) {
-      setError(true);
+
+    if (amount.trim() == "") {
       isValid = false;
+      setAmountError(true);
     }
-    const objActivities = activityFullData.find((el) => {
-      return el.activityRoleName && el.activityRoleName === acivityName;
-    });
-    if (acivityName.length === 0 || !objActivities) {
-      setANError(true);
+
+    if (receiptMode == "") {
       isValid = false;
+      setRMError(true);
     }
-    const objServices = servicesFullData.find((el) => {
-      return el.serviceName && el.serviceName === serviceName;
-    });
-    if (serviceName.length === 0 || !objServices) {
-      setSNError(true);
+
+    if (source == "") {
       isValid = false;
+      setSSError(true);
     }
-    if (hsn.length === 0) {
-      setHSNError(true);
+
+    if (subCategoryName == "") {
       isValid = false;
+      setSCNError(true);
     }
-    if (gst.length === 0) {
-      setGSTError(true);
+
+    if (receivedStatus && receivedForm == "") {
       isValid = false;
+      setRFError(true);
     }
-    const objUnitOfSales = unitOfSalesData.find((el) => {
-      return el.isChecked;
-    });
-    if (!objUnitOfSales) {
-      setUNError(true);
+
+    if (depositTypeStatus && depositeType == "") {
       isValid = false;
+      setDTError(true);
     }
+
+    if (bankListStatus && myBankList == "") {
+      isValid = false;
+      setBLError(true);
+    }
+
+    if (chequeNoStatus && chequeNo.trim() == "") {
+      isValid = false;
+      setChequeNoError(true);
+    }
+
+    if (chequeDateStatus && chequeDate == "") {
+      isValid = false;
+      setChequeDateError(true);
+    }
+
+    if (paymentReminderStatus && repaymentDate == "") {
+      isValid = false;
+      setChequeDateError(true);
+    }
+
+
     if (isValid) {
       if (route.params.type === "edit") {
         UpdateData();
@@ -347,12 +689,12 @@ const AddSource = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <TextInput mode="flat" label="Entry Type" disabled={true} value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} style={{ backgroundColor: "white" }} error={entryTypeError} />
           <HelperText type="error" visible={entryTypeError}>
             {communication.InvalidEntryType}
           </HelperText>
 
-          <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
+          <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>
             {communication.InvalidAmount}
           </HelperText>
@@ -372,67 +714,140 @@ const AddSource = ({ route, navigation }) => {
             {communication.InvalidSubCategoryName}
           </HelperText>
 
-          <Dropdown label="Recevied Form" data={receivedFormData} onSelected={onReceivedFormChanged} isError={errorRF} selectedItem={receivedForm} />
-          <HelperText type="error" visible={errorRF}>
-            {communication.InvalidReceivedForm}
-          </HelperText>
+          {receivedStatus &&
+            <>
+            <View style={[Styles.border1,Styles.borderRadius4,Styles.padding4]}>
+              <Dropdown label="Recevied Form" data={receivedFormData} onSelected={onReceivedFormChanged} isError={errorRF} selectedItem={receivedForm} />
+              <HelperText type="error" visible={errorRF}>
+                {communication.InvalidReceivedForm}
+              </HelperText>
+              <Button
+              icon={"plus"}
+                  mode="contained"
+                  onPress={() => {
+                    navigation.navigate("AddGMyContactsScreen", {
+                      type: "newContact",
+                      fetchReceiverList: FetchReceiverList,
+                    });
+                  }}
+                >
+                  Add New Contact
+                </Button>
+              </View>
+            </>
+          }
 
-          <Dropdown label="Deposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
-          <HelperText type="error" visible={errorDT}>
-            {communication.InvalidDepositeType}
-          </HelperText>
+          {depositTypeStatus &&
+            <>
+              <Dropdown label="Deposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+              <HelperText type="error" visible={errorDT}>
+                {communication.InvalidDepositeType}
+              </HelperText>
+            </>
+          }
 
-          <Dropdown label="My Bank List" data={myBankListData} onSelected={onBankListChanged} isError={errorBL} selectedItem={myBankList} />
-          <HelperText type="error" visible={errorBL}>
-            {communication.InvalidBankName}
-          </HelperText>
+          {bankListStatus &&
+            <>
+            <View style={[Styles.border1,Styles.borderRadius4,Styles.padding4, Styles.marginTop8]}>
+              <Dropdown label="My Bank List" data={myBankListData} onSelected={onBankListChanged} isError={errorBL} selectedItem={myBankList} />
+              <HelperText type="error" visible={errorBL}>
+                {communication.InvalidBankName}
+              </HelperText>
+              <Button
+              icon={"plus"}
+                  mode="contained"
+                  onPress={() => {
+                    navigation.navigate("AddGMyBankScreen", {
+                      type: "newAccount",
+                      fetchBankList: FetchBankList,
+                    });
+                  }}
+                >
+                  Add Bank Account
+                </Button>
+                </View>
+            </>
+          }
 
-          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={chequeNoError} />
-          <HelperText type="error" visible={chequeNoError}>
-            {communication.InvalidChequeNo}
-          </HelperText>
+          {chequeNoStatus &&
+            <>
+              <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" keyboardType="number-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNoChange} style={{ backgroundColor: "white" }} error={chequeNoError} />
+              <HelperText type="error" visible={chequeNoError}>
+                {communication.InvalidChequeNo}
+              </HelperText>
+            </>
+          }
 
-          <View >
-            <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
-          </View>
+          {chequeDateStatus &&
+            <>
+              <View >
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
+                <HelperText type="error" visible={chequeDateError}>
+                  Please enter a valid date
+                </HelperText>
+              </View>
+            </>
+          }
 
-          <View>
-            <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
-          </View>
+          {paymentReminderStatus &&
+            <>
+              <View>
+                <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
+                <HelperText type="error" visible={chequeDateError}>
+                  Please enter a valid date
+                </HelperText>
+              </View>
+            </>
+          }
 
-          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-            <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
-            <Button mode="text" onPress={chooseFile}>
-              {filePath !== null ? "Replace" : "Choose Image"}
-            </Button>
-          </View>
-          <HelperText type="error" visible={errorDI}>
-            {communication.InvalidDesignImage}
-          </HelperText>
+          {commonStatus &&
+            <>
+              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+                <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+                <Button mode="text" onPress={chooseFile}>
+                  {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
+                </Button>
+              </View>
+              <HelperText type="error" visible={errorDI}>
+                {communication.InvalidDesignImage}
+              </HelperText>
+            </>
+          }
 
-          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={notesError} />
-          <HelperText type="error" visible={notesError}>
-            {communication.InvalidNotes}
-          </HelperText>
+          {commonStatus &&
+            <>
+              <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotesChange} style={{ backgroundColor: "white" }} error={notesError} />
+              <HelperText type="error" visible={notesError}>
+                {communication.InvalidNotes}
+              </HelperText>
+            </>
+          }
 
-          <View style={{ width: 160 }}>
-            <Checkbox.Item
-              label="Display"
-              position="leading"
-              style={{ paddingHorizontal: 2 }}
-              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
-              color={theme.colors.primary}
-              status={checked ? "checked" : "unchecked"}
-              onPress={() => {
-                setChecked(!checked);
-              }}
-            />
-          </View>
+          {commonStatus &&
+
+            <>
+              <View style={{ width: 160 }}>
+                <Checkbox.Item
+                  label="Display"
+                  position="leading"
+                  style={{ paddingHorizontal: 2 }}
+                  labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+                  color={theme.colors.primary}
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                />
+              </View>
+            </>
+          }
+
         </View>
       </ScrollView>
+
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" disabled={buttonStatus} onPress={ValidateData}>
             Submit
           </Button>
         </Card.Content>

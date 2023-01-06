@@ -329,10 +329,33 @@ class Provider {
     getmaterialratedata_withoutmaterialrateblur_ratecardform: "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
     ratecardcreate: "ratecardcreate/",
     ratecardupdate: "ratecardupdate/",
+    pckaddsource_pcktransrefnocheck: "pckaddsource_pcktransrefnocheck/",
+    get_pckentrytype: "get_pckentrytype/",
+    get_pckpaymentmodetype: "get_pckpaymentmodetype/",
+    getcategoryname_pckaddsourceform: "getcategoryname_pckaddsourceform/",
+    getsubcategoryname_pckaddsourceform: "getsubcategoryname_pckaddsourceform/",
+    get_pckmybankname: "get_pckmybankname/",
+    get_pckmycontactname: "get_pckmycontactname/",
+    get_pckdeposittype: "get_pckdeposittype/",
+    pckaddsourcecreate: "pckaddsourcecreate/",
+    getcardtype_pckmypersonalbankform: "getcardtype_pckmypersonalbankform/",
+    pckmypersonalbankcreate: "pckmypersonalbankcreate/",
   };
 
   createDFPocketDairy(resource, params) {
     return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params);
+  }
+
+  createDFPocketDairyWithHeader(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      return axios.post(`${BASE_URL_PocketDiary}/${resource}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    }
   }
 
   createDFCommon(resource, params) {

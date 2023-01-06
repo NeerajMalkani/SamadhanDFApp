@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading } from "react-native-paper";
@@ -7,10 +8,22 @@ import { theme } from "../../../../../theme/apptheme";
 import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
 
+let userID = 0;
+
 const AddGMyBankScreen = ({ route, navigation }) => {
   //#region Variables
   const [bankNameError, setBankNameError] = React.useState(false);
   const [bankName, setBankName] = React.useState(route.params.type === "edit" ? route.params.data.bankName : "");
+
+  const [accountHolderNameError, setAccountHolderNameError] = React.useState(false);
+  const [accountHolderName, setAccountHolderName] = React.useState("");
+
+  const [bankBranchNameError, setbankBranchNameError] = React.useState(false);
+  const [bankBranchName, setbankBranchName] = React.useState("");
+
+  const [ifscCodeError, setIfscCodeError] = React.useState(false);
+  const [ifscCode, setIfscCode] = React.useState("");
+
   const [bankAccountNoError, setBankAccountNoError] = React.useState(false);
   const [bankAccountNo, setBankAccountNo] = React.useState(route.params.type === "edit" ? route.params.data.bankAccountNo : "");
   const [openingBalanceError, setOpeningBalanceError] = React.useState(false);
@@ -32,54 +45,45 @@ const AddGMyBankScreen = ({ route, navigation }) => {
   ]);
 
   useEffect(() => {
-    let isEdit = route.params.type === "edit" ? true : false;
-
-    FetchTransactionType(isEdit);
+    GetUserID();
   }, []);
 
-  const FetchTransactionType = (edit) => {
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchCardType();
+    }
+  };
+
+
+  const FetchCardType = () => {
     let params = {
       data: {
-        Sess_UserRefno: "2",
-      },
-    };
-    Provider.createDFCommon(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)
+        Sess_UserRefno: userID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.getcardtype_pckmypersonalbankform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
-
-            const stateData = [];
-            response.data.data.map((data, i) => {
-              let checked = false;
-              if (edit && route.params.data.transactionTypeName.includes(data.transTypeName)) {
-                checked = true;
-              }
-
-              stateData.push({
-                title: data.transTypeName,
-                isChecked: checked,
-                id: data.transtypeID,
-              });
+            const cardType = [];
+            response.data.data.map((data) => {
+              cardType.push(
+                {
+                  title: data.cardtype_name,
+                  isChecked: false,
+                  id: data.cardtype_refno
+                }
+              );
             });
-            setTransactionTypeName(stateData);
+
+            setCardType(cardType);
+
           }
-        } else {
-          listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
-        //setIsLoading(false);
-        setRefreshing(false);
       })
-      .catch((e) => {
-        //setIsLoading(false);
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-        setRefreshing(false);
-      });
+      .catch((e) => { });
   };
 
   const [cardTypeInvalid, setCardTypeInvalid] = useState(false);
@@ -92,44 +96,71 @@ const AddGMyBankScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
+  const onAccountHolderNameChanged = (text) => {
+    setAccountHolderName(text);
+    setAccountHolderNameError(false);
+  };
+
+  const onIfscCodeChanged = (text) => {
+    setIfscCode(text);
+    setIfscCodeError(false);
+  };
+
+  const onBankBranchNameChanged = (text) => {
+    setbankBranchName(text);
+    setbankBranchNameError(false);
+  };
+
   const onBankNameChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+    setBankName(text);
+    setBankNameError(false);
   };
 
   const onBankAccountNoChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+    setBankAccountNo(text);
+    setBankAccountNoError(false);
   };
   const onOpeningBalanceChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+    setOpeningBalance(text);
+    setOpeningBalanceError(false);
   };
   const onRemarksChanged = (text) => {
-    setCategoryName(text);
-    setCategoryNameError(false);
+    setRemarks(text);
+    setRemarksError(false);
   };
-  const InsertCategoryName = () => {
-    let tt = [];
-    transactionTypeName.map((k, i) => {
+  const InsertBankAccount = () => {
+    console.log('insert bank account ===============');
+    let ct = [];
+    cardType.map((k, i) => {
       if (k.isChecked) {
-        tt.push(k.id);
+        ct.push(k.id);
       }
     });
+
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        category_name: categoryName,
-        pck_transtype_refno: tt,
+        Sess_UserRefno: userID,
         view_status: checked ? "1" : "0",
+        bank_ac_holder_name: accountHolderName,
+        bank_account_no: bankAccountNo,
+        bank_name: bankName,
+        bank_branch_name: bankBranchName,
+        ifsc_code: ifscCode,
+        cardtype_refno: ct,
+        opening_balance: openingBalance,
+        remarks: remarks,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.pckcategorynamecreate_user, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankcreate, params)
       .then((response) => {
+        console.log(response.data.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
+          route.params.fetchBankList();
           navigation.goBack();
+        } else if (response.data.data.Created === 0) {
+          setSnackbarText(response.data.message);
+          setSnackbarVisible(true);
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -146,9 +177,9 @@ const AddGMyBankScreen = ({ route, navigation }) => {
       });
   };
 
-  const UpdateActivityName = () => {
+  const UpdateBankAccount = () => {
     let tt = [];
-    transactionTypeName.map((k, i) => {
+    cardType.map((k, i) => {
       if (k.isChecked) {
         tt.push(k.id);
       }
@@ -165,6 +196,7 @@ const AddGMyBankScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
+        
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -187,29 +219,23 @@ const AddGMyBankScreen = ({ route, navigation }) => {
 
   const ValidateActivityName = () => {
     let isValid = true;
-    if (categoryName.length === 0) {
-      setCategoryNameError(true);
+
+    if (accountHolderName.trim() == "") {
+      setAccountHolderNameError(true);
       isValid = false;
     }
 
-    let tt = [];
-    transactionTypeName.map((k, i) => {
-      if (k.isChecked) {
-        tt.push(k.id);
-      }
-    });
-
-    if (tt.length == 0) {
+    if (bankName.trim() == "") {
+      setBankNameError(true);
       isValid = false;
-      setTransactionTypeNameInvalid(true);
     }
 
     if (isValid) {
       setIsButtonLoading(true);
       if (route.params.type === "edit") {
-        UpdateActivityName();
+        UpdateBankAccount();
       } else {
-        InsertCategoryName();
+        InsertBankAccount();
       }
     }
   };
@@ -219,14 +245,31 @@ const AddGMyBankScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
+          <TextInput mode="flat" label="Account Holder Name" value={accountHolderName} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameError} />
+          <HelperText type="error" visible={accountHolderNameError}>
+            Please enter valid name
+          </HelperText>
+
+          <TextInput mode="flat" label="Bank Account No" value={bankAccountNo} keyboardType="number-pad" onChangeText={onBankAccountNoChanged} style={{ backgroundColor: "white" }} error={bankAccountNoError} />
+          <HelperText type="error" visible={bankAccountNoError}>
+            Please enter valid account number
+          </HelperText>
+
           <TextInput mode="flat" label="Bank Name" value={bankName} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameError} />
           <HelperText type="error" visible={bankNameError}>
-            {communication.InvalidBankName}
+            {communication.InvalidBrandName}
           </HelperText>
-          <TextInput mode="flat" label="Bank Account No" value={bankAccountNo} onChangeText={onBankAccountNoChanged} style={{ backgroundColor: "white" }} error={bankAccountNoError} />
-          <HelperText type="error" visible={bankAccountNoError}>
-            {communication.InvalidBankAccountNo}
+
+          <TextInput mode="flat" label="Bank Branch Name" value={bankBranchName} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameError} />
+          <HelperText type="error" visible={bankBranchNameError}>
+            Please enter valid branch name
           </HelperText>
+
+          <TextInput mode="flat" label="IFSC Code" value={ifscCode} onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeError} />
+          <HelperText type="error" visible={ifscCodeError}>
+            Please enter valid IFSC Code
+          </HelperText>
+
           <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Card Type</Subheading>
           <View style={[Styles.flexRow]}>
             {cardType.map((k, i) => {
