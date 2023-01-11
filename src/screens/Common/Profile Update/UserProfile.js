@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Dimensions, ScrollView, Image } from "react-native";
-import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
+import { View,LogBox, Dimensions,RefreshControl, ScrollView, Image } from "react-native";
+import { ActivityIndicator,  Title ,Button, List, Card, HelperText,Searchbar, Checkbox, Snackbar, Subheading, Switch, FAB, TextInput }
+  from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -15,7 +16,15 @@ import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { NullOrEmpty } from "../../../utils/validations";
-import { APIConverter } from "../../../utils/apiconverter";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { SwipeListView } from "react-native-swipe-list-view";
+import { RenderHiddenItems } from "../../../components/ListActions";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import NoItems from "../../../components/NoItems";
+import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
+
+LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0,
@@ -78,13 +87,30 @@ const UserProfile = ({ route, navigation }) => {
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const listData = React.useState([]);
+  const listSearchData = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+
+  const [accountHolderName, setAccountHolderName] = React.useState("");
+  const [accountNo, setAccountNo] = React.useState("");
+  const [bankName, setBankName] = React.useState("");
+  const [bankBranchName, setBankBranchName] = React.useState("");
+  const [ifscCode, setIfscCode] = React.useState("");
+  const [cardType, setCardType] = React.useState("");
+  const [openingBalance, setOpeningBalance] = React.useState("");
+  const [display, setDisplay] = React.useState("");
+
+
+  const refRBSheet = useRef();
+
   //#endregion
 
-  //#region Functions
+ 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -155,7 +181,7 @@ const UserProfile = ({ route, navigation }) => {
           FetchCities(st_ID);
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCities = (stateID) => {
@@ -197,7 +223,7 @@ const UserProfile = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -234,6 +260,8 @@ const UserProfile = ({ route, navigation }) => {
     setCNError(false);
   };
 
+ 
+
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
     setSNError(false);
@@ -250,6 +278,8 @@ const UserProfile = ({ route, navigation }) => {
     setPincode(text);
     setPincodeInvalid(false);
   };
+
+
 
   const InsertData = () => {
     const params = {
@@ -296,63 +326,335 @@ const UserProfile = ({ route, navigation }) => {
       }
     }
   };
+
+  const FetchData = (from) => {
+    if (from === "add" || from === "update") {
+      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        category_refno: "all",
+      },
+    };
+    Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) { 
+          if (response.data.data) {
+            
+             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
+            response.data.data = APIConverter(response.data.data);
+            const lisData = [...response.data.data];
+            lisData.map((k, i) => {
+              k.key = (parseInt(i) + 1).toString();
+            });
+            listData[1](response.data.data);
+            listSearchData[1](response.data.data);
+          }
+        } else {
+          listData[1]([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+        setIsLoading(false);
+        setRefreshing(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    FetchData();
+  }, []);
+
+  const onChangeSearch = (query) => {
+    setSearchQuery(query);
+    if (query === "") {
+      listSearchData[1](listData[0]);
+    } else {
+      listSearchData[1](
+        listData[0].filter((el) => {
+          return el.categoryName.toString().toLowerCase().includes(query.toLowerCase());
+        })
+      );
+    }
+  };
+
+  const RenderItems = (data) => {
+    return (
+      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+        <List.Item
+          title={data.item.accountHolderName}
+          titleStyle={{ fontSize: 18 }}
+          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          onPress={() => {
+            refRBSheet.current.open();
+            setAccountHolderName(data.item.accountHolderName);
+            setAccountNo(data.item.accountNo);
+            setBankName(data.item.bankName);
+            setBankBranchName(data.item.bankBranchName);
+            setIfscCode(data.item.ifscCode);
+            setCardType(data.item.cardType);
+            setOpeningBalance(data.item.openingBalance);
+            setDisplay(data.item.display);
+
+
+          }}
+          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        />
+      </View>
+    );
+  };
+
+  const AddCallback = () => {
+    navigation.navigate("AddBankDetails", { type: "add", fetchData: FetchData });
+  };
+
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddBankDetails", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.id,
+        accountHolderName: data.item.accountHolderName,
+        accountNo: data.item.accountNo,
+        bankName: data.item.bankName,
+        bankBranchName: data.item.bankBranchName,
+        ifscCode: data.item.ifscCode,
+        cardType: data.item.cardType,
+        openingBalance: data.item.openingBalance,
+        display: data.item.display,
+      },
+    });
+  };
+ 
+
+
   //#endregion
 
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case "basicDetail":
+        return (
+          <View style={[Styles.flex1]}>
+            {/* <Header navigation={navigation} title="Update Profile" isDrawer="false" /> */}
+            <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+              <View style={[Styles.padding16]}>
+                <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+                <HelperText type="error" visible={companyNameInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <TextInput ref={contactNameRef} mode="flat" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
+                <HelperText type="error" visible={contactNameInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <TextInput ref={contactNumberRef} mode="flat" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+                <HelperText type="error" visible={contactNumberInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+                <HelperText type="error" visible={addressInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
+                <HelperText type="error" visible={errorSN}>
+                  {communication.InvalidStateName}
+                </HelperText>
+                <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
+                <HelperText type="error" visible={errorCN}>
+                  {communication.InvalidStateName}
+                </HelperText>
+                <TextInput ref={pincodenRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+                <HelperText type="error" visible={pincodeInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+                <HelperText type="error" visible={gstNumberInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+                <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                <HelperText type="error" visible={panNumberInvalid}>
+                  {communication.InvalidActivityName}
+                </HelperText>
+              </View>
+            </ScrollView>
+            {/* <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+              <Card.Content>
+                <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+                  Update
+                </Button>
+              </Card.Content>
+            </View> */}
+            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+              {snackbarText}
+            </Snackbar>
+          </View>
+        );
+      case "bankDetail":
+        return (
+          <View style={[Styles.flex1]}>
+            {isLoading ? (
+              <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+              </View>
+            ) : listData[0].length > 0 ? (
+              <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+                <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+                <SwipeListView
+                  previewDuration={1000}
+                  previewOpenValue={-72}
+                  previewRowKey="1"
+                  previewOpenDelay={1000}
+                  refreshControl={
+                    <RefreshControl
+                      colors={[theme.colors.primary]}
+                      refreshing={refreshing}
+                      onRefresh={() => {
+                        FetchData();
+                      }}
+                    />
+                  }
+                  data={listSearchData[0]}
+                  disableRightSwipe={true}
+                  rightOpenValue={-72}
+                  renderItem={(data) => RenderItems(data)}
+                  renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+                />
+              </View>
+            ) : (
+              <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+            )}
+            <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+              {snackbarText}
+            </Snackbar>
+            <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+              <View>
+                <Title style={[Styles.paddingHorizontal16]}>{accountHolderName}</Title>
+                <ScrollView>
+                  <List.Item title="A/C Holder Name" description={accountHolderName} />
+                  <List.Item title="A/C No" description={accountNo} />
+                  <List.Item title="Bank Name" description={bankName} />
+                  <List.Item title="Branch Name" description={bankBranchName} />
+                  <List.Item title="IFSC Code" description={ifscCode} />
+                  <List.Item title="Card Type Name" description={cardType} />
+                  <List.Item title="Opening Balance" description={openingBalance} />
+                  <List.Item title="Display" description={display} />
+                </ScrollView>
+              </View>
+            </RBSheet>
+          </View>
+        );
+
+      
+      default:
+        return null;
+    }
+  };
+  const renderTabBar = (props) =>
+    <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary}
+      activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }}
+      labelStyle={[Styles.fontSize12, Styles.fontBold]} />;
+
+  const [routes] = React.useState([
+    { key: "basicDetail", title: "Basic" },
+    { key: "bankDetail", title: "Bank" },
+
+  ]);
   return (
-    <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Update Profile" isDrawer="false" />
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-        <View style={[Styles.padding16]}>
-          <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
-          <HelperText type="error" visible={companyNameInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <TextInput ref={contactNameRef} mode="flat" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
-          <HelperText type="error" visible={contactNameInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <TextInput ref={contactNumberRef} mode="flat" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
-          <HelperText type="error" visible={contactNumberInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
-          <HelperText type="error" visible={addressInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
-          <HelperText type="error" visible={errorSN}>
-            {communication.InvalidStateName}
-          </HelperText>
-          <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
-          <HelperText type="error" visible={errorCN}>
-            {communication.InvalidStateName}
-          </HelperText>
-          <TextInput ref={pincodenRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
-          <HelperText type="error" visible={pincodeInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
-          <HelperText type="error" visible={gstNumberInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
-          <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
-          <HelperText type="error" visible={panNumberInvalid}>
-            {communication.InvalidActivityName}
-          </HelperText>
+    isFocused && (
+      <View style={[Styles.flex1]}>
+        <Header navigation={navigation} title="Basic Details" isDrawer="false" />
+        {isLoading ? (
+          <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </View>
+        ) : (
+          <TabView style={{ marginBottom: 64, }}
+            renderTabBar={renderTabBar} navigationState={{ index, routes }}
+            renderScene={renderScene} onIndexChange={setIndex} />
+        )}
+        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+          <Card.Content>
+            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+              Update
+            </Button>
+          </Card.Content>
         </View>
-      </ScrollView>
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-        <Card.Content>
-          <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
-            Update
-          </Button>
-        </Card.Content>
+        <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+          {snackbarText}
+        </Snackbar>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
-        {snackbarText}
-      </Snackbar>
-    </View>
+    )
   );
+
+
+  // return (
+  //   <View style={[Styles.flex1]}>
+  //     <Header navigation={navigation} title="Update Profile" isDrawer="false" />
+  //     <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+  //       <View style={[Styles.padding16]}>
+  //         <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+  //         <HelperText type="error" visible={companyNameInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <TextInput ref={contactNameRef} mode="flat" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
+  //         <HelperText type="error" visible={contactNameInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <TextInput ref={contactNumberRef} mode="flat" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+  //         <HelperText type="error" visible={contactNumberInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+  //         <HelperText type="error" visible={addressInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
+  //         <HelperText type="error" visible={errorSN}>
+  //           {communication.InvalidStateName}
+  //         </HelperText>
+  //         <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
+  //         <HelperText type="error" visible={errorCN}>
+  //           {communication.InvalidStateName}
+  //         </HelperText>
+  //         <TextInput ref={pincodenRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+  //         <HelperText type="error" visible={pincodeInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+  //         <HelperText type="error" visible={gstNumberInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //         <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+  //         <HelperText type="error" visible={panNumberInvalid}>
+  //           {communication.InvalidActivityName}
+  //         </HelperText>
+  //       </View>
+  //     </ScrollView>
+  //     <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+  //       <Card.Content>
+  //         <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+  //           Update
+  //         </Button>
+  //       </Card.Content>
+  //     </View>
+  //     <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+  //       {snackbarText}
+  //     </Snackbar>
+  //   </View>
+  // );
 };
 
 export default UserProfile;

@@ -48,7 +48,7 @@ const AddExpenses = ({ route, navigation }) => {
   const dateRef = useRef({});
 
 
-  const [entryTypeError, setENtryTypeError] = React.useState(false);
+  const [entryTypeError, setEntryTypeError] = React.useState(false);
   const [entryType, setEntryType] = React.useState(route.params.type === "edit" ? route.params.data.entryType : "");
 
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
@@ -104,6 +104,9 @@ const AddExpenses = ({ route, navigation }) => {
 
   const [chequeNoError, setChequeNoError] = React.useState(false);
   const [chequeNo, setChequeNo] = React.useState(route.params.type === "edit" ? route.params.data.chequeNo : "");
+
+  const [utrNoError, setUtrNoError] = React.useState(false);
+  const [utrNo, setUtrNo] = React.useState(route.params.type === "edit" ? route.params.data.utrNo : "");
 
   const [chequeDate, setChequeDate] = useState(new Date());
   const [chequeDateInvalid, setChequeDateInvalid] = useState("");
@@ -231,11 +234,33 @@ const AddExpenses = ({ route, navigation }) => {
     setExpenses(text);
     setEXError(false);
   };
+  const onEntryType = (text) => {
+    setEntryType(text);
+    setEntryTypeError(false);
+  };
+
 
   const onAmount = (text) => {
     setAmount(text);
     setAmountError(false);
   };
+
+  const onChequeNO = (text) => {
+    setChequeNo(text);
+    setChequeNoError(false);
+  };
+
+  const onUtrNo = (text) => {
+    setUtrNo(text);
+    setUtrNoError(false);
+  };
+
+  const onNotes = (text) => {
+    setNotes(text);
+    setNotesError(false);
+  };
+
+
 
   const onPaidToChanged = (text) => {
     setPaidTo(text);
@@ -418,7 +443,7 @@ const AddExpenses = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
 
-          <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onEntryType} style={{ backgroundColor: "white" }} error={entryTypeError} />
           <HelperText type="error" visible={entryTypeError}>
             {communication.InvalidEntryType}
           </HelperText>
@@ -483,7 +508,12 @@ const AddExpenses = ({ route, navigation }) => {
             {communication.InvalidDepositeType}
           </HelperText>
 
-          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={chequeNoError} />
+          <TextInput mode="flat" label="Cheque No" value={utrNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNO} style={{ backgroundColor: "white" }} error={utrNoError} />
+          <HelperText type="error" visible={utrNoError}>
+            {communication.InvalidChequeNo}
+          </HelperText>
+
+          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUtrNo} style={{ backgroundColor: "white" }} error={chequeNoError} />
           <HelperText type="error" visible={chequeNoError}>
             {communication.InvalidChequeNo}
           </HelperText>
@@ -502,7 +532,7 @@ const AddExpenses = ({ route, navigation }) => {
             {communication.InvalidDesignImage}
           </HelperText>
 
-          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={notesError} />
+          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotes} style={{ backgroundColor: "white" }} error={notesError} />
           <HelperText type="error" visible={notesError}>
             {communication.InvalidNotes}
           </HelperText>

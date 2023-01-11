@@ -14,6 +14,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const ActivityRolesScreen = ({ navigation }) => {
+  
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);

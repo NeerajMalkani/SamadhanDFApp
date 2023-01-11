@@ -143,6 +143,7 @@ import WidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/WidthOfGPCoi
 import AddWidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddWidthOfGpCoil";
 import MassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/MassOfZincCoating";
 import AddMassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddMassOfZincCoating";
+import AddBankDetails from "./src/screens/Common/Profile Update/AddBankDetails";
 
 
 const Stack = createStackNavigator();
@@ -411,6 +412,7 @@ export default function App() {
           component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
           options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
         />
+        
       </Tab.Navigator>
     );
   };
@@ -521,6 +523,7 @@ export default function App() {
               <Stack.Screen name="AddWidthOfGpCoil" component={AddWidthOfGpCoil} options={{ headerTitle: "Add Width Of Gp Coil", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="MassOfZincCoating" component={MassOfZincCoating} options={{ headerTitle: "Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMassOfZincCoating" component={AddMassOfZincCoating} options={{ headerTitle: "Add Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddBankDetails" component={AddBankDetails} options={{ headerTitle: "Add Bank Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               
             </Stack.Navigator> 
           </NavigationContainer>
