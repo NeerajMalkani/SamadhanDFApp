@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -10,12 +10,18 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import {NullOrEmpty} from "../../../utils/validations";
+import { NullOrEmpty } from "../../../utils/validations";
+import { useRadioGroup } from "@material-ui/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AWSImagePath } from "../../../utils/paths";
 
+let userID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const AddExpensesList = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
+
+  const [attachmentImage, setAttachmentImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -30,22 +36,41 @@ const AddExpensesList = ({ navigation }) => {
   const dateRef = useRef({});
 
   const [entryType, setEntryType] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
+  const [subCategoryName, setSubCategoryName] = React.useState("");
+  const [receiptMode, setReceiptMode] = React.useState("");
+  const [attachment, setAttachment] = React.useState("");
   const [amount, setAmount] = React.useState("");
   const [paymentMode, setPaymentMode] = React.useState("");
   const [expenses, setExpenses] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
- 
-  const refRBSheet = useRef();
- //#endregion 
+  const [display, setDisplay] = React.useState("");
 
- //#region Functions
+  const refRBSheet = useRef();
+  //#endregion 
+
+  //#region Functions
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    Provider.getAll("master/getcategory")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_trans_refno: "all"
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.pckaddexpenses_pcktransrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -75,7 +100,7 @@ const AddExpensesList = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {
@@ -95,16 +120,20 @@ const AddExpensesList = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.entryType}
+          title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Sub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
+          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
-            setEntryType(data.item.entryType);
+            setDate(data.item.pck_trans_date)
+            setEntryType(data.item.pck_entrytype_name);
+            setCategoryName(data.item.pck_category_name);
+            setSubCategoryName(data.item.pck_sub_category_name);
+            setReceiptMode(data.item.pck_mode_name);
             setAmount(data.item.amount);
-            setPaymentMode(data.item.paymentMode);
-            setExpenses(data.item.expenses);
-            setSubCategoryName(data.item.subCategoryName);
+            setAttachment(data.item.attach_receipt_url);
+            setAttachmentImage(data.item.attach_receipt_url);
+            setDisplay(data.item.view_status == "1" ? "Yes" : "No");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -123,18 +152,37 @@ const AddExpensesList = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
-        categoryName: data.item.categoryName,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
-        display: data.item.display,
+        pck_trans_refno:data.item.pck_trans_refno,
+        createby_user_refno:data.item.createby_user_refno,
+        pck_trans_date:data.item.pck_trans_date,
+        pck_entrytype_refnopck_trans_refno:data.item.pck_entrytype_refno,
+        pck_entrytype_name:data.item.pck_entrytype_name,
+        pck_mode_refno:data.item.pck_mode_refno,
+        pck_mode_name:data.item.pck_mode_name,
+        pck_category_refno:data.item.pck_category_refno,
+        pck_category_name:data.item.pck_category_name,
+        pck_sub_category_refno:data.item.pck_sub_category_refno,
+        pck_sub_category_name:data.item.pck_sub_category_name,
+        pck_mycontact_refno:data.item.pck_mycontact_refno,
+        pck_mybank_refno:data.item.pck_mybank_refno,
+        utr_no:data.item.utr_no,
+        deposit_type_refno:data.item.deposit_type_refno,
+        pdc_cheque_status:data.item.pdc_cheque_status,
+        cheque_date:data.item.cheque_date,
+        cheque_no:data.item.cheque_no,
+        amount:data.item.amount,
+        notes:data.item.notes,
+        recurring_status:data.item.recurring_status,
+        reminder_date:data.item.reminder_date,
+        attach_receipt_url:data.item.attach_receipt_url,
+        cardtype_refno:data.item.cardtype_refno,
+        pck_card_mybank_refno:data.item.pck_card_mybank_refno,
+        due_date:data.item.due_date,
+        view_status:data.item.view_status
       },
     });
   };
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
@@ -178,12 +226,15 @@ const AddExpensesList = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
           <ScrollView>
-         
-          <List.Item title="Entry Type " description={entryType} />
-          <List.Item title="Amount" description={amount} />
-          <List.Item title="Payment Mode" description={paymentMode} />
-          <List.Item title="Expenses / Payment" description={expenses} />
-          <List.Item title="Sub Category Name" description={subCategoryName} />
+            <List.Item title="Entry Type " description={entryType} />
+            <List.Item title="Category Name" description={categoryName} />
+            <List.Item title="Sub Category Name" description={subCategoryName} />
+            <List.Item title="Receipt Mode Type" description={receiptMode} />
+            <List.Item title="Amount" description={amount} />
+            <View style={[Styles.width100per, Styles.height200]}>
+              <Image source={{ uri: attachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
+            </View>
+            <List.Item title="Display" description={display} />
           </ScrollView>
         </View>
       </RBSheet>

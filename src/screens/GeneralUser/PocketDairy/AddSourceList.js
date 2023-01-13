@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -12,12 +12,15 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AWSImagePath } from "../../../utils/paths";
 
 let userID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const AddSourceList = ({ navigation }) => {
+const AddSourceList = ({ route, navigation }) => {
   //#region Variables
+
+  const [attachmentImage, setAttachmentImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -54,7 +57,6 @@ const AddSourceList = ({ navigation }) => {
     }
   };
 
-
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -71,6 +73,7 @@ const AddSourceList = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -129,6 +132,7 @@ const AddSourceList = ({ navigation }) => {
             setReceiptMode(data.item.pck_mode_name);
             setAmount(data.item.amount);
             setAttachment(data.item.attach_receipt_url);
+            setAttachmentImage(data.item.attach_receipt_url);
             setDisplay(data.item.view_status == "1" ? "Yes" : "No");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
@@ -143,20 +147,37 @@ const AddSourceList = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
+    //console.log(data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddSource", {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        date: data.item.date,
-        entryType: data.item.entryType,
-        categoryName: data.item.categoryName,
-        subCategoryName: data.item.subCategoryName,
-        receiptMode: data.item.receiptMode,
         amount: data.item.amount,
-        attachment: data.item.attachment,
-        display: data.item.display,
+        attach_receipt_url: data.item.attach_receipt_url,
+        bankchallan_slip_url: data.item.bankchallan_slip_url,
+        cheque_date: data.item.cheque_date,
+        cheque_no: data.item.cheque_no,
+        createby_user_refno: data.item.createby_user_refno,
+        deposit_type_refno: data.item.deposit_type_refno,
+        notes: data.item.notes,
+        pck_category_name: data.item.pck_category_name,
+        pck_category_refno: data.item.pck_category_refno,
+        pck_entrytype_name: data.item.pck_entrytype_name,
+        pck_entrytype_refno: data.item.pck_entrytype_refno,
+        pck_mode_name: data.item.pck_mode_name,
+        pck_mode_refno: data.item.pck_mode_refno,
+        pck_mybank_refno: data.item.pck_mybank_refno,
+        pck_mycontact_refno: data.item.pck_mycontact_refno,
+        pck_sub_category_name: data.item.pck_sub_category_name,
+        pck_sub_category_refno: data.item.pck_sub_category_refno,
+        pck_trans_date: data.item.pck_trans_date,
+        pck_trans_refno: data.item.pck_trans_refno,
+        pdc_cheque_status: data.item.pdc_cheque_status,
+        reminder_date: data.item.reminder_date,
+        utr_no: data.item.utr_no,
+        view_status: data.item.view_status
+
       },
     });
   };
@@ -200,7 +221,7 @@ const AddSourceList = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={720} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
           <ScrollView>
@@ -210,7 +231,10 @@ const AddSourceList = ({ navigation }) => {
             <List.Item title="Sub Category Name" description={subCategoryName} />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
             <List.Item title="Amount" description={amount} />
-            <List.Item title="Attachment" description={attachment} />
+            <View style={[Styles.width100per, Styles.height200]}>
+              <Image source={{ uri: attachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
+            </View>
+
             <List.Item title="Display" description={display} />
           </ScrollView>
         </View>

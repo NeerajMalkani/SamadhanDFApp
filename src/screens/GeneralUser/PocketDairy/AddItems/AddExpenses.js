@@ -508,12 +508,12 @@ const AddExpenses = ({ route, navigation }) => {
             {communication.InvalidDepositeType}
           </HelperText>
 
-          <TextInput mode="flat" label="Cheque No" value={utrNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNO} style={{ backgroundColor: "white" }} error={utrNoError} />
+          <TextInput mode="flat" label="UTR No" value={utrNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUtrNo} style={{ backgroundColor: "white" }} error={utrNoError} />
           <HelperText type="error" visible={utrNoError}>
             {communication.InvalidChequeNo}
           </HelperText>
 
-          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUtrNo} style={{ backgroundColor: "white" }} error={chequeNoError} />
+          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNO} style={{ backgroundColor: "white" }} error={chequeNoError} />
           <HelperText type="error" visible={chequeNoError}>
             {communication.InvalidChequeNo}
           </HelperText>
@@ -525,7 +525,7 @@ const AddExpenses = ({ route, navigation }) => {
           <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
             <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
             <Button mode="text" onPress={chooseFile}>
-              {filePath !== null ? "Replace" : "Choose Image"}
+              {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
             </Button>
           </View>
           <HelperText type="error" visible={errorDI}>

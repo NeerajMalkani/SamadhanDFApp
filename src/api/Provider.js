@@ -340,6 +340,8 @@ class Provider {
     pckaddsourcecreate: "pckaddsourcecreate/",
     getcardtype_pckmypersonalbankform: "getcardtype_pckmypersonalbankform/",
     pckmypersonalbankcreate: "pckmypersonalbankcreate/",
+    pckaddsourceupdate: "pckaddsourceupdate/",
+    pckaddexpenses_pcktransrefnocheck: "pckaddexpenses_pcktransrefnocheck/",
   };
 
   createDFPocketDairy(resource, params) {
