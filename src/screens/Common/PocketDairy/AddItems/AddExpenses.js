@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Image, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text,RadioButton, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, RadioButton, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -11,6 +11,10 @@ import * as ImagePicker from "expo-image-picker";
 import { AWSImagePath } from "../../../../utils/paths";
 import RadioGroup from "react-native-radio-buttons-group";
 import { PaperSelect } from "react-native-paper-select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APIConverter } from "../../../../utils/apiconverter";
+
+let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0;
 
 const AddExpenses = ({ route, navigation }) => {
 
@@ -39,7 +43,7 @@ const AddExpenses = ({ route, navigation }) => {
     });
   }
 
-  
+
 
   //#region Variables
 
@@ -51,11 +55,13 @@ const AddExpenses = ({ route, navigation }) => {
   const [entryTypeError, setEntryTypeError] = React.useState(false);
   const [entryType, setEntryType] = React.useState(route.params.type === "edit" ? route.params.data.entryType : "");
 
+  const [subCategoryNameFullData, setSubCategoryNameFullData] = React.useState([]);
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
   const [subCategoryName, setSubCategoryName] = React.useState([]);
   //   const [subCategoryName, setSubCategoryName] = React.useState(route.params.type === "edit" ? route.params.data.subCategoryName : "");
   const [errorSCN, setSCNError] = React.useState(false);
 
+  const [payModeFullData, setPayModeFullData] = React.useState([]);
   const [payModeData, setPayModeData] = React.useState([]);
   const [payMode, setPayMode] = React.useState([]);
   //   const [payMode, setPayMode] = React.useState(route.params.type === "edit" ? route.params.data.payMode : "");
@@ -75,6 +81,7 @@ const AddExpenses = ({ route, navigation }) => {
   const [cardRepaymentInvalid, setCardRepaymentInvalid] = useState("");
   const cardRepaymentRef = useRef({});
 
+  const [expensesFullData, setExpensesFullData] = React.useState([]);
   const [expensesData, setExpensesData] = React.useState([]);
   const [expenses, setExpenses] = React.useState([]);
   //   const [expenses, setExpenses] = React.useState(route.params.type === "edit" ? route.params.data.expenses : "");
@@ -129,90 +136,176 @@ const AddExpenses = ({ route, navigation }) => {
     error: "",
   });
 
+  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("");
+
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
+
+  const [cardTypeStatus, setCardTypeStatus] = React.useState(false);
+  const [cardBankNameStatus, setCardBankNameStatus] = React.useState(false);
+  const [cardRepaymentDate, setCardRepaymentDate] = React.useState(false);
+  const [paidToStatus, setPaidToStatus] = React.useState(false);
+  const [recurringStatus, setRecurringStatus] = React.useState(false);
+  const [recurringReminderDateStatus, setRecurringReminderDateStatus] = React.useState(false);
+  const [depositTypeStatus, setDepositTypeStatus] = React.useState(false);
+  const [bankStatus, setBankStatus] = React.useState(false);
+  const [utrNoStatus, setUtrNoStatus] = React.useState(false);
+  const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
+  const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
+  const [commonDisplayStatus, setCommonDisplayStatus] = React.useState(false);
+  const [buttonStatus, setButtonStatus] = React.useState(true);
+
   //#endregion 
 
   //#region Functions
-  const FetchActvityRoles = () => {
-    Provider.getAll("master/getmainactivities")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setActivityFullData(response.data.data);
-            const activities = response.data.data.map((data) => data.activityRoleName);
-            setActivityData(activities);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
-
-  const FetchServices = () => {
-    Provider.getAll("master/getservices")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            setServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.serviceName);
-            setServicesData(services);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
-
-  const FetchUnitOfSales = () => {
-    Provider.getAll("master/getunitofsales")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            response.data.data = response.data.data.filter((el) => {
-              return el.display;
-            });
-            let allUnits = "";
-            if (route.params.type === "edit") {
-              const arrunitOfSalesNameNew = [];
-              unitOfSalesName.split(",").map((o) => {
-                const objTemp = response.data.data.find((el) => {
-                  return o.trim() === el.displayUnit;
-                });
-                if (objTemp) {
-                  arrunitOfSalesNameNew.push(objTemp.id);
-                }
-              });
-              allUnits = arrunitOfSalesNameNew.length > 0 ? arrunitOfSalesNameNew.join(",") : "";
-            }
-            const unitofsales = response.data.data.map((o) => ({
-              ...o,
-              isChecked: allUnits !== "" ? allUnits.split(",").indexOf(o.id.toString()) !== -1 : false,
-            }));
-
-            setUnitOfSalesData(unitofsales);
-          }
-        }
-      })
-      .catch((e) => { });
-  };
 
   useEffect(() => {
-    FetchActvityRoles();
-    FetchServices();
-    FetchUnitOfSales();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      branchID = JSON.parse(userData).Sess_branch_refno;
+      FetchEntryType();
+
+      if (route.params.type === "edit") {
+        SetEditData();
+      }
+    }
+  };
+
+
+  const FetchEntryType = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
+            setEntryType(response.data.data[0].pck_entrytype_name);
+            FetchPaymentMode(2);//expense=2 need to confirm from balaji
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchPaymentMode = (pktEntryTypeID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_transtype_refno: 2,
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentmodetype, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setPayModeFullData(response.data.data);
+            const receiptMode = response.data.data.map((data) => data.pckModeName);
+            setPayModeData(receiptMode);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchExpenseCategory = (receiptModeID, categoryID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        pck_mode_refno: receiptModeID,
+        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setExpensesFullData(response.data.data);
+            const category = response.data.data.map((data) => data.categoryName);
+            setExpensesData(category);
+            if (categoryID != null) {
+              setSource(response.data.data.filter((el) => {
+                return el.pckCategoryID === categoryID;
+              })[0].categoryName);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchExpenseSubCategory = (categoryID, subCategoryID) => {
+console.log('start sub category');
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        pck_category_refno: categoryID,
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log(response.data.data);
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            setSubCategoryNameFullData(response.data.data);
+            const subCategory = response.data.data.map((data) => data.subCategoryName);
+            setSubCategoryNameData(subCategory);
+            if (subcategoryID != null) {
+              setSubCategoryName(response.data.data.filter((el) => {
+                return el.subcategoryID === subCategoryID;
+              })[0].subCategoryName);
+
+            }
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
 
   const onPayModeChanged = (text) => {
     setPayMode(text);
     setPMError(false);
+    let a = payModeFullData.filter((el) => {
+      return el.pckModeName === text;
+    });
+
+    FetchExpenseCategory(a[0].pckModeID);
+
+  };
+
+  const onExpensesChanged = (text) => {
+    console.log('category change');
+    setExpenses(text);
+    setEXError(false);
+    console.log(expensesFullData);
+    let a = expensesFullData.filter((el) => {
+      return el.categoryName === text;
+    });
+
+    console.log(a);
+    FetchExpenseSubCategory(a[0].pckCategoryID);
+
   };
 
   const onCardTypeChanged = (text) => {
@@ -230,10 +323,7 @@ const AddExpenses = ({ route, navigation }) => {
     setSCNError(false);
   };
 
-  const onExpensesChanged = (text) => {
-    setExpenses(text);
-    setEXError(false);
-  };
+
   const onEntryType = (text) => {
     setEntryType(text);
     setEntryTypeError(false);
@@ -443,7 +533,7 @@ const AddExpenses = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
 
-          <TextInput mode="flat" label="Entry Type" value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onEntryType} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <TextInput mode="flat" label="Entry Type" disabled={true} value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onEntryType} style={{ backgroundColor: "white" }} error={entryTypeError} />
           <HelperText type="error" visible={entryTypeError}>
             {communication.InvalidEntryType}
           </HelperText>
@@ -455,107 +545,163 @@ const AddExpenses = ({ route, navigation }) => {
 
           <Dropdown label="Payment Mode" data={payModeData} onSelected={onPayModeChanged} isError={errorPM} selectedItem={payMode} />
           <HelperText type="error" visible={errorPM}>
-            {communication.InvalidPaymentMode}
+            Please select valid payment mode
           </HelperText>
 
-          <Dropdown label="Card Type" data={cardTypeData} onSelected={onCardTypeChanged} isError={errorCT} selectedItem={cardType} />
-          <HelperText type="error" visible={errorCT}>
-            {communication.InvalidCardType}
-          </HelperText>
+          {cardTypeStatus &&
+            <>
+              <Dropdown label="Card Type" data={cardTypeData} onSelected={onCardTypeChanged} isError={errorCT} selectedItem={cardType} />
+              <HelperText type="error" visible={errorCT}>
+                Please select a valid card type
+              </HelperText>
+            </>
+          }
 
-          <Dropdown label="Card Bank Name" data={cardBankData} onSelected={onCardBankNameChanged} isError={errorCB} selectedItem={cardBank} />
-          <HelperText type="error" visible={errorCB}>
-            {communication.InvalidPaymentMode}
-          </HelperText>
+          {cardBankNameStatus &&
+            <>
+              <Dropdown label="Card Bank Name" data={cardBankData} onSelected={onCardBankNameChanged} isError={errorCB} selectedItem={cardBank} />
+              <HelperText type="error" visible={errorCB}>
+                Please select valid bank
+              </HelperText>
+            </>
+          }
 
-          <View >
-            <DateTimePicker style={Styles.backgroundColorWhite} label="Credit Card Repayment Due Date" type="date" value={cardRepayment} onChangeDate={setCardRepayment} />
-          </View>
+          {cardRepaymentDate &&
 
-
+            <>
+              <View >
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Credit Card Repayment Due Date" type="date" value={cardRepayment} onChangeDate={setCardRepayment} />
+              </View>
+            </>
+          }
 
           <Dropdown label="Expenses / Payment" data={expensesData} onSelected={onExpensesChanged} isError={errorEX} selectedItem={expenses} />
           <HelperText type="error" visible={errorEX}>
-            {communication.InvalidExpenses}
+            Please select valid Expenses / Payment
           </HelperText>
 
           <Dropdown label="Sub Category Name" data={subCategoryNameData} onSelected={onSubCategoryNameChanged} isError={errorSCN} selectedItem={subCategoryName} />
           <HelperText type="error" visible={errorSCN}>
-            {communication.InvalidSubCategoryName}
+            Please select valid sub category
           </HelperText>
 
-          <Dropdown label="Paid To" data={paidToData} onSelected={onPaidToChanged} isError={errorPT} selectedItem={paidTo} />
-          <HelperText type="error" visible={errorPT}>
-            {communication.InvalidPaidTo}
-          </HelperText>
+          {paidToStatus &&
 
-          <View style={[Styles.marginTop0, Styles.marginBottom32]}>
-            <Text>Recurring</Text>
-            <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={RecurringRadioButtons} onPress={onPressRecurringRadioButton} />
-          </View>
+            <>
+              <Dropdown label="Paid To" data={paidToData} onSelected={onPaidToChanged} isError={errorPT} selectedItem={paidTo} />
+              <HelperText type="error" visible={errorPT}>
+                Please select valid recepient
+              </HelperText>
+            </>
 
-          <View  >
-            <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginBottom12} label="Recurring Reminder Date" type="date" value={recurringDate} onChangeDate={setRecurringDate} />
-          </View>
+          }
 
-          <Dropdown label="Desposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
-          <HelperText type="error" visible={errorDT}>
-            {communication.InvalidDepositeType}
-          </HelperText>
+          {recurringStatus &&
 
-          <Dropdown label="My Bank List" data={myBankData} onSelected={onMyBankChanged} isError={errorMB} selectedItem={MyBank} />
-          <HelperText type="error" visible={errorMB}>
-            {communication.InvalidDepositeType}
-          </HelperText>
+            <>
+              <View style={[Styles.marginTop0, Styles.marginBottom32]}>
+                <Text>Recurring</Text>
+                <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={RecurringRadioButtons} onPress={onPressRecurringRadioButton} />
+              </View>
+            </>
 
-          <TextInput mode="flat" label="UTR No" value={utrNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUtrNo} style={{ backgroundColor: "white" }} error={utrNoError} />
-          <HelperText type="error" visible={utrNoError}>
-            {communication.InvalidChequeNo}
-          </HelperText>
+          }
 
-          <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNO} style={{ backgroundColor: "white" }} error={chequeNoError} />
-          <HelperText type="error" visible={chequeNoError}>
-            {communication.InvalidChequeNo}
-          </HelperText>
+          {recurringReminderDateStatus &&
 
-          <View >
-            <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
-          </View>
+            <>
+              <View  >
+                <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginBottom12} label="Recurring Reminder Date" type="date" value={recurringDate} onChangeDate={setRecurringDate} />
+              </View>
+            </>
 
-          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-            <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
-            <Button mode="text" onPress={chooseFile}>
-              {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
-            </Button>
-          </View>
-          <HelperText type="error" visible={errorDI}>
-            {communication.InvalidDesignImage}
-          </HelperText>
+          }
 
-          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotes} style={{ backgroundColor: "white" }} error={notesError} />
-          <HelperText type="error" visible={notesError}>
-            {communication.InvalidNotes}
-          </HelperText>
+          {depositTypeStatus &&
+            <>
+              <Dropdown label="Desposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+              <HelperText type="error" visible={errorDT}>
+                {communication.InvalidDepositeType}
+              </HelperText>
+            </>
+          }
 
-          <View style={{ width: 160 }}>
-            <Checkbox.Item
-              label="Display"
-              position="leading"
-              style={{ paddingHorizontal: 2 }}
-              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
-              color={theme.colors.primary}
-              status={checked ? "checked" : "unchecked"}
-              onPress={() => {
-                setChecked(!checked);
-              }}
-            />
-          </View>
+          {bankStatus &&
 
+            <>
+              <Dropdown label="My Bank List" data={myBankData} onSelected={onMyBankChanged} isError={errorMB} selectedItem={MyBank} />
+              <HelperText type="error" visible={errorMB}>
+                Please select valid bank
+              </HelperText>
+            </>
+          }
+
+          {utrNoStatus &&
+            <>
+              <TextInput mode="flat" label="UTR No" value={utrNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUtrNo} style={{ backgroundColor: "white" }} />
+            </>
+
+          }
+
+          {chequeNoStatus &&
+
+            <>
+              <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onChequeNO} style={{ backgroundColor: "white" }} error={chequeNoError} />
+            </>
+
+          }
+
+          {chequeDateStatus &&
+            <>
+              <View >
+                <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
+              </View>
+            </>
+          }
+
+          {commonDisplayStatus &&
+
+            <>
+              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+                <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+                <Button mode="text" onPress={chooseFile}>
+                  {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
+                </Button>
+              </View>
+              <HelperText type="error" visible={errorDI}>
+                {communication.InvalidDesignImage}
+              </HelperText>
+            </>
+          }
+
+          {commonDisplayStatus &&
+            <>
+              <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotes} style={{ backgroundColor: "white" }} />
+            </>
+          }
+
+          {commonDisplayStatus &&
+            <>
+              <View style={{ width: 160 }}>
+                <Checkbox.Item
+                  label="Display"
+                  position="leading"
+                  style={{ paddingHorizontal: 2 }}
+                  labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+                  color={theme.colors.primary}
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                />
+              </View>
+            </>
+          }
         </View>
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" disabled={buttonStatus} onPress={ValidateData}>
             Submit
           </Button>
         </Card.Content>

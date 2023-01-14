@@ -192,7 +192,6 @@ const AddSource = ({ route, navigation }) => {
     setImage(route.params.data.attach_receipt_url);
     setFilePath(route.params.data.attach_receipt_url);
     setDesignImage(route.params.data.attach_receipt_url);
-
   }
 
 
@@ -210,18 +209,18 @@ const AddSource = ({ route, navigation }) => {
 
             setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
             setEntryType(response.data.data[0].pck_entrytype_name);
-            FetchRecepientMode(response.data.data[0].pck_entrytype_refno);
+            FetchRecepientMode();
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchRecepientMode = (pktEntryTypeID) => {
+  const FetchRecepientMode = () => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        pck_transtype_refno: pktEntryTypeID,
+        pck_transtype_refno: 1,
       }
     }
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentmodetype, params)
