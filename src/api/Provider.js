@@ -344,6 +344,12 @@ class Provider {
     pckaddexpenses_pcktransrefnocheck: "pckaddexpenses_pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
     getsubcategoryname_pckaddexpensesform: "getsubcategoryname_pckaddexpensesform/",
+    getcardtype_pckaddexpensesform: "getcardtype_pckaddexpensesform/",
+    getcardbankname_pckaddexpensesform: "getcardbankname_pckaddexpensesform/",
+    pckaddexpensescreate: "pckaddexpensescreate/",
+    pckaddexpensesupdate: "pckaddexpensesupdate/",
+    pckdashboard_payablelist: "pckdashboard_payablelist/",
+    pckdashboard_receivablelist: "pckdashboard_receivablelist/",
   };
 
   createDFPocketDairy(resource, params) {

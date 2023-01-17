@@ -99,13 +99,13 @@ import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
 import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
 import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
-import BudgetSetup from "./src/screens/GeneralUser/PocketDairy/Setting/BudgetSetup";
+import BudgetSetup from "./src/screens/Common/PocketDairy/Setting/BudgetSetup";
 import AddBudgetSetup from "./src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup";
 import AddExpensesList from "./src/screens/Common/PocketDairy/AddExpensesList";
 import AddExpenses from "./src/screens/Common/PocketDairy/AddItems/AddExpenses";
 import AddSourceList from "./src/screens/Common/PocketDairy/AddSourceList";
 import AddSource from "./src/screens/Common/PocketDairy/AddItems/AddSource";
-import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
+//import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
 import BrandConversionValue from "./src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue";
 import OpeningStockList from "./src/screens/Manufacture/ProductionUnitMaster/OpeningStockList";
 import ApiMaster from "./src/screens/Admin/Master/ApiMaster";
@@ -144,6 +144,8 @@ import AddWidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/AddItems/
 import MassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/MassOfZincCoating";
 import AddMassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddMassOfZincCoating";
 import AddBankDetails from "./src/screens/Common/Profile Update/AddBankDetails";
+import PayableList from "./src/screens/Common/PocketDairy/PayableList";
+import ReceivableList from "./src/screens/Common/PocketDairy/ReceivableList";
 
 
 const Stack = createStackNavigator();
@@ -336,7 +338,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
-        case 5:
+        case 5:// Contractor
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
@@ -350,6 +352,13 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
             </Drawer.Navigator>
           );
         case 4:
@@ -481,12 +490,12 @@ export default function App() {
 
               <Stack.Screen name="BudgetSetup" component={BudgetSetup} options={{ headerTitle: "Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddBudgetSetup" component={AddBudgetSetup} options={{ headerTitle: " Add Budget Setup ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddExpensesList" component={AddExpensesList} options={{ headerTitle: " Add Expenses List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              {/* <Stack.Screen name="AddExpensesList" component={AddExpensesList} options={{ headerTitle: " Add Expenses List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
               <Stack.Screen name="AddExpenses" component={AddExpenses} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="AddSourceList" component={AddSourceList} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              {/* <Stack.Screen name="AddSourceList" component={AddSourceList} options={{ headerTitle: " Add Expenses ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
 
               <Stack.Screen name="AddSource" component={AddSource} options={{ headerTitle: " Add Source ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              {/* <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
               <Stack.Screen name="BrandConversionValue" component={BrandConversionValue} options={{ headerTitle: "Brand Conversion Value ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="OpeningStockList" component={OpeningStockList} options={{ headerTitle: "Opening Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddStockList" component={AddStockList} options={{ headerTitle: "Add Stock List ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
@@ -524,6 +533,8 @@ export default function App() {
               <Stack.Screen name="MassOfZincCoating" component={MassOfZincCoating} options={{ headerTitle: "Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMassOfZincCoating" component={AddMassOfZincCoating} options={{ headerTitle: "Add Mass Of Zinc Coating", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddBankDetails" component={AddBankDetails} options={{ headerTitle: "Add Bank Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="PayableList" component={PayableList} options={{ headerTitle: "Payable List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="ReceivableList" component={ReceivableList} options={{ headerTitle: "Receivable List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               
             </Stack.Navigator> 
           </NavigationContainer>

@@ -22,16 +22,23 @@ const AddSource = ({ route, navigation }) => {
 
   //#region Variables
 
-  const [entryTypeError, setEntryTypeError] = React.useState(false);
-  const [entryType, setEntryType] = React.useState("");
+  // const [entryTypeError, setEntryTypeError] = React.useState(false);
+  // const [entryType, setEntryType] = React.useState("");
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
+
+  const [entryTypeData, setEntryTypeData] = React.useState([]);
+  const [entryTypeFullData, setEntryTypeFullData] = React.useState([]);
+  const [entryType, setEntryType] = React.useState("");
+  const [entryTypeDisable, setEntryTypeDisable] = React.useState(true);
 
   const [receiptModeData, setReceiptModeData] = React.useState([]);
   const [receiptModeFullData, setReceiptModeFullData] = React.useState([]);
   const [receiptMode, setReceiptMode] = React.useState([]);
   const [errorRM, setRMError] = React.useState(false);
+
+
 
   const [sourceFullData, setSourceFullData] = React.useState([]);
   const [sourceData, setSourceData] = React.useState([]);
@@ -204,12 +211,23 @@ const AddSource = ({ route, navigation }) => {
     }
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
       .then((response) => {
+        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
-            setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
-            setEntryType(response.data.data[0].pck_entrytype_name);
-            FetchRecepientMode();
+            setEntryTypeFullData(response.data.data);
+
+            const entryTypeData = response.data.data.map((data) => data.pck_entrytype_name);
+            setEntryTypeData(entryTypeData);
+            console.log(response.data.data.length);
+            if (response.data.data.length == 1) {
+              setEntryType(response.data.data[0].pck_entrytype_name);
+              setEntryTypeDisable(true);
+            }
+            else {
+              setEntryTypeDisable(false);
+            }
+            
           }
         }
       })
@@ -244,7 +262,7 @@ const AddSource = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID :  pktEntryTypeID
+        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
     Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddsourceform, params)
@@ -307,7 +325,7 @@ const AddSource = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID :  pktEntryTypeID
+        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
     // console.log(params);
@@ -393,6 +411,12 @@ const AddSource = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
+
+  const onEntryTypeChanged = (selectedItem) => {
+    setEntryType(selectedItem);
+    resetFields();
+
+  };
 
   const onReceiptModeChanged = (selectedItem) => {
     setReceiptMode(selectedItem);
@@ -585,6 +609,7 @@ const AddSource = ({ route, navigation }) => {
   const InsertData = () => {
     console.log('insert===================');
     let contactID = "", bankID = "", depositID = "";
+    
     if (receivedFormFullData.length > 0) {
       contactID = receivedFormFullData.filter((el) => {
         return el.contactName === receivedForm;
@@ -860,10 +885,8 @@ const AddSource = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Entry Type" disabled={true} value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} style={{ backgroundColor: "white" }} error={entryTypeError} />
-          <HelperText type="error" visible={entryTypeError}>
-            {communication.InvalidEntryType}
-          </HelperText>
+          {/* <TextInput mode="flat" label="Entry Type" disabled={true} value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} style={{ backgroundColor: "white" }} error={entryTypeError} /> */}
+          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} selectedItem={entryType} />
 
           <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>

@@ -250,7 +250,7 @@ export const MenuItemsGeneralUser = [
   },
   {
     title: "Pocket Dairy",
-    icon: "timetable",
+    icon: "calculator-variant",
     type: "accordian",
     index: 1,
     roleID: 3,
@@ -654,6 +654,63 @@ export const MenuItemsContractor = [
       },
       {
         title: "Completed",
+        type: "accordian",
+        index: 82,
+        //navigation: "CreatePurchaseOrderScreen",
+      },
+    ],
+  },
+  {
+    title: "Pocket Diary",
+    icon: "calculator-variant",
+    type: "accordian",
+    index: 8,
+    roleID: 5,
+    items: [
+      {
+        title: "Category",
+        type: "accordian",
+        index: 80,
+        navigation: "GCategoryNameScreen",
+      },
+      {
+        title: "Sub-Category",
+        type: "accordian",
+        index: 81,
+        navigation: "GSubCategoryNameScreen",
+      },
+      {
+        title: "My Contacts",
+        type: "accordian",
+        index: 82,
+        navigation: "GMyContactsScreen",
+      },
+      {
+        title: "My Personal Bank",
+        type: "accordian",
+        index: 82,
+        //navigation: "CreatePurchaseOrderScreen",
+      },
+      {
+        title: "Add Source",
+        type: "accordian",
+        index: 82,
+        navigation: "AddSourceList",
+      },
+      {
+        title: "Add Expenses",
+        type: "accordian",
+        index: 82,
+        navigation: "AddExpensesList",
+      },
+      {
+        title: "Cash Check",
+        type: "accordian",
+        index: 82,
+        //navigation: "CreatePurchaseOrderScreen",
+      },
+      {
+        title: "Inbox",
         type: "accordian",
         index: 82,
         //navigation: "CreatePurchaseOrderScreen",
