@@ -38,8 +38,6 @@ const AddSource = ({ route, navigation }) => {
   const [receiptMode, setReceiptMode] = React.useState([]);
   const [errorRM, setRMError] = React.useState(false);
 
-
-
   const [sourceFullData, setSourceFullData] = React.useState([]);
   const [sourceData, setSourceData] = React.useState([]);
   const [source, setSource] = React.useState([]);
@@ -111,7 +109,7 @@ const AddSource = ({ route, navigation }) => {
   const [commonStatus, setCommonStatus] = React.useState(false);
   const [buttonStatus, setButtonStatus] = React.useState(true);
 
-  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("");
+  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("1");
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   //#endregion 
 
@@ -133,10 +131,10 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const SetEditData = () => {
-    console.log('start edit data =====================');
-    console.log(route.params);
+   //console.log('start edit data =====================');
+   //console.log(route.params);
     setButtonStatus(false);
-    setEntryType(route.params.data.pck_mode_refno);
+    setEntryType(route.params.data.pck_entrytype_name);
     settAmount(route.params.data.amount);
     setPckTransID(route.params.data.pck_trans_refno);
     _pktEntryTypeID = route.params.data.pck_entrytype_refno;
@@ -201,7 +199,6 @@ const AddSource = ({ route, navigation }) => {
     setDesignImage(route.params.data.attach_receipt_url);
   }
 
-
   const FetchEntryType = () => {
     let params = {
       data: {
@@ -211,15 +208,16 @@ const AddSource = ({ route, navigation }) => {
     }
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
       .then((response) => {
-        console.log(response.data.data);
+        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
+            FetchRecepientMode();
             setEntryTypeFullData(response.data.data);
 
             const entryTypeData = response.data.data.map((data) => data.pck_entrytype_name);
             setEntryTypeData(entryTypeData);
-            console.log(response.data.data.length);
+            //console.log(response.data.data.length);
             if (response.data.data.length == 1) {
               setEntryType(response.data.data[0].pck_entrytype_name);
               setEntryTypeDisable(true);
@@ -265,8 +263,10 @@ const AddSource = ({ route, navigation }) => {
         pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
+   //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddsourceform, params)
       .then((response) => {
+       //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -318,7 +318,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchBankList = (bankID) => {
-    // console.log('calling bank======');
+    ////console.log('calling bank======');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -328,14 +328,14 @@ const AddSource = ({ route, navigation }) => {
         pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
-    // console.log(params);
+    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
-            // console.log(response.data.data);
+            ////console.log(response.data.data);
             setMyBankListFullData(response.data.data);
 
             const bank = response.data.data.map((data) => data.bankName);
@@ -353,17 +353,17 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchReceiverList = (contactID) => {
-    // console.log('receiver data start ============');
+    ////console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID
       }
     }
-    // console.log(params);
+    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        // console.log('Receiiver contact==============');
-        // console.log(response.data);
+        ////console.log('Receiiver contact==============');
+        ////console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -463,13 +463,13 @@ const AddSource = ({ route, navigation }) => {
       return el.subCategoryName === text;
     });
 
-    // console.log(receiptModeFullData);
-    // console.log(mode[0].pckModeID);
-    // console.log(category[0].pckCategoryID);
-    // console.log(subcat[0].subcategoryID);
+    ////console.log(receiptModeFullData);
+    ////console.log(mode[0].pckModeID);
+    ////console.log(category[0].pckCategoryID);
+    ////console.log(subcat[0].subcategoryID);
 
     if (mode[0].pckModeID == "1") {
-      // console.log('Cash================');
+      ////console.log('Cash================');
       // cash withdrawal
       if (subcat[0].subcategoryID == "1") {
         FetchBankList();
@@ -498,7 +498,7 @@ const AddSource = ({ route, navigation }) => {
     }
     else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setUTRNoStatus(true);
-      // console.log('UPI================');
+      ////console.log('UPI================');
       if (subcat[0].subcategoryID == "7") {
         setReceivedStatus(true);
         FetchReceiverList();
@@ -516,7 +516,7 @@ const AddSource = ({ route, navigation }) => {
       }
     }
     else if (mode[0].pckModeID == "3") {
-      // console.log('Cheque================');
+      ////console.log('Cheque================');
       if (subcat[0].subcategoryID == "7") {
         setReceivedStatus(true);
         FetchReceiverList();
@@ -607,7 +607,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    console.log('insert===================');
+   //console.log('insert===================');
     let contactID = "", bankID = "", depositID = "";
     
     if (receivedFormFullData.length > 0) {
@@ -692,7 +692,7 @@ const AddSource = ({ route, navigation }) => {
     //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourcecreate, datas)
       .then((response) => {
-        console.log(response.data);
+       //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -705,14 +705,14 @@ const AddSource = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+       //console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-    console.log('update===================');
+   //console.log('update===================');
 
     let contactID = "", bankID = "", depositID = "";
 
@@ -795,7 +795,7 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    console.log(datas);
+   //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourceupdate, datas)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -933,7 +933,7 @@ const AddSource = ({ route, navigation }) => {
 
           {depositTypeStatus &&
             <>
-              <Dropdown label="Deposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+              <Dropdown label="Deposit Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
               <HelperText type="error" visible={errorDT}>
                 {communication.InvalidDepositeType}
               </HelperText>

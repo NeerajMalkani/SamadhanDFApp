@@ -192,16 +192,15 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const SetEditData = () => {
-    console.log('start edit data =====================');
-    console.log(route.params);
+    //console.log('start edit data =====================');
+    //console.log(route.params);
+
     setButtonStatus(false);
-    setEntryType(route.params.data.pck_mode_refno);
+    setEntryType(route.params.data.pck_entrytype_name);
     settAmount(route.params.data.amount);
     setPckTransID(route.params.data.pck_trans_refno);
     _pktEntryTypeID = route.params.data.pck_entrytype_refno;
-
     FetchPaymentMode(route.params.data.pck_mode_refno);
-
 
     if (route.params.data.cardtype_refno != "" && route.params.data.cardtype_refno != "0") {
       setCardTypeStatus(true);
@@ -213,7 +212,7 @@ const AddExpenses = ({ route, navigation }) => {
       FetchCardBankList(route.params.data.cardtype_refno, route.params.data.pck_card_mybank_refno);
     }
 
-    if (route.params.data.due_date != "" && route.params.data.due_date != "0") {
+    if (route.params.data.due_date != "" && route.params.data.due_date != "0" && route.params.data.due_date != null) {
       setCardRepaymentDateStatus(true);
       let dateBreakup = route.params.data.due_date.split('-');
       setCardRepayment(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
@@ -222,9 +221,9 @@ const AddExpenses = ({ route, navigation }) => {
     FetchExpenseCategory(route.params.data.pck_mode_refno, route.params.data.pck_category_refno);
     FetchExpenseSubCategory(route.params.data.pck_category_refno, route.params.data.pck_sub_category_refno);
 
-    if (route.params.data.pck_mode_refno != "" && route.params.data.pck_mode_refno != "0") {
+    if (route.params.data.pck_mycontact_refno != "" && route.params.data.pck_mycontact_refno != "0") {
       setPaidToStatus(true);
-      FetchReceiverList(route.params.data.pck_mode_refno);
+      FetchReceiverList(route.params.data.pck_mycontact_refno);
     }
 
     if (route.params.data.recurring_status != "" && route.params.data.recurring_status != "0") {
@@ -249,7 +248,7 @@ const AddExpenses = ({ route, navigation }) => {
       setRecurringRadioButtons(recc);
     }
 
-    if (route.params.data.reminder_date != "" && route.params.data.reminder_date != "0") {
+    if (route.params.data.reminder_date != "" && route.params.data.reminder_date != "0" && route.params.data.reminder_date != null) {
       let dateBreakup = route.params.data.reminder_date.split('-');
       setRecurringDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
     }
@@ -274,7 +273,7 @@ const AddExpenses = ({ route, navigation }) => {
       setChequeNo(route.params.data.cheque_no);
     }
 
-    if (route.params.data.cheque_date != "" && route.params.data.cheque_date != "0") {
+    if (route.params.data.cheque_date != "" && route.params.data.cheque_date != "0" && route.params.data.cheque_date != null) {
       let dateBreakup = route.params.data.cheque_date.split('-');
       setChequeDateStatus(true);
       setChequeDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
@@ -307,7 +306,11 @@ const AddExpenses = ({ route, navigation }) => {
 
             setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
             setEntryType(response.data.data[0].pck_entrytype_name);
-            FetchPaymentMode(2);//expense=2 need to confirm from balaji
+
+            if (route.params.type != "edit") {
+              FetchPaymentMode();//expense=2 need to confirm from balaji
+            }
+
           }
         }
       })
@@ -325,14 +328,21 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            //console.log('payment mode ============');
+            //console.log(editID);
+            //console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
             setPayModeFullData(response.data.data);
             const receiptMode = response.data.data.map((data) => data.pckModeName);
             setPayModeData(receiptMode);
-
+           //console.log(response.data.data);
             if (editID != "") {
+             //console.log('edit start ****************************');
+            //  //console.log(response.data.data.filter((el) => {
+            //     return el.pckModeID == editID;
+            //   })[0].pckModeName);
               setPayMode(response.data.data.filter((el) => {
-                return el.pckModeID === editID;
+                return el.pckModeID == editID;
               })[0].pckModeName);
             }
           }
@@ -401,7 +411,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchBankList = (editID) => {
-    // console.log('calling bank======');
+    ////console.log('calling bank======');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -411,7 +421,7 @@ const AddExpenses = ({ route, navigation }) => {
         pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
-    // console.log(params);
+    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -463,17 +473,17 @@ const AddExpenses = ({ route, navigation }) => {
 
 
   const FetchReceiverList = (editID) => {
-    // console.log('receiver data start ============');
+    ////console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID
       }
     }
-    // console.log(params);
+    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        // console.log('Receiiver contact==============');
-        // console.log(response.data);
+        ////console.log('Receiiver contact==============');
+        ////console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -495,7 +505,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchCardType = (editID) => {
-    console.log('start card type');
+   //console.log('start card type');
     let params = {
       data: {
         Sess_UserRefno: userID
@@ -503,17 +513,20 @@ const AddExpenses = ({ route, navigation }) => {
     }
     Provider.createDFPocketDairy(Provider.API_URLS.getcardtype_pckaddexpensesform, params)
       .then((response) => {
-        console.log(response.data.data);
+       //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCardTypeFullData(response.data.data);
             const cardType = response.data.data.map((data) => data.cardtype_name);
-            console.log(cardType);
+           //console.log(cardType);
             setCardTypeData(cardType);
-
+           //console.log('card type setting===================');
+           //console.log(editID);
+           //console.log(response.data.data);
+            
             if (editID != "") {
               setCardType(response.data.data.filter((el) => {
-                return el.cardtype_refno === editID;
+                return el.cardtype_refno == editID;
               })[0].cardtype_name);
             }
 
@@ -524,14 +537,14 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
-    // console.log('calling bank======');
+    ////console.log('calling bank======');
     let params = {
       data: {
         Sess_UserRefno: userID,
         cardtype_refno: cardtypeID
       }
     }
-    // console.log(params);
+    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getcardbankname_pckaddexpensesform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -585,7 +598,6 @@ const AddExpenses = ({ route, navigation }) => {
   const onCardTypeChanged = (text) => {
     setCardType(text);
     setCTError(false);
-
     setCardBankNameStatus(true);
 
     let cardID = cardTypeFullData.filter((el) => {
@@ -593,6 +605,13 @@ const AddExpenses = ({ route, navigation }) => {
     })[0].cardtype_refno;
 
     FetchCardBankList(cardID);
+
+    if (cardID == 2) {
+      setCardRepaymentDateStatus(true);
+    }
+    else {
+      setCardRepaymentDateStatus(false);
+    }
   };
 
   const onCardBankNameChanged = (text) => {
@@ -611,20 +630,22 @@ const AddExpenses = ({ route, navigation }) => {
       return el.pckModeName === payMode;
     });
 
-    let category = expensesFullData.filter((el) => {
-      return el.categoryName === expenses;
-    });
+    // let category = expensesFullData.filter((el) => {
+    //   return el.categoryName === expenses;
+    // });
 
     let subcat = subCategoryNameFullData.filter((el) => {
       return el.subCategoryName === text;
     });
 
+    let deposit = depositeTypeFullData.filter((el) => {
+      return el.deposit_type_name === depositeType;
+    });
 
-    console.log(mode);
-    console.log(category);
-    console.log(subCategoryNameFullData);
-    console.log(subcat);
-    console.log(subcat[0]);
+   //console.log(mode);
+    //console.log(category);
+   //console.log(subcat);
+   //console.log(deposit);
 
     if (mode[0].pckModeID == "1") {
 
@@ -668,16 +689,15 @@ const AddExpenses = ({ route, navigation }) => {
       FetchDepositType();
 
       if (subcat[0].subcategoryID == "8") {
-        FetchBankList();
-        setUtrNoStatus(true);
-        setBankStatus(true);
+        //FetchBankList();
+        //setUtrNoStatus(true);
+        //setBankStatus(true);
 
         setPaidToStatus(true);
         FetchReceiverList();
 
         setRecurringStatus(true);
         setRecurringReminderDateStatus(true);
-
       }
       else {
         setPaidToStatus(false);
@@ -688,8 +708,56 @@ const AddExpenses = ({ route, navigation }) => {
       }
     }
 
+  };
+
+  const onDepositeTypeChanged = (text) => {
+    setDepositeType(text);
+    setDTError(false);
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let subcat = subCategoryNameFullData.filter((el) => {
+      return el.subCategoryName === subCategoryName;
+    });
+
+    let deposit = depositeTypeFullData.filter((el) => {
+      return el.deposit_type_name === text;
+    });
+
+   //console.log(mode);
+   //console.log(subcat);
+   //console.log(deposit);
+
+    FetchBankList();
+    setBankStatus(true);
+    setChequeNoStatus(true);
+    setChequeDateStatus(true);
+
+    if (mode[0].pckModeID == "3") {
+
+      if (subcat[0].subcategoryID == "8") {
+
+        //setUtrNoStatus(true);
+
+        setPaidToStatus(true);
+        FetchReceiverList();
+
+        setRecurringStatus(true);
+        setRecurringReminderDateStatus(true);
+      }
+      else {
+        setPaidToStatus(false);
+        FetchReceiverList();
+
+        setRecurringStatus(false);
+        setRecurringReminderDateStatus(false);
+      }
+    }
 
   };
+
 
 
   const onEntryType = (text) => {
@@ -725,10 +793,6 @@ const AddExpenses = ({ route, navigation }) => {
     setPTError(false);
   };
 
-  const onDepositeTypeChanged = (text) => {
-    setDepositeType(text);
-    setDTError(false);
-  };
 
   const onMyBankChanged = (text) => {
     setMyBank(text);
@@ -757,7 +821,7 @@ const AddExpenses = ({ route, navigation }) => {
 
 
   const InsertData = () => {
-    console.log('insert===================');
+   //console.log('insert===================');
     const datas = new FormData();
     let params = {
 
@@ -853,13 +917,12 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-    console.log(RecurringRadioButtons);
-    console.log(params);
-    console.log('data params ================');
-    console.log(datas);
+   //console.log(params);
+   //console.log('data params ================');
+   //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensescreate, datas)
       .then((response) => {
-        console.log(response.data);
+       //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -872,14 +935,14 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+       console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-    console.log('update===================');
+   //console.log('update===================');
     const datas = new FormData();
     let params = {
 
@@ -977,7 +1040,7 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-    console.log(datas);
+   //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensesupdate, datas)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -992,7 +1055,7 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+       console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -1171,7 +1234,7 @@ const AddExpenses = ({ route, navigation }) => {
 
           {depositTypeStatus &&
             <>
-              <Dropdown label="Desposite Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+              <Dropdown label="Deposit Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
               <HelperText type="error" visible={errorDT}>
                 {communication.InvalidDepositeType}
               </HelperText>
