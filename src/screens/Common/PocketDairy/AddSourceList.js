@@ -41,6 +41,7 @@ const AddSourceList = ({ route, navigation }) => {
   const [amount, setAmount] = React.useState("");
   const [attachment, setAttachment] = React.useState("");
   const [display, setDisplay] = React.useState("");
+  const [depositType, setDepositType] = React.useState("");
 
 
   const refRBSheet = useRef();
@@ -134,6 +135,7 @@ const AddSourceList = ({ route, navigation }) => {
             setAttachment(data.item.attach_receipt_url);
             setAttachmentImage(data.item.attach_receipt_url);
             setDisplay(data.item.view_status == "1" ? "Yes" : "No");
+            setDepositType(data.item.deposit_type_refno);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -234,7 +236,23 @@ const AddSourceList = ({ route, navigation }) => {
             <View style={[Styles.width100per, Styles.height200]}>
               <Image source={{ uri: attachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
             </View>
-
+            {depositType == "2" &&
+              <>
+                <View style={[Styles.width100per, Styles.paddingTop8]}>
+                  <Button
+                    icon={"plus"}
+                    mode="contained"
+                    onPress={() => {
+                      navigation.navigate("PDCDataUpdate", {
+                        type: "pdc"
+                      });
+                    }}
+                  >
+                    Update PDC Details
+                  </Button>
+                </View>
+              </>
+            }
             <List.Item title="Display" description={display} />
           </ScrollView>
         </View>
