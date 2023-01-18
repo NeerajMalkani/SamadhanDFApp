@@ -103,6 +103,7 @@ const UserProfile = ({ route, navigation }) => {
   const [ifscCode, setIfscCode] = React.useState("");
   const [cardType, setCardType] = React.useState("");
   const [openingBalance, setOpeningBalance] = React.useState("");
+  const [remarks, setRemarks] = React.useState("");
   const [display, setDisplay] = React.useState("");
 
 
@@ -404,6 +405,7 @@ const UserProfile = ({ route, navigation }) => {
             setIfscCode(data.item.ifscCode);
             setCardType(data.item.cardType);
             setOpeningBalance(data.item.openingBalance);
+            setRemarks(data.item.remarks);
             setDisplay(data.item.display);
 
 
@@ -433,6 +435,7 @@ const UserProfile = ({ route, navigation }) => {
         ifscCode: data.item.ifscCode,
         cardType: data.item.cardType,
         openingBalance: data.item.openingBalance,
+        remarks: data.item.remarks,
         display: data.item.display,
       },
     });
@@ -549,6 +552,7 @@ const UserProfile = ({ route, navigation }) => {
                   <List.Item title="IFSC Code" description={ifscCode} />
                   <List.Item title="Card Type Name" description={cardType} />
                   <List.Item title="Opening Balance" description={openingBalance} />
+                  <List.Item title="Remarks" description={remarks} />
                   <List.Item title="Display" description={display} />
                 </ScrollView>
               </View>

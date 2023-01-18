@@ -547,6 +547,12 @@ export const MenuItemsContractor = [
         navigation: "BranchListScreen",
       },
       {
+        title: "Add Bank",
+        type: "accordian",
+        index: 31,
+        navigation: "BankListScreen",
+      },
+      {
         title: "Add Designation",
         type: "accordian",
         index: 32,

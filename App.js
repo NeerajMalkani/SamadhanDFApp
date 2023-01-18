@@ -146,6 +146,9 @@ import AddMassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/AddIt
 import AddBankDetails from "./src/screens/Common/Profile Update/AddBankDetails";
 import PayableList from "./src/screens/Common/PocketDairy/PayableList";
 import ReceivableList from "./src/screens/Common/PocketDairy/ReceivableList";
+import BankListScreen from "./src/screens/Common/Organization/BankScreen";
+import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScreen";
+
 
 
 const Stack = createStackNavigator();
@@ -359,6 +362,9 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} />
+            
             </Drawer.Navigator>
           );
         case 4:
@@ -535,7 +541,7 @@ export default function App() {
               <Stack.Screen name="AddBankDetails" component={AddBankDetails} options={{ headerTitle: "Add Bank Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PayableList" component={PayableList} options={{ headerTitle: "Payable List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="ReceivableList" component={ReceivableList} options={{ headerTitle: "Receivable List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              
+              <Stack.Screen name="BankListScreen" component={BankListScreen} options={{ headerTitle: "Bank List Screen", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator> 
           </NavigationContainer>
         )}

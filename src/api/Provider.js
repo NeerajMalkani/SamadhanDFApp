@@ -350,6 +350,9 @@ class Provider {
     pckaddexpensesupdate: "pckaddexpensesupdate/",
     pckdashboard_payablelist: "pckdashboard_payablelist/",
     pckdashboard_receivablelist: "pckdashboard_receivablelist/",
+
+    branchbankrefnocheck:"branchbankrefnocheck/",
+    getbranchnamebankform:"	getbranchnamebankform/",
   };
 
   createDFPocketDairy(resource, params) {

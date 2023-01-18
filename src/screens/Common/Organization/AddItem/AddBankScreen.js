@@ -3,35 +3,37 @@ import { View, LogBox, Dimensions, RefreshControl, ScrollView, Image } from "rea
 import { ActivityIndicator, Title, Button, List, Card, HelperText, Searchbar, Checkbox, Snackbar, Subheading, Switch, FAB, TextInput }
     from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
-
-
-
-import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { communication } from "../../../utils/communication";
+import Provider from "../../../../api/Provider";
+import Header from "../../../../components/Header";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
+import { communication } from "../../../../utils/communication";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
-import { creds } from "../../../utils/credentials";
+import { creds } from "../../../../utils/credentials";
 import uuid from "react-native-uuid";
-import { AWSImagePath } from "../../../utils/paths";
+import { AWSImagePath } from "../../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-import { NullOrEmpty } from "../../../utils/validations";
+import { NullOrEmpty } from "../../../../utils/validations";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { RenderHiddenItems } from "../../../components/ListActions";
+import { RenderHiddenItems } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import NoItems from "../../../components/NoItems";
-import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
+import NoItems from "../../../../components/NoItems";
+import { APIConverter, RemoveUnwantedParameters } from "../../../../utils/apiconverter";
+LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
+let userID = 0,
+    companyID = 0;
 
-const AddBankDetails = ({ route, navigation }) => {
+const AddBankScreen = ({ route, navigation }) => {
     //#region Variables
-    const [accountHolderName, setAccountHolderName] = useState("");
-    const [accountHolderNameInvalid, setAccountHolderNameInvalid] = useState("");
-    const accountHolderNameRef = useRef({});
+
+    const [companyBranchNameFullData, setCompanyBranchNameFullData] = React.useState([]);
+    const [companyBranchNameData, setCompanyBranchNameData] = React.useState([]);
+    const [companyBranchName, setCompanyBranchNameName] = React.useState(route.params.type === "edit" ? route.params.data.companyBranchName : "");
+    const [companyBranchNameError, setCompanyBranchNameError] = React.useState(false);
 
     const [accountNo, setAccountNo] = useState("");
     const [accountNoInvalid, setAccountNoInvalid] = useState("");
@@ -79,9 +81,10 @@ const AddBankDetails = ({ route, navigation }) => {
     //#endregion
 
     //#region Functions
-    const onAccountHolderNameChanged = (text) => {
-        setAccountHolderName(text);
-        setAccountHolderNameInvalid(false);
+
+    const onCompanyBranchNameSelected = (selectedItem) => {
+        setCompanyBranchName(selectedItem);
+        setCompanyBranchNameError(false);
     };
 
     const onAccountNoChanged = (text) => {
@@ -137,19 +140,57 @@ const AddBankDetails = ({ route, navigation }) => {
         //     VerifyUser();
         //   }
         // }
-      };
-   
+    };
+
 
     //#endregion
 
+    //#region Function
 
+    const GetUserID = async () => {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData !== null) {
+            userID = JSON.parse(userData).UserID;
+            companyID = JSON.parse(userData).Sess_company_refno;
+            FetchCompanyBranchName();
+        }
+    };
+
+    useEffect(() => {
+        GetUserID();
+    }, []);
+
+    const FetchCompanyBranchName = () => {
+        let params = {
+            data: {
+                Sess_UserRefno: UserID,
+                Sess_company_refno: companyID
+            },
+        };
+        Provider.createDFCommon(Provider.API_URLS.getbranchnamebankform, params)
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    console.log(response.data);
+                    if (response.data.data) {
+                        response.data.data = APIConverter(response.data.data);
+                        
+                        setCompanyBranchNameFullData(response.data.data);
+                        const companybranchname = response.data.data.map((data) => data.companyBranchName);
+                        setCompanyBranchNameData(companybranchname);
+                    }
+                }
+            })
+            .catch((e) => { });
+    };
+    //#region
 
     return (
         <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+            <Header navigation={navigation} title="Add Bank Screen" />
             <View style={[Styles.padding16]}>
-                <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
-                <HelperText type="error" visible={accountHolderNameInvalid}>
-                    {communication.InvalidActivityName}
+                <Dropdown label="Company Branch Name" data={companyBranchNameData} onSelected={onCompanyBranchNameSelected} isError={companyBranchNameError} selectedItem={companyBranchName} />
+                <HelperText type="error" visible={companyBranchNameError}>
+                    {communication.InvalidCompanyBranchName}
                 </HelperText>
                 <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
                 <HelperText type="error" visible={accountNoInvalid}>
@@ -218,12 +259,12 @@ const AddBankDetails = ({ route, navigation }) => {
                     />
                 </View>
                 <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateForgotPassword()}>
-            Submit
-          </Button>
+                    Submit
+                </Button>
             </View>
         </ScrollView>
 
     );
 };
 
-export default AddBankDetails;
+export default AddBankScreen;

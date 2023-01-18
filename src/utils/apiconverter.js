@@ -28,6 +28,14 @@ export const APIConverter = (response, convertIDs, type) => {
 
     }
 
+    if (type == "contractor_bank") {
+      renameKey(obj, "branch_name", "companyBranchName");
+      renameKey(obj, "branch_refno", "branchID");
+      
+      
+
+    }
+
     if (type == "pkt_subcat") {
       renameKey(obj, "pck_sub_category_refno", "id");
     }
@@ -188,7 +196,9 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "contractor_product_refno", "contractorProductID");
     renameKey(obj, "pck_mode_refno", "pckModeID");
     renameKey(obj, "pck_mode_name", "pckModeName");
-
+    renameKey(obj, "opening_balance", "openingBalance");
+    renameKey(obj, "cardtype_name", "cardTypeName");
+    renameKey(obj, "cardtype_refno", "cardtypeID");
 
   });
 
