@@ -130,8 +130,6 @@ const PDCDataUpdate = ({ route, navigation }) => {
     };
 
     const UpdateData = () => {
-        //console.log('update===================');
-        console.log(filePath);
         let bankID = "";
 
         if (myBankListFullData.length > 0) {
@@ -161,13 +159,13 @@ const PDCDataUpdate = ({ route, navigation }) => {
                 }
                 : ""
         );
-        console.log(datas);
         Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsource_pdc_cheque_update, datas)
             .then((response) => {
-                console.log(response.data);
                 if (response.data && response.data.code === 200) {
-                    route.params.fetchData("update");
-                    navigation.goBack();
+                    //route.params.fetchData("update");
+                    //navigation.goBack();
+                    navigation.navigate("AddSourceList", { type: "update", fetchData: null });
+                    //navigation.navigate("AddSourceList");
                 } else if (response.data.code === 304) {
                     setSnackbarText(communication.AlreadyExists);
                     setSnackbarVisible(true);
