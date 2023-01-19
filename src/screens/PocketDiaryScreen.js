@@ -14,7 +14,7 @@ import NoItems from "../components/NoItems";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
 import { height } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-// import Dashboard from 'react-native-dashboard';
+import Dashboard from 'react-native-dashboard';
 import { FontAwesome } from 'react-native-vector-icons';
 
 const Icon = ({ icon, item, background }) => (

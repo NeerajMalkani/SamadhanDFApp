@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { Button, FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -21,6 +21,7 @@ const AddSourceList = ({ route, navigation }) => {
   //#region Variables
 
   const [attachmentImage, setAttachmentImage] = React.useState(AWSImagePath + "placeholder-image.png");
+  const [PDCattachmentImage, setPDCAttachmentImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -34,6 +35,7 @@ const AddSourceList = ({ route, navigation }) => {
   const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
 
+  const [transactionID, setTransactionID] = React.useState("");
   const [entryType, setEntryType] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [subCategoryName, setSubCategoryName] = React.useState("");
@@ -42,7 +44,8 @@ const AddSourceList = ({ route, navigation }) => {
   const [attachment, setAttachment] = React.useState("");
   const [display, setDisplay] = React.useState("");
   const [depositType, setDepositType] = React.useState("");
-
+  const [PDCStatus, setPDCStatus] = React.useState("");
+  //
 
   const refRBSheet = useRef();
   //#endregion 
@@ -126,7 +129,8 @@ const AddSourceList = ({ route, navigation }) => {
           description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
-            setDate(data.item.pck_trans_date)
+            setTransactionID(data.item.pck_trans_refno);
+            setDate(data.item.pck_trans_date);
             setEntryType(data.item.pck_entrytype_name);
             setCategoryName(data.item.pck_category_name);
             setSubCategoryName(data.item.pck_sub_category_name);
@@ -134,8 +138,11 @@ const AddSourceList = ({ route, navigation }) => {
             setAmount(data.item.amount);
             setAttachment(data.item.attach_receipt_url);
             setAttachmentImage(data.item.attach_receipt_url);
+            setPDCAttachmentImage(data.item.bankchallan_slip_url);
             setDisplay(data.item.view_status == "1" ? "Yes" : "No");
             setDepositType(data.item.deposit_type_refno);
+            setPDCStatus(data.item.pdc_cheque_status);
+
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -233,18 +240,29 @@ const AddSourceList = ({ route, navigation }) => {
             <List.Item title="Sub Category Name" description={subCategoryName} />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
             <List.Item title="Amount" description={amount} />
-            <View style={[Styles.width100per, Styles.height200]}>
-              <Image source={{ uri: attachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
-            </View>
-            {depositType == "2" &&
+            {attachmentImage != "" &&
               <>
-                <View style={[Styles.width100per, Styles.paddingTop8]}>
+                <View style={[Styles.width100per, Styles.height200]}>
+                  <Image source={{ uri: attachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
+                </View>
+              </>
+            }
+
+            <List.Item title="Display" description={display} />
+
+            {depositType == "2" && PDCStatus == "0" &&
+              <>
+                <View style={[Styles.width100per, Styles.paddingTop24, Styles.paddingHorizontal32, { elevation: 3 }]}>
                   <Button
                     icon={"plus"}
                     mode="contained"
                     onPress={() => {
+                      refRBSheet.current.close();
                       navigation.navigate("PDCDataUpdate", {
-                        type: "pdc"
+                        type: "pdc",
+                        data: {
+                          transactionID: transactionID
+                        }
                       });
                     }}
                   >
@@ -253,7 +271,15 @@ const AddSourceList = ({ route, navigation }) => {
                 </View>
               </>
             }
-            <List.Item title="Display" description={display} />
+
+            {depositType == "2" && PDCStatus == "1" && PDCattachmentImage &&
+              <>
+                <View style={[Styles.width100per, Styles.height200]}>
+                  <Image source={{ uri: PDCattachmentImage }} style={[Styles.borderred], { width: "100%", height: "100%" }} />
+                </View>
+              </>
+            }
+
           </ScrollView>
         </View>
       </RBSheet>

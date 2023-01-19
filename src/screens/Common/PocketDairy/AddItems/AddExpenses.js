@@ -16,7 +16,7 @@ import { PaperSelect } from "react-native-paper-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
 
-let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0;
+let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0;
 
 const AddExpenses = ({ route, navigation }) => {
 
@@ -183,6 +183,7 @@ const AddExpenses = ({ route, navigation }) => {
       groupID = JSON.parse(userData).Sess_group_refno;
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
+      designID = JSON.parse(userData).Sess_designation_refno;
       FetchEntryType();
 
       if (route.params.type === "edit") {
@@ -335,12 +336,12 @@ const AddExpenses = ({ route, navigation }) => {
             setPayModeFullData(response.data.data);
             const receiptMode = response.data.data.map((data) => data.pckModeName);
             setPayModeData(receiptMode);
-           //console.log(response.data.data);
+            //console.log(response.data.data);
             if (editID != "") {
-             //console.log('edit start ****************************');
-            //  //console.log(response.data.data.filter((el) => {
-            //     return el.pckModeID == editID;
-            //   })[0].pckModeName);
+              //console.log('edit start ****************************');
+              //  //console.log(response.data.data.filter((el) => {
+              //     return el.pckModeID == editID;
+              //   })[0].pckModeName);
               setPayMode(response.data.data.filter((el) => {
                 return el.pckModeID == editID;
               })[0].pckModeName);
@@ -418,6 +419,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
+        Sess_designation_refno: designID.toString(),
         pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
       }
     }
@@ -505,7 +507,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchCardType = (editID) => {
-   //console.log('start card type');
+    //console.log('start card type');
     let params = {
       data: {
         Sess_UserRefno: userID
@@ -513,17 +515,17 @@ const AddExpenses = ({ route, navigation }) => {
     }
     Provider.createDFPocketDairy(Provider.API_URLS.getcardtype_pckaddexpensesform, params)
       .then((response) => {
-       //console.log(response.data.data);
+        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCardTypeFullData(response.data.data);
             const cardType = response.data.data.map((data) => data.cardtype_name);
-           //console.log(cardType);
+            //console.log(cardType);
             setCardTypeData(cardType);
-           //console.log('card type setting===================');
-           //console.log(editID);
-           //console.log(response.data.data);
-            
+            //console.log('card type setting===================');
+            //console.log(editID);
+            //console.log(response.data.data);
+
             if (editID != "") {
               setCardType(response.data.data.filter((el) => {
                 return el.cardtype_refno == editID;
@@ -642,10 +644,10 @@ const AddExpenses = ({ route, navigation }) => {
       return el.deposit_type_name === depositeType;
     });
 
-   //console.log(mode);
+    //console.log(mode);
     //console.log(category);
-   //console.log(subcat);
-   //console.log(deposit);
+    //console.log(subcat);
+    //console.log(deposit);
 
     if (mode[0].pckModeID == "1") {
 
@@ -726,9 +728,9 @@ const AddExpenses = ({ route, navigation }) => {
       return el.deposit_type_name === text;
     });
 
-   //console.log(mode);
-   //console.log(subcat);
-   //console.log(deposit);
+    //console.log(mode);
+    //console.log(subcat);
+    //console.log(deposit);
 
     FetchBankList();
     setBankStatus(true);
@@ -821,7 +823,7 @@ const AddExpenses = ({ route, navigation }) => {
 
 
   const InsertData = () => {
-   //console.log('insert===================');
+    //console.log('insert===================');
     const datas = new FormData();
     let params = {
 
@@ -917,12 +919,12 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-   //console.log(params);
-   //console.log('data params ================');
-   //console.log(datas);
+    //console.log(params);
+    //console.log('data params ================');
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensescreate, datas)
       .then((response) => {
-       //console.log(response.data);
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -935,14 +937,14 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-       console.log(e);
+        console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
   };
 
   const UpdateData = () => {
-   //console.log('update===================');
+    //console.log('update===================');
     const datas = new FormData();
     let params = {
 
@@ -1040,7 +1042,7 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-   //console.log(datas);
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensesupdate, datas)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -1055,7 +1057,7 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-       console.log(e);
+        console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });

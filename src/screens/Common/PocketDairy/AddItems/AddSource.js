@@ -16,7 +16,7 @@ import { APIConverter } from "../../../../utils/apiconverter";
 import { common } from "@material-ui/core/colors";
 
 
-let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0;
+let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0;
 
 const AddSource = ({ route, navigation }) => {
 
@@ -122,6 +122,8 @@ const AddSource = ({ route, navigation }) => {
       groupID = JSON.parse(userData).Sess_group_refno;
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
+      designID = JSON.parse(userData).Sess_designation_refno;
+      
       FetchEntryType();
 
       if (route.params.type === "edit") {
@@ -325,7 +327,8 @@ const AddSource = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
+        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID,
+        Sess_designation_refno: designID.toString(),
       }
     }
     ////console.log(params);
