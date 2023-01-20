@@ -31,6 +31,7 @@ export const APIConverter = (response, convertIDs, type) => {
     if (type == "contractor_bank") {
       renameKey(obj, "branch_name", "companyBranchName");
       renameKey(obj, "branch_refno", "branchID");
+      renameKey(obj, "bank_refno", "bankID");
       
       
 
@@ -199,6 +200,8 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "opening_balance", "openingBalance");
     renameKey(obj, "cardtype_name", "cardTypeName");
     renameKey(obj, "cardtype_refno", "cardtypeID");
+    renameKey(obj, "remarks", "remark");
+  
 
   });
 

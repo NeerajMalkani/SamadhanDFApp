@@ -44,7 +44,7 @@ const BankListScreen = ({ navigation }) => {
     const [openingBalance, setOpeningBalance] = React.useState("");
     const [remarks, setRemarks] = React.useState("");
     const [display, setDisplay] = React.useState("");
-
+   
     const refRBSheet = useRef();
     //#endregion
 
@@ -69,7 +69,6 @@ const BankListScreen = ({ navigation }) => {
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
         }
-        console.log('start');
         let params = {
           data: {
             Sess_UserRefno: userID,
@@ -77,13 +76,12 @@ const BankListScreen = ({ navigation }) => {
             bank_refno: "all"
           },
         };
-        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.branchbankrefnocheck, params)
           .then((response) => {
             if (response.data && response.data.code === 200) {
               if (response.data.data) {
-                console.log(response.data.data);
                 response.data.data = APIConverter(response.data.data, false, "contractor_bank");
+
                 const lisData = [...response.data.data];
     
                 lisData.map((k, i) => {
@@ -121,7 +119,7 @@ const BankListScreen = ({ navigation }) => {
         } else {
             listSearchData[1](
                 listData[0].filter((el) => {
-                    return el.departmentName.toString().toLowerCase().includes(query.toLowerCase());
+                    return el.companyBranchName.toString().toLowerCase().includes(query.toLowerCase());
                 })
             );
         }
@@ -131,11 +129,13 @@ const BankListScreen = ({ navigation }) => {
         return (
             <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
                 <List.Item
-                    title={data.item.companyBranchName}
+                    title={data.item.bankName}
                     titleStyle={{ fontSize: 18 }}
-                    description={"Display: " + (data.item.display ? "Yes" : "No")}
+                    description={`Bank Branch: ${NullOrEmpty(data.item.branchName) ? "" : data.item.branchName}\nCompany Branch: ${NullOrEmpty(data.item.companyBranchName) ? "" : data.item.companyBranchName} `}
+                    // description={"Branch: " + (data.item.companyBranchName ? "Yes" : "No")}
                     onPress={() => {
                         refRBSheet.current.open();
+                        console.log(data.item);
                         setCompanyBranchName(data.item.companyBranchName);
                         setAccountNo(data.item.accountNumber);
                         setBankName(data.item.bankName);
@@ -143,7 +143,7 @@ const BankListScreen = ({ navigation }) => {
                         setIfscCode(data.item.ifscCode);
                         setCardType(data.item.cardTypeName);
                         setOpeningBalance(data.item.openingBalance);
-                        // setRemarks(data.item.remarks);
+                        setRemarks(data.item.remark);
                         setDisplay(data.item.display);
 
 
@@ -161,6 +161,7 @@ const BankListScreen = ({ navigation }) => {
     };
 
     const EditCallback = (data, rowMap) => {
+        console.log(data);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddBankScreen", {
             type: "edit",
@@ -168,14 +169,17 @@ const BankListScreen = ({ navigation }) => {
             data: {
                 id: data.item.id,
                 companyBranchName: data.item.companyBranchName,
-                accountNo: data.item.accountNo,
+                accountNo: data.item.accountNumber,
                 bankName: data.item.bankName,
-                bankBranchName: data.item.bankBranchName,
+                bankBranchName: data.item.branchName,
                 ifscCode: data.item.ifscCode,
-                cardType: data.item.cardType,
+                cardType: data.item.cardTypeName,
                 openingBalance: data.item.openingBalance,
-                // remarks: data.item.remarks,
+                remarks: data.item.remark,
                 display: data.item.display,
+                cardtypeID:data.item.cardtypeID,
+                bankID:data.item.bankID,
+                branchID:data.item.branch_refno,
             },
         });
     };
@@ -234,7 +238,7 @@ const BankListScreen = ({ navigation }) => {
                         <List.Item title="IFSC Code" description={ifscCode} />
                         <List.Item title="Card Type Name" description={cardType} />
                         <List.Item title="Opening Balance" description={openingBalance} />
-                        {/* <List.Item title="Remarks" description={remarks} /> */}
+                        <List.Item title="Remarks" description={remarks} />
                         <List.Item title="Display" description={display} />
                     </ScrollView>
                 </View>

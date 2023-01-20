@@ -28,6 +28,7 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0,
+companyID = 0;
   groupID = 0;
 
 let st_ID = 0,
@@ -328,7 +329,7 @@ const UserProfile = ({ route, navigation }) => {
     }
   };
 
-  const FetchData = (from) => {
+  const FetchBankData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
@@ -336,15 +337,17 @@ const UserProfile = ({ route, navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        category_refno: "all",
-      },
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        bank_refno: "all"
+    },
     };
+    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) { 
           if (response.data.data) {
-            
+            console.log(response.data.data);
              response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];

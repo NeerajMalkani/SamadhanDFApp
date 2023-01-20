@@ -26,50 +26,53 @@ LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]
 
 let userID = 0,
     companyID = 0;
+bank_refno = 0;
 
 const AddBankScreen = ({ route, navigation }) => {
     //#region Variables
+    const [selectedID, setSelectedID] = React.useState(route.params.type === "edit" ? route.params.data.bankID : "");
 
+    const [CompanyBranchNameList, setCompanyBranchNameList] = React.useState([]);
     const [companyBranchNameFullData, setCompanyBranchNameFullData] = React.useState([]);
     const [companyBranchNameData, setCompanyBranchNameData] = React.useState([]);
-    const [companyBranchName, setCompanyBranchNameName] = React.useState(route.params.type === "edit" ? route.params.data.companyBranchName : "");
+    const [companyBranchName, setCompanyBranchName] = React.useState(route.params.type === "edit" ? route.params.data.companyBranchName : "");
     const [companyBranchNameError, setCompanyBranchNameError] = React.useState(false);
+    // const [companyBranchNameID, setCompanyBranchNameID] = React.useState(route.params.type === "edit" ? route.params.data.companyBranchNameID : 0);
 
-    const [accountNo, setAccountNo] = useState("");
+    const [accountNo, setAccountNo] = useState(route.params.type === "edit" ? route.params.data.accountNo : "");
     const [accountNoInvalid, setAccountNoInvalid] = useState("");
     const accountNoRef = useRef({});
 
-    const [bankName, setBankName] = useState("");
+    const [bankName, setBankName] = useState(route.params.type === "edit" ? route.params.data.bankName : "");
     const [bankNameInvalid, setBankNameInvalid] = useState("");
     const bankNameRef = useRef({});
 
-    const [bankBranchName, setBankBranchName] = useState("");
+    const [bankBranchName, setBankBranchName] = useState(route.params.type === "edit" ? route.params.data.bankBranchName : "");
     const [bankBranchNameInvalid, setBankBranchNameInvalid] = useState("");
     const bankBranchNameRef = useRef({});
 
-    const [ifscCode, setIfscCode] = useState("");
+    const [ifscCode, setIfscCode] = useState(route.params.type === "edit" ? route.params.data.ifscCode : "");
     const [ifscCodeInvalid, setIfscCodeInvalid] = useState("");
     const ifscCodeRef = useRef({});
 
-    const [openingBalance, setOpeningBalance] = useState("");
+    const [openingBalance, setOpeningBalance] = useState(route.params.type === "edit" ? route.params.data.openingBalance : "");
     const [openingBalanceInvalid, setOpeningBalanceInvalid] = useState("");
     const openingBalanceRef = useRef({});
 
-    const [remarks, setRemarks] = useState("");
+    const [remarks, setRemarks] = useState(route.params.type === "edit" ? route.params.data.remarks : "");
     const [remarksInvalid, setRemarksInvalid] = useState("");
     const remarksRef = useRef({});
 
     const [checked, setChecked] = useState(true);
-
     const [cardType, setCardType] = useState([
         {
             title: "Debit Card",
-            isChecked: false,
+            isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("1") ? true : false,
             id: "1",
         },
         {
             title: "Credit Card",
-            isChecked: false,
+            isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("2") ? true : false,
             id: "2",
         },
     ]);
@@ -78,6 +81,8 @@ const AddBankScreen = ({ route, navigation }) => {
 
 
     const [isButtonLoading, setIsButtonLoading] = useState(false);
+    const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+    const [snackbarText, setSnackbarText] = React.useState("");
     //#endregion
 
     //#region Functions
@@ -92,6 +97,7 @@ const AddBankScreen = ({ route, navigation }) => {
         setAccountNoInvalid(false);
     };
     const onBankNameChanged = (text) => {
+        // setSelectedID(Number)
         setBankName(text);
         setBankNameInvalid(false);
     };
@@ -112,36 +118,6 @@ const AddBankScreen = ({ route, navigation }) => {
         setRemarksInvalid(false);
     };
 
-    const ValidateForgotPassword = () => {
-        // Keyboard.dismiss();
-        // let isValid = true;
-        // if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber)) {
-        //   isValid = false;
-        //   setIsMobileNumberInvalid(true);
-        // }
-        // if (otp1.length === 0 && otp2.length === 0 && otp3.length === 0 && otp4.length === 0) {
-        //   isValid = false;
-        //   setIsOTPInvalid(true);
-        // }
-        // if (password.length < 3) {
-        //   isValid = false;
-        //   setIsPasswordInvalid(true);
-        // }
-        // if (confirmPassword.length < 3) {
-        //   isValid = false;
-        //   setIsConfirmPasswordInvalid(true);
-        // }
-        // if (isValid) {
-        //   if (password !== confirmPassword) {
-        //     setIsConfirmPasswordInvalid(true);
-        //     setSnackbarText(communication.InvalidPasswordsMatch);
-        //     setIsSnackbarVisible(true);
-        //   } else {
-        //     VerifyUser();
-        //   }
-        // }
-    };
-
 
     //#endregion
 
@@ -152,36 +128,216 @@ const AddBankScreen = ({ route, navigation }) => {
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
             companyID = JSON.parse(userData).Sess_company_refno;
-            FetchCompanyBranchName();
+
+            if (route.params.type === "edit") {
+                FetchCompanyBranchName(route.params.data.companyBranchName);
+                FetchCardType(route.params.data.cardtypeID);
+
+            }
+            else {
+                FetchCompanyBranchName();
+                FetchCardType();
+            }
         }
     };
-
+    bankName
     useEffect(() => {
         GetUserID();
     }, []);
 
-    const FetchCompanyBranchName = () => {
+    const FetchCompanyBranchName = (editName) => {
         let params = {
             data: {
-                Sess_UserRefno: UserID,
+                Sess_UserRefno: userID,
                 Sess_company_refno: companyID
             },
         };
         Provider.createDFCommon(Provider.API_URLS.getbranchnamebankform, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     if (response.data.data) {
                         response.data.data = APIConverter(response.data.data);
-                        
-                        setCompanyBranchNameFullData(response.data.data);
-                        const companybranchname = response.data.data.map((data) => data.companyBranchName);
+                        const fullList = [];
+                        response.data.data.map((data: any, i: number) => {
+                            fullList.push({
+                                id: data.id,
+                                branchType: data.locationName + " >> " + data.branchType,
+                                locationName: data.locationName,
+                                oldBranchType: data.branchType
+                            });
+                        });
+                        setCompanyBranchNameFullData(fullList);
+                        const companybranchname = fullList.map((data) => data.branchType);
                         setCompanyBranchNameData(companybranchname);
+                        if (editName != "") {
+                            const branchList = fullList.filter((el) => {
+                                return el.locationName === editName;
+                            });
+
+                            if (branchList != null) {
+                                setCompanyBranchName(branchList[0].branchType);
+                            }
+                        }
                     }
                 }
             })
             .catch((e) => { });
     };
+
+    const FetchCardType = (selectedCards) => {
+        let params = {
+            data: {
+                Sess_UserRefno: userID
+            }
+        }
+        Provider.createDFPocketDairy(Provider.API_URLS.getcardtype_pckmypersonalbankform, params)
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    if (response.data.data) {
+                        const cardType = [];
+
+                        response.data.data.map((data) => {
+                            let selected = false;
+                            if (selectedCards !== null) {
+                                if (selectedCards.includes(data.cardtype_refno.toString())) {
+                                    selected = true;
+                                }
+
+                            }
+                            cardType.push(
+                                {
+                                    title: data.cardtype_name,
+                                    isChecked: selected,
+                                    id: data.cardtype_refno
+                                }
+                            );
+                        });
+
+                        setCardType(cardType);
+                    }
+                }
+            })
+            .catch((e) => { });
+    };
+
+    const ValidateSubmitButton = () => {
+        console.log('validate start');
+        console.log('start update');
+        let isValid = true;
+        if (companyBranchName.length === 0) {
+            setCompanyBranchNameError(true);
+            isValid = false;
+        }
+        if (bankName.length === 0) {
+            setBankNameInvalid(true);
+            isValid = false;
+        }
+        if (isValid) {
+            if (route.params.type === "edit") {
+                console.log('update data');
+                UpdateData();
+            } else {
+                console.log('insert data');
+                InsertData();
+            }
+        }
+    };
+
+    const InsertData = () => {
+        console.log('insert start');
+        let ct = [];
+        cardType.map((k, i) => {
+            if (k.isChecked) {
+                ct.push(k.id);
+            }
+        });
+        let params = {
+            data: {
+                Sess_UserRefno: userID,
+                Sess_company_refno: companyID,
+                branch_refno: companyBranchNameFullData.find((el) => {
+                    return el.branchType === companyBranchName;
+                }).id,
+                bank_account_no: accountNo,
+                bank_name: bankName,
+                bank_branch_name: bankBranchName,
+                ifsc_code: ifscCode,
+                cardtype_refno: ct,
+                opening_balance: openingBalance,
+                remarks: remarks,
+                view_status: checked ? 1 : 0,
+            }
+        };
+        console.log(params);
+        Provider.createDFCommon(Provider.API_URLS.branchbankcreate, params)
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    console.log(response.data);
+                    route.params.fetchData("add");
+                    navigation.goBack();
+                } else if (response.data.code === 304) {
+                    // console.log(response.data.code);
+                    setSnackbarText(communication.AlreadyExists);
+                    setSnackbarVisible(true);
+                } else {
+                    setSnackbarText(communication.InsertError);
+                    setSnackbarVisible(true);
+                }
+            })
+            .catch((e) => {
+                // console.log(e);
+                setSnackbarText(communication.NetworkError);
+                setSnackbarVisible(true);
+            });
+    };
+
+    const UpdateData = () => {
+        let ct = [];
+        cardType.map((k, i) => {
+            if (k.isChecked) {
+                ct.push(k.id);
+            }
+        });
+        let params = {
+            data: {
+                Sess_UserRefno: userID,
+                Sess_company_refno: companyID,
+                bank_refno: selectedID,
+                branch_refno: companyBranchNameFullData.find((el) => {
+                    return el.branchType === companyBranchName;
+                }).id,
+                bank_account_no: accountNo,
+                bank_name: bankName,
+                bank_branch_name: bankBranchName,
+                ifsc_code: ifscCode,
+                cardtype_refno: ct,
+                opening_balance: openingBalance,
+                remarks: remarks,
+                view_status: checked ? "1" : "0",
+            },
+        };
+        // console.log(params);
+        Provider.createDFCommon(Provider.API_URLS.branchbankupdate, params)
+            .then((response) => {
+                if (response.data && response.data.code === 200) {
+                    // console.log(response.data);
+                    route.params.fetchData("update");
+                    navigation.goBack();
+                } else if (response.data.code === 304) {
+                    setSnackbarText(communication.AlreadyExists);
+                    setSnackbarVisible(true);
+                } else {
+                    setSnackbarText(communication.UpdateError);
+                    setSnackbarVisible(true);
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+                setSnackbarText(communication.NetworkError);
+                setSnackbarVisible(true);
+            });
+    };
+
     //#region
 
     return (
@@ -258,7 +414,7 @@ const AddBankScreen = ({ route, navigation }) => {
                         }}
                     />
                 </View>
-                <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateForgotPassword()}>
+                <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSubmitButton}>
                     Submit
                 </Button>
             </View>
