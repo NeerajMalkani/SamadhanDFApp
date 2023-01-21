@@ -63,7 +63,7 @@ const AddBankScreen = ({ route, navigation }) => {
     const [remarksInvalid, setRemarksInvalid] = useState("");
     const remarksRef = useRef({});
 
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : true);
     const [cardType, setCardType] = useState([
         {
             title: "Debit Card",
@@ -140,7 +140,7 @@ const AddBankScreen = ({ route, navigation }) => {
             }
         }
     };
-    bankName
+    
     useEffect(() => {
         GetUserID();
     }, []);

@@ -19,6 +19,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
     companyID = 0,
+   
     groupID = 0;
 
 
@@ -55,6 +56,7 @@ const BankListScreen = ({ navigation }) => {
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
             companyID = JSON.parse(userData).Sess_company_refno;
+            
             FetchData();
         }
     };
@@ -81,9 +83,7 @@ const BankListScreen = ({ navigation }) => {
             if (response.data && response.data.code === 200) {
               if (response.data.data) {
                 response.data.data = APIConverter(response.data.data, false, "contractor_bank");
-
                 const lisData = [...response.data.data];
-    
                 lisData.map((k, i) => {
                   k.key = (parseInt(i) + 1).toString();
                 });

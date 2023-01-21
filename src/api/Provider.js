@@ -356,6 +356,10 @@ class Provider {
     pckaddsource_pdc_cheque_update: "pckaddsource_pdc_cheque_update/",
     branchbankcreate:"branchbankcreate/",
     branchbankupdate:"branchbankupdate/",
+
+    userbankrefnocheck: "userbankrefnocheck/",
+    userbankcreate:"userbankcreate/",
+    userbankupdate:"userbankupdate/",
   };
 
   createDFPocketDairy(resource, params) {

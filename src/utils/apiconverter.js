@@ -201,6 +201,8 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "cardtype_name", "cardTypeName");
     renameKey(obj, "cardtype_refno", "cardtypeID");
     renameKey(obj, "remarks", "remark");
+    renameKey(obj, "bank_ac_holder_name", "acHolderName");
+    // renameKey(obj, "bank_refno", "bankID");
   
 
   });

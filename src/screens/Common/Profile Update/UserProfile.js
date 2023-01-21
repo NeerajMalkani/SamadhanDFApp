@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View,LogBox, Dimensions,RefreshControl, ScrollView, Image } from "react-native";
-import { ActivityIndicator,  Title ,Button, List, Card, HelperText,Searchbar, Checkbox, Snackbar, Subheading, Switch, FAB, TextInput }
+import { View, LogBox, Dimensions, RefreshControl, ScrollView, Image } from "react-native";
+import { ActivityIndicator, Title, Button, List, Card, HelperText, Searchbar, Checkbox, Snackbar, Subheading, Switch, FAB, TextInput }
   from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
@@ -24,12 +24,15 @@ import NoItems from "../../../components/NoItems";
 import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-
+let userID = 0,
+  companyID = 0,
+  // branchID=0,
+  groupID = 0;
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0,
-companyID = 0;
-  groupID = 0;
+// let userID = 0,
+
+//   groupID = 0;
 
 let st_ID = 0,
   ci_ID = 0;
@@ -112,12 +115,15 @@ const UserProfile = ({ route, navigation }) => {
 
   //#endregion
 
- 
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      // branchID = JSON.parse(userData).Sess_branch_refno;
       FetchBasicDetails();
+      FetchData();
     }
   };
   let tempStateName = "";
@@ -262,7 +268,7 @@ const UserProfile = ({ route, navigation }) => {
     setCNError(false);
   };
 
- 
+
 
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
@@ -328,8 +334,12 @@ const UserProfile = ({ route, navigation }) => {
       }
     }
   };
+  useEffect(() => {
+    FetchData();
+  }, []);
 
-  const FetchBankData = (from) => {
+
+  const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
@@ -338,23 +348,24 @@ const UserProfile = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno: companyID,
+        Sess_company_refno: companyID.toString(),
         bank_refno: "all"
-    },
+      },
     };
-    console.log(params);
-    Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
+
+    Provider.createDFCommon(Provider.API_URLS.userbankrefnocheck, params)
       .then((response) => {
-        if (response.data && response.data.code === 200) { 
+        if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
-             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
+
             response.data.data = APIConverter(response.data.data);
+            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
+            console.log(response.data.data);
             listSearchData[1](response.data.data);
           }
         } else {
@@ -375,10 +386,6 @@ const UserProfile = ({ route, navigation }) => {
       });
   };
 
-  useEffect(() => {
-    FetchData();
-  }, []);
-
   const onChangeSearch = (query) => {
     setSearchQuery(query);
     if (query === "") {
@@ -396,19 +403,19 @@ const UserProfile = ({ route, navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.accountHolderName}
+          title={data.item.bankName}
           titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          description={`Bank Branch: ${NullOrEmpty(data.item.branchName) ? "" : data.item.branchName}\nAccount Holder Name: ${NullOrEmpty(data.item.acHolderName) ? "" : data.item.acHolderName} `}
           onPress={() => {
             refRBSheet.current.open();
-            setAccountHolderName(data.item.accountHolderName);
-            setAccountNo(data.item.accountNo);
+            setAccountHolderName(data.item.acHolderName);
+            setAccountNo(data.item.accountNumber);
             setBankName(data.item.bankName);
-            setBankBranchName(data.item.bankBranchName);
+            setBankBranchName(data.item.branchName);
             setIfscCode(data.item.ifscCode);
-            setCardType(data.item.cardType);
+            setCardType(data.item.cardTypeName);
             setOpeningBalance(data.item.openingBalance);
-            setRemarks(data.item.remarks);
+            setRemarks(data.item.remark);
             setDisplay(data.item.display);
 
 
@@ -425,25 +432,28 @@ const UserProfile = ({ route, navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log(data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddBankDetails", {
       type: "edit",
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        accountHolderName: data.item.accountHolderName,
-        accountNo: data.item.accountNo,
+        accountHolderName: data.item.acHolderName,
+        accountNo: data.item.accountNumber,
         bankName: data.item.bankName,
-        bankBranchName: data.item.bankBranchName,
+        bankBranchName: data.item.branchName,
         ifscCode: data.item.ifscCode,
-        cardType: data.item.cardType,
+        cardType: data.item.cardTypeName,
         openingBalance: data.item.openingBalance,
-        remarks: data.item.remarks,
+        remarks: data.item.remark,
         display: data.item.display,
+        bankID: data.item.bank_refno,
+        cardtypeID: data.item.cardtypeID,
       },
     });
   };
- 
+
 
 
   //#endregion
@@ -563,7 +573,7 @@ const UserProfile = ({ route, navigation }) => {
           </View>
         );
 
-      
+
       default:
         return null;
     }
