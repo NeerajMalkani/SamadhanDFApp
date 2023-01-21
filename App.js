@@ -150,6 +150,8 @@ import BankListScreen from "./src/screens/Common/Organization/BankScreen";
 import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScreen";
 
 import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
+import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
+import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -364,6 +366,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyPersonalBankScreen" component={MyPersonalBankScreen} />
             
             </Drawer.Navigator>
           );
@@ -543,6 +546,8 @@ export default function App() {
               <Stack.Screen name="ReceivableList" component={ReceivableList} options={{ headerTitle: "Receivable List", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="BankListScreen" component={BankListScreen} options={{ headerTitle: "Bank List Screen", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PDCDataUpdate" component={PDCDataUpdate} options={{ headerTitle: "Update PDC Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="MyPersonalBankScreen" component={MyPersonalBankScreen} options={{ headerTitle: "My Personal Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="AddMyPersonalBank" component={AddMyPersonalBank} options={{ headerTitle: "Add My Personal Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator> 
           </NavigationContainer>
         )}

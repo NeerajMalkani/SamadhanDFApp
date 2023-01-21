@@ -360,6 +360,10 @@ class Provider {
     userbankrefnocheck: "userbankrefnocheck/",
     userbankcreate:"userbankcreate/",
     userbankupdate:"userbankupdate/",
+
+    pckmypersonalbankrefnocheck:"pckmypersonalbankrefnocheck/",
+    pckmypersonalbankcreate:"pckmypersonalbankcreate/",
+    pckmypersonalbankupdate:"pckmypersonalbankupdate/",
   };
 
   createDFPocketDairy(resource, params) {

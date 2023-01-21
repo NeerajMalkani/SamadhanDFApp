@@ -695,7 +695,7 @@ export const MenuItemsContractor = [
         title: "My Personal Bank",
         type: "accordian",
         index: 82,
-        //navigation: "CreatePurchaseOrderScreen",
+        navigation: "MyPersonalBankScreen",
       },
       {
         title: "Add Source",
