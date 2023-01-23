@@ -14,6 +14,7 @@ import { NullOrEmpty } from "../../../utils/validations";
 import { useRadioGroup } from "@material-ui/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AWSImagePath } from "../../../utils/paths";
+import { creds, projectVariables } from "../../../utils/credentials";
 
 let userID = 0,companyID = 0, branchID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
