@@ -86,9 +86,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
-            // companyID = JSON.parse(userData).Sess_company_refno; +0.
-            // branchID = JSON.parse(userData).Sess_branch_refno;
-            // console.log(route.params.data.bankID);
+          
             if (route.params.type === "edit") {
                 FetchCardType(route.params.data.cardtypeID);
 
@@ -135,9 +133,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
     }, []);
 
     const FetchCardType = (selectedCards) => {
-        // console.log('card type ================');
-        // console.log(selectedCards);
-        // console.log('card type end ============================');
+       
         let params = {
             data: {
                 Sess_UserRefno: userID
@@ -174,8 +170,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
     };
 
     const ValidateSubmitButton = () => {
-        console.log('validate start');
-        console.log('start update');
+        
         let isValid = true;
         if (accountHolderName.length === 0) {
             setAccountNoInvalid(true);
@@ -187,17 +182,14 @@ const AddMyPersonalBank = ({ route, navigation }) => {
         }
         if (isValid) {
             if (route.params.type === "edit") {
-                console.log('update data');
                 UpdateData();
             } else {
-                console.log('insert data');
                 InsertData();
             }
         }
     };
 
     const InsertData = () => {
-        console.log('insert start');
         let ct = [];
         cardType.map((k, i) => {
             if (k.isChecked) {
@@ -218,14 +210,10 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             },
         };
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankcreate, params)
             .then((response) => {
-                console.log('stat.................');
-                console.log(response.data);
-                console.log('end............');
+               
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
@@ -266,11 +254,9 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             },
         };
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankupdate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     route.params.fetchData("update");
                     navigation.goBack();
                 } else if (response.data.code === 304) {

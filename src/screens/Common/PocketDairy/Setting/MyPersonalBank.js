@@ -46,7 +46,6 @@ const MyPersonalBankScreen = ({ navigation }) => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
-            console.log('page load');
             FetchData();
         }
     };
@@ -62,30 +61,24 @@ const MyPersonalBankScreen = ({ navigation }) => {
             setSnackbarColor(theme.colors.success);
             setSnackbarVisible(true);
         }
-        console.log('fcjhsgj');
         let params = {
             data: {
                 Sess_UserRefno: userID ,
                 bank_refno: "all"
             },
         };
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankrefnocheck, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
-                    console.log('start..........');
-                    console.log(response.data.data);
-                    console.log('end..........');
+                   
                     if (response.data.data) {
 
                         response.data.data = APIConverter(response.data.data);
-                        //console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
                         });
                         listData[1](response.data.data);
-                        console.log(response.data.data);
                         listSearchData[1](response.data.data);
                     }
                 } else {
