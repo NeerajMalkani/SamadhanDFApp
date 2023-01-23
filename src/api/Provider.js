@@ -362,8 +362,11 @@ class Provider {
     userbankupdate:"userbankupdate/",
 
     pckmypersonalbankrefnocheck:"pckmypersonalbankrefnocheck/",
-    pckmypersonalbankcreate:"pckmypersonalbankcreate/",
     pckmypersonalbankupdate:"pckmypersonalbankupdate/",
+    get_pckmyclientname: "get_pckmyclientname/",
+    get_pckmyclientprojectname: "get_pckmyclientprojectname/",
+    getuserapprovelist: "getuserapprovelist/",
+    get_pckpaymenttype: "get_pckpaymenttype/",
   };
 
   createDFPocketDairy(resource, params) {

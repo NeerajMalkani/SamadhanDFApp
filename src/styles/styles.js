@@ -34,6 +34,12 @@ export const Styles = StyleSheet.create({
   textColorWhite: {
     color: theme.colors.textLight,
   },
+  textColorDark: {
+    color: theme.colors.primaryText,
+  },
+  textColorDarkSecondary: {
+    color: theme.colors.secondaryText,
+  },
 
   backgroundColor: {
     backgroundColor: theme.colors.textLight,
@@ -43,6 +49,15 @@ export const Styles = StyleSheet.create({
   },
   backgroundColorred: {
     backgroundColor: "red"
+  },
+  backgroundSecondaryLightColor: {
+    backgroundColor: theme.colors.backgroundSecondaryLight,
+  },
+  backgroundGreen: {
+    backgroundColor: theme.colors.containerBgGreen,
+  },
+  horizontalArrowLineBG: {
+    backgroundColor: "#EAEAEA"
   },
 
   redColor: {
@@ -129,6 +144,11 @@ export const Styles = StyleSheet.create({
   bordergray: {
     borderWidth: 1,
     borderColor: "#a6a6a6",
+    borderStyle: "solid"
+  },
+  borderCD: {
+    borderWidth: 1,
+    borderColor: "#CDCDCD",
     borderStyle: "solid"
   },
 
@@ -291,6 +311,10 @@ export const Styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
+  borderTopRadius24: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
   borderTopRadius32: {
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -319,6 +343,9 @@ export const Styles = StyleSheet.create({
   },
   padding12: {
     padding: 12,
+  },
+  padding14: {
+    padding: 14,
   },
   padding16: {
     padding: 16,
@@ -438,7 +465,7 @@ export const Styles = StyleSheet.create({
   },
   paddingLeft4: {
     paddingLeft: 4,
-  }, 
+  },
 
   paddingVertical0: {
     paddingVertical: 0,
@@ -827,6 +854,9 @@ export const Styles = StyleSheet.create({
   width64: {
     width: 64,
   },
+  width70: {
+    width: 70,
+  },
   width72: {
     width: 72,
   },
@@ -879,6 +909,9 @@ export const Styles = StyleSheet.create({
   },
   height48: {
     height: 48,
+  },
+  height50: {
+    height: 50,
   },
   height56: {
     height: 56,
@@ -1017,11 +1050,88 @@ export const Styles = StyleSheet.create({
     justifyContent: "space-evenly"
   },
   ShadowColor: {
-    shadowColor:"black",
+    shadowColor: "black",
     shadowRadius: 10,
     shadowOpacity: 1,
-  }
+  },
   /*#end postion */
+
+  BottomShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  TopShadow: {
+    shadowRadius: 2,
+    shadowOffset: {
+      width: 0,
+      height: -3,
+    },
+    shadowColor: '#000000',
+    elevation: 4,
+  },
+  boxElevation: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+  },
+  boxTopElevation: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -10,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.00,
+    elevation: 3,
+  },
+
+  HomeTitle: {
+    fontSize: 16,
+    color: theme.colors.primaryText,
+    width: "100%",
+    fontWeight: "bold",
+  },
+  userCount: {
+    fontSize: 24,
+    color: theme.colors.primaryText,
+    fontWeight: "bold",
+  },
+  userCountLabel: {
+    fontSize: 12,
+    color: theme.colors.primaryText,
+    fontWeight: "400",
+  },
+  buttonIconLabel: {
+    fontSize: 12,
+    color: theme.colors.primaryText,
+    fontWeight: "400",
+    marginTop: 4,
+  },
+  userCountDevider: {
+    height: 50,
+    width: 1,
+    marginHorizontal: 6,
+    backgroundColor: "#EAEAEA",
+  },
+
+  jobBG: {
+    backgroundColor: "#4A00E0",
+  },
+  homeBox: {
+    backgroundColor: theme.colors.textLight,
+    elevation: 5
+  },
+
+
+
 }
 
 );

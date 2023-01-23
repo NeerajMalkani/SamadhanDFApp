@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
 
-const DeclinedUserScreen = ({ navigation }) => {
+const ApprovedUserScreen = ({ navigation }) => {
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -65,7 +65,7 @@ const DeclinedUserScreen = ({ navigation }) => {
         group_refno: "all",
       },
     };
-    Provider.createDFAdmin("getuserapprovelist/", params)
+    Provider.createDFAdmin(Provider.API_URLS.getuserapprovelist, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -234,4 +234,4 @@ const DeclinedUserScreen = ({ navigation }) => {
   );
 };
 
-export default DeclinedUserScreen;
+export default ApprovedUserScreen;
