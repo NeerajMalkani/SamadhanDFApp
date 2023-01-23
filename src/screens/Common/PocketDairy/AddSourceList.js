@@ -13,8 +13,9 @@ import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AWSImagePath } from "../../../utils/paths";
+import { creds, projectVariables } from "../../../utils/credentials";
 
-let userID = 0;
+let userID = 0, companyID = 0, branchID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const AddSourceList = ({ route, navigation }) => {
@@ -57,6 +58,8 @@ const AddSourceList = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      branchID = JSON.parse(userData).Sess_branch_refno;
       FetchData();
     }
   };
@@ -70,14 +73,16 @@ const AddSourceList = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        pck_trans_refno: "all"
+        pck_trans_refno: "all",
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO,
       }
     }
-    Provider.createDFPocketDairy(Provider.API_URLS.pckaddsource_pcktransrefnocheck, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -185,7 +190,11 @@ const AddSourceList = ({ route, navigation }) => {
         pdc_cheque_status: data.item.pdc_cheque_status,
         reminder_date: data.item.reminder_date,
         utr_no: data.item.utr_no,
-        view_status: data.item.view_status
+        view_status: data.item.view_status,
+        myclient_refno:data.item.myclient_refno,
+        cont_project_refno:data.item.cont_project_refno,
+        invoice_no:data.item.invoice_no,
+        payment_type_refno:data.item.payment_type_refno,
 
       },
     });

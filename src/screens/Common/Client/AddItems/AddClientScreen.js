@@ -233,8 +233,16 @@ const AddClientScreen = ({ route, navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.ClientCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
-          navigation.goBack();
+
+          if(route.params.type == "source_client") {
+            route.params.fetchClientList();
+            navigation.goBack();
+          }
+          else {
+            route.params.fetchData("add");
+            navigation.goBack();
+          }
+          
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);

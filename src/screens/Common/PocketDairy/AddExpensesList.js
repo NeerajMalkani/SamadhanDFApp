@@ -15,7 +15,7 @@ import { useRadioGroup } from "@material-ui/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AWSImagePath } from "../../../utils/paths";
 
-let userID = 0;
+let userID = 0,companyID = 0, branchID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const AddExpensesList = ({ navigation }) => {
@@ -54,6 +54,8 @@ const AddExpensesList = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      branchID = JSON.parse(userData).Sess_branch_refno;
       FetchData();
     }
   };
@@ -67,10 +69,13 @@ const AddExpensesList = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        pck_trans_refno: "all"
+        pck_trans_refno: "all",
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO,
       }
     }
-    Provider.createDFPocketDairy(Provider.API_URLS.pckaddexpenses_pcktransrefnocheck, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
