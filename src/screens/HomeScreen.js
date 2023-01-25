@@ -391,11 +391,23 @@ const HomeScreen = ({ route, navigation }) => {
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>{route.params.userDetails[0].FullName}</Title>
           <Text style={[Styles.textColorDarkSecondary, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
-        <TouchableNativeFeedback>
-          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
-            <Icon name="bell-outline" size={24} color={theme.colors.iconOutline} />
-          </View>
-        </TouchableNativeFeedback>
+        {
+          userRoleID === "2" ? (
+            <TouchableNativeFeedback>
+              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+                <Icon name="bell-outline" size={24} color={theme.colors.iconOutline} />
+              </View>
+            </TouchableNativeFeedback>
+          ) : (
+            <TouchableNativeFeedback>
+              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
+                <Icon name="logout" size={24} color={theme.colors.iconOutline} />
+              </View>
+            </TouchableNativeFeedback>
+          )
+
+        }
+
       </View>
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
@@ -430,23 +442,23 @@ const HomeScreen = ({ route, navigation }) => {
                     <View style={[Styles.borderRadius8, Styles.homeBox, Styles.paddingHorizontal12, Styles.paddingVertical8,
                     Styles.flexRow, Styles.flexAlignCenter, { height: 92 }]}>
                       <View style={[Styles.width70]}>
-                        <Text style={[Styles.userCount]}>{_user_count[2].roleCount}</Text>
-                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count[2].roleName}</Text>
+                        <Text style={[Styles.userCount]}>{_user_count != null ? _user_count[2].roleCount : "0"}</Text>
+                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count != null ? _user_count[2].roleName : ""}</Text>
                       </View>
                       <View style={[Styles.userCountDevider]}></View>
                       <View style={[Styles.width70]}>
-                        <Text style={[Styles.userCount]}>{_user_count[1].roleCount}</Text>
-                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count[1].roleName}</Text>
+                        <Text style={[Styles.userCount]}>{_user_count != null ? _user_count[1].roleCount : "0"}</Text>
+                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count != null ? _user_count[1].roleName : ""}</Text>
                       </View>
                       <View style={[Styles.userCountDevider]}></View>
                       <View style={[Styles.width70]}>
-                        <Text style={[Styles.userCount]}>{_user_count[0].roleCount}</Text>
-                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count[0].roleName}</Text>
+                        <Text style={[Styles.userCount]}>{_user_count != null ? _user_count[0].roleCount : "0"}</Text>
+                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count != null ? _user_count[0].roleName : ""}</Text>
                       </View>
                       <View style={[Styles.userCountDevider]}></View>
                       <View style={[Styles.width70]}>
-                        <Text style={[Styles.userCount]}>{_user_count[3].roleCount}</Text>
-                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count[3].roleName}</Text>
+                        <Text style={[Styles.userCount]}>{_user_count != null ? _user_count[3].roleCount : "0"}</Text>
+                        <Text style={[Styles.userCountLabel, Styles.marginTop4]}>{_user_count != null ? _user_count[3].roleName : ""}</Text>
                       </View>
                     </View>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
@@ -457,18 +469,18 @@ const HomeScreen = ({ route, navigation }) => {
                         <Text style={[Styles.buttonIconLabel]}>Approved ></Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("PendingUserScreen", { type: "add" });
-                      }}
-                       style={[Styles.borderRadius8, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.homeBox, { width: 100, height: 56 }]}>
+                        onPress={() => {
+                          navigation.navigate("PendingUserScreen", { type: "add" });
+                        }}
+                        style={[Styles.borderRadius8, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.homeBox, { width: 100, height: 56 }]}>
                         <Icon name="clock-alert" size={22} color={theme.colors.pendingIcon} />
                         <Text style={[Styles.buttonIconLabel,]}>Pending ></Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("DeclinedUserScreen", { type: "add" });
-                      }}
-                      style={[Styles.borderRadius8, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.homeBox, { width: 100, height: 56 }]}>
+                        onPress={() => {
+                          navigation.navigate("DeclinedUserScreen", { type: "add" });
+                        }}
+                        style={[Styles.borderRadius8, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.homeBox, { width: 100, height: 56 }]}>
                         <Icon name="close-circle" size={22} color={theme.colors.error} />
                         <Text style={[Styles.buttonIconLabel,]}>Decline ></Text>
                       </TouchableOpacity>
@@ -478,27 +490,27 @@ const HomeScreen = ({ route, navigation }) => {
                     <Text style={[Styles.HomeTitle]}>Service Catlogue</Text>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
                       <TouchableOpacity
-                      onPress={() => { navigation.navigate("WorkFloorScreen");}}
-                      
-                      style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                        onPress={() => { navigation.navigate("WorkFloorScreen"); }}
+
+                        style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.serviceCatelogueIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Work Floor</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("WorkLocationScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("WorkLocationScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="map-marker-radius" size={22} color={theme.colors.serviceCatelogueIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Work Location</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("DesignTypeScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("DesignTypeScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="drawing-box" size={22} color={theme.colors.serviceCatelogueIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Design Type</Text>
                       </TouchableOpacity>
                     </View>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("MaterialSetupScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 156, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("MaterialSetupScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 156, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.serviceCatelogueIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Materials Setup</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("PostNewDesignScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 156, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("PostNewDesignScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 156, height: 72 }]}>
                         <Icon name="home-city" size={22} color={theme.colors.serviceCatelogueIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Post New Design</Text>
                       </TouchableOpacity>
@@ -507,49 +519,49 @@ const HomeScreen = ({ route, navigation }) => {
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Masters</Text>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("ActivityRolesScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("ActivityRolesScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Activity</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("ServicesScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("ServicesScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Service</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("UnitOfSalesScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("UnitOfSalesScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Unit of Sales</Text>
                       </TouchableOpacity>
                     </View>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("CategoryScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("CategoryScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Category</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("ProductScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("ProductScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Product</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("ServiceProductScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("ServiceProductScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Service Product</Text>
                       </TouchableOpacity>
                     </View>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("DepartmentScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("DepartmentScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Department</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("LocationTypeScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("LocationTypeScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Location Type</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("DesignationScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("DesignationScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Designation</Text>
                       </TouchableOpacity>
                     </View>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("EWayBillScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("EWayBillScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter, Styles.flexAlignCenter, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>E-Way Bill</Text>
                       </TouchableOpacity>
@@ -558,19 +570,19 @@ const HomeScreen = ({ route, navigation }) => {
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Production Unit Master</Text>
                     <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("ABrandConversationValue");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                      <TouchableOpacity onPress={() => { navigation.navigate("ABrandConversationValue"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
                       Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 108 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.productionIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Brand
                           Conversion
                           Value</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("WidthOfGpCoil");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                      <TouchableOpacity onPress={() => { navigation.navigate("WidthOfGpCoil"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
                       Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 108 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.productionIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Width of GP Coil</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("MassOfZincCoating");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                      <TouchableOpacity onPress={() => { navigation.navigate("MassOfZincCoating"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
                       Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 108 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.productionIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Mass of zinc
@@ -582,12 +594,12 @@ const HomeScreen = ({ route, navigation }) => {
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Pocket Dairy</Text>
                     <View style={[Styles.marginTop16, Styles.flexRow]}>
-                      <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                      <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
                       Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Category</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen");}} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                      <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
                       Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72, marginLeft: 16 }]}>
                         <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
                         <Text style={[Styles.buttonIconLabel,]}>Sub-Category</Text>

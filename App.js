@@ -1,6 +1,6 @@
 import "./src/components/ignoreWarnings";
 import { Provider as PaperProvider, Text, List } from "react-native-paper";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
 import { Styles } from "./src/styles/styles";
@@ -190,9 +190,19 @@ export default function App() {
     }
   };
 
+  const LogoutUser = async () => {
+    try {
+      await AsyncStorage.setItem("user", "{}");
+      navigationRef.dispatch(StackActions.replace("Login"));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     SetUser();
   }, []);
+
 
   let activeIndex = -1;
   const DrawerContent = (props) => {
@@ -226,7 +236,7 @@ export default function App() {
         />
         {menuItems.map((k, i) => {
           return k.roleID === parseInt(userDetails[0].RoleID) ? (
-            k.type === "item" ? (
+            k.type === "item" && k.title != "Logout" ? (
               <DrawerItem
                 key={i}
                 focused={activeIndex === parseInt(i) ? true : false}
@@ -242,7 +252,22 @@ export default function App() {
                   }
                 }}
               />
-            ) : (
+            ) :
+            k.type === "item" && k.title == "Logout" ? (
+              <DrawerItem
+                key={i}
+                focused={activeIndex === parseInt(i) ? true : false}
+                style={[Styles.borderBottom1]}
+                label={({ focused }) => {
+                  return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{k.title}</Text>;
+                }}
+                icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
+                onPress={(e) => {
+                  LogoutUser();
+                }}
+              />
+            )
+             : (
               <List.Accordion
                 key={i}
                 title={k.title}
@@ -465,7 +490,7 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[Styles.flex1, Styles.primaryBgColor, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
+    <SafeAreaView style={[Styles.flex1, Styles.backgroundColorWhite, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
       <PaperProvider theme={theme}>
         {userDetails[0] === null ? (
           <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.backgroundColor]}>

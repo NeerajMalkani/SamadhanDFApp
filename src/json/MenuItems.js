@@ -209,6 +209,14 @@ export const MenuItemsAdmin = [
       },
     ],
   },
+  {
+    title: "Logout",
+    icon: "logout-variant",
+    type:"item",
+    index: 4,
+    roleID: 2,
+    items: null,
+  },
 ];
 
 export const MenuItemsGeneralUser = [
