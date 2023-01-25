@@ -282,6 +282,7 @@ export default function App() {
       </DrawerContentScrollView>
     );
   };
+
   const DrawerNavigator = () => {
     if (Object.keys(userDetails[0]).length === 0) {
       return (
@@ -343,7 +344,7 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
-        case 5:// Contractor
+        case 5: // Contractor
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
@@ -416,7 +417,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => { });
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
 
@@ -432,7 +433,6 @@ export default function App() {
               component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
               options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
             /> */}
-
           </Tab.Navigator>
         );
       default:
@@ -446,7 +446,6 @@ export default function App() {
               component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
               options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
             />
-
           </Tab.Navigator>
         );
     }
@@ -577,7 +576,7 @@ export default function App() {
               <Stack.Screen name="BankListScreen" component={BankListScreen} options={{ headerTitle: "Bank List Screen", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PDCDataUpdate" component={PDCDataUpdate} options={{ headerTitle: "Update PDC Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMyPersonalBank" component={AddMyPersonalBank} options={{ headerTitle: "Add My Personal Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-            </Stack.Navigator> 
+            </Stack.Navigator>
           </NavigationContainer>
         )}
       </PaperProvider>

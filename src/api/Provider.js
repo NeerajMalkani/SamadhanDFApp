@@ -354,15 +354,15 @@ class Provider {
     branchbankrefnocheck: "branchbankrefnocheck/",
     getbranchnamebankform: "	getbranchnamebankform/",
     pckaddsource_pdc_cheque_update: "pckaddsource_pdc_cheque_update/",
-    branchbankcreate:"branchbankcreate/",
-    branchbankupdate:"branchbankupdate/",
+    branchbankcreate: "branchbankcreate/",
+    branchbankupdate: "branchbankupdate/",
 
     userbankrefnocheck: "userbankrefnocheck/",
-    userbankcreate:"userbankcreate/",
-    userbankupdate:"userbankupdate/",
+    userbankcreate: "userbankcreate/",
+    userbankupdate: "userbankupdate/",
 
-    pckmypersonalbankrefnocheck:"pckmypersonalbankrefnocheck/",
-    pckmypersonalbankupdate:"pckmypersonalbankupdate/",
+    pckmypersonalbankrefnocheck: "pckmypersonalbankrefnocheck/",
+    pckmypersonalbankupdate: "pckmypersonalbankupdate/",
     get_pckmyclientname: "get_pckmyclientname/",
     get_pckmyclientprojectname: "get_pckmyclientprojectname/",
     getuserapprovelist: "getuserapprovelist/",
@@ -413,7 +413,7 @@ class Provider {
     }
   }
 
-  createDFContractor(resource: string, params) {
+  createDFContractor(resource, params) {
     return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
   }
 
