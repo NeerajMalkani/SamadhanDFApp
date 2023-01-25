@@ -418,7 +418,7 @@ const AddSourceList = ({ route, navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
-        <TabView style={{ marginBottom: 64, }}
+        <TabView swipeEnabled={false} style={{ marginBottom: 64, }}
           renderTabBar={renderTabBar} navigationState={{ index, routes }}
           renderScene={renderScene} onIndexChange={setIndex} />
       )}
