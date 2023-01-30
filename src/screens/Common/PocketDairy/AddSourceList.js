@@ -57,6 +57,7 @@ const AddSourceList = ({ route, navigation }) => {
   const [display, setDisplay] = React.useState("");
   const [depositType, setDepositType] = React.useState("");
   const [PDCStatus, setPDCStatus] = React.useState("");
+  const [PayToCompanyStatus, setPayToCompanyStatus] = React.useState(false);
   //
 
   const refRBSheet = useRef();
@@ -104,9 +105,9 @@ const AddSourceList = ({ route, navigation }) => {
           }
         } else {
           listData_Self[1]([]);
-          setSnackbarText("No Self data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          //setSnackbarText("No Self data found");
+          // setSnackbarColor(theme.colors.error);
+          // setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -139,6 +140,8 @@ const AddSourceList = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log('*****************************************');
+            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -148,9 +151,9 @@ const AddSourceList = ({ route, navigation }) => {
           }
         } else {
           listData_Company[1]([]);
-          setSnackbarText("No Company data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          //setSnackbarText("No Company data found");
+          // setSnackbarColor(theme.colors.error);
+          // setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -202,6 +205,7 @@ const AddSourceList = ({ route, navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
+
             refRBSheet.current.open();
             setTransactionID(data.item.pck_trans_refno);
             setDate(data.item.pck_trans_date);
@@ -217,6 +221,10 @@ const AddSourceList = ({ route, navigation }) => {
             setDepositType(data.item.deposit_type_refno);
             setPDCStatus(data.item.pdc_cheque_status);
 
+            if (data.item.BalanceUnPaidPayment != null && parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, '')) > 0 && data.item.pck_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+              setPayToCompanyStatus(true);
+            }
+
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -225,14 +233,8 @@ const AddSourceList = ({ route, navigation }) => {
     );
   };
 
-  const AddCallback = (type) => {
-    if (type == "self") {
-      navigation.navigate("AddSource", { type: "add", fetchData: FetchData_Self });
-    }
-    else {
-      navigation.navigate("AddSource", { type: "add", fetchData: FetchData_Company });
-    }
-
+  const AddCallback = () => {
+    navigation.navigate("AddSource", { type: "add", fetchData: FetchData_Self });
   };
 
   const EditCallback_Self = (data, rowMap) => {
@@ -321,8 +323,8 @@ const AddSourceList = ({ route, navigation }) => {
       case "selfDetail":
         return (
           <View style={[Styles.flex1]}>
-            <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-              <View style={[Styles.padding16]}>
+            <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+              <View>
                 {
                   listData_Self[0].length > 0 ? (
                     <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
@@ -359,8 +361,8 @@ const AddSourceList = ({ route, navigation }) => {
       case "companyDetail":
         return (
           <View style={[Styles.flex1]}>
-            <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-              <View style={[Styles.padding16]}>
+            <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
+              <View>
                 {
                   listData_Company[0].length > 0 ? (
                     <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
@@ -418,7 +420,7 @@ const AddSourceList = ({ route, navigation }) => {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
-        <TabView swipeEnabled={false} style={{ marginBottom: 64, }}
+        <TabView swipeEnabled={false}
           renderTabBar={renderTabBar} navigationState={{ index, routes }}
           renderScene={renderScene} onIndexChange={setIndex} />
       )}
@@ -436,6 +438,32 @@ const AddSourceList = ({ route, navigation }) => {
             <List.Item title="Sub Category Name" description={subCategoryName} />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
             <List.Item title="Amount" description={amount} />
+
+
+            {PayToCompanyStatus &&
+              <>
+                <View style={[Styles.width100per, Styles.paddingTop24, Styles.paddingHorizontal32, { elevation: 3 }]}>
+                  <Button
+                    icon={"cash-refund"}
+                    mode="contained"
+                    onPress={() => {
+                      refRBSheet.current.close();
+                      navigation.navigate("AddExpenses", {
+                        fetchData: FetchData_Company,
+                        type: projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText,
+                        data: {
+                          transactionID: transactionID
+                        }
+                      });
+                    }}
+                  >
+                    Pay To Company
+                  </Button>
+                </View>
+              </>
+            }
+
+
             {attachmentImage != "" &&
               <>
                 <View style={[Styles.width100per, Styles.height200]}>

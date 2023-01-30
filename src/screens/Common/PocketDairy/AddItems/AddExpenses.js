@@ -2,7 +2,7 @@ import moment from "moment";
 import uuid from "react-native-uuid";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Image, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, RadioButton, TextInput } from "react-native-paper";
+import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, RadioButton, TextInput, DataTable } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -15,8 +15,9 @@ import RadioGroup from "react-native-radio-buttons-group";
 import { PaperSelect } from "react-native-paper-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
+import { projectVariables } from "../../../../utils/credentials";
 
-let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0;
+let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0, companyAdminID = 0;
 
 const AddExpenses = ({ route, navigation }) => {
 
@@ -60,8 +61,11 @@ const AddExpenses = ({ route, navigation }) => {
   const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
 
+  const [entryTypeData, setEntryTypeData] = React.useState([]);
+  const [entryTypeFullData, setEntryTypeFullData] = React.useState([]);
   const [entryTypeError, setEntryTypeError] = React.useState(false);
   const [entryType, setEntryType] = React.useState(route.params.type === "edit" ? route.params.data.entryType : "");
+  const [entryTypeDisable, setEntryTypeDisable] = React.useState(true);
 
   const [subCategoryNameFullData, setSubCategoryNameFullData] = React.useState([]);
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
@@ -95,6 +99,7 @@ const AddExpenses = ({ route, navigation }) => {
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState(route.params.type === "edit" ? route.params.data.amount : "");
+  const [amountInvalidBalance, setAmountInvalidBalance] = React.useState("Amount can not be more then balance amount");
 
   const [paidToFullData, setPaidToFullData] = React.useState([]);
   const [paidToData, setPaidToData] = React.useState([]);
@@ -115,6 +120,21 @@ const AddExpenses = ({ route, navigation }) => {
   const [myBankData, setMyBankData] = React.useState([]);
   const [MyBank, setMyBank] = React.useState([]);
   const [errorMB, setMBError] = React.useState(false);
+
+  const [clientListFullData, setClientListFullData] = React.useState([]);
+  const [clientListData, setClientListData] = React.useState([]);
+  const [clientList, setClientList] = React.useState([]);
+  const [errorCL, setErrorCL] = React.useState(false);
+
+  const [projectListFullData, setProjectListFullData] = React.useState([]);
+  const [projectListData, setProjectListData] = React.useState([]);
+  const [projectList, setProjectList] = React.useState([]);
+  const [errorPL, setErrorPL] = React.useState(false);
+
+  const [projectExpenseFullData, setProjectExpenseFullData] = React.useState([]);
+  const [projectExpenseData, setProjectExpenseData] = React.useState([]);
+  const [projectExpense, setProjectExpense] = React.useState([]);
+  const [errorPE, setErrorPE] = React.useState(false);
 
   const [chequeNoError, setChequeNoError] = React.useState(false);
   const [chequeNo, setChequeNo] = React.useState(route.params.type === "edit" ? route.params.data.chequeNo : "");
@@ -143,10 +163,11 @@ const AddExpenses = ({ route, navigation }) => {
     error: "",
   });
 
-  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("");
+  const [pktEntryTypeID, setPktEntryTypeID] = React.useState("1");
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const ref_input2 = useRef();
   const ref_input3 = useRef();
@@ -167,6 +188,16 @@ const AddExpenses = ({ route, navigation }) => {
   const [recurringDateFlat, setrecurringDateFlag] = useState("1");
   const [pckTransID, setPckTransID] = React.useState([]);
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
+  const [subCatStatus, setSubCatStatus] = React.useState(true);
+  const [clientListStatus, setClientListstatus] = React.useState(false);
+  const [projectListStatus, setProjectListstatus] = React.useState(false);
+  const [projectExpenseStatus, setProjectExpenseStatus] = React.useState(false);
+  const [PayToCompanyStatus, setPayToCompanyStatus] = React.useState(false);
+  const [projectExpenseDisable, setProjectExpenseDisable] = React.useState(false);
+
+  const [collectedAmount, setcollectedAmount] = React.useState("");
+  const [paidAmount, setpaidAmount] = React.useState("");
+  const [balanceAmount, setbalanceAmount] = React.useState("");
 
   //#endregion 
 
@@ -184,56 +215,114 @@ const AddExpenses = ({ route, navigation }) => {
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
       designID = JSON.parse(userData).Sess_designation_refno;
+      companyAdminID = JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       FetchEntryType();
 
-      if (route.params.type === "edit") {
-        SetEditData();
+      if (route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+        FetchPayToCompanyData(route.params.data.transactionID);
+      }
+      else if (route.params.type === "edit") {
+        SetEditData(route.params.data);
       }
     }
   };
 
-  const SetEditData = () => {
-    //console.log('start edit data =====================');
+  const FetchPayToCompanyData = (transactionID) => {
+    console.log('pay to company ============');
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_trans_refno: transactionID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO,
+        pck_entrytype_refno: projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            SetEditData(response.data.data[0]);
+
+          }
+        } else {
+          setSnackbarText("No Company data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
+
+  const SetEditData = (data) => {
+    console.log('start edit data =====================');
     //console.log(route.params);
 
+    setcollectedAmount(data.Collected_ActualAmount);
+    setpaidAmount(data.TotalPaidAmount);
+    setbalanceAmount(data.BalanceUnPaidPayment);
+
     setButtonStatus(false);
-    setEntryType(route.params.data.pck_entrytype_name);
-    settAmount(route.params.data.amount);
-    setPckTransID(route.params.data.pck_trans_refno);
-    _pktEntryTypeID = route.params.data.pck_entrytype_refno;
-    FetchPaymentMode(route.params.data.pck_mode_refno);
+    setEntryType(data.pck_entrytype_name);
 
-    if (route.params.data.cardtype_refno != "" && route.params.data.cardtype_refno != "0") {
+    if (route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+      settAmount(data.BalanceUnPaidPayment.replace(/,/g, ''));
+    }
+    else {
+      settAmount(data.amount);
+    }
+
+
+    setPckTransID(data.pck_trans_refno);
+    _pktEntryTypeID = data.pck_entrytype_refno;
+    setPktEntryTypeID(data.pck_entrytype_refno)
+    FetchPaymentMode(data.pck_mode_refno);
+
+    if (data.cardtype_refno != "" && data.cardtype_refno != "0") {
       setCardTypeStatus(true);
-      FetchCardType(route.params.data.cardtype_refno);
+      FetchCardType(data.cardtype_refno);
     }
 
-    if (route.params.data.pck_card_mybank_refno != "" && route.params.data.pck_card_mybank_refno != "0") {
+    if (data.pck_card_mybank_refno != "" && data.pck_card_mybank_refno != "0") {
       setCardBankNameStatus(true);
-      FetchCardBankList(route.params.data.cardtype_refno, route.params.data.pck_card_mybank_refno);
+      FetchCardBankList(data.cardtype_refno, data.pck_card_mybank_refno);
     }
 
-    if (route.params.data.due_date != "" && route.params.data.due_date != "0" && route.params.data.due_date != null) {
+    if (data.due_date != "" && data.due_date != "0" && data.due_date != null) {
       setCardRepaymentDateStatus(true);
-      let dateBreakup = route.params.data.due_date.split('-');
+      let dateBreakup = data.due_date.split('-');
       setCardRepayment(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
     }
 
-    FetchExpenseCategory(route.params.data.pck_mode_refno, route.params.data.pck_category_refno);
-    FetchExpenseSubCategory(route.params.data.pck_category_refno, route.params.data.pck_sub_category_refno);
+    FetchExpenseCategory(data.pck_mode_refno, data.pck_category_refno);
 
-    if (route.params.data.pck_mycontact_refno != "" && route.params.data.pck_mycontact_refno != "0") {
-      setPaidToStatus(true);
-      FetchReceiverList(route.params.data.pck_mycontact_refno);
+    if (data.pck_sub_category_refno != "" && data.pck_sub_category_refno != "0") {
+      setSubCategoryName(data.pck_sub_category_name);
+      FetchExpenseSubCategory(data.pck_category_refno, data.pck_sub_category_refno);
+    }
+    else {
+      setSubCatStatus(false);
     }
 
-    if (route.params.data.recurring_status != "" && route.params.data.recurring_status != "0") {
+    if (data.pck_mycontact_refno != "" && data.pck_mycontact_refno != "0") {
+      setPaidToStatus(true);
+      FetchReceiverList(data.pck_mycontact_refno);
+    }
+
+    if (data.recurring_status != "" && data.recurring_status != "0") {
       setRecurringStatus(true);
 
       let recc = [...RecurringRadioButtons];
       recc.map((r) => {
 
-        if (r.id == route.params.data.recurring_status) {
+        if (r.id == data.recurring_status) {
 
           setrecurringDateFlag(r.value);
 
@@ -249,47 +338,64 @@ const AddExpenses = ({ route, navigation }) => {
       setRecurringRadioButtons(recc);
     }
 
-    if (route.params.data.reminder_date != "" && route.params.data.reminder_date != "0" && route.params.data.reminder_date != null) {
-      let dateBreakup = route.params.data.reminder_date.split('-');
+    if (data.reminder_date != "" && data.reminder_date != "0" && data.reminder_date != null) {
+      let dateBreakup = data.reminder_date.split('-');
       setRecurringDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
     }
 
-    if (route.params.data.deposit_type_refno != "" && route.params.data.deposit_type_refno != "0") {
+    if (data.deposit_type_refno != "" && data.deposit_type_refno != "0") {
       setDepositTypeStatus(true);
-      FetchDepositType(route.params.data.deposit_type_refno);
+      FetchDepositType(data.deposit_type_refno);
     }
 
-    if (route.params.data.pck_mybank_refno != "" && route.params.data.pck_mybank_refno != "0") {
+    if (data.pck_mybank_refno != "" && data.pck_mybank_refno != "0") {
       setBankStatus(true);
-      FetchBankList(route.params.data.pck_mybank_refno);
+      FetchBankList(data.pck_mybank_refno);
     }
 
-    if (route.params.data.utr_no != "" && route.params.data.utr_no != "0") {
+    if (data.utr_no != "" && data.utr_no != "0") {
       setUtrNoStatus(true);
-      setUtrNo(route.params.data.utr_no);
+      setUtrNo(data.utr_no);
     }
 
-    if (route.params.data.cheque_no != "" && route.params.data.cheque_no != "0") {
+    if (data.cheque_no != "" && data.cheque_no != "0") {
       setChequeNoStatus(true);
-      setChequeNo(route.params.data.cheque_no);
+      setChequeNo(data.cheque_no);
     }
 
-    if (route.params.data.cheque_date != "" && route.params.data.cheque_date != "0" && route.params.data.cheque_date != null) {
-      let dateBreakup = route.params.data.cheque_date.split('-');
+    if (data.cheque_date != "" && data.cheque_date != "0" && data.cheque_date != null) {
+      let dateBreakup = data.cheque_date.split('-');
       setChequeDateStatus(true);
       setChequeDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
     }
 
+    if (data.myclient_refno != null) {
+      setClientListstatus(true);
+      FetchClientList(data.myclient_refno);
+    }
+
+    if (data.cont_project_refno != null) {
+      setProjectListstatus(true);
+      FetchProjectList(data.myclient_refno, data.cont_project_refno);
+    }
+
+    if (data.dynamic_expenses_refno != null) {
+      setProjectExpenseStatus(true);
+      FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
+    }
+
     setCommonDisplayStatus(true);
 
-    setNotes(route.params.data.notes);
+    setNotes(data.notes);
 
-    setChecked(route.params.data.view_status == "1" ? true : false);
-    //console.log(route.params.data.attach_receipt_url);
+    setChecked(data.view_status == "1" ? true : false);
 
-    setImage(route.params.data.attach_receipt_url);
-    setFilePath(route.params.data.attach_receipt_url);
-    setDesignImage(route.params.data.attach_receipt_url);
+    if (route.params.type != projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+      setImage(data.attach_receipt_url);
+      setFilePath(data.attach_receipt_url);
+      setDesignImage(data.attach_receipt_url);
+    }
+
   }
 
 
@@ -305,11 +411,24 @@ const AddExpenses = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
-            setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
-            setEntryType(response.data.data[0].pck_entrytype_name);
+            setEntryTypeFullData(response.data.data);
+            const entryTypeData = response.data.data.map((data) => data.pck_entrytype_name);
+            setEntryTypeData(entryTypeData);
+
+            if (response.data.data.length == 1) {
+              setEntryType(response.data.data[0].pck_entrytype_name);
+              setEntryTypeDisable(true);
+              setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
+              _pktEntryTypeID = response.data.data[0].pck_entrytype_refno;
+            }
+            else {
+              setEntryTypeDisable(false);
+            }
+
+
 
             if (route.params.type != "edit") {
-              FetchPaymentMode();//expense=2 need to confirm from balaji
+              FetchPaymentMode();
             }
 
           }
@@ -352,13 +471,43 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
+  const FetchClientList = (clientID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString()
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setClientListFullData(response.data.data);
+
+            const clientList = response.data.data.map((data) => data.companyName);
+            setClientListData(clientList);
+
+            if (clientID != null) {
+              setClientList(response.data.data.filter((el) => {
+                return el.myclient_refno === clientID;
+              })[0].companyName);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
   const FetchExpenseCategory = (receiptModeID, editID) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
+        pck_entrytype_refno: _pktEntryTypeID
       }
     }
     Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddexpensesform, params)
@@ -402,9 +551,56 @@ const AddExpenses = ({ route, navigation }) => {
               setSubCategoryName(response.data.data.filter((el) => {
                 return el.subcategoryID === editID;
               })[0].subCategoryName);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
 
+  const FetchProjectExpense = (categoryID, editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        pck_category_refno: categoryID,
+      }
+    }
+    console.log(params);
+    Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log('edit data =============');
+            console.log(response.data.data);
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            setProjectExpenseFullData(response.data.data);
+            if (route.params.type != projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+              response.data.data = response.data.data.filter((el) => {
+                return el.subcategoryID != projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO;
+              })
+              setProjectExpenseDisable(false);
+            }
+            else {
+              response.data.data = response.data.data.filter((el) => {
+                return el.subcategoryID == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO;
+              });
+            }
+            const subCategory = response.data.data.map((data) => data.subCategoryName);
+            setProjectExpenseData(subCategory);
+
+            if (route.params.type == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+              setProjectExpense(response.data.data.filter((el) => {
+                return el.subcategoryID === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO;
+              })[0].subCategoryName);
+              setProjectExpenseDisable(true);
             }
 
+            if (editID != null) {
+              setProjectExpense(response.data.data.filter((el) => {
+                return el.subcategoryID === editID;
+              })[0].subCategoryName);
+            }
           }
         }
       })
@@ -420,12 +616,14 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
         Sess_designation_refno: designID.toString(),
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
+        pck_entrytype_refno: _pktEntryTypeID,
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
       }
     }
-    ////console.log(params);
+    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
@@ -570,6 +768,39 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
+  const FetchProjectList = (clientID, editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString(),
+        myclient_refno: clientID,
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString()
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientprojectname, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+
+            setProjectListFullData(response.data.data);
+
+            const projectList = response.data.data.map((data) => data.project_name);
+            setProjectListData(projectList);
+
+            if (editID != null) {
+              setProjectList(response.data.data.filter((el) => {
+                return el.cont_project_refno == editID;
+              })[0].project_name);
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
   const onPayModeChanged = (text) => {
     setPayMode(text);
     setPMError(false);
@@ -585,6 +816,53 @@ const AddExpenses = ({ route, navigation }) => {
     }
   };
 
+  const onProjectExpenseChanged = (text) => {
+    setProjectExpense(text);
+    setErrorPE(false);
+  }
+
+  const onProjectListChanged = (text) => {
+    setProjectList(text);
+    setErrorPL(false);
+
+    setCommonDisplayStatus(true);
+    setButtonStatus(false);
+
+    setProjectExpenseStatus(true);
+
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let a = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+      FetchProjectExpense(a[0].pckCategoryID);
+    }
+
+    if (mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO || mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO) {
+      FetchBankList();
+      setBankStatus(true);
+      setUtrNoStatus(true);
+    }
+    else if (mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO) {
+      setDepositTypeStatus(true);
+      FetchDepositType();
+    }
+
+    // if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO || a[0].pckCategoryID == "4") {
+
+    // }
+    // else if (a[0].pckModeID == "3") {
+    //   setDepositTypeStatus(true);
+    //   FetchDepositType();
+    // }
+
+  };
+
 
   const onExpensesChanged = (text) => {
     setExpenses(text);
@@ -593,8 +871,16 @@ const AddExpenses = ({ route, navigation }) => {
       return el.categoryName === text;
     });
 
-    FetchExpenseSubCategory(a[0].pckCategoryID);
-
+    if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+      setSubCatStatus(false);
+      setClientListstatus(true);
+      FetchClientList();
+    }
+    else {
+      setSubCatStatus(true);
+      setClientListstatus(false);
+      FetchExpenseSubCategory(a[0].pckCategoryID);
+    }
   };
 
   const onCardTypeChanged = (text) => {
@@ -737,7 +1023,7 @@ const AddExpenses = ({ route, navigation }) => {
     setChequeNoStatus(true);
     setChequeDateStatus(true);
 
-    if (mode[0].pckModeID == "3") {
+    if (mode[0].pckModeID == "3" && subCatStatus) {
 
       if (subcat[0].subcategoryID == "8") {
 
@@ -760,17 +1046,55 @@ const AddExpenses = ({ route, navigation }) => {
 
   };
 
+  const resetFields = () => {
+
+    setCardTypeStatus(false);
+    setCardBankNameStatus(false);
+    setCardRepaymentDateStatus(false);
+    setPaidToStatus(false);
+    setRecurringStatus(false);
+    setRecurringReminderDateStatus(false);
+    setDepositTypeStatus(false);
+    setBankStatus(false);
+    setUtrNoStatus(false);
+    setChequeNoStatus(false);
+    setChequeDateStatus(false);
+    setCommonDisplayStatus(false);
+    setButtonStatus(true);
+    setrecurringDateFlag("1");
+    setSubCatStatus(true);
+  }
 
 
-  const onEntryType = (text) => {
-    setEntryType(text);
-    setEntryTypeError(false);
+  const onEntryTypeChanged = (selectedItem) => {
+    setEntryType(selectedItem);
+    resetFields();
+
+
+    let a = entryTypeFullData.filter((el) => {
+      return el.pck_entrytype_name === selectedItem;
+    });
+
+    setPktEntryTypeID(a[0].pck_entrytype_refno);
+    _pktEntryTypeID = a[0].pck_entrytype_refno;
+
   };
 
-
   const onAmount = (text) => {
-    settAmount(text);
-    setAmountError(false);
+    console.log(parseFloat(text));
+    console.log(route.params);
+
+    if (parseFloat(text) > parseFloat(balanceAmount.replace(/,/g, ''))) {
+      settAmount("");
+      setAmountError(true);
+      setAmountInvalidBalance("Amount can not be more then balance amount");
+    }
+    else {
+      settAmount(text);
+      setAmountError(false);
+    }
+
+
   };
 
   const onChequeNO = (text) => {
@@ -789,7 +1113,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
 
-
   const onPaidToChanged = (text) => {
     setPaidTo(text);
     setPTError(false);
@@ -799,6 +1122,19 @@ const AddExpenses = ({ route, navigation }) => {
   const onMyBankChanged = (text) => {
     setMyBank(text);
     setMBError(false);
+  };
+
+  const onClientListChanged = (text) => {
+    setClientList(text);
+    setErrorCL(false);
+
+    let a = clientListFullData.filter((el) => {
+      return el.companyName === text;
+    });
+
+    setProjectListstatus(true);
+    FetchProjectList(a[0].myclient_refno);
+
   };
 
   const chooseFile = async () => {
@@ -821,13 +1157,15 @@ const AddExpenses = ({ route, navigation }) => {
     }
   };
 
-
   const InsertData = () => {
-    //console.log('insert===================');
+    console.log('insert===================');
     const datas = new FormData();
     let params = {
 
       Sess_UserRefno: userID,
+      Sess_company_refno: companyID.toString(),
+      Sess_branch_refno: branchID.toString(),
+
       pck_entrytype_refno: pktEntryTypeID,
       pck_mode_refno: payModeFullData.filter((el) => {
         return el.pckModeName === payMode;
@@ -837,20 +1175,17 @@ const AddExpenses = ({ route, navigation }) => {
         return el.categoryName === expenses;
       })[0].pckCategoryID,
 
-      pck_sub_category_refno: subCategoryNameFullData.filter((el) => {
-        return el.subCategoryName === subCategoryName;
-      })[0].subcategoryID,
-
       amount: amount.trim(),
       notes: notes.trim(),
 
-      // myclient_refno: 0,
-      // cont_project_refno: 0,
-      // invoice_no: 0,
-      // payment_type_refno: 0,
-      // dynamic_expenses_refno: 0,
       view_status: checked ? "1" : "0"
 
+    }
+
+    if (subCatStatus) {
+      params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
+        return el.subCategoryName === subCategoryName;
+      })[0].subcategoryID;
     }
 
     if (cardTypeStatus) {
@@ -907,6 +1242,29 @@ const AddExpenses = ({ route, navigation }) => {
       params.recurring_status = recurringDateFlat
     }
 
+    if (clientListStatus) {
+      params.myclient_refno = clientListFullData.filter((el) => {
+        return el.companyName === clientList;
+      })[0].myclient_refno;
+    }
+
+    if (projectListStatus) {
+      params.cont_project_refno = projectListFullData.filter((el) => {
+        return el.project_name === projectList;
+      })[0].cont_project_refno;
+    }
+
+    if (projectExpenseStatus) {
+      params.dynamic_expenses_refno = projectExpenseFullData.filter((el) => {
+        return el.subCategoryName === projectExpense;
+      })[0].subcategoryID;
+    }
+
+    if (route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+      params.pck_master_trans_refno = route.params.data.transactionID;
+    }
+
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -920,8 +1278,8 @@ const AddExpenses = ({ route, navigation }) => {
     );
 
     //console.log(params);
-    //console.log('data params ================');
-    //console.log(datas);
+    console.log('data params ================');
+    console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensescreate, datas)
       .then((response) => {
         //console.log(response.data);
@@ -944,12 +1302,14 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    //console.log('update===================');
+    console.log('update===================');
     const datas = new FormData();
     let params = {
 
       Sess_UserRefno: userID,
       pck_trans_refno: pckTransID,
+      Sess_company_refno: companyID.toString(),
+      Sess_branch_refno: branchID.toString(),
 
       pck_entrytype_refno: pktEntryTypeID,
       pck_mode_refno: payModeFullData.filter((el) => {
@@ -960,20 +1320,17 @@ const AddExpenses = ({ route, navigation }) => {
         return el.categoryName === expenses;
       })[0].pckCategoryID,
 
-      pck_sub_category_refno: subCategoryNameFullData.filter((el) => {
-        return el.subCategoryName === subCategoryName;
-      })[0].subcategoryID,
-
       amount: amount.trim(),
       notes: notes.trim(),
 
-      // myclient_refno: 0,
-      // cont_project_refno: 0,
-      // invoice_no: 0,
-      // payment_type_refno: 0,
-      // dynamic_expenses_refno: 0,
       view_status: checked ? "1" : "0"
 
+    }
+
+    if (subCatStatus) {
+      params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
+        return el.subCategoryName === subCategoryName;
+      })[0].subcategoryID;
     }
 
     if (cardTypeStatus) {
@@ -1030,6 +1387,30 @@ const AddExpenses = ({ route, navigation }) => {
       params.recurring_status = recurringDateFlat
     }
 
+    if (projectExpenseStatus) {
+      params.dynamic_expenses_refno = projectExpenseFullData.filter((el) => {
+        return el.subCategoryName === projectExpense;
+      })[0].subcategoryID;
+    }
+
+    if (clientListStatus) {
+      params.myclient_refno = clientListFullData.filter((el) => {
+        return el.companyName === clientList;
+      })[0].myclient_refno;
+    }
+
+    if (projectListStatus) {
+      params.cont_project_refno = projectListFullData.filter((el) => {
+        return el.project_name === projectList;
+      })[0].cont_project_refno;
+    }
+
+    if (projectExpenseStatus) {
+      params.dynamic_expenses_refno = projectExpenseFullData.filter((el) => {
+        return el.subCategoryName === projectExpense;
+      })[0].subcategoryID;
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -1042,9 +1423,10 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-    //console.log(datas);
+    console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensesupdate, datas)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -1066,9 +1448,15 @@ const AddExpenses = ({ route, navigation }) => {
   const ValidateData = () => {
     let isValid = true;
 
+    if (entryType == "") {
+      isValid = false;
+      setEntryTypeError(true);
+    }
+
     if (amount.trim() === 0) {
       setAmountError(true);
       isValid = false;
+      setAmountInvalidBalance("Please enter a valid amount");
     }
 
     if (payMode == "") {
@@ -1096,7 +1484,7 @@ const AddExpenses = ({ route, navigation }) => {
       isValid = false;
     }
 
-    if (subCategoryName == "") {
+    if (subCatStatus && subCategoryName == "") {
       setSCNError(true);
       isValid = false;
     }
@@ -1116,6 +1504,26 @@ const AddExpenses = ({ route, navigation }) => {
       isValid = false;
     }
 
+    if (chequeNoStatus && chequeNo.trim() == "") {
+      setChequeNoError(true);
+      isValid = false;
+    }
+
+    if (chequeDateStatus && chequeDate == "") {
+      setChequeDateInvalid(true);
+      isValid = false;
+    }
+
+    if (clientListStatus && clientList == "") {
+      setErrorCL(true);
+      isValid = false;
+    }
+
+    if (projectListStatus && projectList == "") {
+      setErrorPL(true);
+      isValid = false;
+    }
+
     if (isValid) {
       if (route.params.type === "edit") {
         UpdateData();
@@ -1132,15 +1540,32 @@ const AddExpenses = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
 
-          <TextInput mode="flat" label="Entry Type" disabled={true} value={entryType} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onEntryType} style={{ backgroundColor: "white" }} error={entryTypeError} />
+          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} isError={entryTypeError} onSelected={onEntryTypeChanged} selectedItem={entryType} />
           <HelperText type="error" visible={entryTypeError}>
-            {communication.InvalidEntryType}
+            Please select a valid entry type
           </HelperText>
 
           <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" keyboardType="number-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>
-            {communication.InvalidAmount}
+            {amountInvalidBalance}
           </HelperText>
+
+          <View style={[Styles.padding16]}>
+            <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter, Styles.bordergray, Styles.fontBold]} >
+              <DataTable.Header>
+                <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]}>Collected</DataTable.Title>
+                <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Paid</DataTable.Title>
+                <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Balance</DataTable.Title>
+              </DataTable.Header>
+
+              <DataTable.Row style={[Styles.backgroundColor]}>
+                <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{collectedAmount}</DataTable.Cell>
+                <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{paidAmount}</DataTable.Cell>
+                <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{balanceAmount}</DataTable.Cell>
+              </DataTable.Row>
+
+            </DataTable>
+          </View>
 
           <Dropdown label="Payment Mode" data={payModeData} onSelected={onPayModeChanged} isError={errorPM} selectedItem={payMode} />
           <HelperText type="error" visible={errorPM}>
@@ -1182,10 +1607,58 @@ const AddExpenses = ({ route, navigation }) => {
             Please select valid Expenses / Payment
           </HelperText>
 
-          <Dropdown label="Sub Category Name" data={subCategoryNameData} onSelected={onSubCategoryNameChanged} isError={errorSCN} selectedItem={subCategoryName} />
-          <HelperText type="error" visible={errorSCN}>
-            Please select valid sub category
-          </HelperText>
+          {clientListStatus &&
+            <>
+              <View style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}>
+                <Dropdown label="My Client List" data={clientListData} onSelected={onClientListChanged} isError={errorCL} selectedItem={clientList} />
+                <HelperText type="error" visible={errorCL}>
+                  Please select a client
+                </HelperText>
+                <Button
+                  icon={"plus"}
+                  mode="contained"
+                  onPress={() => {
+                    navigation.navigate("AddClientScreen", {
+                      type: "expenses_client",
+                      data: {
+                        serviceType: "8",
+                      },
+                      fetchClientList: FetchClientList,
+                    });
+                  }}
+                >
+                  Add New Client
+                </Button>
+              </View>
+            </>
+          }
+
+          {projectListStatus &&
+            <>
+              <Dropdown label="Project List" data={projectListData} onSelected={onProjectListChanged} isError={errorPL} selectedItem={projectList} />
+              <HelperText type="error" visible={errorPL}>
+                Please select a project
+              </HelperText>
+            </>
+          }
+
+          {projectExpenseStatus &&
+            <>
+              <Dropdown label="Project Expenses" data={projectExpenseData} forceDisable={projectExpenseDisable} onSelected={onProjectExpenseChanged} isError={errorPE} selectedItem={projectExpense} />
+              <HelperText type="error" visible={errorPE}>
+                Please select a project expense
+              </HelperText>
+            </>
+          }
+
+          {subCatStatus &&
+            <>
+              <Dropdown label="Sub Category Name" data={subCategoryNameData} onSelected={onSubCategoryNameChanged} isError={errorSCN} selectedItem={subCategoryName} />
+              <HelperText type="error" visible={errorSCN}>
+                Please select valid sub category
+              </HelperText>
+            </>
+          }
 
           {paidToStatus &&
             <>

@@ -8,7 +8,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@rea
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView, Platform, StatusBar, LayoutAnimation, View } from "react-native";
-import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser, MenuItemsArchitect, MenuItemsManufacture } from "./src/json/MenuItems";
+import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser, MenuItemsArchitect, MenuItemsManufacture, MenuItemsProjectSupervisor } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
@@ -181,6 +181,9 @@ export default function App() {
           menuItems = [...MenuItemsArchitect];
           break;
         case 7:
+          menuItems = [...MenuItemsProjectSupervisor];
+          break;
+        case 8:
           menuItems = [...MenuItemsManufacture];
           break;
       }
@@ -253,55 +256,55 @@ export default function App() {
                 }}
               />
             ) :
-            k.type === "item" && k.title == "Logout" ? (
-              <DrawerItem
-                key={i}
-                focused={activeIndex === parseInt(i) ? true : false}
-                style={[Styles.borderBottom1]}
-                label={({ focused }) => {
-                  return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{k.title}</Text>;
-                }}
-                icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
-                onPress={(e) => {
-                  LogoutUser();
-                }}
-              />
-            )
-             : (
-              <List.Accordion
-                key={i}
-                title={k.title}
-                expanded={i == 0 ? expanded1 : i == 1 ? expanded2 : i == 2 ? expanded3 : i == 3 ? expanded4 : i == 4 ? expanded5 : i == 5 ? expanded6 : i == 6 ? expanded7 : i == 7 ? expanded8 : expanded9}
-                left={(props) => <List.Icon {...props} icon={k.icon} />}
-                style={[Styles.backgroundColor, Styles.borderBottom1, Styles.height56, { paddingTop: -8 }]}
-                onPress={() => {
-                  LayoutAnimation.easeInEaseOut();
-                  for (let a = 0; a < masterExpanded.length; a++) {
-                    masterSetExpanded[a](false);
-                  }
-                  masterSetExpanded[i](!masterExpanded[i]);
-                }}
-              >
-                {k.items.map((j, l) => {
-                  return (
-                    <DrawerItem
-                      key={l}
-                      style={{ marginVertical: 0, paddingStart: 16, width: "100%", marginLeft: 0, borderRadius: 0, borderBottomColor: theme.colors.textLightSecondary, borderBottomWidth: 1 }}
-                      focused={activeIndex === parseInt(i.toString() + l.toString()) ? true : false}
-                      label={({ focused }) => <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.textLight : theme.colors.text }]}>{j.title}</Text>}
-                      activeBackgroundColor={theme.colors.primary}
-                      inactiveBackgroundColor={theme.colors.backgroundSecondary}
-                      onPress={(e) => {
-                        if (j.navigation !== undefined) {
-                          activeIndex = parseInt(i.toString() + l.toString());
-                          props.navigation.navigate(j.navigation);
-                        }
-                      }}
-                    />
-                  );
-                })}
-              </List.Accordion>
-            )
+              k.type === "item" && k.title == "Logout" ? (
+                <DrawerItem
+                  key={i}
+                  focused={activeIndex === parseInt(i) ? true : false}
+                  style={[Styles.borderBottom1]}
+                  label={({ focused }) => {
+                    return <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.primary : theme.colors.text }]}>{k.title}</Text>;
+                  }}
+                  icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
+                  onPress={(e) => {
+                    LogoutUser();
+                  }}
+                />
+              )
+                : (
+                  <List.Accordion
+                    key={i}
+                    title={k.title}
+                    expanded={i == 0 ? expanded1 : i == 1 ? expanded2 : i == 2 ? expanded3 : i == 3 ? expanded4 : i == 4 ? expanded5 : i == 5 ? expanded6 : i == 6 ? expanded7 : i == 7 ? expanded8 : expanded9}
+                    left={(props) => <List.Icon {...props} icon={k.icon} />}
+                    style={[Styles.backgroundColor, Styles.borderBottom1, Styles.height56, { paddingTop: -8 }]}
+                    onPress={() => {
+                      LayoutAnimation.easeInEaseOut();
+                      for (let a = 0; a < masterExpanded.length; a++) {
+                        masterSetExpanded[a](false);
+                      }
+                      masterSetExpanded[i](!masterExpanded[i]);
+                    }}
+                  >
+                    {k.items.map((j, l) => {
+                      return (
+                        <DrawerItem
+                          key={l}
+                          style={{ marginVertical: 0, paddingStart: 16, width: "100%", marginLeft: 0, borderRadius: 0, borderBottomColor: theme.colors.textLightSecondary, borderBottomWidth: 1 }}
+                          focused={activeIndex === parseInt(i.toString() + l.toString()) ? true : false}
+                          label={({ focused }) => <Text style={[Styles.textColor, Styles.fontSize16, { color: focused ? theme.colors.textLight : theme.colors.text }]}>{j.title}</Text>}
+                          activeBackgroundColor={theme.colors.primary}
+                          inactiveBackgroundColor={theme.colors.backgroundSecondary}
+                          onPress={(e) => {
+                            if (j.navigation !== undefined) {
+                              activeIndex = parseInt(i.toString() + l.toString());
+                              props.navigation.navigate(j.navigation);
+                            }
+                          }}
+                        />
+                      );
+                    })}
+                  </List.Accordion>
+                )
           ) : null;
         })}
       </DrawerContentScrollView>
@@ -434,6 +437,33 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductforProduction" component={ProductforProduction} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionStatus" component={ProductionStatus} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionOrderList" component={ProductionOrderList} />
+
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyPersonalBankScreen" component={MyPersonalBankScreen} />
+
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
+
+              {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
+              
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} /> */}
+              
+            </Drawer.Navigator>
+          );
+          case 8:
+          return (
+            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockScrap" component={OpeningStockScrap} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductforProduction" component={ProductforProduction} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionStatus" component={ProductionStatus} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionOrderList" component={ProductionOrderList} />
             </Drawer.Navigator>
           );
       }
@@ -442,7 +472,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
       return unsubscribe;
     }, [navigation]);
 
@@ -463,8 +493,8 @@ export default function App() {
       default:
         return (
           <Tab.Navigator shifting={false} initialRouteName="dashboard" activeColor={theme.colors.primary} inactiveColor="#696969" barStyle={{ backgroundColor: theme.colors.textLight, height: 70, paddingTop: 8 }}>
-            <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
-            <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
+            <Tab.Screen name="Dashboard" component={DrawerNavigator}  options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
+            <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
             <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
             <Tab.Screen
               name="UserProfile"

@@ -135,7 +135,6 @@ const BankListScreen = ({ navigation }) => {
                     // description={"Branch: " + (data.item.companyBranchName ? "Yes" : "No")}
                     onPress={() => {
                         refRBSheet.current.open();
-                        console.log(data.item);
                         setCompanyBranchName(data.item.companyBranchName);
                         setAccountNo(data.item.accountNumber);
                         setBankName(data.item.bankName);
@@ -161,7 +160,6 @@ const BankListScreen = ({ navigation }) => {
     };
 
     const EditCallback = (data, rowMap) => {
-        console.log(data);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddBankScreen", {
             type: "edit",

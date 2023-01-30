@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, TouchableNativeFeedback, View, Modal, Image } from "react-native";
+import { ScrollView, TouchableNativeFeedback, View, Modal, Image, ImageBackground } from "react-native";
 import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Styles } from "../styles/styles";
@@ -26,6 +26,7 @@ var _user_count = null;
 const HomeScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
   const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails[0].RoleName);
@@ -45,6 +46,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [userRoleData, setUserRoleData] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
 
   //#endregion
 
@@ -84,7 +86,7 @@ const HomeScreen = ({ route, navigation }) => {
           setImageGalleryData([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          setIsSnackbarVisible(true);
         }
         setIsLoading(false);
       })
@@ -92,7 +94,7 @@ const HomeScreen = ({ route, navigation }) => {
         setIsLoading(false);
         setSnackbarText(e.message);
         setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
+        setIsSnackbarVisible(true);
       });
   };
 
@@ -379,11 +381,11 @@ const HomeScreen = ({ route, navigation }) => {
       <View style={[Styles.width100per, Styles.height64, Styles.backgroundColorWhite, Styles.flexRow,
       Styles.flexAlignCenter, Styles.paddingHorizontal16, Styles.BottomShadow]}>
         {/* menu icon */}
-        {/* <TouchableNativeFeedback>
+        <TouchableNativeFeedback>
           <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.toggleDrawer()}>
-            <Icon name="menu" size={24} color={theme.colors.textLight} />
+            <Icon name="menu" size={24} color={theme.colors.primary} />
           </View>
-        </TouchableNativeFeedback> */}
+        </TouchableNativeFeedback>
         {/* menu icon */}
 
         <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundSecondaryLightColor, Styles.borderCD, { overflow: "hidden" }]} source={require("../../assets/defaultIcon.png")} />
@@ -651,26 +653,29 @@ const HomeScreen = ({ route, navigation }) => {
               </View>
 
               {userRoleID === "3" ? (
-                <View style={[Styles.marginBottom16]}>
-                  <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
-                  <View style={[Styles.paddingHorizontal16]}>
-                    <Dropdown label="SELECT" data={switchRoleNames} onSelected={onRoleSelected} isError={errorRole} selectedItem={roleName} />
-                    <Button mode="contained" style={[Styles.marginTop12]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSwitchRole}>
-                      Switch
-                    </Button>
+                <View style={[Styles.padding16]}>
+                  <View style={[Styles.bordergray, Styles.bordergray, Styles.borderRadius8, Styles.paddingBottom8]}>
+                    <Title style={[Styles.padding16, Styles.paddingBottom0]}>Switch Role</Title>
+                    <View style={[Styles.paddingHorizontal16]}>
+                      <Dropdown label="SELECT" data={switchRoleNames} onSelected={onRoleSelected} isError={errorRole} selectedItem={roleName} />
+                      <Button mode="contained" style={[Styles.marginTop12]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSwitchRole}>
+                        Switch
+                      </Button>
+                    </View>
+                    <Portal>
+                      <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                        <Dialog.Title>Confirmation</Dialog.Title>
+                        <Dialog.Content>
+                          <Paragraph>Do you really want to switch your role to {roleName}? If OK, then your active role will get automatically changed</Paragraph>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                          <Button onPress={UpdateUserRole}>Ok</Button>
+                          <Button onPress={hideDialog}>Cancel</Button>
+                        </Dialog.Actions>
+                      </Dialog>
+                    </Portal>
                   </View>
-                  <Portal>
-                    <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-                      <Dialog.Title>Confirmation</Dialog.Title>
-                      <Dialog.Content>
-                        <Paragraph>Do you really want to switch your role to {roleName}? If OK, then your active role will get automatically changed</Paragraph>
-                      </Dialog.Content>
-                      <Dialog.Actions>
-                        <Button onPress={UpdateUserRole}>Ok</Button>
-                        <Button onPress={hideDialog}>Cancel</Button>
-                      </Dialog.Actions>
-                    </Dialog>
-                  </Portal>
+
                 </View>
               ) : null}
 
@@ -681,8 +686,69 @@ const HomeScreen = ({ route, navigation }) => {
                     <Text style={[Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold]}>Design your Dream</Text>
                   </View>
                 </View>
+                {/* Material Calculator */}
+                <TouchableOpacity
+                  onPress={() => {
+                    if (roleID == 2) {
+                      navigation.navigate("MaterialSetupScreen", { type: "add" });
+                    } else {
+                      navigation.navigate("MaterialCalculatorScreen", { type: "add" });
+                    }
+                  }}
+                  style={[Styles.width100per, Styles.height150, Styles.flexRow, Styles.marginTop16, Styles.borderRadius8, { elevation: 4 }]}>
+                  <ImageBackground source={require("../../assets/material-calculator-with-element-bg.jpg")} resizeMode="cover"
+                    style={[{ flex: 1, justifyContent: "center" }]}
+                    imageStyle={{ borderRadius: 8 }}>
+                    <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                    { top: 8 }]}>Material Calculator</Text>
+                  </ImageBackground>
+                </TouchableOpacity>
+                {/* Material Calculator */}
+                <View style={[Styles.paddingTop16]}>
+                  <View style={[Styles.bordergray, Styles.padding16, Styles.borderRadius8]}>
+                    <Text style={[Styles.HomeTitle]}>Enquiry & Estimation</Text>
+                    <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
+                      <TouchableOpacity onPress={() => { navigation.navigate("ImageGalleryScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                      Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 140, height: 72 }]}>
+                        <Icon name="archive-arrow-down" size={22} color={theme.colors.productionIcons} />
+                        <Text style={[Styles.buttonIconLabel,]}>Image Gallery</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => { navigation.navigate("YourEstimationsScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                      Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 140, height: 72, marginLeft: 16 }]}>
+                        <Icon name="archive-arrow-down" size={22} color={theme.colors.productionIcons} />
+                        <Text style={[Styles.buttonIconLabel,]}>Your Estimations</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
 
-                <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
+                {/* Pocket Diary */}
+                <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("PocketDiary", { type: "add" });
+                }}
+                 style={[Styles.width100per, Styles.height150, Styles.flexRow, Styles.marginTop16, Styles.borderRadius8, { elevation: 4 }]}>
+                  <ImageBackground source={require("../../assets/pocket-diary-bg.png")} resizeMode="cover"
+                    style={[{ flex: 1, justifyContent: "center" }]}
+                    imageStyle={{ borderRadius: 8 }}>
+                    <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                    { top: 8 }]}>Pocket Diary</Text>
+                  </ImageBackground>
+                </TouchableOpacity>
+                {/* Pocket Diary */}
+
+                {/* Looking For Jobs */}
+                <View style={[Styles.width100per, Styles.height150, Styles.flexRow, Styles.marginTop16, Styles.borderRadius8, { elevation: 4 }]}>
+                  <ImageBackground source={require("../../assets/jobs-bg.jpg")} resizeMode="cover"
+                    style={[{ flex: 1, justifyContent: "center" }]}
+                    imageStyle={{ borderRadius: 8 }}>
+                    <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                    { top: 8 }]}>Looking For Jobs ?</Text>
+                  </ImageBackground>
+                </View>
+                {/* Looking For Jobs */}
+
+                {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
                   <View style={Styles.width50per}>
                     <Card
                       onPress={() => {
@@ -738,7 +804,7 @@ const HomeScreen = ({ route, navigation }) => {
                       <Image source={require("../../assets/job-seeker.png")} style={[Styles.width104, Styles.height104, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
                     </Card>
                   </View>
-                </View>
+                </View> */}
               </View>
             </View>
           }

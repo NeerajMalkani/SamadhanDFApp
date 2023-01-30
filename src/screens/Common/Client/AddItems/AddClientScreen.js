@@ -234,7 +234,7 @@ const AddClientScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
 
-          if(route.params.type == "source_client") {
+          if(route.params.type == "source_client" || route.params.type == "expenses_client") {
             route.params.fetchClientList();
             navigation.goBack();
           }

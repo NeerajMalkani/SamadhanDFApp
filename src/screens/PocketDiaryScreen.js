@@ -1,118 +1,404 @@
-//import { View } from "react-native";
-// import {Stylesone} from "../styles/stylesone";
-
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, Text, Image, Button, TouchableOpacity } from "react-native";
-
-import { FAB, List, Searchbar, Snackbar, RadioButton } from "react-native-paper";
-import { SwipeListView } from "react-native-swipe-list-view";
-import Provider from "../api/Provider";
-import Header from "../components/Header";
-import { RenderHiddenItems } from "../components/ListActions";
-// import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import NoItems from "../components/NoItems";
+import React from "react";
+import { ScrollView, TouchableNativeFeedback, View, Modal, Image, ImageBackground, LogBox } from "react-native";
+import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
-import { height } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-// import Dashboard from 'react-native-dashboard';
-import { FontAwesome } from 'react-native-vector-icons';
+import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
+import Provider from "../api/Provider";
+import { ImageSlider } from "react-native-image-slider-banner";
+import { communication } from "../utils/communication";
+import ImageViewer from "react-native-image-zoom-viewer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CreateSCCards from "../components/SCCards";
+import FadeCarousel from "rn-fade-carousel";
+import { APIConverter } from "../utils/apiconverter";
+import { Hidden } from "@material-ui/core";
+import { LinearGradient } from 'expo-linear-gradient';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-const Icon = ({ icon, item, background }) => (
-  <FontAwesome
-    name={icon}
-    size={40}
-    color={
-      item.iconColor || (!item.background || !background ? '#fff' : '#fff')
-    }
-    style={item.styleIcon}
-  />
-);
+export const navigationRef = createNavigationContainerRef();
+let roleID = 0,
+  userID = 0,
+  groupRefNo = 0;
+var _user_count = null;
 
-
-const data = [
-  {
-    name: 'SOURCE',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'arrow-circle-down', item, background }),
-    iconColor: '#FFF',
-    link:'AddSourceList',
-  },
-  {
-    name: 'EXPENSE',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'arrow-circle-up', item, background }),
-    styleIcon: { color: '#FFF' },
-    link:'AddExpensesList',
-  },
-  {
-    name: 'PAYABLE',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'level-up', item, background }),
-    link:'PayableList',
-  },
-  {
-    name: 'RECEIVABLE',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'level-down', item, background }),
-    styleName: { color: '#FFF', fontWeight: 'bold' },
-    link:'ReceivableList',
-  },
-  {
-    name: 'POCKET',
-    nameColor: '#FFF',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'get-pocket', item, background }),
-    link:'ApprovedUserScreen',
-  },
-  {
-    name: 'BANK',
-    background: '#03BBB0',
-    icon: (item, background) => Icon({ icon: 'bank', item, background }),
-    link:'ApprovedUserScreen',
-  },
-];
+// const data = [
+//   {
+//     name: 'SOURCE',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'arrow-circle-down', item, background }),
+//     iconColor: '#FFF',
+//     link: 'AddSourceList',
+//   },
+//   {
+//     name: 'EXPENSE',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'arrow-circle-up', item, background }),
+//     styleIcon: { color: '#FFF' },
+//     link: 'AddExpensesList',
+//   },
+//   {
+//     name: 'PAYABLE',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'level-up', item, background }),
+//     link: 'PayableList',
+//   },
+//   {
+//     name: 'RECEIVABLE',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'level-down', item, background }),
+//     styleName: { color: '#FFF', fontWeight: 'bold' },
+//     link: 'ReceivableList',
+//   },
+//   {
+//     name: 'POCKET',
+//     nameColor: '#FFF',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'get-pocket', item, background }),
+//     link: 'ApprovedUserScreen',
+//   },
+//   {
+//     name: 'BANK',
+//     background: '#03BBB0',
+//     icon: (item, background) => Icon({ icon: 'bank', item, background }),
+//     link: 'ApprovedUserScreen',
+//   },
+// ];
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
-const PocketDiaryScreen = ({ navigation }) => {
+const PocketDiaryScreen = ({ route, navigation }) => {
+
   //#region Variables
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-  const [value, setValue] = React.useState("");
-  const [errorCAT, setErrorCAT] = React.useState(false);
-  const [checked, setChecked] = useState('first');
+  const [isSnackbarVisible, setIsSnackbarVisible] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [userRoleName, setUserRoleName] = React.useState(route.params.userDetails[0].RoleName);
+  const [userRoleID, setUserRoleID] = React.useState("");
 
-  //const card = ({ name }) => console.log('Card: ' + name);
-  const card = ({ link }) => navigation.navigate(link);
-  ;
-  //#endregion 
+  const [imageGalleryData, setImageGalleryData] = React.useState([]);
+  const [catalogueCategoryImages, setCatalogueCategoryImages] = React.useState([]);
+  const [catalogueImagesZoom, setCatalogueImagesZoom] = React.useState([]);
+  const [catalogueImagesZoomVisible, setCatalogueImagesZoomVisible] = React.useState(false);
+  const [catalogueImages, setCatalogueImages] = React.useState([]);
+
+  const [userCountData, setUserCountData] = React.useState([]);
+  const [totalUsers, setTotalUsers] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [roleName, setRoleName] = React.useState("");
+  const [switchRoleNames, setSwitchRoleNames] = React.useState([]);
+  const [userRoleData, setUserRoleData] = React.useState([]);
+  const [errorRole, setErrorRole] = React.useState(false);
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+
+  //#endregion
+
 
   //#region Functions
 
-  useEffect(() => {
-    //FetchData();
+  const slidesTwo = [
+    <Image source={require("../../assets/dreamone.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamtwo.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamthree.jpg")} style={Styles.flex1} resizeMode="cover" />,
+    <Image source={require("../../assets/dreamfour.jpg")} style={Styles.flex1} resizeMode="cover" />,
+  ];
+
+  const LogoutUser = async () => {
+    try {
+      await AsyncStorage.setItem("user", "{}");
+      navigationRef.dispatch(StackActions.replace("Login"));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+  const GetUserCount = (userID, groupRefNo) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo,
+      },
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardTotaluser, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setTotalUsers(response.data.data[0].TotalUsers);
+          let usr_data = [
+            {
+              roleID: 0,
+              roleName: "Dealer",
+              roleCount: response.data.data[0].TotalDealer,
+            },
+            {
+              roleID: 1,
+              roleName: "Contractor",
+              roleCount: response.data.data[0].TotalContractor,
+            },
+            {
+              roleID: 2,
+              roleName: "General User",
+              roleCount: response.data.data[0].TotalGeneralUser,
+            },
+            {
+              roleID: 3,
+              roleName: "Client",
+              roleCount: response.data.data[0].TotalClient,
+            },
+          ];
+
+          _user_count = usr_data;
+          setUserCountData(usr_data);
+        }
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+      });
+  };
+
+  React.useEffect(() => {
+    GetUserData();
   }, []);
-  //#region Functions
 
-  //#endregion 
+  const GetUserData = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      const userDataParsed = JSON.parse(userData);
+      roleID = userDataParsed.RoleID;
+      userID = userDataParsed.UserID;
+      groupRefNo = userDataParsed.Sess_group_refno;
+      let roleName = "";
+      switch (roleID) {
+        case "1":
+          roleName = "Super Admin";
+          break;
+        case "2":
+          roleName = "Admin";
+          break;
+        case "3":
+          roleName = "General User";
+          break;
+        case "4":
+          roleName = "Dealer";
+          break;
+        case "5":
+          roleName = "Contractor";
+          break;
+        case "7":
+          roleName = "Employee";
+          break;
+        case "8":
+          roleName = "Client";
+          break;
+        case "9":
+          roleName = "Architect And Consultant (PMC)";
+          break;
+      }
+      setUserRoleID(roleID);
+      setUserRoleName(roleName);
+      GetServiceCatalogue();
+      FetchImageGalleryData();
+      GetUserCount(userID, groupRefNo);
+      if (roleID == 3) {
+        FillUserRoles();
+      }
+    }
+  };
+
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
+
+
+  const GetUserDetails = (user_refno) => {
+    setIsButtonLoading(true);
+    let params = {
+      data: {
+        user_refno: user_refno,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          const user = {
+            UserID: user_refno,
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : "",
+            RoleID: response.data.data.Sess_group_refno,
+            RoleName: response.data.data.Sess_Username,
+            Sess_FName: response.data.data.Sess_FName,
+            Sess_MobileNo: response.data.data.Sess_MobileNo,
+            Sess_Username: response.data.data.Sess_Username,
+            Sess_role_refno: response.data.data.Sess_role_refno,
+            Sess_group_refno: response.data.data.Sess_group_refno,
+            Sess_designation_refno: response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno: response.data.data.Sess_branch_refno,
+            Sess_company_refno: response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
+          };
+
+          StoreUserData(user);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  //#endregion
+
 
   return (
-    <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Pocket Diary" />
-      <Dashboard
-        data={data}
-        background={true}
-        card={card}
-        column={2}
-        rippleColor={'#3498db'}
-      />
+    <View style={[Styles.flex1, Styles.backgroundSecondaryLightColor]}>
+      <View style={[Styles.width100per, Styles.height64, Styles.backgroundColorWhite, Styles.flexRow,
+      Styles.flexAlignCenter, Styles.paddingHorizontal16, Styles.BottomShadow]}>
+        {/* menu icon */}
+        <TouchableNativeFeedback>
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => navigation.toggleDrawer()}>
+            <Icon name="menu" size={24} color={theme.colors.primary} />
+          </View>
+        </TouchableNativeFeedback>
+        {/* menu icon */}
 
-    </View>
+        <Avatar.Image size={40} style={[Styles.marginEnd16, Styles.backgroundSecondaryLightColor, Styles.borderCD, { overflow: "hidden" }]} source={require("../../assets/defaultIcon.png")} />
+        <View style={[Styles.flexColumn, Styles.flexGrow]}>
+          <Title style={[Styles.textColorDark, { marginTop: -4 }]}>{route.params.userDetails[0].FullName}</Title>
+          <Text style={[Styles.textColorDarkSecondary, { marginTop: -4 }]}>{userRoleName}</Text>
+        </View>
+        {
+          userRoleID === "2" ? (
+            <TouchableNativeFeedback>
+              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+                <Icon name="bell-outline" size={24} color={theme.colors.iconOutline} />
+              </View>
+            </TouchableNativeFeedback>
+          ) : (
+            <TouchableNativeFeedback>
+              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
+                <Icon name="logout" size={24} color={theme.colors.iconOutline} />
+              </View>
+            </TouchableNativeFeedback>
+          )
+
+        }
+
+      </View>
+      <ScrollView>
+
+        <View>
+          <View style={[Styles.paddingTop16, Styles.paddingHorizontal16, Styles.paddingBottom24]}>
+            <Text style={[Styles.HomeTitle]}>Pocket Dashboard</Text>
+            <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
+              <TouchableOpacity onPress={() => { navigation.navigate("PayableList"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+                <Icon name="cash-minus" size={24} color={theme.colors.textLight} />
+                <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Payable</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { navigation.navigate("ReceivableList"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+                <Icon name="cash-plus" size={24} color={theme.colors.textLight} />
+                <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Receivable</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
+              <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+                <Icon name="account-cash" size={24} color={theme.colors.textLight} />
+                <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Pocket</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+                <Icon name="bank" size={24} color={theme.colors.textLight} />
+                <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Bank</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={[Styles.width100per, Styles.height40, Styles.boxTopElevation, Styles.borderTopRadius24, Styles.paddingTop12,
+          Styles.backgroundSecondaryLightColor]}>
+
+            <View style={[Styles.horizontalArrowLineBG, Styles.flexAlignSelfCenter, Styles.borderRadius16, Styles.marginBottom16, { width: '20%', height: 6 }]}>
+            </View>
+            <View style={[Styles.width100per, Styles.height40,Styles.backgroundSecondaryLightColor,  { zIndex: 30, position: "absolute", bottom: -34 }]}></View>
+
+          </View>
+          <View style={[Styles.width100per,
+          Styles.paddingBottom16]}>
+            {/* <View style={[Styles.width100per, Styles.height24, { zIndex: 5, position: "absolute", bottom: -5 }]}></View> */}
+            <View style={[Styles.paddingHorizontal16]}>
+
+
+
+              <View>
+                <Text style={[Styles.HomeTitle]}>Settings</Text>
+                <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
+                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Category</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                  Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Sub-Category</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>My Contacts</Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+
+              <View style={[Styles.paddingTop16]}>
+                <Text style={[Styles.HomeTitle]}>Accounting</Text>
+                <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
+                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Source</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                  Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Expenses</Text>
+                  </TouchableOpacity>
+
+                </View>
+
+              </View>
+
+            </View>
+          </View>
+        </View>
+
+      </ScrollView>
+      <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
+      <Modal visible={catalogueImagesZoomVisible} onRequestClose={() => setCatalogueImagesZoomVisible(false)} transparent={true}>
+        <View style={[Styles.flex1, { backgroundColor: "rgba(0,0,0,0.85)", position: "relative" }]}>
+          <Button mode="contained" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }} onPress={() => { }}>
+            View
+          </Button>
+          <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 104, backgroundColor: "white" }} onPress={() => setCatalogueImagesZoomVisible(false)}>
+            Close one
+          </Button>
+          <ImageViewer imageUrls={catalogueImagesZoom} backgroundColor="transparent" style={{ height: 1920 }} />
+        </View>
+      </Modal>
+    </View >
   );
 }
 

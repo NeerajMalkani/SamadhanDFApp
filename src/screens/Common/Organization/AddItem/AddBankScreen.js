@@ -140,7 +140,7 @@ const AddBankScreen = ({ route, navigation }) => {
             }
         }
     };
-    
+
     useEffect(() => {
         GetUserID();
     }, []);
@@ -195,11 +195,10 @@ const AddBankScreen = ({ route, navigation }) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         const cardType = [];
-
                         response.data.data.map((data) => {
                             let selected = false;
                             if (selectedCards !== null) {
-                                if (selectedCards.includes(data.cardtype_refno.toString())) {
+                                if (selectedCards.includes(data.cardtype_refno)) {
                                     selected = true;
                                 }
 
@@ -237,14 +236,12 @@ const AddBankScreen = ({ route, navigation }) => {
                 console.log('update data');
                 UpdateData();
             } else {
-                console.log('insert data');
                 InsertData();
             }
         }
     };
 
     const InsertData = () => {
-        console.log('insert start');
         let ct = [];
         cardType.map((k, i) => {
             if (k.isChecked) {
@@ -272,7 +269,6 @@ const AddBankScreen = ({ route, navigation }) => {
         Provider.createDFCommon(Provider.API_URLS.branchbankcreate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
@@ -316,7 +312,7 @@ const AddBankScreen = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             },
         };
-        // console.log(params);
+        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.branchbankupdate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {

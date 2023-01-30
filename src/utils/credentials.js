@@ -30,5 +30,8 @@ export const projectVariables = {
     DEF_PCKDIARY_CATEGORY_Employee_REFNO: "27",
 
     DEF_PCKDIARY_SUBCATEGORY_CashWithdrawal_REFNO: "1",
+    DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO: "68",
+    DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText: "ptc",
+
 
 }

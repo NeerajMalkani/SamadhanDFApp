@@ -24,8 +24,7 @@ const AddSource = ({ route, navigation }) => {
 
   //#region Variables
 
-  // const [entryTypeError, setEntryTypeError] = React.useState(false);
-  // const [entryType, setEntryType] = React.useState("");
+  
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
@@ -34,6 +33,7 @@ const AddSource = ({ route, navigation }) => {
   const [entryTypeFullData, setEntryTypeFullData] = React.useState([]);
   const [entryType, setEntryType] = React.useState("");
   const [entryTypeDisable, setEntryTypeDisable] = React.useState(true);
+  const [entryTypeError, setEntryTypeError] = React.useState(false);
 
   const [receiptModeData, setReceiptModeData] = React.useState([]);
   const [receiptModeFullData, setReceiptModeFullData] = React.useState([]);
@@ -185,6 +185,7 @@ const AddSource = ({ route, navigation }) => {
     settAmount(route.params.data.amount);
     setPckTransID(route.params.data.pck_trans_refno);
     _pktEntryTypeID = route.params.data.pck_entrytype_refno;
+    
 
     setReceiptMode(route.params.data.pck_mode_name);
     setSource(route.params.data.pck_category_name);
@@ -304,6 +305,8 @@ const AddSource = ({ route, navigation }) => {
             if (response.data.data.length == 1) {
               setEntryType(response.data.data[0].pck_entrytype_name);
               setEntryTypeDisable(true);
+              setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
+              _pktEntryTypeID = response.data.data[0].pck_entrytype_refno;
             }
             else {
               setEntryTypeDisable(false);
@@ -345,7 +348,7 @@ const AddSource = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
         Sess_designation_refno: designID,
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID
+        pck_entrytype_refno: _pktEntryTypeID
       }
     }
     //console.log(params);
@@ -409,8 +412,9 @@ const AddSource = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
-        pck_entrytype_refno: route.params.type === "edit" ? _pktEntryTypeID : pktEntryTypeID,
+        pck_entrytype_refno: _pktEntryTypeID,
         Sess_designation_refno: designID.toString(),
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
       }
     }
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
@@ -596,6 +600,7 @@ const AddSource = ({ route, navigation }) => {
     });
 
     setPktEntryTypeID(a[0].pck_entrytype_refno);
+    _pktEntryTypeID = a[0].pck_entrytype_refno;
 
   };
 
@@ -1144,7 +1149,12 @@ const AddSource = ({ route, navigation }) => {
   const ValidateData = () => {
    // console.log('start validate =========');
     let isValid = true;
-    //console.log(amount);
+
+    if (entryType == "") {
+      isValid = false;
+      setEntryTypeError(true);
+    }
+
     if (amount.trim() == "") {
       isValid = false;
       setAmountError(true);
@@ -1160,7 +1170,7 @@ const AddSource = ({ route, navigation }) => {
       setSSError(true);
     }
     //console.log(subCategoryName);
-    if (subCatStatus && ubCategoryName == "") {
+    if (subCatStatus && subCategoryName == "") {
       isValid = false;
       setSCNError(true);
     }
@@ -1211,7 +1221,10 @@ const AddSource = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} selectedItem={entryType} />
+          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} isError={entryTypeError} selectedItem={entryType} />
+          <HelperText type="error" visible={entryTypeError}>
+            Please select a valid entry type
+          </HelperText>
 
           <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>

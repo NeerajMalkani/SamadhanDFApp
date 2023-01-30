@@ -1090,7 +1090,7 @@ export const Styles = StyleSheet.create({
     },
     shadowOpacity: 0.58,
     shadowRadius: 16.00,
-    elevation: 3,
+    elevation: 20,
   },
 
   HomeTitle: {
