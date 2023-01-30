@@ -20,7 +20,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
   userID = 0,
-  groupRefNo = 0;
+  groupRefNo = 0,
+  companyID = 0,
+  branchID = 0;
 var _user_count = null;
 
 // const data = [
@@ -92,6 +94,8 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   const [userRoleData, setUserRoleData] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [pocketAmount, setPocketAmount] = React.useState("");
+  const [bankAmount, setBankAmount] = React.useState("");
 
 
   //#endregion
@@ -161,6 +165,46 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       });
   };
 
+  const GetPocketAmount = (userID, companyID, branchID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinpocket, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setPocketAmount(response.data.data[0].TotalCashinHand.toString());
+        }
+
+      })
+      .catch((e) => {
+
+      });
+  };
+
+  const GetBankAmount = (userID, companyID, branchID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinbank, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          setBankAmount(response.data.data[0].TotalCashinBank.toString());
+        }
+
+      })
+      .catch((e) => {
+
+      });
+  };
+
   React.useEffect(() => {
     GetUserData();
   }, []);
@@ -172,6 +216,9 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       roleID = userDataParsed.RoleID;
       userID = userDataParsed.UserID;
       groupRefNo = userDataParsed.Sess_group_refno;
+      companyID = userDataParsed.Sess_company_refno;
+      branchID = userDataParsed.Sess_branch_refno;
+
       let roleName = "";
       switch (roleID) {
         case "1":
@@ -201,12 +248,9 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       }
       setUserRoleID(roleID);
       setUserRoleName(roleName);
-      GetServiceCatalogue();
-      FetchImageGalleryData();
       GetUserCount(userID, groupRefNo);
-      if (roleID == 3) {
-        FillUserRoles();
-      }
+      GetPocketAmount(userID, companyID, branchID);
+      GetBankAmount(userID, companyID, branchID);
     }
   };
 
@@ -317,19 +361,27 @@ const PocketDiaryScreen = ({ route, navigation }) => {
               <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
                 <Icon name="account-cash" size={24} color={theme.colors.textLight} />
                 <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Pocket</Text>
+                <View style={[Styles.width50per, Styles.height32, Styles.flexRow, Styles.flexAlignEnd, Styles.flexAlignStart, { position: "absolute", right: 14, top: 14 }]}>
+                  <Icon name="currency-inr" size={20} color={theme.colors.textLight} />
+                  <Text style={[Styles.fontSize16, Styles.textLeft, { color: "#fff", fontWeight: "bold" }]}>{pocketAmount}</Text>
+                </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+              <TouchableOpacity onPress={() => { navigation.navigate("BankTransactionScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
                 <Icon name="bank" size={24} color={theme.colors.textLight} />
                 <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Bank</Text>
+                <View style={[Styles.width50per, Styles.height32, Styles.flexRow, Styles.flexAlignEnd, Styles.flexAlignStart, { position: "absolute", right: 14, top: 14 }]}>
+                  <Icon name="currency-inr" size={20} color={theme.colors.textLight} />
+                  <Text style={[Styles.fontSize16, Styles.textLeft, { color: "#fff", fontWeight: "bold" }]}>{bankAmount}</Text>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
           <View style={[Styles.width100per, Styles.height40, Styles.boxTopElevation, Styles.borderTopRadius24, Styles.paddingTop12,
-          Styles.backgroundSecondaryLightColor]}>
+          Styles.backgroundSecondaryLightColor, { elevation: 20 }]}>
 
             <View style={[Styles.horizontalArrowLineBG, Styles.flexAlignSelfCenter, Styles.borderRadius16, Styles.marginBottom16, { width: '20%', height: 6 }]}>
             </View>
-            <View style={[Styles.width100per, Styles.height40,Styles.backgroundSecondaryLightColor,  { zIndex: 30, position: "absolute", bottom: -34 }]}></View>
+            <View style={[Styles.width100per, Styles.height40, Styles.backgroundSecondaryLightColor, { zIndex: 30, position: "absolute", bottom: -34 }]}></View>
 
           </View>
           <View style={[Styles.width100per,
@@ -337,39 +389,15 @@ const PocketDiaryScreen = ({ route, navigation }) => {
             {/* <View style={[Styles.width100per, Styles.height24, { zIndex: 5, position: "absolute", bottom: -5 }]}></View> */}
             <View style={[Styles.paddingHorizontal16]}>
 
-
-
               <View>
-                <Text style={[Styles.HomeTitle]}>Settings</Text>
+                <Text style={[Styles.HomeTitle]}>Finance</Text>
                 <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
-                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
-                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
-                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
-                    <Text style={[Styles.buttonIconLabel,]}>Category</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
-                  Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
-                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
-                    <Text style={[Styles.buttonIconLabel,]}>Sub-Category</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
-                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
-                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
-                    <Text style={[Styles.buttonIconLabel,]}>My Contacts</Text>
-                  </TouchableOpacity>
-                </View>
-
-              </View>
-
-              <View style={[Styles.paddingTop16]}>
-                <Text style={[Styles.HomeTitle]}>Accounting</Text>
-                <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
-                  <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  <TouchableOpacity onPress={() => { navigation.navigate("AddSourceList"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
                   Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
                     <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                     <Text style={[Styles.buttonIconLabel,]}>Source</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { navigation.navigate("SubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                  <TouchableOpacity onPress={() => { navigation.navigate("AddExpensesList"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
                   Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
                     <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                     <Text style={[Styles.buttonIconLabel,]}>Expenses</Text>
@@ -378,6 +406,30 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
 
               </View>
+
+              <View style={[Styles.paddingTop16]}>
+                <Text style={[Styles.HomeTitle]}>Settings</Text>
+                <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
+                  <TouchableOpacity onPress={() => { navigation.navigate("GCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Category</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate("GSubCategoryNameScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                  Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>Sub-Category</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate("GMyContactsScreen"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 100, height: 72 }]}>
+                    <Icon name="archive-arrow-down" size={22} color={theme.colors.pocketDiaryIcons} />
+                    <Text style={[Styles.buttonIconLabel,]}>My Contacts</Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+
+
 
             </View>
           </View>

@@ -367,6 +367,9 @@ class Provider {
     get_pckmyclientprojectname: "get_pckmyclientprojectname/",
     getuserapprovelist: "getuserapprovelist/",
     get_pckpaymenttype: "get_pckpaymenttype/",
+    pckdashboard_cashinpocket: "pckdashboard_cashinpocket/",
+    pckdashboard_cashinbank: "pckdashboard_cashinbank/",
+    pckdashboard_cashinbank_gridlist: "pckdashboard_cashinbank_gridlist/",
   };
 
   createDFPocketDairy(resource, params) {

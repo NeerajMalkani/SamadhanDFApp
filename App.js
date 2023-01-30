@@ -152,6 +152,7 @@ import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScre
 import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
 import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
 import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
+import BankTransactionScreen from "./src/screens/Common/PocketDairy/BankTransactions";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -369,6 +370,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
+              
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
@@ -615,7 +618,6 @@ export default function App() {
 
               <Stack.Screen name="SubCategoryNameScreen" component={SubCategoryNameScreen} options={{ headerTitle: "Sub Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddSubCategoryNameScreen" component={AddSubCategoryNameScreen} options={{ headerTitle: "Add Sub Category", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
-              <Stack.Screen name="GMyContactsScreen" component={GMyContactsScreen} options={{ headerTitle: "My Contacts", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddGMyContactsScreen" component={AddGMyContactsScreen} options={{ headerTitle: "Add Contacts", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="GMyBankScreen" component={GMyBankScreen} options={{ headerTitle: " My Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddGMyBankScreen" component={AddGMyBankScreen} options={{ headerTitle: " Add Bank Account", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
