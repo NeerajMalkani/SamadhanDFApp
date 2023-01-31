@@ -24,7 +24,7 @@ const AddSource = ({ route, navigation }) => {
 
   //#region Variables
 
-  
+
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
@@ -128,6 +128,7 @@ const AddSource = ({ route, navigation }) => {
   const [projectListStatus, setProjectListstatus] = React.useState(false);
   const [invoiceStatus, setInvoiceStatus] = React.useState(false);
   const [paymentTypeStatus, setPaymentTypeStatus] = React.useState(false);
+  const [entryTypeStatus, setEntryTypeStatus] = React.useState(false);
 
   const [pktEntryTypeID, setPktEntryTypeID] = React.useState("1");
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
@@ -185,7 +186,7 @@ const AddSource = ({ route, navigation }) => {
     settAmount(route.params.data.amount);
     setPckTransID(route.params.data.pck_trans_refno);
     _pktEntryTypeID = route.params.data.pck_entrytype_refno;
-    
+
 
     setReceiptMode(route.params.data.pck_mode_name);
     setSource(route.params.data.pck_category_name);
@@ -307,9 +308,11 @@ const AddSource = ({ route, navigation }) => {
               setEntryTypeDisable(true);
               setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
               _pktEntryTypeID = response.data.data[0].pck_entrytype_refno;
+              setEntryTypeStatus(false);
             }
             else {
               setEntryTypeDisable(false);
+              setEntryTypeStatus(true);
             }
 
           }
@@ -347,13 +350,14 @@ const AddSource = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
-        Sess_designation_refno: designID,
+        Sess_designation_refno: designID.toString(),
         pck_entrytype_refno: _pktEntryTypeID
       }
     }
     //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddsourceform, params)
       .then((response) => {
+        //console.log('recept data +++++++++++++');
         //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -888,7 +892,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-   // console.log('insert===================');
+    // console.log('insert===================');
     let contactID = "", bankID = "", depositID = "";
 
     if (receivedFormFullData.length > 0) {
@@ -994,10 +998,10 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-   // console.log(datas);
+    // console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourcecreate, datas)
       .then((response) => {
-       // console.log(response.data);
+        // console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1147,7 +1151,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-   // console.log('start validate =========');
+    // console.log('start validate =========');
     let isValid = true;
 
     if (entryType == "") {
@@ -1184,22 +1188,22 @@ const AddSource = ({ route, navigation }) => {
       isValid = false;
       setDTError(true);
     }
-   // console.log(myBankList);
+    // console.log(myBankList);
     if (bankListStatus && myBankList == "") {
       isValid = false;
       setBLError(true);
     }
-   // console.log(chequeNo);
+    // console.log(chequeNo);
     if (chequeNoStatus && chequeNo.trim() == "") {
       isValid = false;
       setChequeNoError(true);
     }
-   // console.log(chequeDate);
+    // console.log(chequeDate);
     if (chequeDateStatus && chequeDate == "") {
       isValid = false;
       setChequeDateError(true);
     }
-   // console.log(repaymentDate);
+    // console.log(repaymentDate);
     if (paymentReminderStatus && repaymentDate == "") {
       isValid = false;
       setChequeDateError(true);
@@ -1221,10 +1225,15 @@ const AddSource = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} isError={entryTypeError} selectedItem={entryType} />
-          <HelperText type="error" visible={entryTypeError}>
-            Please select a valid entry type
-          </HelperText>
+
+          {entryTypeStatus &&
+            <>
+              <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} isError={entryTypeError} selectedItem={entryType} />
+              <HelperText type="error" visible={entryTypeError}>
+                Please select a valid entry type
+              </HelperText>
+            </>
+          }
 
           <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>

@@ -25,48 +25,7 @@ let roleID = 0,
   branchID = 0;
 var _user_count = null;
 
-// const data = [
-//   {
-//     name: 'SOURCE',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'arrow-circle-down', item, background }),
-//     iconColor: '#FFF',
-//     link: 'AddSourceList',
-//   },
-//   {
-//     name: 'EXPENSE',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'arrow-circle-up', item, background }),
-//     styleIcon: { color: '#FFF' },
-//     link: 'AddExpensesList',
-//   },
-//   {
-//     name: 'PAYABLE',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'level-up', item, background }),
-//     link: 'PayableList',
-//   },
-//   {
-//     name: 'RECEIVABLE',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'level-down', item, background }),
-//     styleName: { color: '#FFF', fontWeight: 'bold' },
-//     link: 'ReceivableList',
-//   },
-//   {
-//     name: 'POCKET',
-//     nameColor: '#FFF',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'get-pocket', item, background }),
-//     link: 'ApprovedUserScreen',
-//   },
-//   {
-//     name: 'BANK',
-//     background: '#03BBB0',
-//     icon: (item, background) => Icon({ icon: 'bank', item, background }),
-//     link: 'ApprovedUserScreen',
-//   },
-// ];
+
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -358,7 +317,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
-              <TouchableOpacity onPress={() => { navigation.navigate("CategoryNameScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+              <TouchableOpacity onPress={() => { navigation.navigate("PocketTransactionScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
                 <Icon name="account-cash" size={24} color={theme.colors.textLight} />
                 <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Pocket</Text>
                 <View style={[Styles.width50per, Styles.height32, Styles.flexRow, Styles.flexAlignEnd, Styles.flexAlignStart, { position: "absolute", right: 14, top: 14 }]}>

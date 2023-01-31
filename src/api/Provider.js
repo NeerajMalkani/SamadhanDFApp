@@ -370,6 +370,8 @@ class Provider {
     pckdashboard_cashinpocket: "pckdashboard_cashinpocket/",
     pckdashboard_cashinbank: "pckdashboard_cashinbank/",
     pckdashboard_cashinbank_gridlist: "pckdashboard_cashinbank_gridlist/",
+    pckdashboard_cashinpocket_details: "pckdashboard_cashinpocket_details/",
+    pckdashboard_cashinpocket_gridlist: "pckdashboard_cashinpocket_gridlist/",
   };
 
   createDFPocketDairy(resource, params) {

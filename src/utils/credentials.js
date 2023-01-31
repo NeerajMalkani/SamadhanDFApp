@@ -27,7 +27,8 @@ export const projectVariables = {
     DEF_PCKDIARY_CATEGORY_Contacts_REFNO: "2",
     DEF_PCKDIARY_CATEGORY_HandLoan_REFNO: "4",
     DEF_PCKDIARY_CATEGORY_Clients_REFNO: "24",
-    DEF_PCKDIARY_CATEGORY_Employee_REFNO: "27",
+    DEF_PCKDIARY_CATEGORY_Branch_REFNO: "27",
+
 
     DEF_PCKDIARY_SUBCATEGORY_CashWithdrawal_REFNO: "1",
     DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO: "68",

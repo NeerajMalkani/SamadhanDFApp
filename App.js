@@ -153,6 +153,7 @@ import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
 import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
 import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
 import BankTransactionScreen from "./src/screens/Common/PocketDairy/BankTransactions";
+import PocketTransactionScreen from "./src/screens/Common/PocketDairy/PocketTransactions";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -371,7 +372,9 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
-              
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
+
+
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
             </Drawer.Navigator>
           );
@@ -399,6 +402,8 @@ export default function App() {
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyPersonalBankScreen" component={MyPersonalBankScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
             </Drawer.Navigator>
           );
         case 4:
@@ -448,16 +453,17 @@ export default function App() {
 
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
-
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
+              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} /> */}
-              
+
             </Drawer.Navigator>
           );
-          case 8:
+        case 8:
           return (
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
@@ -496,7 +502,7 @@ export default function App() {
       default:
         return (
           <Tab.Navigator shifting={false} initialRouteName="dashboard" activeColor={theme.colors.primary} inactiveColor="#696969" barStyle={{ backgroundColor: theme.colors.textLight, height: 70, paddingTop: 8 }}>
-            <Tab.Screen name="Dashboard" component={DrawerNavigator}  options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
+            <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
             <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
             <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
             <Tab.Screen

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, TouchableOpacity } from "react-native";
 import { FAB, List, Searchbar, Snackbar, Title, HelperText, Divider, Text, Button, DataTable } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -14,6 +14,8 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import Dropdown from "../../../components/Dropdown";
 import { projectVariables } from "../../../utils/credentials";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "react-native-inset-shadow/src/styles";
+
 
 let userID = 0, groupID = 0, companyID = 0, branchID = 0, designID = 0, roleID = 0;
 
@@ -33,10 +35,13 @@ const BankTransactionScreen = ({ navigation }) => {
     const [snackbarText, setSnackbarText] = React.useState("");
     const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-    const [transactionTypeName, setTransactionTypeName] = React.useState("");
     const [categoryName, setCategoryName] = React.useState("");
-    const [createdBy, setCreateBy] = React.useState("");
-    const [display, setDisplay] = React.useState(false);
+    const [subCategoryName, setSubCategoryName] = React.useState("");
+    const [transactionTypeName, setTransactionTypeName] = React.useState("");
+    const [amount, setAmount] = React.useState("");
+    const [notes, setNotes] = React.useState("");
+    const [currentBalance, setCurrentBalance] = React.useState("");
+    const [transactionDate, setTransactionDate] = React.useState("");
     const refRBSheet = useRef();
 
     const [myBankListFullData, setMyBankListFullData] = React.useState([]);
@@ -109,16 +114,13 @@ const BankTransactionScreen = ({ navigation }) => {
                 })[0].bank_refno
             },
         };
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinbank_gridlist, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         response.data.data = APIConverter(response.data.data);
-
                         setBankName(response.data.data[0].pck_mybank_name);
                         setAvailableBalance(response.data.data[0].pck_mybank_amount);
-                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
@@ -232,6 +234,8 @@ const BankTransactionScreen = ({ navigation }) => {
 
     const onEntryTypeChanged = (selectedItem) => {
         setEntryType(selectedItem);
+        setEntryTypeError(false);
+
 
         let a = entryTypeFullData.filter((el) => {
             return el.pck_entrytype_name === selectedItem;
@@ -243,8 +247,44 @@ const BankTransactionScreen = ({ navigation }) => {
 
     const RenderItems = (data) => {
         return (
-            <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-                <List.Item
+            <View style={[Styles.backgroundColor, Styles.flexJustifyCenter, Styles.paddingHorizontal4,
+            { height: 92, }]}>
+                <TouchableOpacity activeOpacity={1}
+                    onPress={() => {
+                        refRBSheet.current.open();
+                        setCategoryName(data.item.categoryName);
+                        setSubCategoryName(data.item.pck_sub_category_name);
+                        setTransactionTypeName(data.item.transTypeName);
+                        setAmount(data.item.amount);
+                        setCurrentBalance(data.item.current_balance);
+                        setNotes(data.item.notes);
+                        setTransactionDate(data.item.pck_trans_date);
+
+                    }}
+                    style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
+                    Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
+                    <View style={[Styles.width50per, Styles.flexColumn]}>
+                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart, Styles.flexAlignCenter]}>
+                            <Text>{data.item.categoryName}</Text>
+                        </View>
+                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart,
+                        Styles.flexAlignCenter, Styles.marginTop4]}>
+                            <Text>{data.item.pck_sub_category_name}</Text>
+                        </View>
+                        <View style={[Styles.width100per, Styles.marginTop4]}>
+                            <Text style={[Styles.textLeft]}>{data.item.pck_trans_date}</Text>
+                        </View>
+                    </View>
+                    <View style={[Styles.width50per, Styles.flexColumn, Styles.flexSpaceBetween]}>
+                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyEnd, Styles.flexAlignCenter]}>
+                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
+                        </View>
+                        <View style={[Styles.width100per,]}>
+                            <Text style={[Styles.textRight]}>Balance: <Icon name="currency-inr" size={14} />{data.item.current_balance}</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                {/* <List.Item
                     title={data.item.categoryName}
                     titleStyle={{ fontSize: 18 }}
                     description={`Transaction Type: ${data.item.pck_sub_category_name}\nAmount: ${data.item.amount}`}
@@ -256,10 +296,10 @@ const BankTransactionScreen = ({ navigation }) => {
                         setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
                         setDisplay(data.item.display);
                     }}
-                     left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+                    left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
                     //left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name={data.item.transtypeID == } />}
                     right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-                />
+                /> */}
             </View>
         );
     };
@@ -361,13 +401,49 @@ const BankTransactionScreen = ({ navigation }) => {
             <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
                 {snackbarText}
             </Snackbar>
-            <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={320} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+            <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={460} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
                 <View>
-                    <Title style={[Styles.paddingHorizontal16]}>{categoryName}</Title>
+                    <Title style={[Styles.paddingHorizontal16]}><Icon name="currency-inr" size={20} />{amount}</Title>
                     <ScrollView style={{ marginBottom: 64 }}>
-                        <List.Item title="Transaction Type" description={transactionTypeName} />
-                        <List.Item title="Created By " description={createdBy} />
-                        <List.Item title="Display" description={display ? "Yes" : "No"} />
+                        <View style={[Styles.paddingStart16]}>
+
+                            {transactionTypeName == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO_TXT ?
+                                (
+                                    <>
+                                        <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                                            <View>
+                                                <Icon name="plus-circle" color={transactionTypeName == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO_TXT ? theme.multicolors.green : theme.multicolors.red} size={18} style={[Styles.marginEnd8]} />
+                                            </View>
+                                            <View>
+                                                <Text style={[Styles.fontSize16]}>{transactionTypeName}</Text>
+                                            </View>
+
+
+                                        </View>
+                                    </>
+                                ) :
+                                (
+                                    <>
+                                        <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                                            <View>
+                                                <Icon name="minus-circle" color={transactionTypeName == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO_TXT ? theme.multicolors.green : theme.multicolors.red} size={18} style={[Styles.marginEnd8]} />
+                                            </View>
+                                            <View>
+                                                <Text style={[Styles.fontSize16]}>{transactionTypeName}</Text>
+                                            </View>
+
+                                        </View>
+                                    </>
+                                )
+                            }
+
+                        </View>
+                        <List.Item title="Transaction Date" description={transactionDate} />
+                        <List.Item title="Category" description={categoryName} />
+                        <List.Item title="Sub Category" description={subCategoryName} />
+                        <List.Item title="Notes" description={notes} />
+                        <List.Item title="Current Balance" description={currentBalance} />
+
                     </ScrollView>
                 </View>
             </RBSheet>

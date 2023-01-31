@@ -194,6 +194,7 @@ const AddExpenses = ({ route, navigation }) => {
   const [projectExpenseStatus, setProjectExpenseStatus] = React.useState(false);
   const [PayToCompanyStatus, setPayToCompanyStatus] = React.useState(false);
   const [projectExpenseDisable, setProjectExpenseDisable] = React.useState(false);
+  const [entryTypeStatus, setEntryTypeStatus] = React.useState(false);
 
   const [collectedAmount, setcollectedAmount] = React.useState("");
   const [paidAmount, setpaidAmount] = React.useState("");
@@ -228,7 +229,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchPayToCompanyData = (transactionID) => {
-    console.log('pay to company ============');
+    //console.log('pay to company ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -262,7 +263,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const SetEditData = (data) => {
-    console.log('start edit data =====================');
+    //console.log('start edit data =====================');
     //console.log(route.params);
 
     setcollectedAmount(data.Collected_ActualAmount);
@@ -420,9 +421,11 @@ const AddExpenses = ({ route, navigation }) => {
               setEntryTypeDisable(true);
               setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
               _pktEntryTypeID = response.data.data[0].pck_entrytype_refno;
+              setEntryTypeStatus(false);
             }
             else {
               setEntryTypeDisable(false);
+              setEntryTypeStatus(true);
             }
 
 
@@ -566,13 +569,13 @@ const AddExpenses = ({ route, navigation }) => {
         pck_category_refno: categoryID,
       }
     }
-    console.log(params);
+    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddexpensesform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('edit data =============');
-            console.log(response.data.data);
+            //console.log('edit data =============');
+            //console.log(response.data.data);
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
             setProjectExpenseFullData(response.data.data);
             if (route.params.type != projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
@@ -620,10 +623,10 @@ const AddExpenses = ({ route, navigation }) => {
         pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
       }
     }
-    console.log(params);
+    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
@@ -1081,8 +1084,8 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const onAmount = (text) => {
-    console.log(parseFloat(text));
-    console.log(route.params);
+    //console.log(parseFloat(text));
+    //console.log(route.params);
 
     if (parseFloat(text) > parseFloat(balanceAmount.replace(/,/g, ''))) {
       settAmount("");
@@ -1158,7 +1161,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    console.log('insert===================');
+    //console.log('insert===================');
     const datas = new FormData();
     let params = {
 
@@ -1278,8 +1281,8 @@ const AddExpenses = ({ route, navigation }) => {
     );
 
     //console.log(params);
-    console.log('data params ================');
-    console.log(datas);
+    //console.log('data params ================');
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensescreate, datas)
       .then((response) => {
         //console.log(response.data);
@@ -1302,7 +1305,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    console.log('update===================');
+    //console.log('update===================');
     const datas = new FormData();
     let params = {
 
@@ -1423,10 +1426,10 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-    console.log(datas);
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensesupdate, datas)
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -1539,33 +1542,41 @@ const AddExpenses = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
+          {entryTypeStatus &&
+            <>
+              <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} isError={entryTypeError} onSelected={onEntryTypeChanged} selectedItem={entryType} />
+              <HelperText type="error" visible={entryTypeError}>
+                Please select a valid entry type
+              </HelperText>
+            </>
+          }
 
-          <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} isError={entryTypeError} onSelected={onEntryTypeChanged} selectedItem={entryType} />
-          <HelperText type="error" visible={entryTypeError}>
-            Please select a valid entry type
-          </HelperText>
 
           <TextInput mode="flat" label="Amount" value={amount} returnKeyType="next" keyboardType="number-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>
             {amountInvalidBalance}
           </HelperText>
 
-          <View style={[Styles.padding16]}>
-            <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter, Styles.bordergray, Styles.fontBold]} >
-              <DataTable.Header>
-                <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]}>Collected</DataTable.Title>
-                <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Paid</DataTable.Title>
-                <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Balance</DataTable.Title>
-              </DataTable.Header>
+          {route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
+            <>
+              <View style={[Styles.padding16]}>
+                <DataTable style={[Styles.backgroundSecondaryColor, Styles.borderRadius4, Styles.flexJustifyCenter, Styles.bordergray, Styles.fontBold]} >
+                  <DataTable.Header>
+                    <DataTable.Title style={[{ flex: 1, justifyContent: 'center' }]}>Collected</DataTable.Title>
+                    <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Paid</DataTable.Title>
+                    <DataTable.Title style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]} numeric>Balance</DataTable.Title>
+                  </DataTable.Header>
 
-              <DataTable.Row style={[Styles.backgroundColor]}>
-                <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{collectedAmount}</DataTable.Cell>
-                <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{paidAmount}</DataTable.Cell>
-                <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{balanceAmount}</DataTable.Cell>
-              </DataTable.Row>
+                  <DataTable.Row style={[Styles.backgroundColor]}>
+                    <DataTable.Cell style={[{ flex: 1, justifyContent: 'center' }]}>{collectedAmount}</DataTable.Cell>
+                    <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{paidAmount}</DataTable.Cell>
+                    <DataTable.Cell style={[Styles.borderLeft1, { flex: 1, justifyContent: 'center' }]}>{balanceAmount}</DataTable.Cell>
+                  </DataTable.Row>
 
-            </DataTable>
-          </View>
+                </DataTable>
+              </View>
+            </>
+          }
 
           <Dropdown label="Payment Mode" data={payModeData} onSelected={onPayModeChanged} isError={errorPM} selectedItem={payMode} />
           <HelperText type="error" visible={errorPM}>
