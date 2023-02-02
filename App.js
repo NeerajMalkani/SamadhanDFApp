@@ -157,6 +157,7 @@ import PocketTransactionScreen from "./src/screens/Common/PocketDairy/PocketTran
 import SourceListGeneralUserScreen from "./src/screens/Common/PocketDairy/SourceListGeneralUser";
 import ExpensesListGeneralUserScreen from "./src/screens/Common/PocketDairy/ExpensesListGeneralUser";
 import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy/PocketTransactionGeneralUser";
+import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -640,6 +641,7 @@ export default function App() {
               <Stack.Screen name="BankListScreen" component={BankListScreen} options={{ headerTitle: "Bank List Screen", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="PDCDataUpdate" component={PDCDataUpdate} options={{ headerTitle: "Update PDC Details", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
               <Stack.Screen name="AddMyPersonalBank" component={AddMyPersonalBank} options={{ headerTitle: "Add My Personal Bank", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
+              <Stack.Screen name="BranchWiseTransactionScreen" component={BranchWiseTransactionScreen} options={{ headerTitle: "BRANCH WISE CASH", headerBackTitleVisible: false, headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} />
             </Stack.Navigator>
           </NavigationContainer>
         )}
