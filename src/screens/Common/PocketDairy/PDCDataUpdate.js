@@ -15,7 +15,7 @@ import { AWSImagePath } from "../../../utils/paths";
 import { APIConverter } from "../../../utils/apiconverter";
 import { common } from "@material-ui/core/colors";
 
-let userID = 0, groupID = 0, companyID = 0, branchID = 0, designID = 0;
+let userID = 0, groupID = 0, companyID = 0, branchID = 0, designID = 0, roleID = 0;
 
 const PDCDataUpdate = ({ route, navigation }) => {
 
@@ -66,6 +66,7 @@ const PDCDataUpdate = ({ route, navigation }) => {
             companyID = JSON.parse(userData).Sess_company_refno;
             branchID = JSON.parse(userData).Sess_branch_refno;
             designID = JSON.parse(userData).Sess_designation_refno;
+            roleID = userDataParsed.RoleID;
             FetchBankList();
         }
     };
@@ -164,8 +165,13 @@ const PDCDataUpdate = ({ route, navigation }) => {
                 if (response.data && response.data.code === 200) {
                     //route.params.fetchData("update");
                     //navigation.goBack();
-                    navigation.navigate("AddSourceList", { type: "update", fetchData: null });
-                    //navigation.navigate("AddSourceList");
+                    if (roleID == 3) {
+                        navigation.navigate("SourceListGeneralUserScreen", { type: "update", fetchData: null });
+                    }
+                    else {
+                        navigation.navigate("AddSourceList", { type: "update", fetchData: null });
+                    }
+
                 } else if (response.data.code === 304) {
                     setSnackbarText(communication.AlreadyExists);
                     setSnackbarVisible(true);

@@ -317,7 +317,15 @@ const PocketDiaryScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
-              <TouchableOpacity onPress={() => { navigation.navigate("PocketTransactionScreen"); }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
+              <TouchableOpacity onPress={() => {
+                if (roleID == 3) {
+                  navigation.navigate("PocketTransactionGeneralUserScreen");
+                }
+                else {
+                  navigation.navigate("PocketTransactionScreen");
+                }
+
+              }} style={[Styles.height80, Styles.borderRadius8, Styles.backgroundGreen, Styles.padding14, Styles.boxElevation, { width: 156 }]}>
                 <Icon name="account-cash" size={24} color={theme.colors.textLight} />
                 <Text style={[Styles.fontSize16, { color: "#fff", width: "100%", fontWeight: "bold", position: "absolute", bottom: 14, left: 14 }]}>Pocket</Text>
                 <View style={[Styles.width50per, Styles.height32, Styles.flexRow, Styles.flexAlignEnd, Styles.flexAlignStart, { position: "absolute", right: 14, top: 14 }]}>
@@ -351,12 +359,29 @@ const PocketDiaryScreen = ({ route, navigation }) => {
               <View>
                 <Text style={[Styles.HomeTitle]}>Finance</Text>
                 <View style={[Styles.marginTop16, Styles.flexSpaceBetween, Styles.flexRow]}>
-                  <TouchableOpacity onPress={() => { navigation.navigate("AddSourceList"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
+                  <TouchableOpacity onPress={() => {
+                    if (roleID == 3) {
+                      navigation.navigate("SourceListGeneralUserScreen");
+                    }
+                    else {
+                      navigation.navigate("AddSourceList");
+                    }
+
+
+                  }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn,
                   Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
                     <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                     <Text style={[Styles.buttonIconLabel,]}>Source</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { navigation.navigate("AddExpensesList"); }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
+                  <TouchableOpacity onPress={() => {
+                    if (roleID == 3) {
+                      navigation.navigate("ExpensesListGeneralUserScreen");
+                    }
+                    else {
+                      navigation.navigate("AddExpensesList");
+                    }
+
+                  }} style={[Styles.borderRadius8, Styles.homeBox, Styles.flexColumn, Styles.flexJustifyCenter,
                   Styles.flexAlignCenter, Styles.paddingHorizontal12, { width: 156, height: 72 }]}>
                     <Icon name="archive-arrow-down" size={22} color={theme.colors.masterIcons} />
                     <Text style={[Styles.buttonIconLabel,]}>Expenses</Text>

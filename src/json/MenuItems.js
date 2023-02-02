@@ -303,13 +303,13 @@ export const MenuItemsGeneralUser = [
         title: "Add Expenses",
         type: "accordian",
         index: 11,
-        navigation: "AddExpensesList",
+        navigation: "ExpensesListGeneralUserScreen",
       },
       {
         title: "Add Source",
         type: "accordian",
         index: 11,
-        navigation: "AddSourceList",
+        navigation: "SourceListGeneralUserScreen",
       },
       {
         title: "Inbox",
