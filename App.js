@@ -122,7 +122,7 @@ import AddBudgetSetup from "./src/screens/Common/PocketDairy/Setting/AddItems/Ad
 import AddExpensesList from "./src/screens/Common/PocketDairy/AddExpensesList";
 import AddExpenses from "./src/screens/Common/PocketDairy/AddItems/AddExpenses";
 import AddSourceList from "./src/screens/Common/PocketDairy/AddSourceList";
-import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
+//import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
 import AddSource from "./src/screens/Common/PocketDairy/AddItems/AddSource";
 //import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
 import BrandConversionValue from "./src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue";
@@ -177,6 +177,7 @@ import SourceListGeneralUserScreen from "./src/screens/Common/PocketDairy/Source
 import ExpensesListGeneralUserScreen from "./src/screens/Common/PocketDairy/ExpensesListGeneralUser";
 import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy/PocketTransactionGeneralUser";
 import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
+import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -819,11 +820,11 @@ export default function App() {
                 name="AddSourceList"
                 component={AddSourceList}
               />
-              <Drawer.Screen
+              {/* <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="VerifyCompanySource"
                 component={VerifyCompanySource}
-              />
+              /> */}
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="AddBankScreen"
@@ -1048,11 +1049,11 @@ export default function App() {
                 name="AddSourceList"
                 component={AddSourceList}
               />
-              <Drawer.Screen
+              {/* <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="VerifyCompanySource"
                 component={VerifyCompanySource}
-              />
+              /> */}
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="BankTransactionScreen"
@@ -2061,6 +2062,17 @@ export default function App() {
               <Stack.Screen
                 name="PhoneContacts"
                 component={PhoneContacts}
+                options={{
+                  headerTitle: "Phone Contacts",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="PhoneContactDirectUpload"
+                component={PhoneContactDirectUpload}
                 options={{
                   headerTitle: "Phone Contacts",
                   headerBackTitleVisible: false,

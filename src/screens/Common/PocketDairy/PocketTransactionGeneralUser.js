@@ -173,17 +173,17 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             <View style={[Styles.backgroundColor, Styles.flexJustifyCenter, Styles.paddingHorizontal4,
             Styles.paddingHorizontal16, { height: 92, }]}>
                 <TouchableOpacity activeOpacity={1}
-                    onPress={() => {
-                        refRBSheet.current.open();
-                        setCategoryName(data.item.categoryName);
-                        setSubCategoryName(data.item.pck_sub_category_name);
-                        setTransactionTypeName(data.item.transTypeName);
-                        setAmount(data.item.amount);
-                        setCurrentBalance(data.item.current_balance);
-                        setNotes(data.item.notes);
-                        setTransactionDate(data.item.pck_trans_date);
+                    // onPress={() => {
+                    //     refRBSheet.current.open();
+                    //     setCategoryName(data.item.categoryName);
+                    //     setSubCategoryName(data.item.pck_sub_category_name);
+                    //     setTransactionTypeName(data.item.transTypeName);
+                    //     setAmount(data.item.amount);
+                    //     setCurrentBalance(data.item.current_balance);
+                    //     setNotes(data.item.notes);
+                    //     setTransactionDate(data.item.pck_trans_date);
 
-                    }}
+                    // }}
                     style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
                     Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
                     <View style={[Styles.width50per, Styles.flexColumn]}>

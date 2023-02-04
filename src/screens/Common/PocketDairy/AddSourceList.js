@@ -278,7 +278,7 @@ const AddSourceList = ({ route, navigation }) => {
   };
 
   const EditCallback_Company = (data, rowMap) => {
-    //console.log(data.item);
+    console.log(data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddSource", {
       type: "edit",
@@ -312,6 +312,7 @@ const AddSourceList = ({ route, navigation }) => {
         cont_project_refno: data.item.cont_project_refno,
         invoice_no: data.item.invoice_no,
         payment_type_refno: data.item.payment_type_refno,
+        payment_group_refno: data.item.payment_group_refno,
 
       },
     });

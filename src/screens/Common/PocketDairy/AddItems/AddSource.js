@@ -16,6 +16,7 @@ import { APIConverter } from "../../../../utils/apiconverter";
 import { common } from "@material-ui/core/colors";
 import { projectVariables } from "../../../../utils/credentials";
 import RadioGroup from "react-native-radio-buttons-group";
+import * as Contacts from "expo-contacts";
 
 
 let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0, companyAdminID = 0;
@@ -111,6 +112,7 @@ const AddSource = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
   const ref_input2 = useRef();
   const ref_input3 = useRef();
 
@@ -128,31 +130,45 @@ const AddSource = ({ route, navigation }) => {
   const [projectListStatus, setProjectListstatus] = React.useState(false);
   const [invoiceStatus, setInvoiceStatus] = React.useState(false);
   const [paymentTypeStatus, setPaymentTypeStatus] = React.useState(false);
+  const [paymentGroupStatus, setPaymentGroupStatus] = React.useState(false);
   const [entryTypeStatus, setEntryTypeStatus] = React.useState(false);
+  const [isContactLoading, setIsContactLoading] = useState(false);
 
   const [pktEntryTypeID, setPktEntryTypeID] = React.useState("1");
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [paymentTypeID, setPaymentTypeID] = useState(0);
+  const [paymentGroupID, setPaymentGroupID] = useState(0);
 
+  const [errorPG, setErrorPG] = React.useState(false);
+  const [errorPT, setErrorPT] = React.useState(false);
   const [paymentRB, setPaymentRB] = useState([
     {
+      id: "1",
+      label: "Part",
+      selected: false,
+      value: "1",
+    },
+    {
+      id: "2",
+      label: "Full Amount with invoice close",
+      selected: false,
+      value: "2",
+    },
+  ]);
+
+  const [paymentGroup, setPaymentGroup] = useState([
+    {
       id: "1", // acts as primary key, should be unique and non-empty string
-      label: "Advance",
+      label: "Advance Amount",
       selected: true,
       value: "1",
     },
     {
       id: "2",
-      label: "Part",
+      label: "Invoice Amount",
       selected: false,
       value: "2",
-    },
-    {
-      id: "3",
-      label: "Full Amount with invoice close",
-      selected: false,
-      value: "3",
-    },
+    }
   ]);
 
   //#endregion 
@@ -242,13 +258,12 @@ const AddSource = ({ route, navigation }) => {
       setRepaymentDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
     }
 
-
-    if (route.params.data.myclient_refno != null) {
+    if (route.params.data.myclient_refno != null && route.params.data.myclient_refno != "0") {
       setClientListstatus(true);
       FetchClientList(route.params.data.myclient_refno);
     }
 
-    if (route.params.data.cont_project_refno != null) {
+    if (route.params.data.cont_project_refno != null && route.params.data.cont_project_refno != "0") {
       setProjectListstatus(true);
       FetchProjectList(route.params.data.myclient_refno, route.params.data.cont_project_refno);
     }
@@ -270,6 +285,20 @@ const AddSource = ({ route, navigation }) => {
       });
 
       setPaymentRB(recc);
+    }
+
+    if (route.params.data.payment_group_refno != "" && route.params.data.payment_group_refno != "0") {
+      setPaymentTypeStatus(true);
+
+      let recc = [...paymentGroup];
+      recc.map((r) => {
+        r.selected = false;
+        if (r.id == route.params.data.payment_group_refno) {
+          r.selected = true;
+        }
+      });
+
+      setPaymentGroup(recc);
     }
 
     setCommonStatus(true);
@@ -442,7 +471,7 @@ const AddSource = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchReceiverList = (contactID) => {
+  const FetchReceiverList = (contactID, contactName) => {
     ////console.log('receiver data start ============');
     let params = {
       data: {
@@ -465,6 +494,12 @@ const AddSource = ({ route, navigation }) => {
             if (contactID != null) {
               setReceivedForm(response.data.data.filter((el) => {
                 return el.mycontactID === contactID;
+              })[0].contactName);
+            }
+
+            if (contactName != null && contactName != "") {
+              setReceivedForm(response.data.data.filter((el) => {
+                return el.contactName === contactName;
               })[0].contactName);
             }
           }
@@ -591,6 +626,36 @@ const AddSource = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
+  const FetchPaymentGroup = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID
+      }
+    }
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentgroup, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            const pType = [];
+            response.data.data.map((data) => {
+              pType.push(
+                {
+                  label: data.payment_group_name,
+                  id: data.payment_group_refno,
+                  selected: false,
+                  value: data.payment_group_refno
+                }
+              );
+            });
+
+            setPaymentGroup(pType);
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
   useEffect(() => {
     GetUserID();
   }, []);
@@ -670,7 +735,6 @@ const AddSource = ({ route, navigation }) => {
     ////console.log(receiptModeFullData);
     ////console.log(mode[0].pckModeID);
     ////console.log(category[0].pckCategoryID);
-    ////console.log(subcat[0].subcategoryID);
 
     if (mode[0].pckModeID == "1") {
       ////console.log('Cash================');
@@ -686,7 +750,8 @@ const AddSource = ({ route, navigation }) => {
         setBankListStatus(true);
       }
       // Phone Book
-      else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
+      //else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
+      else if (subcat[0].subcategoryID == "7") {
         setReceivedStatus(true);
         setPaymentReminderStatus(true);
         FetchReceiverList();
@@ -726,6 +791,7 @@ const AddSource = ({ route, navigation }) => {
         FetchReceiverList();
         setDepositTypeStatus(true);
         FetchDepositType();
+        setPaymentReminderStatus(true);
 
       }
       else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11"
@@ -760,8 +826,9 @@ const AddSource = ({ route, navigation }) => {
     setProjectList(text);
     setErrorPL(false);
 
-    setInvoiceStatus(true);
-    setPaymentTypeStatus(true);
+    setPaymentGroupStatus(true);
+
+    FetchPaymentGroup();
     FetchPaymentType();
 
     setCommonStatus(true);
@@ -821,6 +888,25 @@ const AddSource = ({ route, navigation }) => {
     });
   }
 
+  function onPaymentGroupChange(radioButtonsArray) {
+    setPaymentGroup(radioButtonsArray);
+
+    radioButtonsArray.map((r) => {
+      if (r.selected === true) {
+
+        if (r.id == "2") {
+          setPaymentTypeStatus(true);
+          setInvoiceStatus(true);
+        }
+        else {
+          setPaymentTypeStatus(false);
+          setInvoiceStatus(false);
+        }
+        setPaymentGroupID(r.value);
+      }
+    });
+  }
+
   const onUTRNoChange = (text) => {
     setUTRNo(text);
     setUTRNoError(false);
@@ -839,24 +925,25 @@ const AddSource = ({ route, navigation }) => {
       return el.pck_entrytype_name === entryType;
     });
 
-    if (a[0].pck_entrytype_refno == "2") {
 
-      let depositID = depositeTypeFullData.filter((el) => {
-        return el.deposit_type_name === text;
-      })[0].deposit_type_refno;
+    //if (a[0].pck_entrytype_refno == "2") {
 
-      if (depositID == "1") {
-        FetchBankList();
-        setBankListStatus(true);
-      }
-      else {
-        setBankListStatus(false);
-      }
+    let depositID = depositeTypeFullData.filter((el) => {
+      return el.deposit_type_name === text;
+    })[0].deposit_type_refno;
 
-      setChequeNoStatus(true);
-      setChequeDateStatus(true);
-
+    if (depositID == "1") {
+      FetchBankList();
+      setBankListStatus(true);
     }
+    else {
+      setBankListStatus(false);
+    }
+
+    setChequeNoStatus(true);
+    setChequeDateStatus(true);
+
+    // }
 
 
   };
@@ -915,14 +1002,14 @@ const AddSource = ({ route, navigation }) => {
 
     const datas = new FormData();
     const params = {
-
       Sess_UserRefno: userID,
       Sess_company_refno: companyID.toString(),
       Sess_branch_refno: branchID.toString(),
+      Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID,
       pck_mode_refno: receiptModeFullData.filter((el) => {
         return el.pckModeName === receiptMode;
-      })[0].pckModeID,
+      })[0].pckModeID.toString(),
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
       })[0].pckCategoryID,
@@ -940,6 +1027,7 @@ const AddSource = ({ route, navigation }) => {
     if (depositTypeStatus) {
       params.deposit_type_refno = depositID;
     }
+
 
     if (bankListStatus) {
       params.pck_mybank_refno = bankID;
@@ -987,6 +1075,10 @@ const AddSource = ({ route, navigation }) => {
       params.payment_type_refno = paymentTypeID;
     }
 
+    if (paymentGroupStatus) {
+      params.payment_group_refno = paymentGroupID;
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -998,10 +1090,8 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    // console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourcecreate, datas)
       .then((response) => {
-        // console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1050,10 +1140,9 @@ const AddSource = ({ route, navigation }) => {
       Sess_UserRefno: userID,
       Sess_company_refno: companyID.toString(),
       Sess_branch_refno: branchID.toString(),
+      Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID,
-      pck_mode_refno: receiptModeFullData.filter((el) => {
-        return el.pckModeName === receiptMode;
-      })[0].pckModeID,
+      pck_mode_refno: "1",
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
       })[0].pckCategoryID,
@@ -1088,6 +1177,10 @@ const AddSource = ({ route, navigation }) => {
 
     if (paymentTypeStatus) {
       params.payment_type_refno = paymentTypeID;
+    }
+
+    if (paymentGroupStatus) {
+      params.payment_group_refno = paymentGroupID;
     }
 
     if (receivedStatus) {
@@ -1159,7 +1252,7 @@ const AddSource = ({ route, navigation }) => {
       setEntryTypeError(true);
     }
 
-    if (amount.trim() == "") {
+    if (amount.trim() == "" || amount.trim() == "0") {
       isValid = false;
       setAmountError(true);
     }
@@ -1209,6 +1302,21 @@ const AddSource = ({ route, navigation }) => {
       setChequeDateError(true);
     }
 
+    if (paymentTypeStatus && paymentTypeID == 0) {
+      isValid = false;
+      setErrorPT(true);
+    }
+
+    if (paymentGroupStatus && paymentGroupID == 0) {
+      isValid = false;
+      setErrorPG(true);
+    }
+
+    if (invoiceStatus && invoiceNo.trim() == "") {
+      isValid = false;
+      setInvoiceNoError(true);
+    }
+
 
     if (isValid) {
       if (route.params.type === "edit") {
@@ -1217,6 +1325,80 @@ const AddSource = ({ route, navigation }) => {
         InsertData();
       }
     }
+  };
+
+  const ShowContactList = () => {
+    setIsContactLoading(true);
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === "granted") {
+        //console.log('granted permission =====================');
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.PhoneNumbers],
+        });
+        //console.log(data.length);
+        if (data.length > 0) {
+          //console.log(data[0]);
+          //console.log(data[1]);
+          const arrPhones = [];
+          data.map((k, i) => {
+            // if (i < 100) {
+            //console.log('==================================');
+            //console.log(k);
+            if (Array.isArray(k.phoneNumbers)) {
+              arrPhones.push(k);
+            }
+            // }
+          });
+          //console.log('complete loop');
+          //console.log(arrPhones);
+          //console.log(arrPhones);
+          setIsContactLoading(false);
+          navigation.navigate("PhoneContactDirectUpload", { phoneNumbers: arrPhones, callback: PhoneClicked });
+        }
+      }
+    })();
+  };
+
+  const PhoneClicked = (contact) => {
+    if (contact != null) {
+      InsertNewContact(contact.name, contact.phoneNumbers[0].number);
+    }
+  };
+
+  const InsertNewContact = (name, mobileNo) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        contact_name: name,
+        contact_phoneno: mobileNo,
+        remarks: "",
+        view_status: "1",
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactscreate, params)
+      .then((response) => {
+        setIsContactLoading(false);
+        if (response.data && response.data.code === 200) {
+          FetchReceiverList(null, name);
+          setSnackbarText("New Contact Added");
+          setSnackbarColor(theme.colors.success);
+          setSnackbarVisible(true);
+
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setIsContactLoading(false);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      });
   };
 
   //#endregion 
@@ -1237,7 +1419,7 @@ const AddSource = ({ route, navigation }) => {
 
           <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
           <HelperText type="error" visible={amountError}>
-            {communication.InvalidAmount}
+            Please enter valid amount
           </HelperText>
 
           <Dropdown label="Receipt Mode" data={receiptModeData} onSelected={onReceiptModeChanged} isError={errorRM} selectedItem={receiptMode} />
@@ -1285,6 +1467,30 @@ const AddSource = ({ route, navigation }) => {
             </>
           }
 
+          {paymentGroupStatus &&
+            <>
+              <View style={[Styles.marginTop8, Styles.bordergray, Styles.borderRadius4]}>
+                <Text>Payment Group:</Text>
+                <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" isError={errorPG} radioButtons={paymentGroup} onPress={onPaymentGroupChange} />
+                <HelperText type="error" visible={errorPG}>
+                  Please select payment group
+                </HelperText>
+              </View>
+            </>
+          }
+
+          {paymentTypeStatus &&
+            <>
+              <View style={[Styles.marginTop16, Styles.bordergray, Styles.borderRadius4]}>
+                <Text>Payment Type:</Text>
+                <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" isError={errorPT} radioButtons={paymentRB} onPress={onPaymentTypeChange} />
+                <HelperText type="error" visible={errorPT}>
+                  Please select payment type
+                </HelperText>
+              </View>
+            </>
+          }
+
           {invoiceStatus &&
             <>
               <TextInput mode="flat" label="Invoice No" value={invoiceNo} returnKeyType="next"
@@ -1292,15 +1498,6 @@ const AddSource = ({ route, navigation }) => {
               <HelperText type="error" visible={invoiceNoError}>
                 Please enter a valid Invoice number
               </HelperText>
-            </>
-          }
-
-          {paymentTypeStatus &&
-            <>
-              <View style={[Styles.marginTop8, Styles.bordergray, Styles.borderRadius4]}>
-                <Text>Payment Type:</Text>
-                <RadioGroup containerStyle={[Styles.marginTop16]} layout="column" radioButtons={paymentRB} onPress={onPaymentTypeChange} />
-              </View>
             </>
           }
 
@@ -1320,7 +1517,10 @@ const AddSource = ({ route, navigation }) => {
                 <HelperText type="error" visible={errorRF}>
                   {communication.InvalidReceivedForm}
                 </HelperText>
-                <Button
+                <Button icon={"card-account-phone-outline"} mode="contained" loading={isContactLoading} disabled={isContactLoading} onPress={ShowContactList}>
+                  Add New Contact
+                </Button>
+                {/* <Button
                   icon={"plus"}
                   mode="contained"
                   onPress={() => {
@@ -1331,7 +1531,7 @@ const AddSource = ({ route, navigation }) => {
                   }}
                 >
                   Add New Contact
-                </Button>
+                </Button> */}
               </View>
             </>
           }
@@ -1461,7 +1661,7 @@ const AddSource = ({ route, navigation }) => {
           </Button>
         </Card.Content>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
     </View>

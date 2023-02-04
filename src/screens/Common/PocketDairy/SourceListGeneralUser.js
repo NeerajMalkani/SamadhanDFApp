@@ -62,8 +62,13 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
         }
     };
 
-    const FetchData = () => {
-
+    const FetchData = (from) => {
+        if (from === "add" || from === "update") {
+            console.log('new record');
+            setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+            setSnackbarColor(theme.colors.success);
+            setSnackbarVisible(true);
+        }
         let params = {
             data: {
                 Sess_UserRefno: userID,
@@ -233,6 +238,9 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
             )}
             <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+                {snackbarText}
+            </Snackbar>
             <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={360} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
                 <View>
                     <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>

@@ -62,7 +62,13 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
         }
     };
 
-    const FetchData = () => {
+    const FetchData = (from) => {
+        if (from === "add" || from === "update") {
+            console.log('new record');
+            setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+            setSnackbarColor(theme.colors.success);
+            setSnackbarVisible(true);
+        }
         let params = {
             data: {
                 Sess_UserRefno: userID,
@@ -195,7 +201,7 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
 
     return (
         <View style={[Styles.flex1]}>
-            <Header navigation={navigation} title="Source List" />
+            <Header navigation={navigation} title="Expense List" />
             {isLoading ? (
                 <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -229,6 +235,9 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
             )}
 
             <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+                {snackbarText}
+            </Snackbar>
             <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={360} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
                 <View>
                     <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>

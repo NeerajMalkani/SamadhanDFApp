@@ -7,7 +7,7 @@ import Provider from "../../../../../api/Provider";
 import { Styles } from "../../../../../styles/styles";
 import { theme } from "../../../../../theme/apptheme";
 import { communication } from "../../../../../utils/communication";
-let userID = 0;
+let userID = 0, compID = 0;
 
 const AddGMyContactsScreen = ({ route, navigation }) => {
   //#region Variables
@@ -28,6 +28,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isContactLoading, setIsContactLoading] = useState(false);
   //#endregion
 
   //#region Functions
@@ -40,6 +41,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      compID = JSON.parse(userData).Sess_company_refno;
     }
   };
 
@@ -72,7 +74,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          if(route.params.type == "newContact") {
+          if (route.params.type == "newContact") {
             route.params.fetchReceiverList();
             navigation.goBack();
           }
@@ -80,7 +82,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
             route.params.fetchData("add");
             navigation.goBack();
           }
-          
+
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -159,20 +161,32 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
   };
 
   const ShowContactList = () => {
+    setIsContactLoading(true);
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
+        //console.log('granted permission =====================');
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-
+        //console.log(data.length);
         if (data.length > 0) {
+          //console.log(data[0]);
+          //console.log(data[1]);
           const arrPhones = [];
           data.map((k, i) => {
+            // if (i < 100) {
+            //console.log('==================================');
+            //console.log(k);
             if (Array.isArray(k.phoneNumbers)) {
               arrPhones.push(k);
             }
+            // }
           });
+          //console.log('complete loop');
+          //console.log(arrPhones);
+          //console.log(arrPhones);
+          setIsContactLoading(false);
           navigation.navigate("PhoneContacts", { phoneNumbers: arrPhones, callback: PhoneClicked });
         }
       }
@@ -185,7 +199,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <Card.Content>
-            <Button icon={"card-account-phone-outline"} mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ShowContactList}>
+            <Button icon={"card-account-phone-outline"} mode="contained" loading={isContactLoading} disabled={isContactLoading} onPress={ShowContactList}>
               load from contacts
             </Button>
           </Card.Content>
