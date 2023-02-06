@@ -522,18 +522,6 @@ export const MenuItemsDealer = [
         navigation: "MyPersonalBankScreen",
       },
       {
-        title: "Verify Company Source",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanySource",
-      },
-      {
-        title: "Verify Company Expense",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanyExpense",
-      },
-      {
         title: "Add Source",
         type: "accordian",
         index: 82,
@@ -773,18 +761,6 @@ export const MenuItemsContractor = [
         type: "accordian",
         index: 82,
         navigation: "MyPersonalBankScreen",
-      },
-      {
-        title: "Verify Company Source",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanySource",
-      },
-      {
-        title: "Verify Company Expense",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanyExpense",
       },
       {
         title: "Add Source",
@@ -1226,18 +1202,6 @@ export const MenuItemsProjectSupervisor = [
         type: "accordian",
         index: 82,
         navigation: "MyPersonalBankScreen",
-      },
-      {
-        title: "Verify Company Source",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanySource",
-      },
-      {
-        title: "Verify Company Expense",
-        type: "accordian",
-        index: 82,
-        navigation: "VerifyCompanyExpense",
       },
       {
         title: "Add Source",

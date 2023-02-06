@@ -516,6 +516,10 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                 icon={"cash-refund"}
                 mode="contained"
                 onPress={() => {
+                  navigation.navigate("AddExpenses", {
+                    type: "verify",
+                    data: current,
+                  });
                   refRBSheet.current.close();
                 }}
               >

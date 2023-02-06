@@ -3,7 +3,16 @@ import uuid from "react-native-uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Image, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Checkbox,
+  HelperText,
+  Snackbar,
+  Subheading,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -18,14 +27,16 @@ import { projectVariables } from "../../../../utils/credentials";
 import RadioGroup from "react-native-radio-buttons-group";
 import * as Contacts from "expo-contacts";
 
-
-let userID = 0, groupID = 0, companyID = 0, branchID = 0, _pktEntryTypeID = 0, designID = 0, companyAdminID = 0;
+let userID = 0,
+  groupID = 0,
+  companyID = 0,
+  branchID = 0,
+  _pktEntryTypeID = 0,
+  designID = 0,
+  companyAdminID = 0;
 
 const AddSource = ({ route, navigation }) => {
-
   //#region Variables
-
-
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
@@ -46,7 +57,9 @@ const AddSource = ({ route, navigation }) => {
   const [source, setSource] = React.useState([]);
   const [errorSS, setSSError] = React.useState(false);
 
-  const [subCategoryNameFullData, setSubCategoryNameFullData] = React.useState([]);
+  const [subCategoryNameFullData, setSubCategoryNameFullData] = React.useState(
+    []
+  );
   const [subCategoryNameData, setSubCategoryNameData] = React.useState([]);
   const [subCategoryName, setSubCategoryName] = React.useState([]);
   const [errorSCN, setSCNError] = React.useState(false);
@@ -99,8 +112,9 @@ const AddSource = ({ route, navigation }) => {
   const [repaymentDateError, setRepaymentDateError] = React.useState(false);
   const repaymentDateRef = useRef({});
 
-
-  const [image, setImage] = React.useState(AWSImagePath + "placeholder-image.png");
+  const [image, setImage] = React.useState(
+    AWSImagePath + "placeholder-image.png"
+  );
   const [filePath, setFilePath] = React.useState(null);
   const [designImage, setDesignImage] = React.useState("");
   const [errorDI, setDIError] = React.useState(false);
@@ -112,7 +126,9 @@ const AddSource = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
   const ref_input2 = useRef();
   const ref_input3 = useRef();
 
@@ -122,7 +138,8 @@ const AddSource = ({ route, navigation }) => {
   const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
   const [UTRNoStatus, setUTRNoStatus] = React.useState(false);
   const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
-  const [paymentReminderStatus, setPaymentReminderStatus] = React.useState(false);
+  const [paymentReminderStatus, setPaymentReminderStatus] =
+    React.useState(false);
   const [commonStatus, setCommonStatus] = React.useState(false);
   const [buttonStatus, setButtonStatus] = React.useState(true);
   const [subCatStatus, setSubCatStatus] = React.useState(true);
@@ -168,10 +185,10 @@ const AddSource = ({ route, navigation }) => {
       label: "Invoice Amount",
       selected: false,
       value: "2",
-    }
+    },
   ]);
 
-  //#endregion 
+  //#endregion
 
   //#region Functions
 
@@ -187,7 +204,7 @@ const AddSource = ({ route, navigation }) => {
 
       FetchEntryType();
 
-      if (route.params.type === "edit") {
+      if (route.params.type === "edit" || route.params.type === "verify") {
         SetEditData();
       }
     }
@@ -195,7 +212,7 @@ const AddSource = ({ route, navigation }) => {
 
   const SetEditData = () => {
     //console.log('start edit data =====================');
-    //console.log(route.params);
+    console.log(route.params);
     setPktEntryTypeID(route.params.data.pck_entrytype_refno);
     setButtonStatus(false);
     setEntryType(route.params.data.pck_entrytype_name);
@@ -203,33 +220,49 @@ const AddSource = ({ route, navigation }) => {
     setPckTransID(route.params.data.pck_trans_refno);
     _pktEntryTypeID = route.params.data.pck_entrytype_refno;
 
-
     setReceiptMode(route.params.data.pck_mode_name);
     setSource(route.params.data.pck_category_name);
-    FetchReceptCategory(route.params.data.pck_mode_refno, route.params.data.pck_category_refno);
+    FetchReceptCategory(
+      route.params.data.pck_mode_refno,
+      route.params.data.pck_category_refno
+    );
 
-    if (route.params.data.pck_sub_category_refno != "" && route.params.data.pck_sub_category_refno != "0") {
+    if (
+      route.params.data.pck_sub_category_refno != "" &&
+      route.params.data.pck_sub_category_refno != "0"
+    ) {
       setSubCategoryName(route.params.data.pck_sub_category_name);
-      FetchReceptSubCategory(route.params.data.pck_category_refno, route.params.data.pck_sub_category_refno);
-    }
-    else {
+      FetchReceptSubCategory(
+        route.params.data.pck_category_refno,
+        route.params.data.pck_sub_category_refno
+      );
+    } else {
       setSubCatStatus(false);
     }
 
-    if (route.params.data.pck_mycontact_refno != "" && route.params.data.pck_mycontact_refno != "0") {
+    if (
+      route.params.data.pck_mycontact_refno != "" &&
+      route.params.data.pck_mycontact_refno != "0"
+    ) {
       setReceivedStatus(true);
-      setReceivedEditID(route.params.data.pck_mycontact_refno)
+      setReceivedEditID(route.params.data.pck_mycontact_refno);
       FetchReceiverList(route.params.data.pck_mycontact_refno);
     }
 
-    if (route.params.data.deposit_type_refno != "" && route.params.data.deposit_type_refno != "0") {
+    if (
+      route.params.data.deposit_type_refno != "" &&
+      route.params.data.deposit_type_refno != "0"
+    ) {
       setDepositTypeStatus(true);
       //setDepositeType(route.params.data.deposit_type_refno);
       setDepositeTypeEditID(route.params.data.deposit_type_refno);
       FetchDepositType(route.params.data.deposit_type_refno);
     }
 
-    if (route.params.data.pck_mybank_refno != "" && route.params.data.pck_mybank_refno != "0") {
+    if (
+      route.params.data.pck_mybank_refno != "" &&
+      route.params.data.pck_mybank_refno != "0"
+    ) {
       setBankListStatus(true);
       //setMyBankList(route.params.data.pck_mybank_refno);
       setMyBankListEditID(route.params.data.pck_mybank_refno);
@@ -248,24 +281,37 @@ const AddSource = ({ route, navigation }) => {
 
     if (route.params.data.cheque_date != null) {
       setChequeDateStatus(true);
-      let dateBreakup = route.params.data.cheque_date.split('-');
-      setChequeDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
+      let dateBreakup = route.params.data.cheque_date.split("-");
+      setChequeDate(
+        new Date(dateBreakup[2] + "/" + dateBreakup[1] + "/" + dateBreakup[0])
+      );
     }
 
     if (route.params.data.reminder_date != null) {
       setPaymentReminderStatus(true);
-      let dateBreakup = route.params.data.reminder_date.split('-');
-      setRepaymentDate(new Date(dateBreakup[2] + '/' + dateBreakup[1] + '/' + dateBreakup[0]));
+      let dateBreakup = route.params.data.reminder_date.split("-");
+      setRepaymentDate(
+        new Date(dateBreakup[2] + "/" + dateBreakup[1] + "/" + dateBreakup[0])
+      );
     }
 
-    if (route.params.data.myclient_refno != null && route.params.data.myclient_refno != "0") {
+    if (
+      route.params.data.myclient_refno != null &&
+      route.params.data.myclient_refno != "0"
+    ) {
       setClientListstatus(true);
       FetchClientList(route.params.data.myclient_refno);
     }
 
-    if (route.params.data.cont_project_refno != null && route.params.data.cont_project_refno != "0") {
+    if (
+      route.params.data.cont_project_refno != null &&
+      route.params.data.cont_project_refno != "0"
+    ) {
       setProjectListstatus(true);
-      FetchProjectList(route.params.data.myclient_refno, route.params.data.cont_project_refno);
+      FetchProjectList(
+        route.params.data.myclient_refno,
+        route.params.data.cont_project_refno
+      );
     }
 
     if (route.params.data.invoice_no != "") {
@@ -273,7 +319,10 @@ const AddSource = ({ route, navigation }) => {
       setInvoiceNo(route.params.data.invoice_no);
     }
 
-    if (route.params.data.payment_type_refno != "" && route.params.data.payment_type_refno != "0") {
+    if (
+      route.params.data.payment_type_refno != "" &&
+      route.params.data.payment_type_refno != "0"
+    ) {
       setPaymentTypeStatus(true);
 
       let recc = [...paymentRB];
@@ -287,7 +336,10 @@ const AddSource = ({ route, navigation }) => {
       setPaymentRB(recc);
     }
 
-    if (route.params.data.payment_group_refno != "" && route.params.data.payment_group_refno != "0") {
+    if (
+      route.params.data.payment_group_refno != "" &&
+      route.params.data.payment_group_refno != "0"
+    ) {
       setPaymentTypeStatus(true);
 
       let recc = [...paymentGroup];
@@ -311,15 +363,15 @@ const AddSource = ({ route, navigation }) => {
     setImage(route.params.data.attach_receipt_url);
     setFilePath(route.params.data.attach_receipt_url);
     setDesignImage(route.params.data.attach_receipt_url);
-  }
+  };
 
   const FetchEntryType = () => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_group_refno: groupID
-      }
-    }
+        Sess_group_refno: groupID,
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
       .then((response) => {
         //console.log(response.data.data);
@@ -329,7 +381,9 @@ const AddSource = ({ route, navigation }) => {
             FetchRecepientMode();
             setEntryTypeFullData(response.data.data);
 
-            const entryTypeData = response.data.data.map((data) => data.pck_entrytype_name);
+            const entryTypeData = response.data.data.map(
+              (data) => data.pck_entrytype_name
+            );
             setEntryTypeData(entryTypeData);
 
             if (response.data.data.length == 1) {
@@ -338,16 +392,14 @@ const AddSource = ({ route, navigation }) => {
               setPktEntryTypeID(response.data.data[0].pck_entrytype_refno);
               _pktEntryTypeID = response.data.data[0].pck_entrytype_refno;
               setEntryTypeStatus(false);
-            }
-            else {
+            } else {
               setEntryTypeDisable(false);
               setEntryTypeStatus(true);
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchRecepientMode = () => {
@@ -355,21 +407,25 @@ const AddSource = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         pck_transtype_refno: 1,
-      }
-    }
-    Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentmodetype, params)
+      },
+    };
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.get_pckpaymentmodetype,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setReceiptModeFullData(response.data.data);
-            const receiptMode = response.data.data.map((data) => data.pckModeName);
+            const receiptMode = response.data.data.map(
+              (data) => data.pckModeName
+            );
             setReceiptModeData(receiptMode);
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReceptCategory = (receiptModeID, categoryID) => {
@@ -380,11 +436,14 @@ const AddSource = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
         Sess_designation_refno: designID.toString(),
-        pck_entrytype_refno: _pktEntryTypeID
-      }
-    }
+        pck_entrytype_refno: _pktEntryTypeID,
+      },
+    };
     //console.log(params);
-    Provider.createDFPocketDairy(Provider.API_URLS.getcategoryname_pckaddsourceform, params)
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.getcategoryname_pckaddsourceform,
+      params
+    )
       .then((response) => {
         //console.log('recept data +++++++++++++');
         //console.log(response.data);
@@ -392,50 +451,57 @@ const AddSource = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setSourceFullData(response.data.data);
-            const category = response.data.data.map((data) => data.categoryName);
+            const category = response.data.data.map(
+              (data) => data.categoryName
+            );
             setSourceData(category);
             if (categoryID != null) {
-              setSource(response.data.data.filter((el) => {
-                return el.pckCategoryID === categoryID;
-              })[0].categoryName);
+              setSource(
+                response.data.data.filter((el) => {
+                  return el.pckCategoryID === categoryID;
+                })[0].categoryName
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReceptSubCategory = (categoryID, subCategoryID) => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
         pck_category_refno: categoryID,
-      }
-    }
-    Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddsourceform, params)
+      },
+    };
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.getsubcategoryname_pckaddsourceform,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
 
             setSubCategoryNameFullData(response.data.data);
 
-            const subCategory = response.data.data.map((data) => data.subCategoryName);
+            const subCategory = response.data.data.map(
+              (data) => data.subCategoryName
+            );
             setSubCategoryNameData(subCategory);
             if (subcategoryID != null) {
-              setSubCategoryName(response.data.data.filter((el) => {
-                return el.subcategoryID === subCategoryID;
-              })[0].subCategoryName);
-
+              setSubCategoryName(
+                response.data.data.filter((el) => {
+                  return el.subcategoryID === subCategoryID;
+                })[0].subCategoryName
+              );
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBankList = (bankID) => {
@@ -447,37 +513,39 @@ const AddSource = ({ route, navigation }) => {
         Sess_group_refno: groupID.toString(),
         pck_entrytype_refno: _pktEntryTypeID,
         Sess_designation_refno: designID.toString(),
-        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
-      }
-    }
+        pck_transtype_refno:
+          projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO,
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
             setMyBankListFullData(response.data.data);
 
             const bank = response.data.data.map((data) => data.bankName);
             setMyBankListData(bank);
             if (bankID != null) {
-              setMyBankList(response.data.data.filter((el) => {
-                return el.bank_refno === bankID;
-              })[0].bankName)
+              setMyBankList(
+                response.data.data.filter((el) => {
+                  return el.bank_refno === bankID;
+                })[0].bankName
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReceiverList = (contactID, contactName) => {
     ////console.log('receiver data start ============');
     let params = {
       data: {
-        Sess_UserRefno: userID
-      }
-    }
+        Sess_UserRefno: userID,
+      },
+    };
     ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
@@ -489,23 +557,29 @@ const AddSource = ({ route, navigation }) => {
 
             setReceivedFormFullData(response.data.data);
 
-            const receiverList = response.data.data.map((data) => data.contactName);
+            const receiverList = response.data.data.map(
+              (data) => data.contactName
+            );
             setReceivedFormData(receiverList);
             if (contactID != null) {
-              setReceivedForm(response.data.data.filter((el) => {
-                return el.mycontactID === contactID;
-              })[0].contactName);
+              setReceivedForm(
+                response.data.data.filter((el) => {
+                  return el.mycontactID === contactID;
+                })[0].contactName
+              );
             }
 
             if (contactName != null && contactName != "") {
-              setReceivedForm(response.data.data.filter((el) => {
-                return el.contactName === contactName;
-              })[0].contactName);
+              setReceivedForm(
+                response.data.data.filter((el) => {
+                  return el.contactName === contactName;
+                })[0].contactName
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchClientList = (clientID) => {
@@ -514,9 +588,9 @@ const AddSource = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
-        Sess_group_refno: groupID.toString()
-      }
-    }
+        Sess_group_refno: groupID.toString(),
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -524,18 +598,22 @@ const AddSource = ({ route, navigation }) => {
             response.data.data = APIConverter(response.data.data);
             setClientListFullData(response.data.data);
 
-            const clientList = response.data.data.map((data) => data.companyName);
+            const clientList = response.data.data.map(
+              (data) => data.companyName
+            );
             setClientListData(clientList);
 
             if (clientID != null) {
-              setClientList(response.data.data.filter((el) => {
-                return el.myclient_refno === clientID;
-              })[0].companyName);
+              setClientList(
+                response.data.data.filter((el) => {
+                  return el.myclient_refno === clientID;
+                })[0].companyName
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -546,10 +624,13 @@ const AddSource = ({ route, navigation }) => {
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
         myclient_refno: clientID,
-        Sess_CompanyAdmin_UserRefno: companyAdminID.toString()
-      }
-    }
-    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientprojectname, params)
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.get_pckmyclientprojectname,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -557,103 +638,105 @@ const AddSource = ({ route, navigation }) => {
 
             setProjectListFullData(response.data.data);
 
-            const projectList = response.data.data.map((data) => data.project_name);
+            const projectList = response.data.data.map(
+              (data) => data.project_name
+            );
             setProjectListData(projectList);
 
             if (editID != null) {
-              setProjectList(response.data.data.filter((el) => {
-                return el.cont_project_refno == editID;
-              })[0].project_name);
+              setProjectList(
+                response.data.data.filter((el) => {
+                  return el.cont_project_refno == editID;
+                })[0].project_name
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDepositType = (depositID) => {
     let params = {
       data: {
-        Sess_UserRefno: userID
-      }
-    }
+        Sess_UserRefno: userID,
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckdeposittype, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
             setDepositeTypeFullData(response.data.data);
-            const depostiType = response.data.data.map((data) => data.deposit_type_name);
+            const depostiType = response.data.data.map(
+              (data) => data.deposit_type_name
+            );
             setDepositeTypeData(depostiType);
             if (depositID != null) {
-              setDepositeType(response.data.data.filter((el) => {
-                return el.deposit_type_refno == depositID;
-              })[0].deposit_type_name);
+              setDepositeType(
+                response.data.data.filter((el) => {
+                  return el.deposit_type_refno == depositID;
+                })[0].deposit_type_name
+              );
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchPaymentType = () => {
     let params = {
       data: {
-        Sess_UserRefno: userID
-      }
-    }
+        Sess_UserRefno: userID,
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymenttype, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const pType = [];
             response.data.data.map((data) => {
-              pType.push(
-                {
-                  label: data.payment_type_name,
-                  id: data.payment_type_refno,
-                  selected: false,
-                  value: data.payment_type_refno
-                }
-              );
+              pType.push({
+                label: data.payment_type_name,
+                id: data.payment_type_refno,
+                selected: false,
+                value: data.payment_type_refno,
+              });
             });
 
             setPaymentRB(pType);
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchPaymentGroup = () => {
     let params = {
       data: {
-        Sess_UserRefno: userID
-      }
-    }
+        Sess_UserRefno: userID,
+      },
+    };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckpaymentgroup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const pType = [];
             response.data.data.map((data) => {
-              pType.push(
-                {
-                  label: data.payment_group_name,
-                  id: data.payment_group_refno,
-                  selected: false,
-                  value: data.payment_group_refno
-                }
-              );
+              pType.push({
+                label: data.payment_group_name,
+                id: data.payment_group_refno,
+                selected: false,
+                value: data.payment_group_refno,
+              });
             });
 
             setPaymentGroup(pType);
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -670,7 +753,6 @@ const AddSource = ({ route, navigation }) => {
 
     setPktEntryTypeID(a[0].pck_entrytype_refno);
     _pktEntryTypeID = a[0].pck_entrytype_refno;
-
   };
 
   const onReceiptModeChanged = (selectedItem) => {
@@ -682,9 +764,7 @@ const AddSource = ({ route, navigation }) => {
       return el.pckModeName === selectedItem;
     });
 
-
     FetchReceptCategory(a[0].pckModeID);
-
   };
 
   const onSourceChanged = (text) => {
@@ -699,18 +779,17 @@ const AddSource = ({ route, navigation }) => {
     //console.log(a);
     //console.log(projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO);
 
-    if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+    if (
+      a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
+    ) {
       setSubCatStatus(false);
       setClientListstatus(true);
       FetchClientList();
-
-    }
-    else {
+    } else {
       setSubCatStatus(true);
       setClientListstatus(false);
       FetchReceptSubCategory(a[0].pckCategoryID);
     }
-
   };
 
   const onSubCategoryNameChanged = (text) => {
@@ -757,15 +836,22 @@ const AddSource = ({ route, navigation }) => {
         FetchReceiverList();
       }
       // My Business
-      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11" || subcat[0].subcategoryID == "12" ||
-        subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16" || subcat[0].subcategoryID == "17" ||
-        subcat[0].subcategoryID == "18") {
+      else if (
+        subcat[0].subcategoryID == "9" ||
+        subcat[0].subcategoryID == "10" ||
+        subcat[0].subcategoryID == "11" ||
+        subcat[0].subcategoryID == "12" ||
+        subcat[0].subcategoryID == "13" ||
+        subcat[0].subcategoryID == "14" ||
+        subcat[0].subcategoryID == "15" ||
+        subcat[0].subcategoryID == "16" ||
+        subcat[0].subcategoryID == "17" ||
+        subcat[0].subcategoryID == "18"
+      ) {
         setReceivedStatus(true);
         FetchReceiverList();
       }
-
-    }
-    else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+    } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setUTRNoStatus(true);
       ////console.log('UPI================');
       if (subcat[0].subcategoryID == "7") {
@@ -774,17 +860,24 @@ const AddSource = ({ route, navigation }) => {
         FetchBankList();
         setBankListStatus(true);
         setPaymentReminderStatus(true);
-      }
-      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11" || subcat[0].subcategoryID == "12"
-        || subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16"
-        || subcat[0].subcategoryID == "17" || subcat[0].subcategoryID == "18") {
+      } else if (
+        subcat[0].subcategoryID == "9" ||
+        subcat[0].subcategoryID == "10" ||
+        subcat[0].subcategoryID == "11" ||
+        subcat[0].subcategoryID == "12" ||
+        subcat[0].subcategoryID == "13" ||
+        subcat[0].subcategoryID == "14" ||
+        subcat[0].subcategoryID == "15" ||
+        subcat[0].subcategoryID == "16" ||
+        subcat[0].subcategoryID == "17" ||
+        subcat[0].subcategoryID == "18"
+      ) {
         setReceivedStatus(true);
         FetchReceiverList();
         FetchBankList();
         setBankListStatus(true);
       }
-    }
-    else if (mode[0].pckModeID == "3") {
+    } else if (mode[0].pckModeID == "3") {
       ////console.log('Cheque================');
       if (subcat[0].subcategoryID == "7") {
         setReceivedStatus(true);
@@ -792,12 +885,17 @@ const AddSource = ({ route, navigation }) => {
         setDepositTypeStatus(true);
         FetchDepositType();
         setPaymentReminderStatus(true);
-
-      }
-      else if (subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11"
-        || subcat[0].subcategoryID == "12"
-        || subcat[0].subcategoryID == "13" || subcat[0].subcategoryID == "14" || subcat[0].subcategoryID == "15" || subcat[0].subcategoryID == "16"
-        || subcat[0].subcategoryID == "17" || subcat[0].subcategoryID == "18"
+      } else if (
+        subcat[0].subcategoryID == "9" ||
+        subcat[0].subcategoryID == "10" ||
+        subcat[0].subcategoryID == "11" ||
+        subcat[0].subcategoryID == "12" ||
+        subcat[0].subcategoryID == "13" ||
+        subcat[0].subcategoryID == "14" ||
+        subcat[0].subcategoryID == "15" ||
+        subcat[0].subcategoryID == "16" ||
+        subcat[0].subcategoryID == "17" ||
+        subcat[0].subcategoryID == "18"
       ) {
         setReceivedStatus(true);
         FetchReceiverList();
@@ -805,13 +903,11 @@ const AddSource = ({ route, navigation }) => {
         FetchDepositType();
       }
     }
-
   };
 
   const onClientListChanged = (text) => {
     setClientList(text);
     setErrorCL(false);
-
 
     let a = clientListFullData.filter((el) => {
       return el.companyName === text;
@@ -819,7 +915,6 @@ const AddSource = ({ route, navigation }) => {
 
     setProjectListstatus(true);
     FetchProjectList(a[0].myclient_refno);
-
   };
 
   const onProjectListChanged = (text) => {
@@ -842,16 +937,13 @@ const AddSource = ({ route, navigation }) => {
       setUTRNoStatus(true);
       FetchBankList();
       setBankListStatus(true);
-    }
-    else if (mode[0].pckModeID == "3") {
+    } else if (mode[0].pckModeID == "3") {
       setDepositTypeStatus(true);
       FetchDepositType();
     }
-
   };
 
   const resetFields = () => {
-
     setReceivedStatus(false);
     setDepositTypeStatus(false);
     setBankListStatus(false);
@@ -860,8 +952,7 @@ const AddSource = ({ route, navigation }) => {
     setPaymentReminderStatus(false);
     setCommonStatus(false);
     setButtonStatus(true);
-
-  }
+  };
 
   const onReceivedFormChanged = (text) => {
     setReceivedForm(text);
@@ -893,12 +984,10 @@ const AddSource = ({ route, navigation }) => {
 
     radioButtonsArray.map((r) => {
       if (r.selected === true) {
-
         if (r.id == "2") {
           setPaymentTypeStatus(true);
           setInvoiceStatus(true);
-        }
-        else {
+        } else {
           setPaymentTypeStatus(false);
           setInvoiceStatus(false);
         }
@@ -925,7 +1014,6 @@ const AddSource = ({ route, navigation }) => {
       return el.pck_entrytype_name === entryType;
     });
 
-
     //if (a[0].pck_entrytype_refno == "2") {
 
     let depositID = depositeTypeFullData.filter((el) => {
@@ -935,8 +1023,7 @@ const AddSource = ({ route, navigation }) => {
     if (depositID == "1") {
       FetchBankList();
       setBankListStatus(true);
-    }
-    else {
+    } else {
       setBankListStatus(false);
     }
 
@@ -944,14 +1031,11 @@ const AddSource = ({ route, navigation }) => {
     setChequeDateStatus(true);
 
     // }
-
-
   };
   const onBankListChanged = (text) => {
     setMyBankList(text);
     setBLError(false);
   };
-
 
   const onAmount = (text) => {
     settAmount(text);
@@ -969,10 +1053,12 @@ const AddSource = ({ route, navigation }) => {
       setDIError(false);
       const arrExt = result.uri.split(".");
       const unique_id = uuid.v4();
-      setDesignImage(AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]);
+      setDesignImage(
+        AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
+      );
       setImage(result.uri);
       setFilePath(result);
-      if (route.params.type === "edit") {
+      if (route.params.type === "edit" || route.params.type === "verify") {
         setIsImageReplaced(true);
       }
     }
@@ -980,7 +1066,9 @@ const AddSource = ({ route, navigation }) => {
 
   const InsertData = () => {
     // console.log('insert===================');
-    let contactID = "", bankID = "", depositID = "";
+    let contactID = "",
+      bankID = "",
+      depositID = "";
 
     if (receivedFormFullData.length > 0) {
       contactID = receivedFormFullData.filter((el) => {
@@ -1007,17 +1095,18 @@ const AddSource = ({ route, navigation }) => {
       Sess_branch_refno: branchID.toString(),
       Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID,
-      pck_mode_refno: receiptModeFullData.filter((el) => {
-        return el.pckModeName === receiptMode;
-      })[0].pckModeID.toString(),
+      pck_mode_refno: receiptModeFullData
+        .filter((el) => {
+          return el.pckModeName === receiptMode;
+        })[0]
+        .pckModeID.toString(),
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
       })[0].pckCategoryID,
 
       amount: amount.trim(),
       notes: notes.trim(),
-      view_status: checked ? "1" : "0"
-
+      view_status: checked ? "1" : "0",
     };
 
     if (receivedStatus) {
@@ -1027,7 +1116,6 @@ const AddSource = ({ route, navigation }) => {
     if (depositTypeStatus) {
       params.deposit_type_refno = depositID;
     }
-
 
     if (bankListStatus) {
       params.pck_mybank_refno = bankID;
@@ -1042,11 +1130,13 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (chequeDateStatus) {
-      params.cheque_date = chequeDate == "" ? "" : moment(chequeDate).format("DD-MM-YYYY");
+      params.cheque_date =
+        chequeDate == "" ? "" : moment(chequeDate).format("DD-MM-YYYY");
     }
 
     if (paymentReminderStatus) {
-      params.reminder_date = repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
+      params.reminder_date =
+        repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
     }
 
     if (subCatStatus) {
@@ -1082,15 +1172,24 @@ const AddSource = ({ route, navigation }) => {
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
-      filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
+      filePath != null &&
+        filePath != undefined &&
+        filePath.type != undefined &&
+        filePath.type != null
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
-    Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourcecreate, datas)
+    Provider.createDFPocketDairyWithHeader(
+      Provider.API_URLS.pckaddsourcecreate,
+      datas
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -1110,10 +1209,10 @@ const AddSource = ({ route, navigation }) => {
       });
   };
 
-  const UpdateData = () => {
-    //console.log('update===================');
-
-    let contactID = "", bankID = "", depositID = "";
+  const UpdateData = (type) => {
+    let contactID = "",
+      bankID = "",
+      depositID = "";
 
     if (receivedFormFullData.length > 0) {
       contactID = receivedFormFullData.filter((el) => {
@@ -1135,7 +1234,6 @@ const AddSource = ({ route, navigation }) => {
 
     const datas = new FormData();
     const params = {
-
       pck_trans_refno: pckTransID,
       Sess_UserRefno: userID,
       Sess_company_refno: companyID.toString(),
@@ -1149,8 +1247,7 @@ const AddSource = ({ route, navigation }) => {
 
       amount: amount.trim(),
       notes: notes.trim(),
-      view_status: checked ? "1" : "0"
-
+      view_status: checked ? "1" : "0",
     };
 
     if (subCatStatus) {
@@ -1204,11 +1301,13 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (chequeDateStatus) {
-      params.cheque_date = chequeDate == "" ? "" : moment(chequeDate).format("DD-MM-YYYY");
+      params.cheque_date =
+        chequeDate == "" ? "" : moment(chequeDate).format("DD-MM-YYYY");
     }
 
     if (paymentReminderStatus) {
-      params.reminder_date = repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
+      params.reminder_date =
+        repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1216,14 +1315,22 @@ const AddSource = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     //console.log(datas);
-    Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourceupdate, datas)
+    Provider.createDFPocketDairyWithHeader(
+      type === "edit"
+        ? Provider.API_URLS.pckaddsourceupdate
+        : Provider.API_URLS.pck_companysource_verify_action,
+      datas
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -1317,10 +1424,10 @@ const AddSource = ({ route, navigation }) => {
       setInvoiceNoError(true);
     }
 
-
     if (isValid) {
-      if (route.params.type === "edit") {
-        UpdateData();
+      // verify 324 api call
+      if (route.params.type === "edit" || route.params.type === "verify") {
+        UpdateData(route.params.type);
       } else {
         InsertData();
       }
@@ -1354,7 +1461,10 @@ const AddSource = ({ route, navigation }) => {
           //console.log(arrPhones);
           //console.log(arrPhones);
           setIsContactLoading(false);
-          navigation.navigate("PhoneContactDirectUpload", { phoneNumbers: arrPhones, callback: PhoneClicked });
+          navigation.navigate("PhoneContactDirectUpload", {
+            phoneNumbers: arrPhones,
+            callback: PhoneClicked,
+          });
         }
       }
     })();
@@ -1384,7 +1494,6 @@ const AddSource = ({ route, navigation }) => {
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
-
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -1401,41 +1510,80 @@ const AddSource = ({ route, navigation }) => {
       });
   };
 
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={[Styles.padding16]}>
-
-          {entryTypeStatus &&
+          {entryTypeStatus && (
             <>
-              <Dropdown label="Entry Type" forceDisable={entryTypeDisable} data={entryTypeData} onSelected={onEntryTypeChanged} isError={entryTypeError} selectedItem={entryType} />
+              <Dropdown
+                label="Entry Type"
+                forceDisable={entryTypeDisable}
+                data={entryTypeData}
+                onSelected={onEntryTypeChanged}
+                isError={entryTypeError}
+                selectedItem={entryType}
+              />
               <HelperText type="error" visible={entryTypeError}>
                 Please select a valid entry type
               </HelperText>
             </>
-          }
+          )}
 
-          <TextInput mode="flat" label="Amount" value={amount} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onAmount} style={{ backgroundColor: "white" }} error={amountError} />
+          <TextInput
+            mode="flat"
+            label="Amount"
+            value={amount}
+            keyboardType="number-pad"
+            returnKeyType="next"
+            onSubmitEditing={() => ref_input2.current.focus()}
+            onChangeText={onAmount}
+            style={{ backgroundColor: "white" }}
+            error={amountError}
+          />
           <HelperText type="error" visible={amountError}>
             Please enter valid amount
           </HelperText>
 
-          <Dropdown label="Receipt Mode" data={receiptModeData} onSelected={onReceiptModeChanged} isError={errorRM} selectedItem={receiptMode} />
+          <Dropdown
+            label="Receipt Mode"
+            data={receiptModeData}
+            onSelected={onReceiptModeChanged}
+            isError={errorRM}
+            selectedItem={receiptMode}
+          />
           <HelperText type="error" visible={errorRM}>
             {communication.InvalidReceiptMode}
           </HelperText>
 
-          <Dropdown label="Source / Receipt" data={sourceData} onSelected={onSourceChanged} isError={errorSS} selectedItem={source} />
+          <Dropdown
+            label="Source / Receipt"
+            data={sourceData}
+            onSelected={onSourceChanged}
+            isError={errorSS}
+            selectedItem={source}
+          />
           <HelperText type="error" visible={errorSS}>
             {communication.InvalidSource}
           </HelperText>
 
-          {clientListStatus &&
+          {clientListStatus && (
             <>
-              <View style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}>
-                <Dropdown label="My Client List" data={clientListData} onSelected={onClientListChanged} isError={errorCL} selectedItem={clientList} />
+              <View
+                style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}
+              >
+                <Dropdown
+                  label="My Client List"
+                  data={clientListData}
+                  onSelected={onClientListChanged}
+                  isError={errorCL}
+                  selectedItem={clientList}
+                />
                 <HelperText type="error" visible={errorCL}>
                   Please select a client
                 </HelperText>
@@ -1456,68 +1604,126 @@ const AddSource = ({ route, navigation }) => {
                 </Button>
               </View>
             </>
-          }
+          )}
 
-          {projectListStatus &&
+          {projectListStatus && (
             <>
-              <Dropdown label="Project List" data={projectListData} onSelected={onProjectListChanged} isError={errorPL} selectedItem={projectList} />
+              <Dropdown
+                label="Project List"
+                data={projectListData}
+                onSelected={onProjectListChanged}
+                isError={errorPL}
+                selectedItem={projectList}
+              />
               <HelperText type="error" visible={errorPL}>
                 Please select a project
               </HelperText>
             </>
-          }
+          )}
 
-          {paymentGroupStatus &&
+          {paymentGroupStatus && (
             <>
-              <View style={[Styles.marginTop8, Styles.bordergray, Styles.borderRadius4]}>
+              <View
+                style={[
+                  Styles.marginTop8,
+                  Styles.bordergray,
+                  Styles.borderRadius4,
+                ]}
+              >
                 <Text>Payment Group:</Text>
-                <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" isError={errorPG} radioButtons={paymentGroup} onPress={onPaymentGroupChange} />
+                <RadioGroup
+                  containerStyle={[Styles.marginTop16]}
+                  layout="row"
+                  isError={errorPG}
+                  radioButtons={paymentGroup}
+                  onPress={onPaymentGroupChange}
+                />
                 <HelperText type="error" visible={errorPG}>
                   Please select payment group
                 </HelperText>
               </View>
             </>
-          }
+          )}
 
-          {paymentTypeStatus &&
+          {paymentTypeStatus && (
             <>
-              <View style={[Styles.marginTop16, Styles.bordergray, Styles.borderRadius4]}>
+              <View
+                style={[
+                  Styles.marginTop16,
+                  Styles.bordergray,
+                  Styles.borderRadius4,
+                ]}
+              >
                 <Text>Payment Type:</Text>
-                <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" isError={errorPT} radioButtons={paymentRB} onPress={onPaymentTypeChange} />
+                <RadioGroup
+                  containerStyle={[Styles.marginTop16]}
+                  layout="row"
+                  isError={errorPT}
+                  radioButtons={paymentRB}
+                  onPress={onPaymentTypeChange}
+                />
                 <HelperText type="error" visible={errorPT}>
                   Please select payment type
                 </HelperText>
               </View>
             </>
-          }
+          )}
 
-          {invoiceStatus &&
+          {invoiceStatus && (
             <>
-              <TextInput mode="flat" label="Invoice No" value={invoiceNo} returnKeyType="next"
-                onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onInvoiceNoChange} style={{ backgroundColor: "white" }} error={invoiceNoError} />
+              <TextInput
+                mode="flat"
+                label="Invoice No"
+                value={invoiceNo}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onInvoiceNoChange}
+                style={{ backgroundColor: "white" }}
+                error={invoiceNoError}
+              />
               <HelperText type="error" visible={invoiceNoError}>
                 Please enter a valid Invoice number
               </HelperText>
             </>
-          }
+          )}
 
-          {subCatStatus &&
+          {subCatStatus && (
             <>
-              <Dropdown label="Sub Category Name" data={subCategoryNameData} onSelected={onSubCategoryNameChanged} isError={errorSCN} selectedItem={subCategoryName} />
+              <Dropdown
+                label="Sub Category Name"
+                data={subCategoryNameData}
+                onSelected={onSubCategoryNameChanged}
+                isError={errorSCN}
+                selectedItem={subCategoryName}
+              />
               <HelperText type="error" visible={errorSCN}>
                 {communication.InvalidSubCategoryName}
               </HelperText>
             </>
-          }
+          )}
 
-          {receivedStatus &&
+          {receivedStatus && (
             <>
-              <View style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}>
-                <Dropdown label="Recevied Form" data={receivedFormData} onSelected={onReceivedFormChanged} isError={errorRF} selectedItem={receivedForm} />
+              <View
+                style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}
+              >
+                <Dropdown
+                  label="Recevied Form"
+                  data={receivedFormData}
+                  onSelected={onReceivedFormChanged}
+                  isError={errorRF}
+                  selectedItem={receivedForm}
+                />
                 <HelperText type="error" visible={errorRF}>
                   {communication.InvalidReceivedForm}
                 </HelperText>
-                <Button icon={"card-account-phone-outline"} mode="contained" loading={isContactLoading} disabled={isContactLoading} onPress={ShowContactList}>
+                <Button
+                  icon={"card-account-phone-outline"}
+                  mode="contained"
+                  loading={isContactLoading}
+                  disabled={isContactLoading}
+                  onPress={ShowContactList}
+                >
                   Add New Contact
                 </Button>
                 {/* <Button
@@ -1534,21 +1740,40 @@ const AddSource = ({ route, navigation }) => {
                 </Button> */}
               </View>
             </>
-          }
+          )}
 
-          {depositTypeStatus &&
+          {depositTypeStatus && (
             <>
-              <Dropdown label="Deposit Type" data={depositeTypeData} onSelected={onDepositeTypeChanged} isError={errorDT} selectedItem={depositeType} />
+              <Dropdown
+                label="Deposit Type"
+                data={depositeTypeData}
+                onSelected={onDepositeTypeChanged}
+                isError={errorDT}
+                selectedItem={depositeType}
+              />
               <HelperText type="error" visible={errorDT}>
                 {communication.InvalidDepositeType}
               </HelperText>
             </>
-          }
+          )}
 
-          {bankListStatus &&
+          {bankListStatus && (
             <>
-              <View style={[Styles.border1, Styles.borderRadius4, Styles.padding4, Styles.marginTop8]}>
-                <Dropdown label="My Bank List" data={myBankListData} onSelected={onBankListChanged} isError={errorBL} selectedItem={myBankList} />
+              <View
+                style={[
+                  Styles.border1,
+                  Styles.borderRadius4,
+                  Styles.padding4,
+                  Styles.marginTop8,
+                ]}
+              >
+                <Dropdown
+                  label="My Bank List"
+                  data={myBankListData}
+                  onSelected={onBankListChanged}
+                  isError={errorBL}
+                  selectedItem={myBankList}
+                />
                 <HelperText type="error" visible={errorBL}>
                   {communication.InvalidBankName}
                 </HelperText>
@@ -1566,53 +1791,92 @@ const AddSource = ({ route, navigation }) => {
                 </Button>
               </View>
             </>
-          }
+          )}
 
-          {chequeNoStatus &&
+          {chequeNoStatus && (
             <>
-              <TextInput mode="flat" label="Cheque No" value={chequeNo} returnKeyType="next" keyboardType="number-pad" onSubmitEditing={() => ref_input2.current.focus()}
-                onChangeText={onChequeNoChange} style={{ backgroundColor: "white" }} error={chequeNoError} />
+              <TextInput
+                mode="flat"
+                label="Cheque No"
+                value={chequeNo}
+                returnKeyType="next"
+                keyboardType="number-pad"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onChequeNoChange}
+                style={{ backgroundColor: "white" }}
+                error={chequeNoError}
+              />
               <HelperText type="error" visible={chequeNoError}>
                 {communication.InvalidChequeNo}
               </HelperText>
             </>
-          }
+          )}
 
-          {UTRNoStatus &&
+          {UTRNoStatus && (
             <>
-              <TextInput mode="flat" label="UTR No" value={UTRNo} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onUTRNoChange} style={{ backgroundColor: "white" }} error={UTRNoError} />
+              <TextInput
+                mode="flat"
+                label="UTR No"
+                value={UTRNo}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onUTRNoChange}
+                style={{ backgroundColor: "white" }}
+                error={UTRNoError}
+              />
               <HelperText type="error" visible={UTRNoError}>
                 Please enter valid UTR No
               </HelperText>
             </>
-          }
+          )}
 
-          {chequeDateStatus &&
-            <>
-              <View >
-                <DateTimePicker style={Styles.backgroundColorWhite} label="Cheque Date" type="date" value={chequeDate} onChangeDate={setChequeDate} />
-                <HelperText type="error" visible={chequeDateError}>
-                  Please enter a valid date
-                </HelperText>
-              </View>
-            </>
-          }
-
-          {paymentReminderStatus &&
+          {chequeDateStatus && (
             <>
               <View>
-                <DateTimePicker style={Styles.backgroundColorWhite, Styles.marginTop16} label="Repayment Reminder Date" type="date" value={repaymentDate} onChangeDate={setRepaymentDate} />
+                <DateTimePicker
+                  style={Styles.backgroundColorWhite}
+                  label="Cheque Date"
+                  type="date"
+                  value={chequeDate}
+                  onChangeDate={setChequeDate}
+                />
                 <HelperText type="error" visible={chequeDateError}>
                   Please enter a valid date
                 </HelperText>
               </View>
             </>
-          }
+          )}
 
-          {commonStatus &&
+          {paymentReminderStatus && (
             <>
-              <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-                <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+              <View>
+                <DateTimePicker
+                  style={(Styles.backgroundColorWhite, Styles.marginTop16)}
+                  label="Repayment Reminder Date"
+                  type="date"
+                  value={repaymentDate}
+                  onChangeDate={setRepaymentDate}
+                />
+                <HelperText type="error" visible={chequeDateError}>
+                  Please enter a valid date
+                </HelperText>
+              </View>
+            </>
+          )}
+
+          {commonStatus && (
+            <>
+              <View
+                style={[
+                  Styles.flexRow,
+                  Styles.flexAlignEnd,
+                  Styles.marginTop16,
+                ]}
+              >
+                <Image
+                  source={{ uri: image }}
+                  style={[Styles.width104, Styles.height96, Styles.border1]}
+                />
                 <Button mode="text" onPress={chooseFile}>
                   {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
                 </Button>
@@ -1621,19 +1885,27 @@ const AddSource = ({ route, navigation }) => {
                 {communication.InvalidDesignImage}
               </HelperText>
             </>
-          }
+          )}
 
-          {commonStatus &&
+          {commonStatus && (
             <>
-              <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotesChange} style={{ backgroundColor: "white" }} error={notesError} />
+              <TextInput
+                mode="flat"
+                label="Notes"
+                value={notes}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onNotesChange}
+                style={{ backgroundColor: "white" }}
+                error={notesError}
+              />
               <HelperText type="error" visible={notesError}>
                 {communication.InvalidNotes}
               </HelperText>
             </>
-          }
+          )}
 
-          {commonStatus &&
-
+          {commonStatus && (
             <>
               <View style={{ width: 160 }}>
                 <Checkbox.Item
@@ -1649,19 +1921,35 @@ const AddSource = ({ route, navigation }) => {
                 />
               </View>
             </>
-          }
-
+          )}
         </View>
       </ScrollView>
 
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.width100per,
+          Styles.marginTop32,
+          Styles.padding16,
+          { position: "absolute", bottom: 0, elevation: 3 },
+        ]}
+      >
         <Card.Content>
-          <Button mode="contained" disabled={buttonStatus} onPress={ValidateData}>
+          <Button
+            mode="contained"
+            disabled={buttonStatus}
+            onPress={ValidateData}
+          >
             Submit
           </Button>
         </Card.Content>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
     </View>

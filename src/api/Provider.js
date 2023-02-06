@@ -367,6 +367,7 @@ class Provider {
     getcardtype_pckmypersonalbankform: "getcardtype_pckmypersonalbankform/",
     pckmypersonalbankcreate: "pckmypersonalbankcreate/",
     pckaddsourceupdate: "pckaddsourceupdate/",
+    pck_companysource_verify_action: "pck_companysource_verify_action/",
     pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
     getsubcategoryname_pckaddexpensesform:
@@ -375,6 +376,7 @@ class Provider {
     getcardbankname_pckaddexpensesform: "getcardbankname_pckaddexpensesform/",
     pckaddexpensescreate: "pckaddexpensescreate/",
     pckaddexpensesupdate: "pckaddexpensesupdate/",
+    pck_companyexpenses_verify_action: "pck_companyexpenses_verify_action/",
     pckdashboard_payablelist: "pckdashboard_payablelist/",
     pckdashboard_receivablelist: "pckdashboard_receivablelist/",
 

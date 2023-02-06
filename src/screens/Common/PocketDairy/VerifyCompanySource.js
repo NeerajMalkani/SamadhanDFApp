@@ -516,6 +516,10 @@ const VerifyCompanySource = ({ route, navigation }) => {
                 icon={"cash-refund"}
                 mode="contained"
                 onPress={() => {
+                  navigation.navigate("AddSource", {
+                    type: "verify",
+                    data: current,
+                  });
                   refRBSheet.current.close();
                 }}
               >
