@@ -4,7 +4,7 @@ import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Paragraph, Po
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
-import { createNavigationContainerRef, StackActions } from "@react-navigation/native";
+import { createNavigationContainerRef, StackActions, useFocusEffect } from "@react-navigation/native";
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { communication } from "../utils/communication";
@@ -167,6 +167,17 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   React.useEffect(() => {
     GetUserData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshScreen = () => {
+        // Refresh the screen here
+        GetUserData();
+      };
+      refreshScreen();
+      return () => { };
+    }, [])
+  );
 
   const GetUserData = async () => {
     const userData = await AsyncStorage.getItem("user");

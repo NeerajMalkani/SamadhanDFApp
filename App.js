@@ -390,20 +390,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -1135,7 +1135,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
       return unsubscribe;
     }, [navigation]);
 
@@ -1164,7 +1164,6 @@ export default function App() {
                 ),
               }}
             />
-            {/* <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} /> */}
             <Tab.Screen
               name="Feedbacks"
               component={FeedbackScreen}
@@ -1176,11 +1175,6 @@ export default function App() {
                 ),
               }}
             />
-            {/* <Tab.Screen
-              name="UserProfile"
-              component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
-              options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
-            /> */}
           </Tab.Navigator>
         );
       default:
@@ -1236,14 +1230,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfileScreen
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 6
+                          ? UserProfile
+                          : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,
@@ -1256,19 +1250,6 @@ export default function App() {
           </Tab.Navigator>
         );
     }
-    // return (
-    //   <Tab.Navigator shifting={false} initialRouteName="dashboard" activeColor={theme.colors.primary} inactiveColor="#696969" barStyle={{ backgroundColor: theme.colors.textLight, height: 70, paddingTop: 8 }}>
-    //     <Tab.Screen name="Dashboard" component={DrawerNavigator} options={{ unmountOnBlur: false, tabBarLabel: "Dashboard", tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} /> }} />
-    //     <Tab.Screen name="PocketDiary" component={PocketDiaryScreen} options={{ unmountOnBlur: true, tabBarLabel: "Pocket Diary", tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} /> }} />
-    //     <Tab.Screen name="Feedbacks" component={FeedbackScreen} options={{ unmountOnBlur: true, tabBarLabel: "Suggestions", tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} /> }} />
-    //     <Tab.Screen
-    //       name="UserProfile"
-    //       component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
-    //       options={{ unmountOnBlur: true, tabBarLabel: "User Profile", tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} /> }}
-    //     />
-
-    //   </Tab.Navigator>
-    // );
   };
 
   return (
