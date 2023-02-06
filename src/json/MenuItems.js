@@ -212,7 +212,7 @@ export const MenuItemsAdmin = [
   {
     title: "Logout",
     icon: "logout-variant",
-    type:"item",
+    type: "item",
     index: 4,
     roleID: 2,
     items: null,
@@ -522,6 +522,18 @@ export const MenuItemsDealer = [
         navigation: "MyPersonalBankScreen",
       },
       {
+        title: "Verify Company Source",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanySource",
+      },
+      {
+        title: "Verify Company Expense",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanyExpense",
+      },
+      {
         title: "Add Source",
         type: "accordian",
         index: 82,
@@ -761,6 +773,18 @@ export const MenuItemsContractor = [
         type: "accordian",
         index: 82,
         navigation: "MyPersonalBankScreen",
+      },
+      {
+        title: "Verify Company Source",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanySource",
+      },
+      {
+        title: "Verify Company Expense",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanyExpense",
       },
       {
         title: "Add Source",
@@ -1167,10 +1191,10 @@ export const MenuItemsProjectSupervisor = [
   {
     title: "My Profile",
     icon: "account",
-    type:"item",
+    type: "item",
     index: 4,
     roleID: 7,
-    items: null, 
+    items: null,
   },
   {
     title: "Pocket Diary",
@@ -1204,6 +1228,18 @@ export const MenuItemsProjectSupervisor = [
         navigation: "MyPersonalBankScreen",
       },
       {
+        title: "Verify Company Source",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanySource",
+      },
+      {
+        title: "Verify Company Expense",
+        type: "accordian",
+        index: 82,
+        navigation: "VerifyCompanyExpense",
+      },
+      {
         title: "Add Source",
         type: "accordian",
         index: 82,
@@ -1232,7 +1268,7 @@ export const MenuItemsProjectSupervisor = [
   {
     title: "On Going Projects",
     icon: "tools",
-    type:"item",
+    type: "item",
     index: 5,
     roleID: 7,
     items: null,

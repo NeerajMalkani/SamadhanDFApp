@@ -122,7 +122,8 @@ import AddBudgetSetup from "./src/screens/Common/PocketDairy/Setting/AddItems/Ad
 import AddExpensesList from "./src/screens/Common/PocketDairy/AddExpensesList";
 import AddExpenses from "./src/screens/Common/PocketDairy/AddItems/AddExpenses";
 import AddSourceList from "./src/screens/Common/PocketDairy/AddSourceList";
-//import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
+import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
+import VerifyCompanyExpense from "./src/screens/Common/PocketDairy/VerifyCompanyExpense";
 import AddSource from "./src/screens/Common/PocketDairy/AddItems/AddSource";
 //import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
 import BrandConversionValue from "./src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue";
@@ -820,11 +821,16 @@ export default function App() {
                 name="AddSourceList"
                 component={AddSourceList}
               />
-              {/* <Drawer.Screen
+              <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="VerifyCompanySource"
                 component={VerifyCompanySource}
-              /> */}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="AddBankScreen"
@@ -1049,11 +1055,16 @@ export default function App() {
                 name="AddSourceList"
                 component={AddSourceList}
               />
-              {/* <Drawer.Screen
+              <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="VerifyCompanySource"
                 component={VerifyCompanySource}
-              /> */}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="BankTransactionScreen"

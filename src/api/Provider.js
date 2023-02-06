@@ -3,10 +3,14 @@ import axios from "axios";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
 const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
-const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
-const BASE_URL_Dashboard = "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
-const BASE_URL_PocketDiary = "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
-const BASE_URL_Contractor = "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
+const BASE_URL_Admin =
+  "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
+const BASE_URL_Dashboard =
+  "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
+const BASE_URL_PocketDiary =
+  "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
+const BASE_URL_Contractor =
+  "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
 
 class Provider {
   //#region Old API's
@@ -128,7 +132,8 @@ class Provider {
     CategoryNameServiceProduct: "getcategorynameserviceproductform/",
     CategoryDataServiceProduct: "getcategorydataserviceproductform/",
     ProductServiceProduct: "getproductnameserviceproductform/",
-    AlternativeUnitOfSalesServiceProduct: "getalternativeunitofsalesserviceproductform/",
+    AlternativeUnitOfSalesServiceProduct:
+      "getalternativeunitofsalesserviceproductform/",
     ServiceProductCreate: "serviceproductcreate/",
     ServiceProductUpdate: "serviceproductupdate/",
     ServiceProductrefNoCheck: "serviceproductrefnocheck/",
@@ -176,7 +181,8 @@ class Provider {
     CategoryNamePopupMaterialSetup: "getcategoryname_popup_materialsetupform/",
     ProductListPopupMaterialSetup: "getproductlist_popup_materialsetupform/",
     BrandNamelistPopupMaterialSetup: "getbrandnamelist_materialsetupform/",
-    ProductRateBrandRefNoMaterialSetup: "getproductrate_by_brandrefno_materialsetupform/",
+    ProductRateBrandRefNoMaterialSetup:
+      "getproductrate_by_brandrefno_materialsetupform/",
     MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
     MaterialsSetupCreate: "materialsetupcreate/",
     MaterialsSetupUpdate: "materialsetupupdate/",
@@ -198,7 +204,8 @@ class Provider {
     GetdashboardUserswitchto: "getdashboard_userswitchto/",
     Getdashboard_Userswitchto_Proceed: "getdashboard_userswitchto_proceed/",
     GetdashboardServicecatalogue: "getdashboard_servicecatalogue/",
-    GetserviceimagegalleryByServicerefno: "getserviceimagegallery_by_servicerefno/",
+    GetserviceimagegalleryByServicerefno:
+      "getserviceimagegallery_by_servicerefno/",
     Getgotoestimation: "getgotoestimation/",
     MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
     MyDesignationRefnoCheck: "mydesignationrefnocheck/",
@@ -224,7 +231,8 @@ class Provider {
     CategoryDataDealerBrandSetup: "getcategorydatadealerbrandsetupform/",
     UnitOfSaleDealerBrandSetup: "getunitofsaledealerbrandsetupform/",
     BrandNameDealerBrandSetup: "getbrandnamedealerbrandsetupform/",
-    BuyerCategoryDiscountDealerBrandSetup: "getbuyercategorydiscountdealerbrandsetupform/",
+    BuyerCategoryDiscountDealerBrandSetup:
+      "getbuyercategorydiscountdealerbrandsetupform/",
     DealerBrandRefNoCheck: "dealerbrandrefnocheck/",
     DealerBrandSetupCreate: "dealerbrandsetupcreate/",
     DealerBrandSetupUpdate: "dealerbrandsetupupdate/",
@@ -241,15 +249,24 @@ class Provider {
     GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
 
-    getservicenamematerialcalculatorform: "getservicenamematerialcalculatorform/",
-    getcategorynamematerialcalculatorform: "getcategorynamematerialcalculatorform/",
-    getproductnamematerialcalculatorform: "getproductnamematerialcalculatorform/",
-    getproductdesigntypematerialcalculatorform: "getproductdesigntypematerialcalculatorform/",
-    getdesigntypeimagematerialcalculatorform: "getdesigntypeimagematerialcalculatorform/",
-    getsqftcalculation_materialcalculatorform: "getservicenamematerialcalculatorform/",
-    getviewmaterials_materialcalculatorform: "getviewmaterials_materialcalculatorform/",
-    getproductrate_by_brandrefno_materialcalculatorform: "getproductrate_by_brandrefno_materialcalculatorform/",
-    getbrandnamelist_materialcalculatorform: "getbrandnamelist_materialcalculatorform/",
+    getservicenamematerialcalculatorform:
+      "getservicenamematerialcalculatorform/",
+    getcategorynamematerialcalculatorform:
+      "getcategorynamematerialcalculatorform/",
+    getproductnamematerialcalculatorform:
+      "getproductnamematerialcalculatorform/",
+    getproductdesigntypematerialcalculatorform:
+      "getproductdesigntypematerialcalculatorform/",
+    getdesigntypeimagematerialcalculatorform:
+      "getdesigntypeimagematerialcalculatorform/",
+    getsqftcalculation_materialcalculatorform:
+      "getservicenamematerialcalculatorform/",
+    getviewmaterials_materialcalculatorform:
+      "getviewmaterials_materialcalculatorform/",
+    getproductrate_by_brandrefno_materialcalculatorform:
+      "getproductrate_by_brandrefno_materialcalculatorform/",
+    getbrandnamelist_materialcalculatorform:
+      "getbrandnamelist_materialcalculatorform/",
 
     getservicenamedealermyserviceform: "getservicenamedealermyserviceform/",
     dealermyservicecreate: "dealermyservicecreate/",
@@ -298,20 +315,26 @@ class Provider {
     userprofileupdate: "userprofileupdate/",
     pckcategoryrefnocheck_appadmin: "pckcategoryrefnocheck_appadmin/",
     pckcategorynamecreate_appadmin: "pckcategorynamecreate_appadmin/",
-    gettransactiontype_pckcategoryform_appadmin: "gettransactiontype_pckcategoryform_appadmin/",
+    gettransactiontype_pckcategoryform_appadmin:
+      "gettransactiontype_pckcategoryform_appadmin/",
     pckcategorynameupdate_appadmin: "pckcategorynameupdate_appadmin/",
     pcksubcategoryrefnocheck_appadmin: "pcksubcategoryrefnocheck_appadmin/",
-    gettransactiontype_pcksubcategoryform_appadmin: "gettransactiontype_pcksubcategoryform_appadmin/",
-    getpckcategoryname_pcksubcategoryform_appadmin: "getpckcategoryname_pcksubcategoryform_appadmin/",
+    gettransactiontype_pcksubcategoryform_appadmin:
+      "gettransactiontype_pcksubcategoryform_appadmin/",
+    getpckcategoryname_pcksubcategoryform_appadmin:
+      "getpckcategoryname_pcksubcategoryform_appadmin/",
     pcksubcategorynamecreate_appadmin: "pcksubcategorynamecreate_appadmin/",
     pcksubcategorynameupdate_appadmin: "pcksubcategorynameupdate_appadmin/",
     pckcategoryrefnocheck_user: "pckcategoryrefnocheck_user/",
-    gettransactiontype_pckcategoryform_user: "gettransactiontype_pckcategoryform_user/",
+    gettransactiontype_pckcategoryform_user:
+      "gettransactiontype_pckcategoryform_user/",
     pckcategorynamecreate_user: "pckcategorynamecreate_user/",
     pckcategorynameupdate_user: "pckcategorynameupdate_user/",
     pcksubcategoryrefnocheck_user: "pcksubcategoryrefnocheck_user/",
-    gettransactiontype_pcksubcategoryform_user: "gettransactiontype_pcksubcategoryform_user/",
-    getpckcategoryname_pcksubcategoryform_user: "getpckcategoryname_pcksubcategoryform_user/",
+    gettransactiontype_pcksubcategoryform_user:
+      "gettransactiontype_pcksubcategoryform_user/",
+    getpckcategoryname_pcksubcategoryform_user:
+      "getpckcategoryname_pcksubcategoryform_user/",
     pcksubcategorynamecreate_user: "pcksubcategorynamecreate_user/",
     pcksubcategorynameupdate_user: "pcksubcategorynameupdate_user/",
     pckmycontactrefnocheck: "pckmycontactrefnocheck/",
@@ -324,9 +347,12 @@ class Provider {
     getproductnameratecardform: "getproductnameratecardform/",
     getunitofsaleratecardform: "getunitofsaleratecardform/",
     getmaterialratedataratecardform: "getmaterialratedataratecardform/",
-    getmaterialratedata_unitofsaleonchange_ratecardform: "getmaterialratedata_unitofsaleonchange_ratecardform/",
-    getmaterialratedata_withmaterialrateblur_ratecardform: "getmaterialratedata_withmaterialrateblur_ratecardform/",
-    getmaterialratedata_withoutmaterialrateblur_ratecardform: "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
+    getmaterialratedata_unitofsaleonchange_ratecardform:
+      "getmaterialratedata_unitofsaleonchange_ratecardform/",
+    getmaterialratedata_withmaterialrateblur_ratecardform:
+      "getmaterialratedata_withmaterialrateblur_ratecardform/",
+    getmaterialratedata_withoutmaterialrateblur_ratecardform:
+      "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
     ratecardcreate: "ratecardcreate/",
     ratecardupdate: "ratecardupdate/",
     pcktransrefnocheck: "pcktransrefnocheck/",
@@ -343,7 +369,8 @@ class Provider {
     pckaddsourceupdate: "pckaddsourceupdate/",
     pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
-    getsubcategoryname_pckaddexpensesform: "getsubcategoryname_pckaddexpensesform/",
+    getsubcategoryname_pckaddexpensesform:
+      "getsubcategoryname_pckaddexpensesform/",
     getcardtype_pckaddexpensesform: "getcardtype_pckaddexpensesform/",
     getcardbankname_pckaddexpensesform: "getcardbankname_pckaddexpensesform/",
     pckaddexpensescreate: "pckaddexpensescreate/",
@@ -373,6 +400,20 @@ class Provider {
     pckdashboard_cashinpocket_details: "pckdashboard_cashinpocket_details/",
     pckdashboard_cashinpocket_gridlist: "pckdashboard_cashinpocket_gridlist/",
     get_pckpaymentgroup: "get_pckpaymentgroup/",
+
+    pck_companysource_cash_verify_gridlist:
+      "pck_companysource_cash_verify_gridlist/",
+    pck_companysource_bank_verify_gridlist:
+      "pck_companysource_bank_verify_gridlist/",
+    pck_companysource_all_verified_gridlist:
+      "pck_companysource_all_verified_gridlist/",
+
+    pck_companyexpenses_cash_verify_gridlist:
+      "pck_companyexpenses_cash_verify_gridlist/",
+    pck_companyexpenses_bank_verify_gridlist:
+      "pck_companyexpenses_bank_verify_gridlist/",
+    pck_companyexpenses_all_verified_gridlist:
+      "pck_companyexpenses_all_verified_gridlist/",
   };
 
   createDFPocketDairy(resource, params) {

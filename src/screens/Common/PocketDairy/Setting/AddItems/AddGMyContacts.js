@@ -2,30 +2,48 @@ import { ScrollView, View } from "react-native";
 import * as Contacts from "expo-contacts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Checkbox,
+  HelperText,
+  Snackbar,
+  TextInput,
+} from "react-native-paper";
 import Provider from "../../../../../api/Provider";
 import { Styles } from "../../../../../styles/styles";
 import { theme } from "../../../../../theme/apptheme";
 import { communication } from "../../../../../utils/communication";
-let userID = 0, compID = 0;
+let userID = 0,
+  compID = 0;
 
 const AddGMyContactsScreen = ({ route, navigation }) => {
   //#region Variables
   const [nameError, setNameError] = React.useState(false);
-  const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.contactName : "");
+  const [name, setName] = React.useState(
+    route.params.type === "edit" ? route.params.data.contactName : ""
+  );
 
   const [mobileNoError, setMobileNoError] = React.useState(false);
-  const [mobileNo, setMobileNo] = React.useState(route.params.type === "edit" ? route.params.data.contactPhoneno : "");
+  const [mobileNo, setMobileNo] = React.useState(
+    route.params.type === "edit" ? route.params.data.contactPhoneno : ""
+  );
 
   const [remarkError, setRemarkError] = React.useState(false);
-  const [remarkName, setRemarkName] = React.useState(route.params.type === "edit" ? route.params.data.remarks : "");
-  const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
+  const [remarkName, setRemarkName] = React.useState(
+    route.params.type === "edit" ? route.params.data.remarks : ""
+  );
+  const [checked, setChecked] = React.useState(
+    route.params.type === "edit" ? route.params.data.display : true
+  );
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
 
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isContactLoading, setIsContactLoading] = useState(false);
@@ -77,12 +95,10 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
           if (route.params.type == "newContact") {
             route.params.fetchReceiverList();
             navigation.goBack();
-          }
-          else {
+          } else {
             route.params.fetchData("add");
             navigation.goBack();
           }
-
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -187,7 +203,10 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
           //console.log(arrPhones);
           //console.log(arrPhones);
           setIsContactLoading(false);
-          navigation.navigate("PhoneContacts", { phoneNumbers: arrPhones, callback: PhoneClicked });
+          navigation.navigate("PhoneContacts", {
+            phoneNumbers: arrPhones,
+            callback: PhoneClicked,
+          });
         }
       }
     })();
@@ -196,24 +215,55 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={[Styles.padding16]}>
           <Card.Content>
-            <Button icon={"card-account-phone-outline"} mode="contained" loading={isContactLoading} disabled={isContactLoading} onPress={ShowContactList}>
+            <Button
+              icon={"card-account-phone-outline"}
+              mode="contained"
+              loading={isContactLoading}
+              disabled={isContactLoading}
+              onPress={ShowContactList}
+            >
               load from contacts
             </Button>
           </Card.Content>
         </View>
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label=" Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={nameError} />
+          <TextInput
+            mode="flat"
+            label=" Name"
+            value={name}
+            onChangeText={onNameChanged}
+            style={{ backgroundColor: "white" }}
+            error={nameError}
+          />
           <HelperText type="error" visible={nameError}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="Mobile No" keyboardType="number-pad" value={mobileNo} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoError} />
+          <TextInput
+            mode="flat"
+            label="Mobile No"
+            keyboardType="number-pad"
+            value={mobileNo}
+            onChangeText={onMobileNoChanged}
+            style={{ backgroundColor: "white" }}
+            error={mobileNoError}
+          />
           <HelperText type="error" visible={mobileNoError}>
             {communication.InvalidMobileNo}
           </HelperText>
-          <TextInput mode="flat" label="Remarks" value={remarkName} onChangeText={onRemarkChanged} style={{ backgroundColor: "white" }} error={remarkError} />
+          <TextInput
+            mode="flat"
+            label="Remarks"
+            value={remarkName}
+            onChangeText={onRemarkChanged}
+            style={{ backgroundColor: "white" }}
+            error={remarkError}
+          />
           <HelperText type="error" visible={remarkError}>
             {communication.InvalidRemarks}
           </HelperText>
@@ -223,7 +273,11 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
               color={theme.colors.primary}
               style={[Styles.paddingHorizontal0]}
               position="leading"
-              labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
+              labelStyle={[
+                Styles.textLeft,
+                Styles.paddingStart4,
+                Styles.fontSize14,
+              ]}
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
@@ -232,14 +286,32 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
           </View>
         </View>
       </ScrollView>
-      <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.width100per,
+          Styles.marginTop32,
+          Styles.padding16,
+          { position: "absolute", bottom: 0, elevation: 3 },
+        ]}
+      >
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
+          <Button
+            mode="contained"
+            loading={isButtonLoading}
+            disabled={isButtonLoading}
+            onPress={ValidateActivityName}
+          >
             SAVE
           </Button>
         </Card.Content>
       </View>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: theme.colors.error }}
+      >
         {snackbarText}
       </Snackbar>
     </View>
