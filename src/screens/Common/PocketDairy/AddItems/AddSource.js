@@ -204,131 +204,186 @@ const AddSource = ({ route, navigation }) => {
 
       FetchEntryType();
 
-      if (route.params.type === "edit" || route.params.type === "verify") {
-        SetEditData();
+      if (route.params.type === "edit") {
+        SetEditData(route.params.data);
+      }
+      if (route.params.type === "verify") {
+        FetchData_Company(route.params.data.pck_trans_refno);
       }
     }
   };
 
-  const SetEditData = () => {
-    //console.log('start edit data =====================');
-    console.log(route.params);
-    setPktEntryTypeID(route.params.data.pck_entrytype_refno);
-    setButtonStatus(false);
-    setEntryType(route.params.data.pck_entrytype_name);
-    settAmount(route.params.data.amount);
-    setPckTransID(route.params.data.pck_trans_refno);
-    _pktEntryTypeID = route.params.data.pck_entrytype_refno;
+  const FetchData_Company = (transactionID) => {
 
-    setReceiptMode(route.params.data.pck_mode_name);
-    setSource(route.params.data.pck_category_name);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_trans_refno: transactionID.toString(),
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_transtype_refno:
+          projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO,
+        pck_entrytype_refno:
+          projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            SetEditData(response.data.data[0]);
+          }
+        } else {
+          setSnackbarText("No data found, please go back and try again.");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+      });
+  };
+
+  const SetEditData = (data) => {
+    setPktEntryTypeID(data.pck_entrytype_refno);
+    setButtonStatus(false);
+    setEntryType(data.pck_entrytype_name);
+    settAmount(data.amount);
+    setPckTransID(data.pck_trans_refno);
+    _pktEntryTypeID = data.pck_entrytype_refno;
+
+    setReceiptMode(data.pck_mode_name);
+    setSource(data.pck_category_name);
     FetchReceptCategory(
-      route.params.data.pck_mode_refno,
-      route.params.data.pck_category_refno
+      data.pck_mode_refno,
+      data.pck_category_refno
     );
 
     if (
-      route.params.data.pck_sub_category_refno != "" &&
-      route.params.data.pck_sub_category_refno != "0"
+      data.pck_sub_category_refno != "" &&
+      data.pck_sub_category_refno != "0"
     ) {
-      setSubCategoryName(route.params.data.pck_sub_category_name);
+      setSubCategoryName(data.pck_sub_category_name);
       FetchReceptSubCategory(
-        route.params.data.pck_category_refno,
-        route.params.data.pck_sub_category_refno
+        data.pck_category_refno,
+        data.pck_sub_category_refno
       );
     } else {
       setSubCatStatus(false);
     }
 
     if (
-      route.params.data.pck_mycontact_refno != "" &&
-      route.params.data.pck_mycontact_refno != "0"
+      data.pck_mycontact_refno != "" &&
+      data.pck_mycontact_refno != "0"
     ) {
       setReceivedStatus(true);
-      setReceivedEditID(route.params.data.pck_mycontact_refno);
-      FetchReceiverList(route.params.data.pck_mycontact_refno);
+      setReceivedEditID(data.pck_mycontact_refno);
+      FetchReceiverList(data.pck_mycontact_refno);
     }
 
     if (
-      route.params.data.deposit_type_refno != "" &&
-      route.params.data.deposit_type_refno != "0"
+      data.deposit_type_refno != "" &&
+      data.deposit_type_refno != "0"
     ) {
       setDepositTypeStatus(true);
-      //setDepositeType(route.params.data.deposit_type_refno);
-      setDepositeTypeEditID(route.params.data.deposit_type_refno);
-      FetchDepositType(route.params.data.deposit_type_refno);
+      //setDepositeType(data.deposit_type_refno);
+      setDepositeTypeEditID(data.deposit_type_refno);
+      FetchDepositType(data.deposit_type_refno);
     }
 
     if (
-      route.params.data.pck_mybank_refno != "" &&
-      route.params.data.pck_mybank_refno != "0"
+      data.pck_mybank_refno != "" &&
+      data.pck_mybank_refno != "0"
     ) {
       setBankListStatus(true);
-      //setMyBankList(route.params.data.pck_mybank_refno);
-      setMyBankListEditID(route.params.data.pck_mybank_refno);
-      FetchBankList(route.params.data.pck_mybank_refno);
+      //setMyBankList(data.pck_mybank_refno);
+      setMyBankListEditID(data.pck_mybank_refno);
+      FetchBankList(data.pck_mybank_refno);
     }
 
-    if (route.params.data.cheque_no != "") {
+    if (data.cheque_no != "") {
       setChequeNoStatus(true);
-      setChequeNo(route.params.data.cheque_no);
+      setChequeNo(data.cheque_no);
     }
 
-    if (route.params.data.utr_no != "") {
+    if (data.utr_no != "") {
       setUTRNoStatus(true);
-      setUTRNo(route.params.data.utr_no);
+      setUTRNo(data.utr_no);
     }
 
-    if (route.params.data.cheque_date != null) {
+    if (data.cheque_date != null) {
       setChequeDateStatus(true);
-      let dateBreakup = route.params.data.cheque_date.split("-");
+      let dateBreakup = data.cheque_date.split("-");
       setChequeDate(
         new Date(dateBreakup[2] + "/" + dateBreakup[1] + "/" + dateBreakup[0])
       );
     }
 
-    if (route.params.data.reminder_date != null) {
+    if (data.reminder_date != null) {
       setPaymentReminderStatus(true);
-      let dateBreakup = route.params.data.reminder_date.split("-");
+      let dateBreakup = data.reminder_date.split("-");
       setRepaymentDate(
         new Date(dateBreakup[2] + "/" + dateBreakup[1] + "/" + dateBreakup[0])
       );
     }
 
     if (
-      route.params.data.myclient_refno != null &&
-      route.params.data.myclient_refno != "0"
+      data.myclient_refno != null &&
+      data.myclient_refno != "0"
     ) {
       setClientListstatus(true);
-      FetchClientList(route.params.data.myclient_refno);
+      FetchClientList(data.myclient_refno);
     }
 
     if (
-      route.params.data.cont_project_refno != null &&
-      route.params.data.cont_project_refno != "0"
+      data.cont_project_refno != null &&
+      data.cont_project_refno != "0"
     ) {
       setProjectListstatus(true);
       FetchProjectList(
-        route.params.data.myclient_refno,
-        route.params.data.cont_project_refno
+        data.myclient_refno,
+        data.cont_project_refno
       );
     }
 
-    if (route.params.data.invoice_no != "") {
+    if (data.invoice_no != "") {
       setInvoiceStatus(true);
-      setInvoiceNo(route.params.data.invoice_no);
+      setInvoiceNo(data.invoice_no);
     }
 
     if (
-      route.params.data.payment_type_refno != "" &&
-      route.params.data.payment_type_refno != "0"
+      data.payment_group_refno != "" &&
+      data.payment_group_refno != "0"
     ) {
+      setPaymentGroupStatus(true);
+
+      let recc = [...paymentGroup];
+      recc.map((r) => {
+        r.selected = false;
+        if (r.id == data.payment_group_refno) {
+          r.selected = true;
+          setPaymentGroupID(r.value);
+          if (r.id == "2") {
+            setPaymentTypeStatus(true);
+            setInvoiceStatus(true);
+          }
+        }
+
+      });
+
+      setPaymentGroup(recc);
+    }
+
+    if (data.payment_type_refno != "" && data.payment_type_refno != "0") {
+
       setPaymentTypeStatus(true);
 
       let recc = [...paymentRB];
       recc.map((r) => {
         r.selected = false;
-        if (r.id == route.params.data.payment_type_refno) {
+        if (r.id == data.payment_type_refno) {
           r.selected = true;
         }
       });
@@ -336,33 +391,17 @@ const AddSource = ({ route, navigation }) => {
       setPaymentRB(recc);
     }
 
-    if (
-      route.params.data.payment_group_refno != "" &&
-      route.params.data.payment_group_refno != "0"
-    ) {
-      setPaymentTypeStatus(true);
 
-      let recc = [...paymentGroup];
-      recc.map((r) => {
-        r.selected = false;
-        if (r.id == route.params.data.payment_group_refno) {
-          r.selected = true;
-        }
-      });
-
-      setPaymentGroup(recc);
-    }
 
     setCommonStatus(true);
 
-    setNotes(route.params.data.notes);
+    setNotes(data.notes);
 
-    setChecked(route.params.data.view_status == "1" ? true : false);
-    //console.log(route.params.data.attach_receipt_url);
+    setChecked(data.view_status == "1" ? true : false);
 
-    setImage(route.params.data.attach_receipt_url);
-    setFilePath(route.params.data.attach_receipt_url);
-    setDesignImage(route.params.data.attach_receipt_url);
+    // setImage(data.attach_receipt_url);
+    // setFilePath(data.attach_receipt_url);
+    // setDesignImage(data.attach_receipt_url);
   };
 
   const FetchEntryType = () => {
@@ -399,7 +438,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchRecepientMode = () => {
@@ -425,7 +464,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceptCategory = (receiptModeID, categoryID) => {
@@ -465,7 +504,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceptSubCategory = (categoryID, subCategoryID) => {
@@ -501,7 +540,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankList = (bankID) => {
@@ -536,7 +575,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceiverList = (contactID, contactName) => {
@@ -579,7 +618,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchClientList = (clientID) => {
@@ -613,7 +652,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -653,7 +692,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepositType = (depositID) => {
@@ -682,7 +721,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentType = () => {
@@ -709,10 +748,10 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
-  const FetchPaymentGroup = () => {
+  const FetchPaymentGroup = (editID) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -736,7 +775,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -1177,13 +1216,13 @@ const AddSource = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
@@ -1310,27 +1349,25 @@ const AddSource = ({ route, navigation }) => {
         repaymentDate == "" ? "" : moment(repaymentDate).format("DD-MM-YYYY");
     }
 
+    if (route.params.type === "verify") {
+      params.pck_master_trans_refno = pckTransID;
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
-    //console.log(datas);
-    Provider.createDFPocketDairyWithHeader(
-      type === "edit"
-        ? Provider.API_URLS.pckaddsourceupdate
-        : Provider.API_URLS.pck_companysource_verify_action,
-      datas
-    )
+    Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourceupdate, datas)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
@@ -1873,10 +1910,10 @@ const AddSource = ({ route, navigation }) => {
                   Styles.marginTop16,
                 ]}
               >
-                <Image
+                {/* <Image
                   source={{ uri: image }}
                   style={[Styles.width104, Styles.height96, Styles.border1]}
-                />
+                /> */}
                 <Button mode="text" onPress={chooseFile}>
                   {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
                 </Button>

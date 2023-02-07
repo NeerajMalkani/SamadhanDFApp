@@ -165,6 +165,18 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
         setRefreshing(false);
       });
   };
+
+  const LoadAll = (from) => {
+    if (from === "update") {
+      setSnackbarText("Record verified successfully");
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
+    CashVerifyCompanySource();
+    BankVerifyCompanySource();
+    VerifiedCompanySource();
+  };
+
   useEffect(() => {
     GetUserID();
   }, []);
@@ -193,7 +205,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
 
   useEffect(() => {
     setVerifiedData(
-      allcashData.filter((item) => {
+      allverifiedData.filter((item) => {
         return item.pck_category_name
           .toString()
           .toLowerCase()
@@ -216,11 +228,10 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${
-            NullOrEmpty(data.item.pck_category_name)
+          description={`Employee Name/Code: ${NullOrEmpty(data.item.pck_category_name)
               ? ""
               : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             setCurrent(data.item);
             refRBSheet.current.open();
@@ -295,7 +306,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -349,7 +360,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -403,7 +414,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -423,7 +434,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
       inactiveColor={theme.colors.textSecondary}
       activeColor={theme.colors.primary}
       scrollEnabled={true}
-      tabStyle={{ width: windowWidth / 2 }}
+      tabStyle={{ width: windowWidth / 3 }}
       labelStyle={[Styles.fontSize12, Styles.fontBold]}
     />
   );
@@ -436,7 +447,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Verify To Company Expenses" />
+      <Header navigation={navigation} title="Verify Company Expenses" />
       {isLoading ? (
         <View
           style={[
@@ -519,6 +530,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                   navigation.navigate("AddExpenses", {
                     type: "verify",
                     data: current,
+                    fetchData: LoadAll,
                   });
                   refRBSheet.current.close();
                 }}

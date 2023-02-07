@@ -55,6 +55,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
     theme.colors.success
   );
   const [current, setCurrent] = useState({});
+  const [mode, setMode] = React.useState("");
 
   const refRBSheet = useRef();
 
@@ -69,7 +70,18 @@ const VerifyCompanySource = ({ route, navigation }) => {
       VerifiedCompanySource();
     }
   };
-  //317
+
+  const LoadAll = (from) => {
+    if (from === "update") {
+      setSnackbarText("Record verified successfully");
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
+    CashVerifyCompanySource();
+    BankVerifyCompanySource();
+    VerifiedCompanySource();
+  };
+
   const CashVerifyCompanySource = () => {
     let params = {
       data: {
@@ -193,7 +205,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
 
   useEffect(() => {
     setVerifiedData(
-      allcashData.filter((item) => {
+      allverifiedData.filter((item) => {
         return item.pck_category_name
           .toString()
           .toLowerCase()
@@ -202,7 +214,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
     );
   }, [allverifiedData, verifyquery]);
 
-  const RenderItems = (data) => {
+  const RenderItems = (data, mode) => {
     return (
       <View
         style={[
@@ -216,13 +228,13 @@ const VerifyCompanySource = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${
-            NullOrEmpty(data.item.pck_category_name)
-              ? ""
-              : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Employee Name/Code: ${NullOrEmpty(data.item.pck_category_name)
+            ? ""
+            : data.item.pck_category_name
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             setCurrent(data.item);
+            setMode(mode);
             refRBSheet.current.open();
           }}
           left={() => (
@@ -289,13 +301,13 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={cashData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, route.key)}
                     />
                   </View>
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -343,13 +355,13 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={upiData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, route.key)}
                     />
                   </View>
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -397,13 +409,13 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={verifiedData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, route.key)}
                     />
                   </View>
                 ) : (
                   <NoItems
                     icon="format-list-bulleted"
-                    text="No records found. Add records by clicking on plus icon."
+                    text="No records found."
                   />
                 )}
               </View>
@@ -423,7 +435,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
       inactiveColor={theme.colors.textSecondary}
       activeColor={theme.colors.primary}
       scrollEnabled={true}
-      tabStyle={{ width: windowWidth / 2 }}
+      tabStyle={{ width: windowWidth / 3 }}
       labelStyle={[Styles.fontSize12, Styles.fontBold]}
     />
   );
@@ -436,7 +448,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Verify To Company Source" />
+      <Header navigation={navigation} title="Verify Company Source" />
       {isLoading ? (
         <View
           style={[
@@ -516,9 +528,10 @@ const VerifyCompanySource = ({ route, navigation }) => {
                 icon={"cash-refund"}
                 mode="contained"
                 onPress={() => {
-                  navigation.navigate("AddSource", {
+                  navigation.navigate(mode == "cash" ? "AddExpenses" : "AddSource", {
                     type: "verify",
                     data: current,
+                    fetchData: LoadAll,
                   });
                   refRBSheet.current.close();
                 }}

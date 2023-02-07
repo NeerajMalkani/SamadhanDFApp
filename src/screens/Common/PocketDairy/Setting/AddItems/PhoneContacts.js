@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { List } from "react-native-paper";
+import { List, Searchbar } from "react-native-paper";
 import { Styles } from "../../../../../styles/styles";
-import { Searchbar } from "react-native-paper";
+
 const PhoneContacts = ({ route, navigation }) => {
   const [phonequery, setPhoneQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -26,11 +26,12 @@ const PhoneContacts = ({ route, navigation }) => {
       })
     );
   }, [route.params.phoneNumbers, phonequery]);
+  
   return (
     <ScrollView style={[Styles.flex1]}>
       <Searchbar
         style={[Styles.margin16]}
-        placeholder="Search"
+        placeholder="Search Phone Book"
         onChangeText={(query) => {
           setPhoneQuery(query);
         }}

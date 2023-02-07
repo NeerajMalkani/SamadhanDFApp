@@ -262,29 +262,30 @@ const AddExpenses = ({ route, navigation }) => {
       FetchEntryType();
 
       if (
-        route.params.type ===
-        projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
-      ) {
+        route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
         FetchPayToCompanyData(route.params.data.transactionID);
-      } else if (
-        route.params.type === "edit" ||
-        route.params.type === "verify"
-      ) {
+      } else if (route.params.type === "edit") {
         SetEditData(route.params.data);
+      }
+      else if (route.params.type === "verify") {
+        FetchPayToCompanyData(route.params.data.pck_trans_refno);
       }
     }
   };
 
   const FetchPayToCompanyData = (transactionID) => {
-    //console.log('pay to company ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
         pck_trans_refno: transactionID,
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
-        pck_transtype_refno:
-          projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO,
+        pck_transtype_refno: route.params.type === "edit" ?
+          projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
+          :
+          route.params.type === "verify" ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
+            : 0
+        ,
         pck_entrytype_refno:
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
@@ -502,7 +503,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentMode = (editID) => {
@@ -543,7 +544,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchClientList = (clientID) => {
@@ -577,7 +578,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseCategory = (receiptModeID, editID) => {
@@ -613,7 +614,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseSubCategory = (categoryID, editID) => {
@@ -648,7 +649,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectExpense = (categoryID, editID) => {
@@ -674,7 +675,8 @@ const AddExpenses = ({ route, navigation }) => {
             if (
               route.params.type !=
               projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
-            ) {
+              && route.params.type != "verify") {
+
               response.data.data = response.data.data.filter((el) => {
                 return (
                   el.subcategoryID !=
@@ -683,12 +685,15 @@ const AddExpenses = ({ route, navigation }) => {
               });
               setProjectExpenseDisable(false);
             } else {
-              response.data.data = response.data.data.filter((el) => {
-                return (
-                  el.subcategoryID ==
-                  projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO
-                );
-              });
+
+              if (route.params.type == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+                response.data.data = response.data.data.filter((el) => {
+                  return (
+                    el.subcategoryID ==
+                    projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO
+                  );
+                });
+              }
             }
             const subCategory = response.data.data.map(
               (data) => data.subCategoryName
@@ -716,11 +721,16 @@ const AddExpenses = ({ route, navigation }) => {
                   return el.subcategoryID === editID;
                 })[0].subCategoryName
               );
+
+
+              if (editID == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO) {
+                setProjectExpenseDisable(true);
+              }
             }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankList = (editID) => {
@@ -759,7 +769,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepositType = (editID) => {
@@ -789,7 +799,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceiverList = (editID, contactName) => {
@@ -833,7 +843,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardType = (editID) => {
@@ -871,7 +881,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
@@ -906,7 +916,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -946,7 +956,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const ShowContactList = () => {
@@ -1482,13 +1492,13 @@ const AddExpenses = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
 
@@ -1531,7 +1541,7 @@ const AddExpenses = ({ route, navigation }) => {
       pck_entrytype_refno: pktEntryTypeID,
       pck_mode_refno: payModeFullData.filter((el) => {
         return el.pckModeName === payMode;
-      })[0].pckModeID,
+      })[0].pckModeID.toString(),
 
       pck_category_refno: expensesFullData.filter((el) => {
         return el.categoryName === expenses;
@@ -1621,7 +1631,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (projectListStatus) {
       params.cont_project_refno = projectListFullData.filter((el) => {
         return el.project_name === projectList;
-      })[0].cont_project_refno;
+      })[0].cont_project_refno.toString();
     }
 
     if (projectExpenseStatus) {
@@ -1630,30 +1640,31 @@ const AddExpenses = ({ route, navigation }) => {
       })[0].subcategoryID;
     }
 
+    if (route.params.type === "verify") {
+      params.pck_master_trans_refno = pckTransID;
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
 
-    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(
-      type === "edit"
+      type == "edit"
         ? Provider.API_URLS.pckaddexpensesupdate
         : Provider.API_URLS.pck_companyexpenses_verify_action,
-      datas
-    )
+      datas)
       .then((response) => {
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -1802,70 +1813,70 @@ const AddExpenses = ({ route, navigation }) => {
 
           {route.params.type ===
             projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText && (
-            <>
-              <View style={[Styles.padding16]}>
-                <DataTable
-                  style={[
-                    Styles.backgroundSecondaryColor,
-                    Styles.borderRadius4,
-                    Styles.flexJustifyCenter,
-                    Styles.bordergray,
-                    Styles.fontBold,
-                  ]}
-                >
-                  <DataTable.Header>
-                    <DataTable.Title
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      Collected
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Paid
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Balance
-                    </DataTable.Title>
-                  </DataTable.Header>
+              <>
+                <View style={[Styles.padding16]}>
+                  <DataTable
+                    style={[
+                      Styles.backgroundSecondaryColor,
+                      Styles.borderRadius4,
+                      Styles.flexJustifyCenter,
+                      Styles.bordergray,
+                      Styles.fontBold,
+                    ]}
+                  >
+                    <DataTable.Header>
+                      <DataTable.Title
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        Collected
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Paid
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Balance
+                      </DataTable.Title>
+                    </DataTable.Header>
 
-                  <DataTable.Row style={[Styles.backgroundColor]}>
-                    <DataTable.Cell
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      {collectedAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {paidAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {balanceAmount}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                </DataTable>
-              </View>
-            </>
-          )}
+                    <DataTable.Row style={[Styles.backgroundColor]}>
+                      <DataTable.Cell
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        {collectedAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {paidAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {balanceAmount}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </DataTable>
+                </View>
+              </>
+            )}
 
           <Dropdown
             label="Payment Mode"

@@ -184,7 +184,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
           setPocketAmount(response.data.data[0].TotalCashinHand.toString());
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const GetBankAmount = (userID, companyID, branchID) => {
@@ -204,7 +204,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
           setBankAmount(response.data.data[0].TotalCashinBank.toString());
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   React.useEffect(() => {
@@ -218,7 +218,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
         GetUserData();
       };
       refreshScreen();
-      return () => {};
+      return () => { };
     }, [])
   );
 
@@ -784,73 +784,79 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={[Styles.paddingTop16]}>
-                <Text style={[Styles.HomeTitle]}>Company Finance</Text>
-                <View
-                  style={[
-                    Styles.marginTop16,
-                    Styles.flexSpaceBetween,
-                    Styles.flexRow,
-                  ]}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate("VerifyCompanySource");
-                      // if (roleID == 3) {
-                      // navigation.navigate("VerifyCompanySource");
-                      // } else {
-                      //   navigation.navigate("AddSourceList");
-                      // }
-                    }}
+              {(roleID == 4 || roleID == 5 && (
+              <>
+                {/* Verify Company Source / Expenses */}
+                <View style={[Styles.paddingTop16]}>
+                  <Text style={[Styles.HomeTitle]}>Company Finance Verification</Text>
+                  <View
                     style={[
-                      Styles.borderRadius8,
-                      Styles.homeBox,
-                      Styles.flexColumn,
-                      Styles.flexJustifyCenter,
-                      Styles.flexAlignCenter,
-                      Styles.paddingHorizontal12,
-                      { width: 156, height: 72 },
+                      Styles.marginTop16,
+                      Styles.flexSpaceBetween,
+                      Styles.flexRow,
                     ]}
                   >
-                    <Icon
-                      name="archive-arrow-down"
-                      size={22}
-                      color={theme.colors.masterIcons}
-                    />
-                    <Text style={[Styles.buttonIconLabel]}>
-                      Verify Company Source
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate("VerifyCompanyExpense");
-                      // if (roleID == 3) {
-                      //   navigation.navigate("ExpensesListGeneralUserScreen");
-                      // } else {
-                      //   navigation.navigate("AddExpensesList");
-                      // }
-                    }}
-                    style={[
-                      Styles.borderRadius8,
-                      Styles.homeBox,
-                      Styles.flexColumn,
-                      Styles.flexJustifyCenter,
-                      Styles.flexAlignCenter,
-                      Styles.paddingHorizontal12,
-                      { width: 156, height: 72 },
-                    ]}
-                  >
-                    <Icon
-                      name="archive-arrow-down"
-                      size={22}
-                      color={theme.colors.masterIcons}
-                    />
-                    <Text style={[Styles.buttonIconLabel]}>
-                      Verify Company Expense
-                    </Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("VerifyCompanySource");
+                        // if (roleID == 3) {
+                        // navigation.navigate("VerifyCompanySource");
+                        // } else {
+                        //   navigation.navigate("AddSourceList");
+                        // }
+                      }}
+                      style={[
+                        Styles.borderRadius8,
+                        Styles.homeBox,
+                        Styles.flexColumn,
+                        Styles.flexJustifyCenter,
+                        Styles.flexAlignCenter,
+                        Styles.paddingHorizontal12,
+                        { width: 156, height: 72 },
+                      ]}
+                    >
+                      <Icon
+                        name="archive-arrow-down"
+                        size={22}
+                        color={theme.colors.masterIcons}
+                      />
+                      <Text style={[Styles.buttonIconLabel]}>
+                        Verify Company Source
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("VerifyCompanyExpense");
+                        // if (roleID == 3) {
+                        //   navigation.navigate("ExpensesListGeneralUserScreen");
+                        // } else {
+                        //   navigation.navigate("AddExpensesList");
+                        // }
+                      }}
+                      style={[
+                        Styles.borderRadius8,
+                        Styles.homeBox,
+                        Styles.flexColumn,
+                        Styles.flexJustifyCenter,
+                        Styles.flexAlignCenter,
+                        Styles.paddingHorizontal12,
+                        { width: 156, height: 72 },
+                      ]}
+                    >
+                      <Icon
+                        name="archive-arrow-down"
+                        size={22}
+                        color={theme.colors.masterIcons}
+                      />
+                      <Text style={[Styles.buttonIconLabel]}>
+                        Verify Company Expense
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+                {/* Verify Company Source / Expenses */}
+              </>
+              ))}
               <View style={[Styles.paddingTop16]}>
                 <Text style={[Styles.HomeTitle]}>Settings</Text>
                 <View
@@ -950,7 +956,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
           <Button
             mode="contained"
             style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
-            onPress={() => {}}
+            onPress={() => { }}
           >
             View
           </Button>
