@@ -64,7 +64,7 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
 
     const FetchData = (from) => {
         if (from === "add" || from === "update") {
-            console.log('new record');
+            
             setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
             setSnackbarColor(theme.colors.success);
             setSnackbarVisible(true);
@@ -79,10 +79,12 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 pck_entrytype_refno: projectVariables.DEF_PCKDIARY_ENTRYTYPE_SELF_REFNO,
             }
         }
+        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
+                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
@@ -92,9 +94,9 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                     }
                 } else {
                     listData[1]([]);
-                    setSnackbarText("No data found");
-                    setSnackbarColor(theme.colors.error);
-                    setSnackbarVisible(true);
+                    // setSnackbarText("No data found");
+                    // setSnackbarColor(theme.colors.error);
+                    // setSnackbarVisible(true);
                 }
                 setIsLoading(false);
                 setRefreshing(false);
@@ -192,7 +194,8 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 cont_project_refno: data.item.cont_project_refno,
                 invoice_no: data.item.invoice_no,
                 payment_type_refno: data.item.payment_type_refno,
-
+                pck_contacttype_refno: data.item.pck_contacttype_refno,
+                pck_sub_category_notes:data.item.pck_sub_category_notes,
             },
         });
     };

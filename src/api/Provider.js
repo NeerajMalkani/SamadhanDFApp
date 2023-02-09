@@ -416,6 +416,7 @@ class Provider {
       "pck_companyexpenses_bank_verify_gridlist/",
     pck_companyexpenses_all_verified_gridlist:
       "pck_companyexpenses_all_verified_gridlist/",
+    get_contacttype: "get_contacttype/",
   };
 
   createDFPocketDairy(resource, params) {

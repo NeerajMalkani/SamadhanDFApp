@@ -64,6 +64,11 @@ const AddSource = ({ route, navigation }) => {
   const [subCategoryName, setSubCategoryName] = React.useState([]);
   const [errorSCN, setSCNError] = React.useState(false);
 
+  const [contactTypeFullData, setContactTypeFullData] = React.useState([]);
+  const [contactTypeData, setContactTypeData] = React.useState([]);
+  const [contactType, setContactType] = React.useState([]);
+  const [errorCT, setErrorCT] = React.useState(false);
+
   const [clientListFullData, setClientListFullData] = React.useState([]);
   const [clientListData, setClientListData] = React.useState([]);
   const [clientList, setClientList] = React.useState([]);
@@ -96,6 +101,12 @@ const AddSource = ({ route, navigation }) => {
   const [chequeNoError, setChequeNoError] = React.useState(false);
   const [chequeNo, setChequeNo] = React.useState("");
 
+  const [contactNameError, setContactNameError] = React.useState(false);
+  const [contactName, setContactName] = React.useState("");
+
+  const [mobileNoError, setMobileNoError] = React.useState(false);
+  const [mobileNumber, setMobileNumber] = React.useState("");
+
   const [invoiceNoError, setInvoiceNoError] = React.useState(false);
   const [invoiceNo, setInvoiceNo] = React.useState("");
 
@@ -122,6 +133,8 @@ const AddSource = ({ route, navigation }) => {
   const [notesError, setNotesError] = React.useState(false);
   const [notes, setNotes] = React.useState("");
 
+  const [rentalDescription, setRentalDescription] = React.useState("");
+
   const [checked, setChecked] = React.useState(true);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -136,6 +149,8 @@ const AddSource = ({ route, navigation }) => {
   const [depositTypeStatus, setDepositTypeStatus] = React.useState(false);
   const [bankListStatus, setBankListStatus] = React.useState(false);
   const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
+  const [newMobileNumberStatus, setNewMobileNumberStatus] = React.useState(false);
+  const [newContactNameStatus, setNewContactNameStatus] = React.useState(false);
   const [UTRNoStatus, setUTRNoStatus] = React.useState(false);
   const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
   const [paymentReminderStatus, setPaymentReminderStatus] =
@@ -143,6 +158,7 @@ const AddSource = ({ route, navigation }) => {
   const [commonStatus, setCommonStatus] = React.useState(false);
   const [buttonStatus, setButtonStatus] = React.useState(true);
   const [subCatStatus, setSubCatStatus] = React.useState(true);
+  const [rentalDescriptionStatus, setRentalDescriptionStatus] = React.useState(false);
   const [clientListStatus, setClientListstatus] = React.useState(false);
   const [projectListStatus, setProjectListstatus] = React.useState(false);
   const [invoiceStatus, setInvoiceStatus] = React.useState(false);
@@ -150,12 +166,11 @@ const AddSource = ({ route, navigation }) => {
   const [paymentGroupStatus, setPaymentGroupStatus] = React.useState(false);
   const [entryTypeStatus, setEntryTypeStatus] = React.useState(false);
   const [isContactLoading, setIsContactLoading] = useState(false);
-
+  const [contactTypeStatus, setContactTypeStatus] = useState(false);
   const [pktEntryTypeID, setPktEntryTypeID] = React.useState("1");
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [paymentTypeID, setPaymentTypeID] = useState(0);
   const [paymentGroupID, setPaymentGroupID] = useState(0);
-
   const [errorPG, setErrorPG] = React.useState(false);
   const [errorPT, setErrorPT] = React.useState(false);
   const [paymentRB, setPaymentRB] = useState([
@@ -274,13 +289,22 @@ const AddSource = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
+    console.log(data.pck_contacttype_refno);
+    if (
+      data.pck_contacttype_refno != "" &&
+      data.pck_contacttype_refno != "0"
+    ) {
+      setContactTypeStatus(true);
+      FetchContactType(data.pck_contacttype_refno);
+    }
+
     if (
       data.pck_mycontact_refno != "" &&
       data.pck_mycontact_refno != "0"
     ) {
       setReceivedStatus(true);
       setReceivedEditID(data.pck_mycontact_refno);
-      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno);
+      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno, data.pck_contacttype_refno);
     }
 
     if (
@@ -306,6 +330,11 @@ const AddSource = ({ route, navigation }) => {
     if (data.cheque_no != "") {
       setChequeNoStatus(true);
       setChequeNo(data.cheque_no);
+    }
+
+    if (data.pck_sub_category_notes != "") {
+      setRentalDescriptionStatus(true);
+      setRentalDescription(data.pck_sub_category_notes);
     }
 
     if (data.utr_no != "") {
@@ -353,7 +382,7 @@ const AddSource = ({ route, navigation }) => {
       setInvoiceNo(data.invoice_no);
     }
 
-    if (
+    if (data.payment_group_refno != null &&
       data.payment_group_refno != "" &&
       data.payment_group_refno != "0"
     ) {
@@ -584,21 +613,22 @@ const AddSource = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchReceiverList = (contactID, contactName, subCategoryID) => {
+  const FetchReceiverList = (contactID, contactName, subCategoryID, contactTypeID) => {
     console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
-        pck_sub_category_refno: subCategoryID,
+        pck_sub_category_refno: subCategoryID.toString(),
+        pck_contacttype_refno: contactTypeID == null ? 0 : contactTypeID == "" ? 0 : contactTypeID.toString(),
         AddNew: "NO",
         UserPhoneBookAllContactList: ""
-      },
+      }
     };
     console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        console.log('Receiiver contact==============');
-        console.log(response.data);
+        //console.log('Receiiver contact==============');
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -656,6 +686,40 @@ const AddSource = ({ route, navigation }) => {
                 response.data.data.filter((el) => {
                   return el.myclient_refno === clientID;
                 })[0].companyName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchContactType = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
+      .then((response) => {
+        //console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setContactTypeFullData(response.data.data);
+            //console.log(response.data.data);
+            const ct = response.data.data.map(
+              (data) => data.pck_contacttype_name
+            );
+            setContactTypeData(ct);
+
+            if (editID != null) {
+              console.log('editing ==========');
+              console.log(response.data.data);
+              setContactType(
+                response.data.data.filter((el) => {
+                  return el.pck_contacttype_refno == editID;
+                })[0].pck_contacttype_name
               );
             }
           }
@@ -815,6 +879,187 @@ const AddSource = ({ route, navigation }) => {
     FetchReceptCategory(a[0].pckModeID);
   };
 
+  const onContactTypeDataChanged = (text) => {
+    setContactType(text);
+    setErrorCT(false);
+
+    // let b = sourceFullData.filter((el) => {
+    //   return el.categoryName === source;
+    // });
+
+
+
+    // setCommonStatus(true);
+    // setButtonStatus(false);
+    ////////////
+
+    setReceivedFormFullData([]);
+    setReceivedFormData([]);
+    setReceivedForm([]);
+
+    resetFields();
+    //setSubCategoryName(text);
+    setSCNError(false);
+    setCommonStatus(true);
+    setButtonStatus(false);
+
+    let contact = contactTypeFullData.filter((el) => {
+      return el.pck_contacttype_name === text;
+    });
+
+    let mode = receiptModeFullData.filter((el) => {
+      return el.pckModeName === receiptMode;
+    });
+
+    let category = sourceFullData.filter((el) => {
+      return el.categoryName === source;
+    });
+
+    let subcat = subCategoryNameFullData.filter((el) => {
+      return el.subCategoryName === subCategoryName;
+    });
+
+    FetchReceiverList(null, null, 0, contact[0].pck_contacttype_refno);
+
+    if (contact[0].pck_contacttype_refno == 3) {
+      setNewMobileNumberStatus(true);
+      setNewContactNameStatus(true);
+      setReceivedStatus(false);
+    }
+    else {
+      setNewMobileNumberStatus(false);
+      setNewContactNameStatus(false);
+      setReceivedStatus(true);
+    }
+
+    ////console.log(receiptModeFullData);
+    ////console.log(mode[0].pckModeID);
+    ////console.log(category[0].pckCategoryID);
+
+    if (category[0].pckCategoryID == 4) {
+      setPaymentReminderStatus(true);
+    }
+    else {
+      setPaymentReminderStatus(false);
+    }
+
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+
+      setBankListStatus(true);
+      FetchBankList();
+      setUTRNoStatus(true);
+
+    }
+    if (mode[0].pckModeID == "3") {
+
+      setDepositTypeStatus(true);
+      FetchDepositType();
+
+    }
+
+    // if (mode[0].pckModeID == "1") {
+    //   ////console.log('Cash================');
+    //   // cash withdrawal
+    //   if (subcat[0].subcategoryID == "1") {
+    //     FetchBankList();
+    //     setBankListStatus(true);
+    //     setChequeNoStatus(true);
+    //   }
+    //   // atm withdrawal
+    //   else if (subcat[0].subcategoryID == "2") {
+    //     FetchBankList();
+    //     setBankListStatus(true);
+    //   }
+    //   // Phone Book
+    //   //else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
+    //   else if (subcat[0].subcategoryID == "7") {
+    //     //setReceivedStatus(true);
+    //     setPaymentReminderStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, 0);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //   }
+    //   // My Business
+    //   else if (
+    //     subcat[0].subcategoryID == "9" ||
+    //     subcat[0].subcategoryID == "10" ||
+    //     subcat[0].subcategoryID == "11" ||
+    //     subcat[0].subcategoryID == "12" ||
+    //     subcat[0].subcategoryID == "13" ||
+    //     subcat[0].subcategoryID == "14" ||
+    //     subcat[0].subcategoryID == "15" ||
+    //     subcat[0].subcategoryID == "16" ||
+    //     subcat[0].subcategoryID == "17" ||
+    //     subcat[0].subcategoryID == "18"
+    //   ) {
+    //     //setReceivedStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //   }
+    // } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+    //   setUTRNoStatus(true);
+    //   ////console.log('UPI================');
+    //   if (subcat[0].subcategoryID == "7") {
+    //     //setReceivedStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //     FetchBankList();
+    //     setBankListStatus(true);
+    //     setPaymentReminderStatus(true);
+    //   } else if (
+    //     subcat[0].subcategoryID == "9" ||
+    //     subcat[0].subcategoryID == "10" ||
+    //     subcat[0].subcategoryID == "11" ||
+    //     subcat[0].subcategoryID == "12" ||
+    //     subcat[0].subcategoryID == "13" ||
+    //     subcat[0].subcategoryID == "14" ||
+    //     subcat[0].subcategoryID == "15" ||
+    //     subcat[0].subcategoryID == "16" ||
+    //     subcat[0].subcategoryID == "17" ||
+    //     subcat[0].subcategoryID == "18"
+    //   ) {
+    //     //setReceivedStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //     FetchBankList();
+    //     setBankListStatus(true);
+    //   }
+    // } else if (mode[0].pckModeID == "3") {
+    //   ////console.log('Cheque================');
+    //   if (subcat[0].subcategoryID == "7") {
+    //     //setReceivedStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //     setDepositTypeStatus(true);
+    //     FetchDepositType();
+    //     setPaymentReminderStatus(true);
+    //   } else if (
+    //     subcat[0].subcategoryID == "9" ||
+    //     subcat[0].subcategoryID == "10" ||
+    //     subcat[0].subcategoryID == "11" ||
+    //     subcat[0].subcategoryID == "12" ||
+    //     subcat[0].subcategoryID == "13" ||
+    //     subcat[0].subcategoryID == "14" ||
+    //     subcat[0].subcategoryID == "15" ||
+    //     subcat[0].subcategoryID == "16" ||
+    //     subcat[0].subcategoryID == "17" ||
+    //     subcat[0].subcategoryID == "18"
+    //   ) {
+    //     //setReceivedStatus(true);
+    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+    //     setContactTypeStatus(true);
+    //     FetchContactType();
+    //     setDepositTypeStatus(true);
+    //     FetchDepositType();
+    //   }
+    // }
+
+  };
+
   const onSourceChanged = (text) => {
     setSource(text);
     setSSError(false);
@@ -824,16 +1069,19 @@ const AddSource = ({ route, navigation }) => {
       return el.categoryName === text;
     });
 
-    //console.log(a);
-    //console.log(projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO);
-
     if (
       a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
     ) {
       setSubCatStatus(false);
       setClientListstatus(true);
       FetchClientList();
-    } else {
+    } else if (a[0].pckCategoryID == 4) {
+      setSubCatStatus(false);
+      setContactTypeStatus(true);
+      FetchContactType();
+    }
+    else {
+      setContactTypeStatus(false);
       setSubCatStatus(true);
       setClientListstatus(false);
       FetchReceptSubCategory(a[0].pckCategoryID);
@@ -868,6 +1116,13 @@ const AddSource = ({ route, navigation }) => {
     ////console.log(mode[0].pckModeID);
     ////console.log(category[0].pckCategoryID);
 
+    if (category[0].pckCategoryID == 13) {
+      setRentalDescriptionStatus(true);
+    }
+    else {
+      setRentalDescriptionStatus(false);
+    }
+
     if (mode[0].pckModeID == "1") {
       ////console.log('Cash================');
       // cash withdrawal
@@ -883,10 +1138,12 @@ const AddSource = ({ route, navigation }) => {
       }
       // Phone Book
       //else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
-      else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
-        setReceivedStatus(true);
+      else if (subcat[0].subcategoryID == "7") {
+        //setReceivedStatus(true);
         setPaymentReminderStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, 0);
+        setContactTypeStatus(true);
+        FetchContactType();
       }
       // My Business
       else if (
@@ -901,15 +1158,19 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "17" ||
         subcat[0].subcategoryID == "18"
       ) {
-        setReceivedStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+        //setReceivedStatus(true);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+        setContactTypeStatus(true);
+        FetchContactType();
       }
     } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setUTRNoStatus(true);
       ////console.log('UPI================');
-      if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
-        setReceivedStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+      if (subcat[0].subcategoryID == "7") {
+        //setReceivedStatus(true);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+        setContactTypeStatus(true);
+        FetchContactType();
         FetchBankList();
         setBankListStatus(true);
         setPaymentReminderStatus(true);
@@ -925,16 +1186,20 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "17" ||
         subcat[0].subcategoryID == "18"
       ) {
-        setReceivedStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+        //setReceivedStatus(true);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+        setContactTypeStatus(true);
+        FetchContactType();
         FetchBankList();
         setBankListStatus(true);
       }
     } else if (mode[0].pckModeID == "3") {
       ////console.log('Cheque================');
-      if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
-        setReceivedStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+      if (subcat[0].subcategoryID == "7") {
+        //setReceivedStatus(true);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+        setContactTypeStatus(true);
+        FetchContactType();
         setDepositTypeStatus(true);
         FetchDepositType();
         setPaymentReminderStatus(true);
@@ -950,8 +1215,10 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "17" ||
         subcat[0].subcategoryID == "18"
       ) {
-        setReceivedStatus(true);
-        FetchReceiverList(null, null, subcat[0].subcategoryID);
+        //setReceivedStatus(true);
+        //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
+        setContactTypeStatus(true);
+        FetchContactType();
         setDepositTypeStatus(true);
         FetchDepositType();
       }
@@ -1015,6 +1282,16 @@ const AddSource = ({ route, navigation }) => {
   const onChequeNoChange = (text) => {
     setChequeNo(text);
     setChequeNoError(false);
+  };
+
+  const onNewContactChange = (text) => {
+    setContactName(text);
+    setContactNameError(false);
+  };
+
+  const onMobileNoChange = (text) => {
+    setMobileNumber(text);
+    setMobileNoError(false);
   };
 
   const onInvoiceNoChange = (text) => {
@@ -1093,6 +1370,10 @@ const AddSource = ({ route, navigation }) => {
   const onAmount = (text) => {
     settAmount(text);
     setAmountError(false);
+  };
+
+  const onrentalDescriptionChange = (text) => {
+    setRentalDescription(text);
   };
 
   const chooseFile = async () => {
@@ -1193,6 +1474,10 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (subCatStatus) {
+      console.log('sdklfalsdflasdfl');
+      console.log(subCategoryNameFullData);
+      console.log(subCategoryName);
+      console.log('===========');
       params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
         return el.subCategoryName === subCategoryName;
       })[0].subcategoryID;
@@ -1222,6 +1507,16 @@ const AddSource = ({ route, navigation }) => {
       params.payment_group_refno = paymentGroupID;
     }
 
+    if (contactTypeStatus) {
+      params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
+        return el.pck_contacttype_name === contactType;
+      })[0].pck_contacttype_refno;
+    }
+
+    if (rentalDescriptionStatus) {
+      params.pck_sub_category_notes = rentalDescription.trim() == "" ? "" : rentalDescription.trim();
+    }
+    console.log(params);
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -1365,6 +1660,16 @@ const AddSource = ({ route, navigation }) => {
 
     if (route.params.type === "verify") {
       params.pck_master_trans_refno = pckTransID;
+    }
+
+    if (contactTypeStatus) {
+      params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
+        return el.pck_contacttype_name === contactType;
+      })[0].pck_contacttype_refno;
+    }
+
+    if (rentalDescriptionStatus) {
+      params.pck_sub_category_notes = rentalDescription.trim() == "" ? "" : rentalDescription.trim();
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1543,7 +1848,7 @@ const AddSource = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           FetchReceiverList(null, name, subCategoryNameFullData.filter((el) => {
             return el.subCategoryName === subCategoryName;
-          })[0].subcategoryID);
+          })[0].subcategoryID, null);
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
@@ -1610,6 +1915,7 @@ const AddSource = ({ route, navigation }) => {
             isError={errorRM}
             selectedItem={receiptMode}
           />
+
           <HelperText type="error" visible={errorRM}>
             {communication.InvalidReceiptMode}
           </HelperText>
@@ -1624,6 +1930,51 @@ const AddSource = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSS}>
             {communication.InvalidSource}
           </HelperText>
+
+          {subCatStatus && (
+            <>
+              <Dropdown
+                label="Sub Category Name"
+                data={subCategoryNameData}
+                onSelected={onSubCategoryNameChanged}
+                isError={errorSCN}
+                selectedItem={subCategoryName}
+              />
+              <HelperText type="error" visible={errorSCN}>
+                {communication.InvalidSubCategoryName}
+              </HelperText>
+            </>
+          )}
+
+          {rentalDescriptionStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Rental Description"
+                value={rentalDescription}
+                returnKeyType="next"
+                keyboardType="default"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onrentalDescriptionChange}
+                style={{ backgroundColor: "white" }}
+              />
+            </>
+          )}
+
+          {contactTypeStatus && (
+            <>
+              <Dropdown
+                label="Contact Type"
+                data={contactTypeData}
+                onSelected={onContactTypeDataChanged}
+                isError={errorCT}
+                selectedItem={contactType}
+              />
+              <HelperText type="error" visible={errorCT}>
+                Please select valid contact type
+              </HelperText>
+            </>
+          )}
 
           {clientListStatus && (
             <>
@@ -1740,21 +2091,6 @@ const AddSource = ({ route, navigation }) => {
             </>
           )}
 
-          {subCatStatus && (
-            <>
-              <Dropdown
-                label="Sub Category Name"
-                data={subCategoryNameData}
-                onSelected={onSubCategoryNameChanged}
-                isError={errorSCN}
-                selectedItem={subCategoryName}
-              />
-              <HelperText type="error" visible={errorSCN}>
-                {communication.InvalidSubCategoryName}
-              </HelperText>
-            </>
-          )}
-
           {receivedStatus && (
             <>
               <View
@@ -1779,21 +2115,50 @@ const AddSource = ({ route, navigation }) => {
                 >
                   Add New Contact
                 </Button>
-                {/* <Button
-                  icon={"plus"}
-                  mode="contained"
-                  onPress={() => {
-                    navigation.navigate("AddGMyContactsScreen", {
-                      type: "newContact",
-                      fetchReceiverList: FetchReceiverList,
-                    });
-                  }}
-                >
-                  Add New Contact
-                </Button> */}
+
               </View>
             </>
           )}
+
+          {newContactNameStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Received From"
+                value={contactName}
+                returnKeyType="next"
+                keyboardType="default"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onNewContactChange}
+                style={{ backgroundColor: "white" }}
+                error={contactNameError}
+              />
+              <HelperText type="error" visible={contactNameError}>
+                Please enter a valid cheque number
+              </HelperText>
+            </>
+          )}
+
+          {newMobileNumberStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Mobile No."
+                value={mobileNumber}
+                returnKeyType="next"
+                keyboardType="number-pad"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onMobileNoChange}
+                style={{ backgroundColor: "white" }}
+                error={mobileNoError}
+              />
+              <HelperText type="error" visible={mobileNoError}>
+                {communication.InvalidMobileNumber}
+              </HelperText>
+            </>
+          )}
+
+
 
           {depositTypeStatus && (
             <>
@@ -1919,6 +2284,24 @@ const AddSource = ({ route, navigation }) => {
 
           {commonStatus && (
             <>
+              <TextInput
+                mode="flat"
+                label="Notes"
+                value={notes}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onNotesChange}
+                style={{ backgroundColor: "white" }}
+                error={notesError}
+              />
+              <HelperText type="error" visible={notesError}>
+                {communication.InvalidNotes}
+              </HelperText>
+            </>
+          )}
+
+          {commonStatus && (
+            <>
               <View
                 style={[
                   Styles.flexRow,
@@ -1940,23 +2323,7 @@ const AddSource = ({ route, navigation }) => {
             </>
           )}
 
-          {commonStatus && (
-            <>
-              <TextInput
-                mode="flat"
-                label="Notes"
-                value={notes}
-                returnKeyType="next"
-                onSubmitEditing={() => ref_input2.current.focus()}
-                onChangeText={onNotesChange}
-                style={{ backgroundColor: "white" }}
-                error={notesError}
-              />
-              <HelperText type="error" visible={notesError}>
-                {communication.InvalidNotes}
-              </HelperText>
-            </>
-          )}
+
 
           {commonStatus && (
             <>

@@ -199,29 +199,30 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
             if (Array.isArray(k.phoneNumbers)) {
               arrPhones.push(k);
 
-              // if (k.phoneNumbers.length > 1) {
+              if (k.phoneNumbers.length > 1) {
 
-              //   if (k.phoneNumbers[0].number != null) {
-              //     arrNumbers.push({
-              //       number: k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
-              //       displayNumber: k.phoneNumbers[0].number
-              //     });
-              //   }
-              // }
-              // else {
-              //   if (k.phoneNumbers.number != null) {
-              //     arrNumbers.push({
-              //       number: k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
-              //       displayNumber: k.phoneNumbers.number
-              //     }
+                if (k.phoneNumbers[0].number != null) {
+                  arrNumbers.push({
+                    number: k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    displayNumber: k.phoneNumbers[0].number
+                  });
+                }
+              }
+              else {
+                if (k.phoneNumbers.number != null) {
+                  arrNumbers.push({
+                    number: k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    displayNumber: k.phoneNumbers.number
+                  }
 
-              //     );
-              //   }
-              // }
+                  );
+                }
+              }
             }
             // }
           });
-          //console.log(arrNumbers);
+          console.log(arrNumbers[0]);
+          console.log(arrPhones[0]);
           setIsContactLoading(false);
           navigation.navigate("PhoneContacts", {
             phoneNumbers: arrPhones,
