@@ -21,6 +21,9 @@ export const Styles = StyleSheet.create({
   bFontColor: {
     color: "#6200EE",
   },
+  errorColor: {
+    color: theme.colors.error,
+  },
 
   textColor: {
     color: theme.colors.text,
@@ -134,8 +137,8 @@ export const Styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   borderred: {
-    borderWidth: 3,
-    borderColor: "red"
+    borderWidth: 1,
+    borderColor: theme.colors.error,
   },
   borderyellow: {
     borderWidth: 3,

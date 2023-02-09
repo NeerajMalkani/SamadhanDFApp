@@ -614,7 +614,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchReceiverList = (contactID, contactName, subCategoryID, contactTypeID) => {
-    console.log('receiver data start ============');
+    //console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -624,7 +624,7 @@ const AddSource = ({ route, navigation }) => {
         UserPhoneBookAllContactList: ""
       }
     };
-    console.log(params);
+    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
         //console.log('Receiiver contact==============');
@@ -654,6 +654,59 @@ const AddSource = ({ route, navigation }) => {
                 })[0].contactName
               );
             }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const CheckContactList = (contactList, originalList) => {
+    console.log('receiver data start ============');
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_sub_category_refno: "0",
+        pck_contacttype_refno: "0",
+        AddNew: "YES",
+        UserPhoneBookAllContactList: contactList
+      }
+    };
+    //console.log(params);
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
+      .then((response) => {
+        //console.log('Receiiver contact==============');
+        //console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log('updated phone contact');
+            //console.log(originalList);
+            //console.log(response.data.data);
+            var margedList = [];
+            console.log(originalList.length);
+
+            originalList.map((data) => {
+
+              let n = response.data.data.find((el) => {
+                return el.Actual_no === data.phoneNumbers[0].number;
+              });
+
+              if (n != null) {
+                margedList.push({
+                  name: data.name,
+                  number: data.phoneNumbers[0].number,
+                  Is_MyContactList: n.Is_MyContactList,
+                  Is_SamadhanUser: n.Is_SamadhanUser,
+                });
+              }
+
+            });
+
+            //console.log(margedList);
+            setIsContactLoading(false);
+            navigation.navigate("PhoneContactDirectUpload", {
+              phoneNumbers: margedList,
+              callback: PhoneClicked,
+            });
           }
         }
       })
@@ -714,8 +767,6 @@ const AddSource = ({ route, navigation }) => {
             setContactTypeData(ct);
 
             if (editID != null) {
-              console.log('editing ==========');
-              console.log(response.data.data);
               setContactType(
                 response.data.data.filter((el) => {
                   return el.pck_contacttype_refno == editID;
@@ -1803,32 +1854,51 @@ const AddSource = ({ route, navigation }) => {
         if (data.length > 0) {
           //console.log(data[0]);
           //console.log(data[1]);
-          const arrPhones = [];
+          const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
           data.map((k, i) => {
-            // if (i < 100) {
-            //console.log('==================================');
-            //console.log(k);
-            if (Array.isArray(k.phoneNumbers)) {
-              arrPhones.push(k);
-            }
-            // }
+            //if (i < 100) {
+              if (Array.isArray(k.phoneNumbers)) {
+                arrPhones.push(k);
+                if (k.phoneNumbers.length > 1) {
+                  if (k.phoneNumbers[0].number != null) {
+                    arrNumbers.push(
+                      k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    );
+                    arrDisplayNumbers.push(
+                      k.phoneNumbers[0].number
+                    );
+                  }
+                }
+                else {
+                  if (k.phoneNumbers.number != null) {
+                    arrNumbers.push(
+                      k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    );
+                    arrDisplayNumbers.push(
+                      k.phoneNumbers.number
+                    );
+                  }
+                }
+              }
+            //}
           });
-          //console.log('complete loop');
-          //console.log(arrPhones);
-          //console.log(arrPhones);
-          setIsContactLoading(false);
-          navigation.navigate("PhoneContactDirectUpload", {
-            phoneNumbers: arrPhones,
-            callback: PhoneClicked,
-          });
+
+          //console.log(arrNumbers[0]);
+          let obj = {};
+          arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
+          //console.log(obj);
+          CheckContactList(obj, arrPhones);
+
         }
       }
     })();
   };
 
   const PhoneClicked = (contact) => {
+    console.log('insert new');
+    console.log(contact);
     if (contact != null) {
-      InsertNewContact(contact.name, contact.phoneNumbers[0].number);
+      InsertNewContact(contact.name, contact.number);
     }
   };
 
@@ -1844,6 +1914,7 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactscreate, params)
       .then((response) => {
+        console.log(response.data);
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
           FetchReceiverList(null, name, subCategoryNameFullData.filter((el) => {
