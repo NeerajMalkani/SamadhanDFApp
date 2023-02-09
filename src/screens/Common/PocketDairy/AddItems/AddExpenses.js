@@ -495,6 +495,14 @@ const AddExpenses = ({ route, navigation }) => {
             } else {
               setEntryTypeDisable(false);
               setEntryTypeStatus(true);
+
+              if (route.params.type === "add") {
+
+                setEntryType(response.data.data[route.params.tabIndex].pck_entrytype_name);
+                setPktEntryTypeID(response.data.data[route.params.tabIndex].pck_entrytype_refno);
+                _pktEntryTypeID = response.data.data[route.params.tabIndex].pck_entrytype_refno;
+              }
+              
             }
 
             if (route.params.type != "edit" || route.params.type != "verify") {

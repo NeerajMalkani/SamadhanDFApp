@@ -185,23 +185,43 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-        //console.log(data.length);
+        //console.log(data);
         if (data.length > 0) {
           //console.log(data[0]);
           //console.log(data[1]);
           const arrPhones = [];
+          const arrNumbers = [];
+
           data.map((k, i) => {
             // if (i < 100) {
             //console.log('==================================');
             //console.log(k);
             if (Array.isArray(k.phoneNumbers)) {
               arrPhones.push(k);
+
+              // if (k.phoneNumbers.length > 1) {
+
+              //   if (k.phoneNumbers[0].number != null) {
+              //     arrNumbers.push({
+              //       number: k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+              //       displayNumber: k.phoneNumbers[0].number
+              //     });
+              //   }
+              // }
+              // else {
+              //   if (k.phoneNumbers.number != null) {
+              //     arrNumbers.push({
+              //       number: k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+              //       displayNumber: k.phoneNumbers.number
+              //     }
+
+              //     );
+              //   }
+              // }
             }
             // }
           });
-          //console.log('complete loop');
-          //console.log(arrPhones);
-          //console.log(arrPhones);
+          //console.log(arrNumbers);
           setIsContactLoading(false);
           navigation.navigate("PhoneContacts", {
             phoneNumbers: arrPhones,

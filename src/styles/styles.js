@@ -146,6 +146,11 @@ export const Styles = StyleSheet.create({
     borderColor: "#a6a6a6",
     borderStyle: "solid"
   },
+  bordergreen: {
+    borderWidth: 1,
+    borderColor: "#45916b",
+    borderStyle: "solid"
+  },
   borderCD: {
     borderWidth: 1,
     borderColor: "#CDCDCD",

@@ -223,7 +223,7 @@ const AddExpensesList = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddExpenses", { type: "add", fetchData: FetchData_Self });
+    navigation.navigate("AddExpenses", { type: "add", fetchData: FetchData_Self, tabIndex: index });
   };
 
   const EditCallback_Self = (data, rowMap) => {

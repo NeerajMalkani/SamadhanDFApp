@@ -249,11 +249,10 @@ const AddSourceList = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${
-            NullOrEmpty(data.item.pck_category_name)
+          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name)
               ? ""
               : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
             setTransactionID(data.item.pck_trans_refno);
@@ -273,9 +272,9 @@ const AddSourceList = ({ route, navigation }) => {
             if (
               data.item.BalanceUnPaidPayment != null &&
               parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, "")) >
-                0 &&
+              0 &&
               data.item.pck_category_refno ==
-                projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
+              projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
             ) {
               setPayToCompanyStatus(true);
             }
@@ -305,6 +304,7 @@ const AddSourceList = ({ route, navigation }) => {
     navigation.navigate("AddSource", {
       type: "add",
       fetchData: FetchData_Self,
+      tabIndex: index
     });
   };
 

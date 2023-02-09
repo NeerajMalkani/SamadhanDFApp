@@ -280,7 +280,7 @@ const AddSource = ({ route, navigation }) => {
     ) {
       setReceivedStatus(true);
       setReceivedEditID(data.pck_mycontact_refno);
-      FetchReceiverList(data.pck_mycontact_refno);
+      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno);
     }
 
     if (
@@ -434,6 +434,12 @@ const AddSource = ({ route, navigation }) => {
             } else {
               setEntryTypeDisable(false);
               setEntryTypeStatus(true);
+              if (route.params.type === "add") {
+
+                setEntryType(response.data.data[route.params.tabIndex].pck_entrytype_name);
+                setPktEntryTypeID(response.data.data[route.params.tabIndex].pck_entrytype_refno);
+                _pktEntryTypeID = response.data.data[route.params.tabIndex].pck_entrytype_refno;
+              }
             }
           }
         }
@@ -578,18 +584,21 @@ const AddSource = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchReceiverList = (contactID, contactName) => {
-    ////console.log('receiver data start ============');
+  const FetchReceiverList = (contactID, contactName, subCategoryID) => {
+    console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
+        pck_sub_category_refno: subCategoryID,
+        AddNew: "NO",
+        UserPhoneBookAllContactList: ""
       },
     };
-    ////console.log(params);
+    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        ////console.log('Receiiver contact==============');
-        ////console.log(response.data);
+        console.log('Receiiver contact==============');
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -832,6 +841,11 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const onSubCategoryNameChanged = (text) => {
+
+    setReceivedFormFullData([]);
+    setReceivedFormData([]);
+    setReceivedForm([]);
+
     resetFields();
     setSubCategoryName(text);
     setSCNError(false);
@@ -869,10 +883,10 @@ const AddSource = ({ route, navigation }) => {
       }
       // Phone Book
       //else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
-      else if (subcat[0].subcategoryID == "7") {
+      else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
         setReceivedStatus(true);
         setPaymentReminderStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
       }
       // My Business
       else if (
@@ -888,14 +902,14 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "18"
       ) {
         setReceivedStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
       }
     } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setUTRNoStatus(true);
       ////console.log('UPI================');
-      if (subcat[0].subcategoryID == "7") {
+      if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
         setReceivedStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
         FetchBankList();
         setBankListStatus(true);
         setPaymentReminderStatus(true);
@@ -912,15 +926,15 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "18"
       ) {
         setReceivedStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
         FetchBankList();
         setBankListStatus(true);
       }
     } else if (mode[0].pckModeID == "3") {
       ////console.log('Cheque================');
-      if (subcat[0].subcategoryID == "7") {
+      if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "73") {
         setReceivedStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
         setDepositTypeStatus(true);
         FetchDepositType();
         setPaymentReminderStatus(true);
@@ -937,7 +951,7 @@ const AddSource = ({ route, navigation }) => {
         subcat[0].subcategoryID == "18"
       ) {
         setReceivedStatus(true);
-        FetchReceiverList();
+        FetchReceiverList(null, null, subcat[0].subcategoryID);
         setDepositTypeStatus(true);
         FetchDepositType();
       }
@@ -1527,7 +1541,9 @@ const AddSource = ({ route, navigation }) => {
       .then((response) => {
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
-          FetchReceiverList(null, name);
+          FetchReceiverList(null, name, subCategoryNameFullData.filter((el) => {
+            return el.subCategoryName === subCategoryName;
+          })[0].subcategoryID);
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
@@ -1745,7 +1761,7 @@ const AddSource = ({ route, navigation }) => {
                 style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}
               >
                 <Dropdown
-                  label="Recevied Form"
+                  label="Received From"
                   data={receivedFormData}
                   onSelected={onReceivedFormChanged}
                   isError={errorRF}

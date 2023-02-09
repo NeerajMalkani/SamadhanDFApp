@@ -207,22 +207,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                         </View>
                     </View>
                 </TouchableOpacity>
-                {/* <List.Item
-                    title={data.item.categoryName}
-                    titleStyle={{ fontSize: 18 }}
-                    description={`Transaction Type: ${data.item.pck_sub_category_name}\nAmount: ${data.item.amount}`}
-                    onPress={() => {
-                        refRBSheet.current.open();
-
-                        setTransactionTypeName(data.item.transactionTypeName);
-                        setCategoryName(data.item.categoryName);
-                        setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
-                        setDisplay(data.item.display);
-                    }}
-                    left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-                    //left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name={data.item.transtypeID == } />}
-                    right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-                /> */}
+                
             </View>
         );
     };
