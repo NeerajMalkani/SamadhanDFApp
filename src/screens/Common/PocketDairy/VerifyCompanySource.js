@@ -7,6 +7,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
+import { SheetElement } from "./SheetElements";
 import { Button, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -178,41 +179,51 @@ const VerifyCompanySource = ({ route, navigation }) => {
       });
   };
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
+  // Temparary code since pck_category_name is null. [ searching by that field currently ]
+  // Fix 1 field by which you want to search and do not put it null or app will crash client side
   useEffect(() => {
-    setCashData(
-      allcashData.filter((item) => {
-        return item.pck_category_name
-          .toString()
-          .toLowerCase()
-          .includes(cashquery.toLowerCase());
-      })
-    );
-  }, [allcashData, cashquery]);
+    setCashData(allcashData);
+    setUpiData(allupiData);
+    setVerifiedData(allverifiedData);
+  }, [allcashData, allverifiedData, allupiData]);
 
-  useEffect(() => {
-    setUpiData(
-      allupiData.filter((item) => {
-        return item.pck_category_name
-          .toString()
-          .toLowerCase()
-          .includes(upiquery.toLowerCase());
-      })
-    );
-  }, [allupiData, upiquery]);
+  // useEffect(() => {
+  //   setCashData(
+  //     allcashData?.filter((item) => {
+  //       return item?.pck_category_name
+  //         .toString()
+  //         .toLowerCase()
+  //         .includes(cashquery.toLowerCase());
+  //     })
+  //   );
+  // }, [allcashData, cashquery]);
 
-  useEffect(() => {
-    setVerifiedData(
-      allverifiedData.filter((item) => {
-        return item.pck_category_name
-          .toString()
-          .toLowerCase()
-          .includes(verifyquery.toLowerCase());
-      })
-    );
-  }, [allverifiedData, verifyquery]);
+  // useEffect(() => {
+  //   setUpiData(
+  //     allupiData?.filter((item) => {
+  //       return item?.pck_category_name
+  //         .toString()
+  //         .toLowerCase()
+  //         .includes(upiquery.toLowerCase());
+  //     })
+  //   );
+  // }, [allupiData, upiquery]);
+
+  // useEffect(() => {
+  //   setVerifiedData(
+  //     allverifiedData?.filter((item) => {
+  //       return item?.pck_category_name
+  //         ?.toString()
+  //         .toLowerCase()
+  //         .includes(verifyquery.toLowerCase());
+  //     })
+  //   );
+  // }, [allverifiedData, verifyquery]);
 
   const RenderItems = (data, mode) => {
     return (
@@ -228,10 +239,11 @@ const VerifyCompanySource = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${NullOrEmpty(data.item.pck_category_name)
-            ? ""
-            : data.item.pck_category_name
-            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Employee Name/Code: ${
+            NullOrEmpty(data.item?.pck_category_name)
+              ? ""
+              : data.item.pck_category_name
+          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             setCurrent(data.item);
             setMode(mode);
@@ -493,29 +505,6 @@ const VerifyCompanySource = ({ route, navigation }) => {
             {current.pck_entrytype_name}
           </Title>
           <ScrollView>
-            <List.Item title="Date" description={current.pck_trans_date} />
-            <List.Item
-              title="Entry Type"
-              description={current.pck_entrytype_name}
-            />
-            <List.Item
-              title="Category Name"
-              description={current.pck_category_name}
-            />
-            <List.Item
-              title="Sub Category Name / Particulars"
-              description={current.pck_sub_category_name}
-            />
-            <List.Item title="Notes" description={current.notes} />
-            <List.Item
-              title="Reciept Mode / Type"
-              description={current.pck_mode_name}
-            />
-            <List.Item title="Amount" description={current.amount} />
-            <List.Item
-              title="Employee Code / Name"
-              description={current.employee_code}
-            />
             <View
               style={[
                 Styles.width100per,
@@ -524,15 +513,19 @@ const VerifyCompanySource = ({ route, navigation }) => {
                 { elevation: 3 },
               ]}
             >
+              <SheetElement current={current} />
               <Button
                 icon={"cash-refund"}
                 mode="contained"
                 onPress={() => {
-                  navigation.navigate(mode == "cash" ? "AddExpenses" : "AddSource", {
-                    type: "verify",
-                    data: current,
-                    fetchData: LoadAll,
-                  });
+                  navigation.navigate(
+                    mode == "cash" ? "AddExpenses" : "AddSource",
+                    {
+                      type: "verify",
+                      data: current,
+                      fetchData: LoadAll,
+                    }
+                  );
                   refRBSheet.current.close();
                 }}
               >

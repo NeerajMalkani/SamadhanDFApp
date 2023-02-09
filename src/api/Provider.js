@@ -438,6 +438,98 @@ class Provider {
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
   }
+  convert(params, isImageReplaced, filePath) {
+    const datas = new FormData();
+    datas.append("data", JSON.stringify(params));
+    datas.append(
+      "attach_receipt",
+      isImageReplaced
+        ? {
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
+        : ""
+    );
+    return datas;
+  }
+  async updateEmployee(
+    basic,
+    work,
+    pay,
+    isImageReplaced,
+    filePath,
+    logoImage,
+    unload
+  ) {
+    try {
+      const empbasicdata = await axios.post(
+        `${BASE_URL}/employeebasicdataupdate/`,
+        this.convert(basic, isImageReplaced, filePath),
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      const workData = await axios.post(`${BASE_URL}/employeeworkdataupdate/`, {
+        data: work,
+      });
+      const payDetails = await axios.post(
+        `${BASE_URL}/employeepaydataupdate/`,
+        { data: pay }
+      );
+      console.log("pp", payDetails.data);
+      console.log(workData.data);
+      console.log({
+        data: work,
+      });
+      return {
+        sucess:
+          empbasicdata.data.status === "Success" &&
+          workData.data.status === "Success" &&
+          payDetails.data.status === "Success",
+      };
+    } catch (e) {
+      console.log(e);
+      unload();
+    }
+  }
+  async getEmployeebasicDetails(params, unload) {
+    try {
+      const empdata = await axios.post(
+        `${BASE_URL}/getemployeepaydata//`,
+        params
+      );
+      const empbasicdata = await axios.post(
+        `${BASE_URL}/getemployeebasicdata/`,
+        params
+      );
+      const workdata = await axios.post(
+        `${BASE_URL}/getemployeeworkdata/`,
+        params
+      );
+      const payDetails = await axios.post(
+        `${BASE_URL}/getemployeepaydata/`,
+        params
+      );
+      const reportingDetails = await axios.post(
+        `${BASE_URL}/getreportingtoemployeeworkform/`,
+        params
+      );
+      return {
+        empbasicdata: empbasicdata.data.data,
+        workdata: workdata.data.data,
+        payDetails: payDetails.data.data,
+        reportingDetails: reportingDetails.data.data,
+        empdata: empdata.data.data,
+      };
+    } catch (e) {
+      console.log(e);
+      unload();
+    }
+  }
 
   createDFCommonWithouParam(resource) {
     return axios.post(`${BASE_URL}/${resource}`);

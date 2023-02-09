@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Button, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { SheetElement } from "./SheetElements";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -178,8 +179,11 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      console.log("hereuuuu");
+      GetUserID();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     setCashData(
@@ -228,10 +232,11 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${NullOrEmpty(data.item.pck_category_name)
+          description={`Employee Name/Code: ${
+            NullOrEmpty(data.item.pck_category_name)
               ? ""
               : data.item.pck_category_name
-            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             setCurrent(data.item);
             refRBSheet.current.open();
@@ -492,29 +497,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
             {current.pck_entrytype_name}
           </Title>
           <ScrollView>
-            <List.Item title="Date" description={current.pck_trans_date} />
-            <List.Item
-              title="Category Name"
-              description={current.pck_category_name}
-            />
-            <List.Item
-              title="Entry Type"
-              description={current.pck_entrytype_name}
-            />
-            <List.Item
-              title="Sub Category Name / Particulars"
-              description={current.pck_sub_category_name}
-            />
-            <List.Item title="Notes" description={current.notes} />
-            <List.Item
-              title="Reciept Mode / Type"
-              description={current.pck_mode_name}
-            />
-            <List.Item title="Amount" description={current.amount} />
-            <List.Item
-              title="Employee Code / Name"
-              description={current.employee_code}
-            />
+            <SheetElement current={current} />
             <View
               style={[
                 Styles.width100per,

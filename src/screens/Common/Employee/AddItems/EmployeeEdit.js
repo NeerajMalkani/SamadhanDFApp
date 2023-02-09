@@ -1,6 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
-import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Card,
+  HelperText,
+  Snackbar,
+  Subheading,
+  Switch,
+  TextInput,
+  Checkbox,
+  RadioButton,
+  Text,
+} from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
@@ -32,16 +44,21 @@ export const selectValidator = (value) => {
   return "";
 };
 
-let st_ID = 0,
-  ct_ID = 0,
-  bg_ID = 0,
-  b_ID = 0,
-  d_ID = 0,
-  de_ID = 0;
-let rpt = 0;
+let st_ID = 0;
+let ct_ID = 0;
+let bg_ID = 0;
+let b_ID = 0;
+let d_ID = 0;
+let de_ID = 0;
+let rpt = [];
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
+let Sess_company_refno = 0;
+let Sess_group_refno = 0;
+let Sess_FName = 0;
+let Sess_designation_refno = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
 
 const EmployeeEditScreen = ({ route, navigation }) => {
   //#region Variables
@@ -101,10 +118,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const [showDropDown, setShowDropDown] = useState(false);
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
-  const [selectedReportingEmployee, setSelectedReportingEmployee] = React.useState("");
+  const [selectedReportingEmployee, setSelectedReportingEmployee] =
+    React.useState("");
 
   const isFocused = useIsFocused();
-  const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
+  const [index, setIndex] = useState(
+    route.params && route.params.from === "brand" ? 2 : 0
+  );
 
   const [empType, setEmpType] = React.useState();
 
@@ -177,11 +197,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const dojRef = useRef({});
 
   const [emergencyContactName, setEmergencyContactName] = useState("");
-  const [emergencyContactNameInvalid, setEmergencyContactNameInvalid] = useState("");
+  const [emergencyContactNameInvalid, setEmergencyContactNameInvalid] =
+    useState("");
   const emergencyContactNameRef = useRef({});
 
   const [emergencyContactNo, setEmergencyContactNo] = useState("");
-  const [emergencyContactNoInvalid, setEmergencyContactNoInvalid] = useState("");
+  const [emergencyContactNoInvalid, setEmergencyContactNoInvalid] =
+    useState("");
   const emergencyContactNoRef = useRef({});
 
   const [cardValidity, setCardValidity] = useState(new Date());
@@ -271,7 +293,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
-
+  const [id, setId] = useState(0);
   //#endregion
 
   //#region Functions
@@ -279,163 +301,291 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      setId(userID);
+      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
+      Sess_FName = JSON.parse(userData).Sess_FName;
+      Sess_designation_refno = JSON.parse(userData).Sess_designation_refno;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       setBloodGroupFullData(BloodGroup);
       FetchBasicDetails();
     }
   };
-
   let tempStateName = "";
-  const FetchBasicDetails = () => {
-    let params = {
-      ID: route.params.data.id,
-      AddedByUserID: userID,
-    };
-    Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            let employee_data = response.data.data[0].employee[0];
-            let reporting_data = response.data.data[0].employeeReportingAuthority[0];
-            let bankDetails_data = response.data.data[0].bankDetails[0];
-            if (!NullOrEmpty(employee_data)) {
-              setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
-              setEemployeeCode(!NullOrEmpty(employee_data.employeeCode) ? employee_data.employeeCode : "");
-              setMobileNo(!NullOrEmpty(employee_data.mobileNo) ? employee_data.mobileNo : "");
-              setAadharNo(!NullOrEmpty(employee_data.aadharNo) ? employee_data.aadharNo : "");
-              setFatherName(!NullOrEmpty(employee_data.fatherName) ? employee_data.fatherName : "");
-              setAddress(!NullOrEmpty(employee_data.address) ? employee_data.address : "");
-              setPincode(NullOrEmpty(employee_data.pincode) ? "" : employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
+  const [work, setWork] = useState({});
+  useEffect(() => {
+    FetchStates();
+    BloodGroupDropdown();
+    FetchBranch();
+    FetchDepartments();
+    FetchDesignations();
+    FetchReportingEmployee(
+      work?.reporting_user_refno ? work?.reporting_user_refno : []
+    );
+    // setIsLoading(false);
+  }, [work]);
+  // const call = (work_data) => {
 
-              if (!NullOrEmpty(employee_data.stateID)) {
-                setStatesID(employee_data.stateID);
-                st_ID = employee_data.stateID;
-              }
+  // };
+  const FetchBasicDetails = async () => {
+    try {
+      let params = {
+        data: {
+          ...route.params.data,
+          Sess_company_refno: Sess_company_refno,
+          Sess_group_refno: Sess_group_refno,
+          Sess_FName: Sess_FName,
+          employee_user_refno: route.params.data.myemployee_refno,
+          Sess_designation_refno: Sess_designation_refno,
+        },
+      };
+      const data = await Provider.getEmployeebasicDetails(params, () =>
+        setIsLoading(false)
+      );
+      if (data.empbasicdata) {
+        let employee_data = data.empbasicdata[0];
+        let reporting_data = {};
+        let bankDetails_data = data.payDetails[0];
+        let work_data = data.workdata[0];
+        console.log("paydata", bankDetails_data);
 
-              if (!NullOrEmpty(employee_data.cityID)) {
-                setCityID(employee_data.cityID);
-                ct_ID = employee_data.cityID;
-              }
-              if (!NullOrEmpty(employee_data.bloodGroup)) {
-                setBloodGroupID(employee_data.bloodGroup);
-                bg_ID = employee_data.bloodGroup;
-              }
+        if (!NullOrEmpty(employee_data)) {
+          setEmployeeName(
+            !NullOrEmpty(employee_data.firstname) ? employee_data.firstname : ""
+          );
+          setEemployeeCode(
+            !NullOrEmpty(employee_data.common_employee_code)
+              ? employee_data.common_employee_code
+              : ""
+          );
+          setMobileNo(
+            !NullOrEmpty(employee_data.mobile_no) ? employee_data.mobile_no : ""
+          );
+          setAadharNo(
+            !NullOrEmpty(employee_data.aadhar_no) ? employee_data.aadhar_no : ""
+          );
+          setFatherName(
+            !NullOrEmpty(employee_data.father_name)
+              ? employee_data.father_name
+              : ""
+          );
+          setAddress(
+            !NullOrEmpty(employee_data.address) ? employee_data.address : ""
+          );
+          setPincode(
+            NullOrEmpty(employee_data.pincode)
+              ? ""
+              : employee_data.pincode !== 0
+              ? employee_data.pincode.toString()
+              : ""
+          );
 
-              if (!NullOrEmpty(employee_data.dob)) {
-                setDob(new Date(employee_data.dob));
-              }
-
-              if (!NullOrEmpty(employee_data.doj)) {
-                setDoj(new Date(employee_data.doj));
-              }
-
-              if (!NullOrEmpty(employee_data.idCardValidity)) {
-                setCardValidity(new Date(employee_data.idCardValidity));
-              }
-
-              if (!NullOrEmpty(employee_data.lastWorkDate)) {
-                setLwd(new Date(employee_data.lastWorkDate));
-              }
-
-              setEmergencyContactName(!NullOrEmpty(employee_data.emergencyContactName) ? employee_data.emergencyContactName : "");
-              setEmergencyContactNo(!NullOrEmpty(employee_data.emergencyContactNo) ? employee_data.emergencyContactNo : "");
-
-              setLoginActiveStatus(!NullOrEmpty(employee_data.loginStatus) ? employee_data.loginStatus : "");
-
-              if (!NullOrEmpty(employee_data.branchID)) {
-                setBranchID(employee_data.branchID);
-                b_ID = employee_data.branchID;
-              }
-              if (!NullOrEmpty(employee_data.departmentID)) {
-                setDepartmentID(employee_data.departmentID);
-                d_ID = employee_data.departmentID;
-              }
-              if (!NullOrEmpty(employee_data.designationID)) {
-                setDesignationID(employee_data.designationID);
-                de_ID = employee_data.designationID;
-              }
-
-              if (!NullOrEmpty(employee_data.employeeType)) {
-                {
-                  ETRadioButtons.map((r) => {
-                    r.selected = false;
-                    if (r.value === employee_data.employeeType.toString()) {
-                      r.selected = true;
-                    }
-                  });
-                }
-
-                onPressETRadioButton(ETRadioButtons);
-                setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : 0);
-              }
-              if (!NullOrEmpty(employee_data.wagesType)) {
-                {
-                  wagesRadioButtons.map((r) => {
-                    r.selected = false;
-                    if (r.value === employee_data.wagesType.toString()) {
-                      r.selected = true;
-                    }
-                  });
-                }
-
-                onPressWagesRadioButton(wagesRadioButtons);
-                setWagesTypeID(!NullOrEmpty(employee_data.wagesType) ? employee_data.wagesType : "");
-              }
-
-              setSalary(!NullOrEmpty(employee_data.salary) ? employee_data.salary : 0);
-
-              setLogoImage(employee_data.profilePhoto);
-              setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
-              setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
-            }
-            if (!NullOrEmpty(reporting_data)) {
-              setReportingID(reporting_data.reportingAuthorityID);
-              rpt = reporting_data.reportingAuthorityID;
-            }
-
-            if (!NullOrEmpty(bankDetails_data)) {
-              setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
-              setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-              setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
-              setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
-              setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
-            }
+          if (!NullOrEmpty(employee_data.state_refno)) {
+            setStatesID(employee_data.state_refno);
+            st_ID = employee_data.state_refno;
           }
 
-          FetchStates();
-          BloodGroupDropdown();
-          FetchBranch();
-          FetchDepartments();
-          FetchDesignations();
-          FetchReportingEmployee();
-          setIsLoading(false);
+          if (!NullOrEmpty(employee_data.district_refno)) {
+            setCityID(employee_data.district_refno);
+            ct_ID = employee_data.district_refno;
+          }
+          if (!NullOrEmpty(employee_data.bloodgroup_refno)) {
+            setBloodGroupID(employee_data.bloodgroup_refno);
+            bg_ID = employee_data.bloodgroup_refno;
+          }
+
+          if (!NullOrEmpty(employee_data.dob)) {
+            setDob(
+              new Date(
+                employee_data.dob.substring(6, 11) +
+                  "/" +
+                  employee_data.dob.substring(3, 5) +
+                  "/" +
+                  employee_data.dob.substring(0, 2)
+              )
+            );
+          }
+
+          if (!NullOrEmpty(employee_data.doj)) {
+            setDoj(
+              new Date(
+                employee_data.doj.substring(6, 11) +
+                  "/" +
+                  employee_data.doj.substring(3, 5) +
+                  "/" +
+                  employee_data.doj.substring(0, 2)
+              )
+            );
+          }
+
+          if (!NullOrEmpty(employee_data.idcard_valid_date)) {
+            setCardValidity(
+              new Date(
+                employee_data.idcard_valid_date.substring(6, 11) +
+                  "/" +
+                  employee_data.idcard_valid_date.substring(3, 5) +
+                  "/" +
+                  employee_data.idcard_valid_date.substring(0, 2)
+              )
+            );
+          }
+
+          if (!NullOrEmpty(work_data.dol)) {
+            setLwd(
+              new Date(
+                work_data.dol.substring(6, 11) +
+                  "/" +
+                  work_data.dol.substring(3, 5) +
+                  "/" +
+                  work_data.dol.substring(0, 2)
+              )
+            );
+          }
+
+          setEmergencyContactName(
+            !NullOrEmpty(employee_data.emergency_contact_name)
+              ? employee_data.emergency_contact_name
+              : ""
+          );
+          setEmergencyContactNo(
+            !NullOrEmpty(employee_data.emergency_contact_no)
+              ? employee_data.emergency_contact_no
+              : ""
+          );
+
+          setLoginActiveStatus(
+            !NullOrEmpty(employee_data.login_active_status)
+              ? employee_data.login_active_status
+              : ""
+          );
+
+          if (!NullOrEmpty(work_data.branch_refno)) {
+            setBranchID(work_data.branch_refno);
+            b_ID = work_data.branch_refno;
+          }
+          if (!NullOrEmpty(work_data.department_refno)) {
+            setDepartmentID(work_data.department_refno);
+            d_ID = work_data.department_refno;
+          }
+          if (!NullOrEmpty(work_data.designation_refno)) {
+            setDesignationID(work_data.designation_refno);
+            de_ID = work_data.designation_refno;
+          }
+
+          if (!NullOrEmpty(work_data.employee_type_refno)) {
+            {
+              ETRadioButtons.map((r) => {
+                r.selected = false;
+                if (r.value === work_data.employee_type_refno.toString()) {
+                  r.selected = true;
+                }
+              });
+            }
+
+            onPressETRadioButton(ETRadioButtons);
+            setEmployeeTypeID(
+              !NullOrEmpty(work_data.employee_type_refno)
+                ? work_data.employee_type_refno
+                : 0
+            );
+          }
+          if (!NullOrEmpty(bankDetails_data.wages_type_refno)) {
+            {
+              wagesRadioButtons.map((r) => {
+                r.selected = false;
+                if (r.value === bankDetails_data.wages_type_refno.toString()) {
+                  r.selected = true;
+                }
+              });
+            }
+
+            onPressWagesRadioButton(wagesRadioButtons);
+            setWagesTypeID(
+              !NullOrEmpty(bankDetails_data.wages_type_refno)
+                ? bankDetails_data.wages_type_refno
+                : ""
+            );
+          }
+
+          setSalary(
+            !NullOrEmpty(bankDetails_data.salary) ? bankDetails_data.salary : 0
+          );
+
+          setLogoImage(employee_data.profile_photo_url);
+          setImage(
+            employee_data.profile_photo_url
+              ? employee_data.profile_photo_url
+              : AWSImagePath + "placeholder-image.png"
+          );
+          setFilePath(
+            employee_data.profile_photo_url
+              ? employee_data.profile_photo_url
+              : null
+          );
         }
-      })
-      .catch((e) => {
-        console.log(e);
-        setIsLoading(false);
-      });
+        // no idea
+        if (!NullOrEmpty(work_data)) {
+          setReportingID(work_data.reporting_user_refno);
+          rpt = reporting_data.reporting_user_refno;
+        }
+
+        if (!NullOrEmpty(bankDetails_data)) {
+          setAccountHolderName(
+            !NullOrEmpty(bankDetails_data.bank_ac_holder_name)
+              ? bankDetails_data.bank_ac_holder_name.toString()
+              : ""
+          );
+          setAccountNo(
+            bankDetails_data.bank_ac_no
+              ? bankDetails_data.bank_ac_no.toString()
+              : ""
+          );
+          setBankName(
+            bankDetails_data.bank_name ? bankDetails_data.bank_name : ""
+          );
+          setBankBranchName(
+            bankDetails_data.branch_name ? bankDetails_data.branch_name : ""
+          );
+          setIfscCode(
+            bankDetails_data.ifsc_code ? bankDetails_data.ifsc_code : ""
+          );
+          setWork(work_data);
+          // call(work_data);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+    }
   };
 
   //#region Dropdown Functions
 
   const FetchCities = (stateID) => {
     let params = {
-      ID: stateID,
+      data: {
+        Sess_UserRefno: id,
+        state_refno: stateID,
+      },
     };
-    Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(
+      Provider.API_URLS.GetDistrictDetailsByStateRefno,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCityFullData(response.data.data);
 
-            const cities = response.data.data.map((data) => data.cityName);
+            const cities = response.data.data.map((data) => data.district_name);
             setCityData(cities);
             if (ct_ID > 0) {
               let a = response.data.data.filter((el) => {
-                return el.id === ct_ID;
+                return el.district_refno === ct_ID;
               });
-              setCityName(a[0].cityName);
-              setCityID(a[0].id);
+              setCityName(a[0].district_name);
+              setCityID(a[0].district_refno);
             } else {
               setCityName("");
               setCityID(0);
@@ -461,22 +611,21 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const FetchStates = () => {
-    Provider.getAll("master/getstates")
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setStatesFullData(response.data.data);
+            const states = response.data.data.map((data) => data.state_name);
 
-            const states = response.data.data.map((data) => data.stateName);
             setStatesData(states);
             if (st_ID > 0) {
               let s = response.data.data.filter((el) => {
-                return el.id === st_ID;
+                return el.state_refno === st_ID;
               });
-
-              setStateName(s[0].stateName);
-              setStatesID(s[0].id);
-              tempStateName = s[0].stateName;
+              setStateName(s[0].state_name);
+              setStatesID(s[0].state_refno);
+              tempStateName = s[0].state_name;
             }
 
             if (tempStateName !== "") {
@@ -502,24 +651,28 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchBranch = () => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        ...route.params.data,
+        Sess_company_refno: Sess_company_refno,
+        Sess_designation_refno: Sess_designation_refno,
+      },
     };
-    Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getbranchnamebankform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBranchFullData(response.data.data);
 
-            const branch = response.data.data.map((data) => data.locationName);
+            const branch = response.data.data.map((data) => data.location_name);
             setBranchData(branch);
 
             if (b_ID > 0) {
               let b = response.data.data.filter((el) => {
-                return el.id === b_ID;
+                return el.branch_refno === b_ID;
               });
 
-              setBranchName(b[0].locationName);
-              setBranchID(b[0].id);
+              setBranchName(b[0].location_name);
+              setBranchID(b[0].branch_refno);
             }
           }
         }
@@ -529,24 +682,31 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchDepartments = () => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: id,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
     };
-    Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(
+      Provider.API_URLS.getdepartmentnameemployeeworkform,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDepartmentFullData(response.data.data);
-
-            const department = response.data.data.map((data) => data.departmentName);
+            const department = response.data.data.map(
+              (data) => data.department_name
+            );
             setDepartmentData(department);
-
+            console.log("depart", response.data.data);
             if (d_ID > 0) {
               let d = response.data.data.filter((el) => {
-                return el.departmentID === d_ID;
+                return el.department_refno === d_ID;
               });
 
-              setDepartmentName(d[0].departmentName);
-              setDepartmentID(d[0].departmentID);
+              setDepartmentName(d[0].department_name);
+              setDepartmentID(d[0].department_refno);
             }
           }
         }
@@ -556,23 +716,31 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const FetchDesignations = () => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: id,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
     };
-    Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(
+      Provider.API_URLS.getdesignationnameemployeeworkform,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDesignationFullData(response.data.data);
-            const designation = response.data.data.map((data) => data.designationName);
+            const designation = response.data.data.map(
+              (data) => data.designation_name
+            );
             setDesignationData(designation);
 
             if (de_ID > 0) {
               let b = response.data.data.filter((el) => {
-                return el.designationID === de_ID;
+                return el.designation_refno === de_ID;
               });
 
-              setDesignationName(b[0].designationName);
-              setDesignationID(b[0].designationID);
+              setDesignationName(b[0].designation_name);
+              setDesignationID(b[0].designation_refno);
             }
           }
         }
@@ -580,27 +748,44 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .catch((e) => {});
   };
 
-  const FetchReportingEmployee = () => {
+  const FetchReportingEmployee = (sample) => {
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: id,
+        Sess_company_refno: Sess_company_refno,
+        Sess_group_refno: Sess_group_refno,
+        Sess_FName: Sess_FName,
+        employee_user_refno: route.params.data.myemployee_refno,
+      },
     };
-    Provider.getAll(`master/getreportingemployeelist?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(
+      Provider.API_URLS.getreportingtoemployeeworkform,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            const rd = [];
-            response.data.data.map((data) => {
-              rd.push({ _id: data.id.toString(), value: data.employee });
+            console.log("reorting", response.data.data);
+            let rd = response.data.data.map((data) => {
+              return {
+                _id: data.reporting_user_refno.toString(),
+                value: data.reporting_user_name,
+              };
+            });
+            let ct = rd.filter((data) => {
+              return sample.includes(data._id);
             });
 
-            const ct = [];
-            response.data.data.map((data) => {
-              if (data.id.toString() == rpt.toString()) {
-                ct.push({ _id: data.id.toString(), value: data.employee });
-              }
+            console.log("123e", rd);
+            console.log("456e", ct);
+            setReporting({
+              ...reporting,
+              list: rd,
+              selectedList: ct,
+              value: ct.map((u) => u.value).join(", "),
             });
-            setReporting({ ...reporting, list: rd, selectedList: ct });
             setReportingFullData(rd);
+            setIsLoading(false);
           }
         }
       })
@@ -608,7 +793,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   //#endregion
-
   useEffect(() => {
     GetUserID();
   }, []);
@@ -647,9 +831,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     setCityData([]);
     setCityFullData([]);
     let a = statesFullData.filter((el) => {
-      return el.stateName === selectedItem;
+      return el.state_name === selectedItem;
     });
-    FetchCities(a[0].id);
+    FetchCities(a[0].state_refno);
   };
   const onCityNameSelected = (selectedItem) => {
     setCityName(selectedItem);
@@ -754,7 +938,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const uploadFile = () => {
-    if (!isImageReplaced) {
+    if (true) {
+      setIsButtonLoading(true);
       UpdateData();
     } else {
       if (filePath.uri) {
@@ -781,7 +966,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         )
           .progress((progress) => {
             setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+            setSnackbarText(
+              `Uploading: ${progress.loaded / progress.total} (${
+                progress.percent
+              }%)`
+            );
           })
           .then((response) => {
             setIsButtonLoading(false);
@@ -807,120 +996,114 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       }
     }
   };
+  const UpdateData = async () => {
+    try {
+      const data = await Provider.updateEmployee(
+        {
+          Sess_UserRefno: id.toString(),
+          myemployee_refno: route.params.data.myemployee_refno,
+          firstname: employeeName.trim(),
+          mobile_no: mobileNo.trim(),
+          aadhar_no: aadharNo.trim(),
+          father_name: fatherName,
+          address: address,
+          state_refno: stateName
+            ? statesFullData.find((el) => el.state_name === stateName)
+                .state_refno
+            : "0",
+          district_refno: cityName
+            ? cityFullData.find((el) => el.district_name === cityName)
+                .district_refno
+            : "0",
+          pincode: pincode ? pincode : "0",
+          bloodgroup_refno: bloodGroup
+            ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID
+            : "0",
+          dob: moment(dob).format("YYYY-MM-DD"),
+          doj: moment(doj).format("YYYY-MM-DD"),
+          emergency_contact_name: emergencyContactName,
+          emergency_contact_no: emergencyContactNo,
+          idcard_valid_date: moment(cardValidity).format("YYYY-MM-DD"),
+          active_status: loginActiveStatus ? "1" : "0",
+        },
+        {
+          Sess_UserRefno: id.toString(),
+          myemployee_refno: route.params.data.myemployee_refno,
+          firstname: employeeName.trim(),
+          branch_refno: branchID.toString(),
+          department_refno: departmentID.toString(),
+          designation_refno: designationID.toString(),
+          reporting_user_refno: reporting.selectedList.map((item) => item._id),
+          employee_type_refno: employeeTypeID.toString(),
+          dol: moment(lwd).format("YYYY-MM-DD"),
+          Sess_company_refno: Sess_company_refno.toString(),
+        },
+        {
+          Sess_UserRefno: id.toString(),
+          myemployee_refno: route.params.data.myemployee_refno,
+          firstname: employeeName.trim(),
+          wages_type_refno: NullOrEmpty(wagesTypeID)
+            ? "0"
+            : parseInt(wagesTypeID),
+          salary: salary,
+          bank_ac_holder_name: accountHolderName,
+          bank_ac_no: accountNo,
+          bank_name: bankName,
+          branch_name: branchName,
+          ifsc_code: ifscCode,
+        },
+        isImageReplaced,
+        filePath,
+        logoImage,
+        () => setIsButtonLoading(false)
+      );
 
-  const UpdateData = () => {
-    const params = {
-      ID: route.params.data.id,
-      MobileNo: mobileNo.trim(),
-      AadharNo: aadharNo.trim(),
-      FatherName: fatherName,
-      Address: address,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      ProfilePhoto: logoImage ? logoImage : "",
-      BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID : 0,
-      DOB: moment(dob).format("YYYY-MM-DD"),
-      DOJ: moment(doj).format("YYYY-MM-DD"),
-      EmergencyContactName: emergencyContactName,
-      EmergencyContactNo: emergencyContactNo,
-      IDCardValidity: moment(cardValidity).format("YYYY-MM-DD"),
-      LoginActiveStatus: true,
-      BranchID: branchName ? branchFullData.find((el) => el.locationName === branchName).id : 0,
-      DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).departmentID : 0,
-      DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).designationID : 0,
-      EmployeeType: employeeTypeID,
-      LastWorkDate: moment(lwd).format("YYYY-MM-DD"),
-      WagesType: NullOrEmpty(wagesTypeID) ? 0 : parseInt(wagesTypeID),
-      Salary: salary,
-      AccountHolderName: accountHolderName,
-      AccountNumber: accountNo,
-      BankName: bankName,
-      BranchName: branchName,
-      IFSCCode: ifscCode,
-    };
-    Provider.create("master/updateemployeedetails", params)
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          UpdateReportingAuthority();
-          setSnackbarColor(theme.colors.success);
-          setSnackbarText("Data updated successfully");
-          setSnackbarVisible(true);
-        } else {
-          setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
-          setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarText(communication.NetworkError);
+      if (data.sucess) {
+        setSnackbarColor(theme.colors.success);
+        setSnackbarText("Data updated successfully");
         setSnackbarVisible(true);
-      });
-  };
-
-  const UpdateReportingAuthority = () => {
-    let rptId = "";
-    if (!NullOrEmpty(reporting.selectedList)) {
-      reporting.selectedList.map((r) => {
-        rptId += r._id + ",";
-      });
+      } else {
+        setSnackbarColor(theme.colors.error);
+        setSnackbarText(communication.UpdateError);
+        setSnackbarVisible(true);
+      }
+    } catch (e) {
+      setSnackbarColor(theme.colors.error);
+      setSnackbarText(communication.NetworkError);
+      setSnackbarVisible(true);
     }
-
-    const params = {
-      EmployeeID: route.params.data.id,
-      AddedByUserID: userID,
-      ReportingAuthorityID: rptId.replace(/,\s*$/, ""),
-    };
-
-    Provider.create("master/updateemployeereportingauthority", params)
-      .then((response) => {
-        debugger;
-        if (response.data && response.data.code === 200) {
-        }
-        setTimeout(() => {
-          navigation.navigate("EmployeeListScreen");
-        }, 500);
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarType("error");
-        setSnackMsg(communication.NetworkError);
-        setOpen(true);
-        setButtonLoading(false);
-        setTimeout(() => {
-          navigation.navigate("EmployeeListScreen");
-        }, 500);
-      });
+    setIsButtonLoading(false);
   };
 
   const ValidateData = () => {
-    const isValid = true;
-
+    let isValid = true;
     if (NullOrEmpty(employeeName.trim())) {
       isValid = false;
       setEemployeeNameInvalid(true);
     }
     if (NullOrEmpty(employeeCode.trim())) {
-      isvalid = false;
+      isValid = false;
       setEemployeeCodeInvalid(true);
     }
     if (NullOrEmpty(mobileNo.trim())) {
-      isvalid = false;
+      isValid = false;
       setMobileNoInvalid(true);
     }
     if (NullOrEmpty(aadharNo.trim())) {
-      isvalid = false;
+      isValid = false;
       setAadharNoInvalid(true);
     }
     if (NullOrEmpty(fatherName.trim())) {
-      isvalid = false;
+      isValid = false;
       setFatherNameInvalid(true);
     }
 
     if (isValid) {
       uploadFile();
+    } else {
+      setSnackbarVisible(true);
+      setSnackbarColor(theme.colors.error);
+      setSnackbarText("Enter All Details.");
     }
   };
 
@@ -930,53 +1113,199 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={employeeNameRef} mode="flat" dense label="Employee Name" value={employeeName} returnKeyType="next" onSubmitEditing={() => employeeNameRef.current.focus()} editable={false} selectTextOnFocus={false} onChangeText={onEmployeeNameChanged} style={{ backgroundColor: "#cdcdcd" }} error={employeeNameInvalid} />
+              <TextInput
+                ref={employeeNameRef}
+                mode="flat"
+                dense
+                label="Employee Name"
+                value={employeeName}
+                returnKeyType="next"
+                onSubmitEditing={() => employeeNameRef.current.focus()}
+                editable={false}
+                selectTextOnFocus={false}
+                onChangeText={onEmployeeNameChanged}
+                style={{ backgroundColor: "#cdcdcd" }}
+                error={employeeNameInvalid}
+              />
               <HelperText type="error" visible={employeeNameInvalid}>
                 {communication.InvalidEmployeeName}
               </HelperText>
 
-              <TextInput ref={employeeCodeRef} mode="flat" dense label="Employee Code" value={employeeCode} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => employeeCodeRef.current.focus()} onChangeText={onEmployeeCodeChanged} style={{ backgroundColor: "#cdcdcd" }} error={employeeCodeInvalid} />
+              <TextInput
+                ref={employeeCodeRef}
+                mode="flat"
+                dense
+                label="Employee Code"
+                value={employeeCode}
+                returnKeyType="next"
+                editable={false}
+                selectTextOnFocus={false}
+                onSubmitEditing={() => employeeCodeRef.current.focus()}
+                onChangeText={onEmployeeCodeChanged}
+                style={{ backgroundColor: "#cdcdcd" }}
+                error={employeeCodeInvalid}
+              />
 
               <HelperText type="error" visible={employeeCodeInvalid}>
                 {communication.InvalidEmployeeCode}
               </HelperText>
 
-              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
+              <TextInput
+                ref={mobileNoRef}
+                mode="flat"
+                dense
+                keyboardType="number-pad"
+                label="Mobile No"
+                value={mobileNo}
+                returnKeyType="next"
+                onSubmitEditing={() => mobileNoRef.current.focus()}
+                onChangeText={onMobileNoChanged}
+                style={{ backgroundColor: "white" }}
+                error={mobileNoInvalid}
+              />
               <HelperText type="error" visible={mobileNoInvalid}>
                 {communication.mobileNoInvalid}
               </HelperText>
-              <TextInput ref={aadharNoRef} mode="flat" dense label="Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
+              <TextInput
+                ref={aadharNoRef}
+                mode="flat"
+                dense
+                label="Aadhar No"
+                value={aadharNo}
+                returnKeyType="next"
+                onSubmitEditing={() => aadharNoRef.current.focus()}
+                onChangeText={onAadharNoChanged}
+                style={{ backgroundColor: "white" }}
+                error={aadharNoInvalid}
+              />
               <HelperText type="error" visible={aadharNoInvalid}>
                 {communication.InvalidAadharNo}
               </HelperText>
-              <TextInput ref={fatherNameRef} mode="flat" dense label="Father Name" value={fatherName} returnKeyType="next" onSubmitEditing={() => fatherNameRef.current.focus()} onChangeText={onFatherNameChanged} style={{ backgroundColor: "white" }} error={fatherNameInvalid} />
+              <TextInput
+                ref={fatherNameRef}
+                mode="flat"
+                dense
+                label="Father Name"
+                value={fatherName}
+                returnKeyType="next"
+                onSubmitEditing={() => fatherNameRef.current.focus()}
+                onChangeText={onFatherNameChanged}
+                style={{ backgroundColor: "white" }}
+                error={fatherNameInvalid}
+              />
               <HelperText type="error" visible={fatherNameInvalid}>
                 {communication.InvalidFatherName}
               </HelperText>
-              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={[Styles.marginBottom16, { backgroundColor: "white" }]} error={addressInvalid} />
+              <TextInput
+                ref={addressRef}
+                mode="flat"
+                dense
+                label="Address"
+                value={address}
+                returnKeyType="next"
+                onSubmitEditing={() => addressRef.current.focus()}
+                onChangeText={onAddressChanged}
+                style={[Styles.marginBottom16, { backgroundColor: "white" }]}
+                error={addressInvalid}
+              />
 
-              <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
+              <Dropdown
+                label="State"
+                data={statesData}
+                onSelected={onStateNameSelected}
+                isError={errorSN}
+                selectedItem={stateName}
+              />
               <View style={[Styles.height24]}></View>
-              <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
+              <Dropdown
+                label="District"
+                data={cityData}
+                onSelected={onCityNameSelected}
+                isError={errorCN}
+                selectedItem={cityName}
+                reference={cityRef}
+              />
 
-              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={[Styles.marginTop24, Styles.marginBottom16, { backgroundColor: "white" }]} error={pincodeInvalid} />
+              <TextInput
+                ref={pincodeRef}
+                mode="flat"
+                dense
+                keyboardType="number-pad"
+                label="Pincode"
+                value={pincode}
+                returnKeyType="done"
+                onChangeText={onPincodeChanged}
+                style={[
+                  Styles.marginTop24,
+                  Styles.marginBottom16,
+                  { backgroundColor: "white" },
+                ]}
+                error={pincodeInvalid}
+              />
 
-              <Dropdown label="Blood Group" data={bloodGroupData} onSelected={onBloodGroupSelected} isError={errorBloodGroup} selectedItem={bloodGroup} reference={bloodGroupRef} />
+              <Dropdown
+                label="Blood Group"
+                data={bloodGroupData}
+                onSelected={onBloodGroupSelected}
+                isError={errorBloodGroup}
+                selectedItem={bloodGroup}
+                reference={bloodGroupRef}
+              />
 
               <View>
-                <DateTimePicker style={Styles.backgroundColorWhite} label="Date of Birth" type="date" value={dob} onChangeDate={setDob} />
+                <DateTimePicker
+                  style={Styles.backgroundColorWhite}
+                  label="Date of Birth"
+                  type="date"
+                  value={dob}
+                  onChangeDate={setDob}
+                />
               </View>
 
               <View>
-                <DateTimePicker style={Styles.backgroundColorWhite} label="Date of Joining" type="date" value={doj} onChangeDate={setDoj} />
+                <DateTimePicker
+                  style={Styles.backgroundColorWhite}
+                  label="Date of Joining"
+                  type="date"
+                  value={doj}
+                  onChangeDate={setDoj}
+                />
               </View>
 
-              <TextInput ref={emergencyContactNameRef} mode="flat" dense label="Emergency Contact Name" value={emergencyContactName} returnKeyType="next" onSubmitEditing={() => emergencyContactNameRef.current.focus()} onChangeText={onEmergencyContactNameChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNameInvalid} />
+              <TextInput
+                ref={emergencyContactNameRef}
+                mode="flat"
+                dense
+                label="Emergency Contact Name"
+                value={emergencyContactName}
+                returnKeyType="next"
+                onSubmitEditing={() => emergencyContactNameRef.current.focus()}
+                onChangeText={onEmergencyContactNameChanged}
+                style={[Styles.marginTop16, { backgroundColor: "white" }]}
+                error={emergencyContactNameInvalid}
+              />
 
-              <TextInput ref={emergencyContactNoRef} mode="flat" dense label="Emergency Contact No" value={emergencyContactNo} returnKeyType="next" onSubmitEditing={() => emergencyContactNoRef.current.focus()} onChangeText={onEmergencyContactNoChanged} style={[Styles.marginTop16, { backgroundColor: "white" }]} error={emergencyContactNoInvalid} />
+              <TextInput
+                ref={emergencyContactNoRef}
+                mode="flat"
+                dense
+                label="Emergency Contact No"
+                value={emergencyContactNo}
+                returnKeyType="next"
+                onSubmitEditing={() => emergencyContactNoRef.current.focus()}
+                onChangeText={onEmergencyContactNoChanged}
+                style={[Styles.marginTop16, { backgroundColor: "white" }]}
+                error={emergencyContactNoInvalid}
+              />
 
               <View>
-                <DateTimePicker style={Styles.backgroundColorWhite} label="ID Card Valid Upto" type="date" value={cardValidity} onChangeDate={setCardValidity} />
+                <DateTimePicker
+                  style={Styles.backgroundColorWhite}
+                  label="ID Card Valid Upto"
+                  type="date"
+                  value={cardValidity}
+                  onChangeDate={setCardValidity}
+                />
               </View>
 
               <Checkbox.Item
@@ -994,24 +1323,50 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <Dropdown label="Branch" data={branchData} onSelected={onBranchChanged} isError={errorBranch} selectedItem={branchName} reference={branchRef} />
+              <Dropdown
+                label="Branch"
+                data={branchData}
+                onSelected={onBranchChanged}
+                isError={errorBranch}
+                selectedItem={branchName}
+                reference={branchRef}
+              />
 
-              <Dropdown label="Department" data={departmentData} onSelected={onDepartmentChanged} isError={errorDepartment} selectedItem={departmentName} reference={departmentRef} />
+              <Dropdown
+                label="Department"
+                data={departmentData}
+                onSelected={onDepartmentChanged}
+                isError={errorDepartment}
+                selectedItem={departmentName}
+                reference={departmentRef}
+              />
 
-              <Dropdown label="Designation" data={designationData} onSelected={onDesignationChanged} isError={errorDesignation} selectedItem={designationName} reference={designationRef} />
+              <Dropdown
+                label="Designation"
+                data={designationData}
+                onSelected={onDesignationChanged}
+                isError={errorDesignation}
+                selectedItem={designationName}
+                reference={designationRef}
+              />
 
               <View style={Styles.marginTop16}>
                 <Text>Employee Type</Text>
               </View>
 
-              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={ETRadioButtons} onPress={onPressETRadioButton} />
+              <RadioGroup
+                containerStyle={[Styles.marginTop16]}
+                layout="row"
+                radioButtons={ETRadioButtons}
+                onPress={onPressETRadioButton}
+              />
 
               <View style={[Styles.marginTop24, Styles.marginBottom8]}>
                 <Text>Reporting to</Text>
               </View>
 
               <PaperSelect
-                label="Reporting Employees"
+                label="Reporting Employees To"
                 value={reporting.value}
                 onSelection={(value) => {
                   setReporting({
@@ -1033,7 +1388,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               />
 
               <View>
-                <DateTimePicker style={Styles.backgroundColorWhite} label="Last Working Date" type="date" value={lwd} onChangeDate={setLwd} />
+                <DateTimePicker
+                  style={Styles.backgroundColorWhite}
+                  label="Last Working Date"
+                  type="date"
+                  value={lwd}
+                  onChangeDate={setLwd}
+                />
               </View>
             </View>
           </ScrollView>
@@ -1046,25 +1407,96 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 <Text>Wages Type</Text>
               </View>
 
-              <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={wagesRadioButtons} onPress={onPressWagesRadioButton} />
+              <RadioGroup
+                containerStyle={[Styles.marginTop16]}
+                layout="row"
+                radioButtons={wagesRadioButtons}
+                onPress={onPressWagesRadioButton}
+              />
 
-              <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
+              <TextInput
+                ref={salaryRef}
+                mode="flat"
+                dense
+                keyboardType="number-pad"
+                label="Salary"
+                value={salary}
+                returnKeyType="next"
+                onSubmitEditing={() => salaryRef.current.focus()}
+                onChangeText={onSalaryChanged}
+                style={{ backgroundColor: "white" }}
+                error={salaryInvalid}
+              />
 
-              <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
+              <TextInput
+                ref={accountHolderNameRef}
+                mode="flat"
+                dense
+                label="Account Holder Name"
+                value={accountHolderName}
+                returnKeyType="next"
+                onSubmitEditing={() => accountHolderNameRef.current.focus()}
+                onChangeText={onAccountHolderNameChanged}
+                style={{ backgroundColor: "white" }}
+                error={accountHolderNameInvalid}
+              />
 
-              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput
+                ref={accountNoRef}
+                mode="flat"
+                dense
+                label="Account Number"
+                value={accountNo}
+                returnKeyType="next"
+                onSubmitEditing={() => bankNameRef.current.focus()}
+                onChangeText={onAccountNoChanged}
+                style={{ backgroundColor: "white" }}
+                error={accountNoInvalid}
+              />
               {/* <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
-              <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+              <TextInput
+                ref={bankNameRef}
+                mode="flat"
+                dense
+                label="Bank Name"
+                value={bankName}
+                returnKeyType="next"
+                onSubmitEditing={() => bankBranchNameRef.current.focus()}
+                onChangeText={onBankNameChanged}
+                style={{ backgroundColor: "white" }}
+                error={bankNameInvalid}
+              />
               {/* <HelperText type="error" visible={bankNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
-              <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+              <TextInput
+                ref={bankBranchNameRef}
+                mode="flat"
+                dense
+                label="Bank Branch Name"
+                value={bankBranchName}
+                returnKeyType="next"
+                onSubmitEditing={() => ifscCodeRef.current.focus()}
+                onChangeText={onBankBranchNameChanged}
+                style={{ backgroundColor: "white" }}
+                error={bankBranchNameInvalid}
+              />
               {/* <HelperText type="error" visible={bankBranchNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
-              <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+              <TextInput
+                ref={ifscCodeRef}
+                mode="flat"
+                dense
+                label="IFSC Code"
+                value={ifscCode}
+                returnKeyType="done"
+                onChangeText={onIfscCodeChanged}
+                style={{ backgroundColor: "white" }}
+                error={ifscCodeInvalid}
+              />
               {/* <HelperText type="error" visible={ifscCodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}
@@ -1074,8 +1506,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       case "photo":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-            <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
-              <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
+            <View
+              style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}
+            >
+              <Image
+                source={{ uri: image }}
+                style={[Styles.width104, Styles.height96, Styles.border1]}
+              />
               <Button mode="text" onPress={chooseFile}>
                 {filePath !== null ? "Replace" : "Choose Image"}
               </Button>
@@ -1089,7 +1526,18 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         return null;
     }
   };
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 4 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
+  const renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.textLight }}
+      inactiveColor={theme.colors.textSecondary}
+      activeColor={theme.colors.primary}
+      scrollEnabled={true}
+      tabStyle={{ width: windowWidth / 4 }}
+      labelStyle={[Styles.fontSize13, Styles.fontBold]}
+    />
+  );
   const [routes] = React.useState([
     { key: "basicDetails", title: "Basic Details" },
     { key: "workDetails", title: "Work Details" },
@@ -1101,20 +1549,49 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     isFocused && (
       <View style={[Styles.flex1]}>
         {isLoading ? (
-          <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+          <View
+            style={[
+              Styles.flex1,
+              Styles.flexJustifyCenter,
+              Styles.flexAlignCenter,
+            ]}
+          >
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : (
-          <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+          <TabView
+            style={{ marginBottom: 64 }}
+            renderTabBar={renderTabBar}
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+          />
         )}
-        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <View
+          style={[
+            Styles.backgroundColor,
+            Styles.width100per,
+            Styles.marginTop32,
+            Styles.padding16,
+            { position: "absolute", bottom: 0, elevation: 3 },
+          ]}
+        >
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            <Button
+              mode="contained"
+              onPress={ValidateData}
+              loading={isButtonLoading}
+            >
               Update
             </Button>
           </Card.Content>
         </View>
-        <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={3000}
+          style={{ backgroundColor: snackbarColor }}
+        >
           {snackbarText}
         </Snackbar>
       </View>

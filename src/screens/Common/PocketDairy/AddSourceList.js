@@ -31,6 +31,7 @@ import { AWSImagePath } from "../../../utils/paths";
 import { creds, projectVariables } from "../../../utils/credentials";
 import { useIsFocused } from "@react-navigation/native";
 import { TabBar, TabView } from "react-native-tab-view";
+import { SheetElement } from "./SheetElements";
 
 let userID = 0,
   companyID = 0,
@@ -71,7 +72,7 @@ const AddSourceList = ({ route, navigation }) => {
   const [date, setDate] = useState(new Date());
   const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
-
+  const [current, setCurrent] = useState({});
   const [transactionID, setTransactionID] = React.useState("");
   const [entryType, setEntryType] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
@@ -255,6 +256,7 @@ const AddSourceList = ({ route, navigation }) => {
             }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
+            setCurrent(data.item);
             setTransactionID(data.item.pck_trans_refno);
             setDate(data.item.pck_trans_date);
             setEntryType(data.item.pck_entrytype_name);
@@ -268,7 +270,6 @@ const AddSourceList = ({ route, navigation }) => {
             setDisplay(data.item.view_status == "1" ? "Yes" : "No");
             setDepositType(data.item.deposit_type_refno);
             setPDCStatus(data.item.pdc_cheque_status);
-
             if (
               data.item.BalanceUnPaidPayment != null &&
               parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, "")) >
@@ -577,7 +578,7 @@ const AddSourceList = ({ route, navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
           <ScrollView>
-            <List.Item title="Date" description={date} />
+            {/* <List.Item title="Date" description={date} />
             <List.Item title="Entry Type " description={entryType} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item
@@ -585,7 +586,8 @@ const AddSourceList = ({ route, navigation }) => {
               description={subCategoryName}
             />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
-            <List.Item title="Amount" description={amount} />
+            <List.Item title="Amount" description={amount} /> */}
+            <SheetElement current={current} />
 
             {PayToCompanyStatus && (
               <>
