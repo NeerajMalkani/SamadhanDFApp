@@ -7,7 +7,7 @@ const Autocomplete = ({
   label,
   data,
   containerStyle,
-  onChange: origOnChange,
+  onChange,
   menuStyle = {},
   right = () => {},
   left = () => {},
@@ -19,8 +19,6 @@ const Autocomplete = ({
 }) => {
   const [value, setValue] = useState(origValue);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-
   return (
     <View style={[containerStyle]}>
       <TextInput
@@ -39,12 +37,12 @@ const Autocomplete = ({
         returnKeyType="next"
         style={{ backgroundColor: "white" }}
         onChangeText={(text) => {
-          origOnChange(text);
-          if (text.length === 0) {
-            setFilteredData([]);
-          } else {
-            setFilteredData(data);
-          }
+          onChange(text);
+          // if (text.length === 0) {
+          //   setFilteredData([]);
+          // } else {
+          //   setFilteredData(data);
+          // }
           setMenuVisible(true);
           setValue(text);
         }}
@@ -52,7 +50,7 @@ const Autocomplete = ({
         error={error}
         onSubmitEditing={onSubmitEditing}
       />
-      {menuVisible && filteredData && (
+      {menuVisible && data && (
         <View
           style={{
             flex: 1,
@@ -62,25 +60,31 @@ const Autocomplete = ({
             borderColor: "green",
           }}
         >
-          {filteredData.map((datum, i) => (
-            <Menu.Item
-              key={i}
-              style={[{ width: "100%" }, menuStyle]}
-              onPress={() => {
-                setValue(() =>
-                  datum?.mobile_no_Result
+          {value.length > 0 &&
+            data.map((datum, i) => (
+              <Menu.Item
+                key={i}
+                style={[{ width: "100%" }, menuStyle]}
+                onPress={() => {
+                  setValue(() =>
+                    datum?.mobile_no_Result
+                      ? datum.mobile_no_Result
+                      : datum.aadharno_Result
+                  );
+                  onChange(() =>
+                    datum?.mobile_no_Result
+                      ? datum.mobile_no_Result
+                      : datum.aadharno_Result
+                  );
+                  setMenuVisible(false);
+                }}
+                title={
+                  datum.mobile_no_Result
                     ? datum.mobile_no_Result
                     : datum.aadharno_Result
-                );
-                setMenuVisible(false);
-              }}
-              title={
-                datum.mobile_no_Result
-                  ? datum.mobile_no_Result
-                  : datum.aadharno_Result
-              }
-            />
-          ))}
+                }
+              />
+            ))}
         </View>
       )}
     </View>

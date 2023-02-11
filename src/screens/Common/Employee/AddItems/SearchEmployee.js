@@ -17,6 +17,7 @@ import {
   Title,
   HelperText,
   Button,
+  Card,
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { theme } from "../../../../theme/apptheme";
@@ -41,6 +42,7 @@ let Sess_branch_refno = 0;
 const SearchEmployee = ({ route, navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [displayLoader, setDisplayLoader] = React.useState(false);
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
@@ -154,6 +156,7 @@ const SearchEmployee = ({ route, navigation }) => {
     console.log("xyeff", params);
     Provider.createDFCommon(Provider.API_URLS.employeeadd, params)
       .then((response) => {
+        // console.log();
         if (
           response.data &&
           response.data.code === 200 &&
@@ -163,7 +166,7 @@ const SearchEmployee = ({ route, navigation }) => {
           navigation.navigate("EmployeeListScreen");
         } else {
           setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
+          setSnackbarText(response.data.message);
           setSnackbarVisible(true);
         }
       })
@@ -203,11 +206,15 @@ const SearchEmployee = ({ route, navigation }) => {
         mobile_no_s: mobileNo.trim(),
       },
     };
-
+    // console.log(params);
+    setIsButtonLoading(true);
     Provider.createDFCommon(Provider.API_URLS.employeesearch, params)
       .then((response) => {
-        console.log("data", response.data.data);
-        if (response.data && response.data.code === 200) {
+        if (
+          response.data &&
+          response.data.code === 200 &&
+          response.data !== null
+        ) {
           if (response.data.data) {
             console.log(response.data);
             const lisData = [...response.data.data];
@@ -219,6 +226,7 @@ const SearchEmployee = ({ route, navigation }) => {
           }
         } else {
           listData[1]([]);
+          listSearchData[1]([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -232,6 +240,9 @@ const SearchEmployee = ({ route, navigation }) => {
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
         setRefreshing(false);
+      })
+      .finally(() => {
+        setIsButtonLoading(false);
       });
   };
   const EditCallback = (data) => {
@@ -291,17 +302,23 @@ const SearchEmployee = ({ route, navigation }) => {
   };
   const [numbers, setNumbers] = useState([]);
   useEffect(() => {
+    console.log(mobileNo);
     if (mobileNo.length > 0) {
+      console.log("here");
       let params = {
         data: {
-          Sess_UserRefno: userID,
+          Sess_UserRefno: userID.toString(),
           mobile_no: mobileNo,
         },
       };
       Provider.createDFCommon(Provider.API_URLS.mobilenoautocomplete, params)
         .then((response) => {
+          console.log(response.data);
+          console.log("params", params);
           if (response.data?.data) {
-            setNumbers(response.data?.data);
+            setNumbers(() => {
+              return response.data?.data;
+            });
           }
         })
         .catch((e) => {});
@@ -406,7 +423,7 @@ const SearchEmployee = ({ route, navigation }) => {
             {communication.InvalidMobileNumber}
           </HelperText>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={OnSearchEmployee}
             style={[
               Styles.marginTop32,
@@ -418,7 +435,17 @@ const SearchEmployee = ({ route, navigation }) => {
             <Text style={[Styles.fontSize14, Styles.textColorWhite]}>
               SEARCH EMPLOYEE
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <Card.Content>
+            <Button
+              mode="contained"
+              onPress={OnSearchEmployee}
+              loading={isButtonLoading}
+              disabled={isButtonLoading}
+            >
+              SEARCH EMPLOYEE
+            </Button>
+          </Card.Content>
         </View>
         <View style={[Styles.padding16]}>
           <View

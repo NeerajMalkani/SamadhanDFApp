@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
   ActivityIndicator,
@@ -31,7 +31,7 @@ import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  RenderHiddenItems,
+  RenderHiddenItemsConditional,
   RenderHiddenMultipleItems,
 } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
@@ -60,6 +60,7 @@ const EmployeeListScreen = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(
     theme.colors.success
   );
+  const [empcode, setEmpCode] = useState("");
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -244,6 +245,12 @@ const EmployeeListScreen = ({ navigation }) => {
           myemployee_refno: data.item.myemployee_refno,
           Sess_UserRefno: userID,
         },
+        call: () => {
+          setSnackbarColor(theme.colors.success);
+          setSnackbarText("Data updated successfully");
+          setSnackbarVisible(true);
+          navigation.navigate("EmployeeListScreen");
+        },
       });
     }
   };
@@ -269,10 +276,14 @@ const EmployeeListScreen = ({ navigation }) => {
           }\nProfile Status: ${
             NullOrEmpty(data.item.profie_update_status)
               ? ""
-              : data.item.profie_update_status
+              : data.item.profie_update_status == "0"
+              ? "incomplete"
+              : "complete"
           } `}
           onPress={() => {
             refRBSheet.current.open();
+            console.log(data.item);
+            setEmpCode(data.item.common_employee_code);
             setEmployeeName(data.item.employee_name);
             setMobileNo(data.item.employee_mobile_no);
             setBranch(data.item.branchname);
@@ -366,7 +377,7 @@ const EmployeeListScreen = ({ navigation }) => {
             rightOpenValue={-160}
             renderItem={(data) => RenderItems(data)}
             renderHiddenItem={(data, rowMap) =>
-              RenderHiddenMultipleItems(data, rowMap, [EditCallback])
+              RenderHiddenItemsConditional(data, rowMap, [EditCallback])
             }
           />
         </View>
@@ -429,6 +440,7 @@ const EmployeeListScreen = ({ navigation }) => {
             <List.Item title="Branch" description={branch} />
             <List.Item title="Department" description={department} />
             <List.Item title="Designation" description={designation} />
+            <List.Item title="Employee Code" description={empcode} />
             <List.Item
               title="Profile Status"
               description={
@@ -450,7 +462,7 @@ const EmployeeListScreen = ({ navigation }) => {
               description={
                 NullOrEmpty(verifyStatus)
                   ? ""
-                  : verifyStatus
+                  : verifyStatus == "1"
                   ? "Verified"
                   : "Not Verified"
               }

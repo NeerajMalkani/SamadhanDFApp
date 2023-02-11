@@ -1059,9 +1059,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       );
 
       if (data.sucess) {
-        setSnackbarColor(theme.colors.success);
-        setSnackbarText("Data updated successfully");
-        setSnackbarVisible(true);
+        route.params.call();
       } else {
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.UpdateError);
@@ -1581,6 +1579,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               mode="contained"
               onPress={ValidateData}
               loading={isButtonLoading}
+              disabled={isButtonLoading}
             >
               Update
             </Button>

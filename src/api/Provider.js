@@ -480,7 +480,7 @@ class Provider {
         `${BASE_URL}/employeepaydataupdate/`,
         { data: pay }
       );
-      console.log("pp", payDetails.data);
+      console.log("workparam", work);
       console.log(workData.data);
       console.log({
         data: work,
@@ -497,6 +497,7 @@ class Provider {
     }
   }
   async getEmployeebasicDetails(params, unload) {
+    console.log(params);
     try {
       const empdata = await axios.post(
         `${BASE_URL}/getemployeepaydata//`,
