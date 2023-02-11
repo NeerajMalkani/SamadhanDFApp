@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -79,12 +79,12 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 pck_entrytype_refno: projectVariables.DEF_PCKDIARY_ENTRYTYPE_SELF_REFNO,
             }
         }
-        console.log(params);
+        //console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        console.log(response.data.data);
+                        //console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();

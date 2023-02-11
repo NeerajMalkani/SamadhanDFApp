@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -134,7 +134,7 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
                     description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
                     onPress={() => {
                         refRBSheet.current.open();
-                        setDate(data.item.pck_trans_date)
+                        setDate(data.item.pck_trans_date);
                         setEntryType(data.item.pck_entrytype_name);
                         setCategoryName(data.item.pck_category_name);
                         setSubCategoryName(data.item.pck_sub_category_name);
@@ -193,6 +193,8 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
                 invoice_no: data.item.invoice_no,
                 payment_type_refno: data.item.payment_type_refno,
                 dynamic_expenses_refno: data.item.dynamic_expenses_refno,
+                pck_contacttype_refno: data.item.pck_contacttype_refno,
+                pck_sub_category_notes: data.item.pck_sub_category_notes,
             },
         });
     };

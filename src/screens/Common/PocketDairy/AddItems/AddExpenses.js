@@ -28,6 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { projectVariables } from "../../../../utils/credentials";
 import * as Contacts from "expo-contacts";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 let userID = 0,
   groupID = 0,
@@ -116,7 +117,7 @@ const AddExpenses = ({ route, navigation }) => {
   const [errorEX, setEXError] = React.useState(false);
 
   const [amountError, setAmountError] = React.useState(false);
-  const [amount, settAmount] = React.useState(route?.params?.data?.amount);
+  const [amount, settAmount] = React.useState("");
   const [amountInvalidBalance, setAmountInvalidBalance] = React.useState(
     "Amount can not be more then balance amount"
   );
@@ -162,7 +163,7 @@ const AddExpenses = ({ route, navigation }) => {
   const [chequeNo, setChequeNo] = React.useState(route.params?.data?.chequeNo);
 
   const [utrNoError, setUtrNoError] = React.useState(false);
-  const [utrNo, setUtrNo] = React.useState(route.params?.data?.utrNo);
+  const [utrNo, setUtrNo] = React.useState("");
 
   const [chequeDate, setChequeDate] = useState(new Date());
   const [chequeDateInvalid, setChequeDateInvalid] = useState("");
@@ -184,13 +185,24 @@ const AddExpenses = ({ route, navigation }) => {
   const [errorDI, setDIError] = React.useState(false);
 
   const [notesError, setNotesError] = React.useState(false);
-  const [notes, setNotes] = React.useState(route.params?.data?.notes);
+  const [notes, setNotes] = React.useState("");
 
   const [checked, setChecked] = React.useState(
     route.params.type === "edit" || route.params.type === "verify"
       ? route.params?.data?.display
       : true
   );
+
+  const [contactTypeFullData, setContactTypeFullData] = React.useState([]);
+  const [contactTypeData, setContactTypeData] = React.useState([]);
+  const [contactType, setContactType] = React.useState([]);
+  const [errorContactType, setErrorContactType] = React.useState(false);
+
+  const [contactName, setContactName] = React.useState("");
+
+  const [mobileNumber, setMobileNumber] = React.useState("");
+
+
 
   const [recurring, setRecurring] = useState({
     value: "",
@@ -229,6 +241,9 @@ const AddExpenses = ({ route, navigation }) => {
   const [pckTransID, setPckTransID] = React.useState([]);
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [subCatStatus, setSubCatStatus] = React.useState(true);
+  const [contactTypeStatus, setContactTypeStatus] = useState(false);
+  const [newMobileNumberStatus, setNewMobileNumberStatus] = React.useState(false);
+  const [newContactNameStatus, setNewContactNameStatus] = React.useState(false);
   const [clientListStatus, setClientListstatus] = React.useState(false);
   const [projectListStatus, setProjectListstatus] = React.useState(false);
   const [projectExpenseStatus, setProjectExpenseStatus] = React.useState(false);
@@ -369,9 +384,17 @@ const AddExpenses = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
+    if (
+      data.pck_contacttype_refno != "" &&
+      data.pck_contacttype_refno != "0"
+    ) {
+      setContactTypeStatus(true);
+      FetchContactType(data.pck_contacttype_refno);
+    }
+
     if (data.pck_mycontact_refno != "" && data.pck_mycontact_refno != "0") {
       setPaidToStatus(true);
-      FetchReceiverList(data.pck_mycontact_refno);
+      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno, data.pck_contacttype_refno);
     }
 
     if (data.recurring_status != "" && data.recurring_status != "0") {
@@ -502,7 +525,7 @@ const AddExpenses = ({ route, navigation }) => {
                 setPktEntryTypeID(response.data.data[route.params.tabIndex].pck_entrytype_refno);
                 _pktEntryTypeID = response.data.data[route.params.tabIndex].pck_entrytype_refno;
               }
-              
+
             }
 
             if (route.params.type != "edit" || route.params.type != "verify") {
@@ -617,6 +640,38 @@ const AddExpenses = ({ route, navigation }) => {
                 response.data.data.filter((el) => {
                   return el.pckCategoryID === editID;
                 })[0].categoryName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchContactType = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
+      .then((response) => {
+        //console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setContactTypeFullData(response.data.data);
+            //console.log(response.data.data);
+            const ct = response.data.data.map(
+              (data) => data.pck_contacttype_name
+            );
+            setContactTypeData(ct);
+
+            if (editID != null) {
+              setContactType(
+                response.data.data.filter((el) => {
+                  return el.pck_contacttype_refno == editID;
+                })[0].pck_contacttype_name
               );
             }
           }
@@ -810,11 +865,15 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchReceiverList = (editID, contactName) => {
+  const FetchReceiverList = (editID, contactName, subCategoryID, contactTypeID) => {
     ////console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
+        pck_sub_category_refno: subCategoryID.toString(),
+        pck_contacttype_refno: contactTypeID == null ? 0 : contactTypeID == "" ? 0 : contactTypeID.toString(),
+        AddNew: "NO",
+        UserPhoneBookAllContactList: ""
       },
     };
     ////console.log(params);
@@ -980,24 +1039,43 @@ const AddExpenses = ({ route, navigation }) => {
         if (data.length > 0) {
           //console.log(data[0]);
           //console.log(data[1]);
-          const arrPhones = [];
+          const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
           data.map((k, i) => {
             // if (i < 100) {
             //console.log('==================================');
             //console.log(k);
             if (Array.isArray(k.phoneNumbers)) {
               arrPhones.push(k);
+              if (k.phoneNumbers.length > 1) {
+                if (k.phoneNumbers[0].number != null) {
+                  arrNumbers.push(
+                    k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                  );
+                  arrDisplayNumbers.push(
+                    k.phoneNumbers[0].number
+                  );
+                }
+              }
+              else {
+                if (k.phoneNumbers.number != null) {
+                  arrNumbers.push(
+                    k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                  );
+                  arrDisplayNumbers.push(
+                    k.phoneNumbers.number
+                  );
+                }
+              }
             }
             // }
           });
           //console.log('complete loop');
           //console.log(arrPhones);
           //console.log(arrPhones);
-          setIsContactLoading(false);
-          navigation.navigate("PhoneContactDirectUpload", {
-            phoneNumbers: arrPhones,
-            callback: PhoneClicked,
-          });
+          let obj = {};
+          arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
+          CheckContactList(obj, arrPhones);
+
         }
       }
     })();
@@ -1005,8 +1083,77 @@ const AddExpenses = ({ route, navigation }) => {
 
   const PhoneClicked = (contact) => {
     if (contact != null) {
-      InsertNewContact(contact.name, contact.phoneNumbers[0].number);
+      InsertNewContact(contact.name, contact.number);
     }
+  };
+
+  const CheckContactList = (contactList, originalList) => {
+    console.log('receiver data start ============');
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        pck_sub_category_refno: "0",
+        pck_contacttype_refno: "0",
+        AddNew: "YES",
+        UserPhoneBookAllContactList: contactList
+      }
+    };
+    //console.log(params);
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
+      .then((response) => {
+        //console.log('Receiiver contact==============');
+        //console.log(response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log('updated phone contact');
+            //console.log(originalList);
+            //console.log(response.data.data);
+            var margedList = [];
+            console.log(originalList.length);
+            let ct = 0;
+            if (contactTypeStatus) {
+              ct = contactTypeFullData.filter((el) => {
+                return el.pck_contacttype_name === contactType;
+              })[0].pck_contacttype_refno;
+            }
+
+            originalList.map((data) => {
+
+              let n = response.data.data.find((el) => {
+                return el.Actual_no === data.phoneNumbers[0].number;
+              });
+
+              if (n != null) {
+
+                if (ct == 1 && n.Is_SamadhanUser == 1) {
+                  margedList.push({
+                    name: data.name,
+                    number: data.phoneNumbers[0].number,
+                    Is_MyContactList: n.Is_MyContactList,
+                    Is_SamadhanUser: n.Is_SamadhanUser,
+                  });
+                }
+                else if (ct == 2 && n.Is_SamadhanUser == 0) {
+                  margedList.push({
+                    name: data.name,
+                    number: data.phoneNumbers[0].number,
+                    Is_MyContactList: n.Is_MyContactList,
+                    Is_SamadhanUser: n.Is_SamadhanUser,
+                  });
+                }
+              }
+            });
+
+            //console.log(margedList);
+            setIsContactLoading(false);
+            navigation.navigate("PhoneContactDirectUpload", {
+              phoneNumbers: margedList,
+              callback: PhoneClicked,
+            });
+          }
+        }
+      })
+      .catch((e) => { });
   };
 
   const InsertNewContact = (name, mobileNo) => {
@@ -1014,7 +1161,7 @@ const AddExpenses = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         contact_name: name,
-        contact_phoneno: mobileNo,
+        contact_phoneno: mobileNo.length > 10 ? mobileNo.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10) : mobileNo,
         remarks: "",
         view_status: "1",
       },
@@ -1023,7 +1170,20 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
-          FetchReceiverList(null, name);
+
+          let subcatID = 0, ct = 0;
+          if (subCatStatus) {
+            subcatID = subCategoryNameFullData.filter((el) => {
+              return el.subCategoryName === subCategoryName;
+            })[0].subcategoryID;
+          }
+          if (contactTypeStatus) {
+            ct = contactTypeFullData.filter((el) => {
+              return el.pck_contacttype_name === contactType;
+            })[0].pck_contacttype_refno;
+          }
+
+          FetchReceiverList(null, name, subcatID, ct);
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
@@ -1056,6 +1216,79 @@ const AddExpenses = ({ route, navigation }) => {
       setCardTypeStatus(true);
       FetchCardType();
     }
+  };
+
+  const onNewContactChange = (text) => {
+    setContactName(text);
+  };
+
+  const onMobileNoChange = (text) => {
+    setMobileNumber(text);
+  };
+
+  const onContactTypeDataChanged = (text) => {
+    setContactType(text);
+    setErrorContactType(false);
+
+    setPaidToFullData([]);
+    setPaidToData([]);
+    setPaidTo([]);
+
+    //resetFields();
+    setSCNError(false);
+    setCommonDisplayStatus(true);
+    setButtonStatus(false);
+
+
+    let contact = contactTypeFullData.filter((el) => {
+      return el.pck_contacttype_name === text;
+    });
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let category = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    let subcat = subCategoryNameFullData.filter((el) => {
+      return el.subCategoryName === subCategoryName;
+    });
+
+    FetchReceiverList(null, null, 0, contact[0].pck_contacttype_refno);
+
+    if (contact[0].pck_contacttype_refno == 3) {
+      setNewMobileNumberStatus(true);
+      setNewContactNameStatus(true);
+      setPaidToStatus(false);
+    }
+    else {
+      setNewMobileNumberStatus(false);
+      setNewContactNameStatus(false);
+      setPaidToStatus(true);
+    }
+
+    if (category[0].pckCategoryID == 4) {
+      setRecurringReminderDateStatus(true);
+      setRecurringStatus(true);
+    }
+    else {
+      setRecurringReminderDateStatus(false);
+      setRecurringStatus(false);
+    }
+
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+
+      setBankStatus(true);
+      FetchBankList();
+      setUtrNoStatus(true);
+    }
+    if (mode[0].pckModeID == "3") {
+      setDepositTypeStatus(true);
+      FetchDepositType();
+    }
+
   };
 
   const onProjectExpenseChanged = (text) => {
@@ -1112,6 +1345,7 @@ const AddExpenses = ({ route, navigation }) => {
   const onExpensesChanged = (text) => {
     setExpenses(text);
     setEXError(false);
+
     let a = expensesFullData.filter((el) => {
       return el.categoryName === text;
     });
@@ -1122,7 +1356,12 @@ const AddExpenses = ({ route, navigation }) => {
       setSubCatStatus(false);
       setClientListstatus(true);
       FetchClientList();
+    } else if (a[0].pckCategoryID == 4) {
+      setSubCatStatus(false);
+      setContactTypeStatus(true);
+      FetchContactType();
     } else {
+      console.log('step-1');
       setSubCatStatus(true);
       setClientListstatus(false);
       FetchExpenseSubCategory(a[0].pckCategoryID);
@@ -1183,7 +1422,9 @@ const AddExpenses = ({ route, navigation }) => {
     if (mode[0].pckModeID == "1") {
       if (subcat[0].subcategoryID == "8") {
         setPaidToStatus(true);
-        FetchReceiverList();
+        //FetchReceiverList();
+        setContactTypeStatus(true);
+        FetchContactType();
 
         setRecurringStatus(true);
         setRecurringReminderDateStatus(true);
@@ -1198,14 +1439,18 @@ const AddExpenses = ({ route, navigation }) => {
       setBankStatus(true);
 
       if (subcat[0].subcategoryID == "8") {
-        setPaidToStatus(true);
-        FetchReceiverList();
+        // setPaidToStatus(true);
+        // //FetchReceiverList();
+        // setContactTypeStatus(true);
+        // FetchContactType();
 
         setRecurringStatus(true);
         setRecurringReminderDateStatus(true);
       } else {
-        setPaidToStatus(false);
-        FetchReceiverList();
+        // setPaidToStatus(false);
+        // //FetchReceiverList();
+        // setContactTypeStatus(true);
+        // FetchContactType();
 
         setRecurringStatus(false);
         setRecurringReminderDateStatus(false);
@@ -1219,15 +1464,17 @@ const AddExpenses = ({ route, navigation }) => {
         //setUtrNoStatus(true);
         //setBankStatus(true);
 
-        setPaidToStatus(true);
-        FetchReceiverList();
-
+        // setPaidToStatus(true);
+        // //FetchReceiverList();
+        // setContactTypeStatus(true);
+        // FetchContactType();
         setRecurringStatus(true);
         setRecurringReminderDateStatus(true);
       } else {
-        setPaidToStatus(false);
-        FetchReceiverList();
-
+        // setPaidToStatus(false);
+        // //FetchReceiverList();
+        // setContactTypeStatus(true);
+        // FetchContactType();
         setRecurringStatus(false);
         setRecurringReminderDateStatus(false);
       }
@@ -1293,7 +1540,11 @@ const AddExpenses = ({ route, navigation }) => {
     setCommonDisplayStatus(false);
     setButtonStatus(true);
     setrecurringDateFlag("1");
+    console.log('step-2');
     setSubCatStatus(true);
+    setContactTypeStatus(false);
+    setNewContactNameStatus(false);
+    setNewMobileNumberStatus(false);
   };
 
   const onEntryTypeChanged = (selectedItem) => {
@@ -1440,11 +1691,11 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (utrNoStatus) {
-      params.utr_no = utrNo.trim();
+      params.utr_no = utrNo == "" ? "" : utrNo.trim();
     }
 
     if (chequeNoStatus) {
-      params.cheque_no = chequeNo.trim();
+      params.cheque_no = chequeNo == "" ? "" : chequeNo.trim();
     }
 
     if (depositTypeStatus) {
@@ -1492,6 +1743,23 @@ const AddExpenses = ({ route, navigation }) => {
       params.pck_master_trans_refno = route.params.data.transactionID;
     }
 
+    if (contactTypeStatus) {
+      params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
+        return el.pck_contacttype_name === contactType;
+      })[0].pck_contacttype_refno;
+    }
+    else {
+      params.pck_contacttype_refno = "0";
+    }
+
+    if (newContactNameStatus) {
+      params.contact_name = contactName.trim() == "" ? "" : contactName.trim();
+    }
+
+    if (newMobileNumberStatus) {
+      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -1511,8 +1779,8 @@ const AddExpenses = ({ route, navigation }) => {
     );
 
     //console.log(params);
-    //console.log('data params ================');
-    //console.log(datas);
+    console.log('data params ================');
+    console.log(datas);
     Provider.createDFPocketDairyWithHeader(
       Provider.API_URLS.pckaddexpensescreate,
       datas
@@ -1556,7 +1824,7 @@ const AddExpenses = ({ route, navigation }) => {
       })[0].pckCategoryID,
 
       amount: amount.trim(),
-      notes: notes.trim(),
+      notes: notes == "" ? "" : notes.trim(),
 
       view_status: checked ? "1" : "0",
     };
@@ -1652,6 +1920,23 @@ const AddExpenses = ({ route, navigation }) => {
       params.pck_master_trans_refno = pckTransID;
     }
 
+    if (contactTypeStatus) {
+      params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
+        return el.pck_contacttype_name === contactType;
+      })[0].pck_contacttype_refno;
+    }
+    else {
+      params.pck_contacttype_refno = "0";
+    }
+
+    if (newContactNameStatus) {
+      params.contact_name = contactName.trim() == "" ? "" : contactName.trim();
+    }
+
+    if (newMobileNumberStatus) {
+      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -1699,7 +1984,7 @@ const AddExpenses = ({ route, navigation }) => {
       setEntryTypeError(true);
     }
 
-    if (amount.trim() == 0 || amount.trim() == "") {
+    if (amount.trim() == "0" || amount.trim() == "") {
       setAmountError(true);
       isValid = false;
       setAmountInvalidBalance("Please enter a valid amount");
@@ -2036,6 +2321,21 @@ const AddExpenses = ({ route, navigation }) => {
             </>
           )}
 
+          {contactTypeStatus && (
+            <>
+              <Dropdown
+                label="Contact Type"
+                data={contactTypeData}
+                onSelected={onContactTypeDataChanged}
+                isError={errorContactType}
+                selectedItem={contactType}
+              />
+              <HelperText type="error" visible={errorContactType}>
+                Please select valid contact type
+              </HelperText>
+            </>
+          )}
+
           {paidToStatus && (
             <>
               <View
@@ -2065,19 +2365,39 @@ const AddExpenses = ({ route, navigation }) => {
                 >
                   Add New Contact
                 </Button>
-                {/* <Button
-                  icon={"plus"}
-                  mode="contained"
-                  onPress={() => {
-                    navigation.navigate("AddGMyContactsScreen", {
-                      type: "newContact",
-                      fetchReceiverList: FetchReceiverList,
-                    });
-                  }}
-                >
-                  Add New Contact
-                </Button> */}
               </View>
+            </>
+          )}
+
+          {newContactNameStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Received From"
+                value={contactName}
+                returnKeyType="next"
+                keyboardType="default"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onNewContactChange}
+                style={{ backgroundColor: "white" }}
+              />
+
+            </>
+          )}
+
+          {newMobileNumberStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Mobile No."
+                value={mobileNumber}
+                returnKeyType="next"
+                keyboardType="number-pad"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onMobileNoChange}
+                style={{ backgroundColor: "white" }}
+              />
+
             </>
           )}
 
@@ -2209,6 +2529,20 @@ const AddExpenses = ({ route, navigation }) => {
 
           {commonDisplayStatus && (
             <>
+              <TextInput
+                mode="flat"
+                label="Notes"
+                value={notes}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                onChangeText={onNotes}
+                style={{ backgroundColor: "white" }}
+              />
+            </>
+          )}
+
+          {commonDisplayStatus && (
+            <>
               <View
                 style={[
                   Styles.flexRow,
@@ -2227,20 +2561,6 @@ const AddExpenses = ({ route, navigation }) => {
               <HelperText type="error" visible={errorDI}>
                 {communication.InvalidDesignImage}
               </HelperText>
-            </>
-          )}
-
-          {commonDisplayStatus && (
-            <>
-              <TextInput
-                mode="flat"
-                label="Notes"
-                value={notes}
-                returnKeyType="next"
-                onSubmitEditing={() => ref_input2.current.focus()}
-                onChangeText={onNotes}
-                style={{ backgroundColor: "white" }}
-              />
             </>
           )}
 

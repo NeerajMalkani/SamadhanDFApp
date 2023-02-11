@@ -289,7 +289,7 @@ const AddSource = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
-    console.log(data.pck_contacttype_refno);
+    //console.log(data.pck_contacttype_refno);
     if (
       data.pck_contacttype_refno != "" &&
       data.pck_contacttype_refno != "0"
@@ -332,6 +332,7 @@ const AddSource = ({ route, navigation }) => {
       setChequeNo(data.cheque_no);
     }
 
+    console.log(data.pck_sub_category_notes);
     if (data.pck_sub_category_notes != "") {
       setRentalDescriptionStatus(true);
       setRentalDescription(data.pck_sub_category_notes);
@@ -683,6 +684,12 @@ const AddSource = ({ route, navigation }) => {
             //console.log(response.data.data);
             var margedList = [];
             console.log(originalList.length);
+            let ct = 0;
+            if (contactTypeStatus) {
+              ct = contactTypeFullData.filter((el) => {
+                return el.pck_contacttype_name === contactType;
+              })[0].pck_contacttype_refno;
+            }
 
             originalList.map((data) => {
 
@@ -691,14 +698,24 @@ const AddSource = ({ route, navigation }) => {
               });
 
               if (n != null) {
-                margedList.push({
-                  name: data.name,
-                  number: data.phoneNumbers[0].number,
-                  Is_MyContactList: n.Is_MyContactList,
-                  Is_SamadhanUser: n.Is_SamadhanUser,
-                });
-              }
 
+                if (ct == 1 && n.Is_SamadhanUser == 1) {
+                  margedList.push({
+                    name: data.name,
+                    number: data.phoneNumbers[0].number,
+                    Is_MyContactList: n.Is_MyContactList,
+                    Is_SamadhanUser: n.Is_SamadhanUser,
+                  });
+                }
+                else if (ct == 2 && n.Is_SamadhanUser == 0) {
+                  margedList.push({
+                    name: data.name,
+                    number: data.phoneNumbers[0].number,
+                    Is_MyContactList: n.Is_MyContactList,
+                    Is_SamadhanUser: n.Is_SamadhanUser,
+                  });
+                }
+              }
             });
 
             //console.log(margedList);
@@ -934,21 +951,11 @@ const AddSource = ({ route, navigation }) => {
     setContactType(text);
     setErrorCT(false);
 
-    // let b = sourceFullData.filter((el) => {
-    //   return el.categoryName === source;
-    // });
-
-
-
-    // setCommonStatus(true);
-    // setButtonStatus(false);
-    ////////////
-
     setReceivedFormFullData([]);
     setReceivedFormData([]);
     setReceivedForm([]);
 
-    resetFields();
+    //resetFields();
     //setSubCategoryName(text);
     setSCNError(false);
     setCommonStatus(true);
@@ -1007,107 +1014,6 @@ const AddSource = ({ route, navigation }) => {
       FetchDepositType();
 
     }
-
-    // if (mode[0].pckModeID == "1") {
-    //   ////console.log('Cash================');
-    //   // cash withdrawal
-    //   if (subcat[0].subcategoryID == "1") {
-    //     FetchBankList();
-    //     setBankListStatus(true);
-    //     setChequeNoStatus(true);
-    //   }
-    //   // atm withdrawal
-    //   else if (subcat[0].subcategoryID == "2") {
-    //     FetchBankList();
-    //     setBankListStatus(true);
-    //   }
-    //   // Phone Book
-    //   //else if (subcat[0].subcategoryID == "7" || subcat[0].subcategoryID == "9" || subcat[0].subcategoryID == "10" || subcat[0].subcategoryID == "11") {
-    //   else if (subcat[0].subcategoryID == "7") {
-    //     //setReceivedStatus(true);
-    //     setPaymentReminderStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, 0);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //   }
-    //   // My Business
-    //   else if (
-    //     subcat[0].subcategoryID == "9" ||
-    //     subcat[0].subcategoryID == "10" ||
-    //     subcat[0].subcategoryID == "11" ||
-    //     subcat[0].subcategoryID == "12" ||
-    //     subcat[0].subcategoryID == "13" ||
-    //     subcat[0].subcategoryID == "14" ||
-    //     subcat[0].subcategoryID == "15" ||
-    //     subcat[0].subcategoryID == "16" ||
-    //     subcat[0].subcategoryID == "17" ||
-    //     subcat[0].subcategoryID == "18"
-    //   ) {
-    //     //setReceivedStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //   }
-    // } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-    //   setUTRNoStatus(true);
-    //   ////console.log('UPI================');
-    //   if (subcat[0].subcategoryID == "7") {
-    //     //setReceivedStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //     FetchBankList();
-    //     setBankListStatus(true);
-    //     setPaymentReminderStatus(true);
-    //   } else if (
-    //     subcat[0].subcategoryID == "9" ||
-    //     subcat[0].subcategoryID == "10" ||
-    //     subcat[0].subcategoryID == "11" ||
-    //     subcat[0].subcategoryID == "12" ||
-    //     subcat[0].subcategoryID == "13" ||
-    //     subcat[0].subcategoryID == "14" ||
-    //     subcat[0].subcategoryID == "15" ||
-    //     subcat[0].subcategoryID == "16" ||
-    //     subcat[0].subcategoryID == "17" ||
-    //     subcat[0].subcategoryID == "18"
-    //   ) {
-    //     //setReceivedStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //     FetchBankList();
-    //     setBankListStatus(true);
-    //   }
-    // } else if (mode[0].pckModeID == "3") {
-    //   ////console.log('Cheque================');
-    //   if (subcat[0].subcategoryID == "7") {
-    //     //setReceivedStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //     setDepositTypeStatus(true);
-    //     FetchDepositType();
-    //     setPaymentReminderStatus(true);
-    //   } else if (
-    //     subcat[0].subcategoryID == "9" ||
-    //     subcat[0].subcategoryID == "10" ||
-    //     subcat[0].subcategoryID == "11" ||
-    //     subcat[0].subcategoryID == "12" ||
-    //     subcat[0].subcategoryID == "13" ||
-    //     subcat[0].subcategoryID == "14" ||
-    //     subcat[0].subcategoryID == "15" ||
-    //     subcat[0].subcategoryID == "16" ||
-    //     subcat[0].subcategoryID == "17" ||
-    //     subcat[0].subcategoryID == "18"
-    //   ) {
-    //     //setReceivedStatus(true);
-    //     //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
-    //     setContactTypeStatus(true);
-    //     FetchContactType();
-    //     setDepositTypeStatus(true);
-    //     FetchDepositType();
-    //   }
-    // }
 
   };
 
@@ -1323,6 +1229,9 @@ const AddSource = ({ route, navigation }) => {
     setPaymentReminderStatus(false);
     setCommonStatus(false);
     setButtonStatus(true);
+    setContactTypeStatus(false);
+    setNewContactNameStatus(false);
+    setNewMobileNumberStatus(false);
   };
 
   const onReceivedFormChanged = (text) => {
@@ -1479,7 +1388,7 @@ const AddSource = ({ route, navigation }) => {
       Sess_company_refno: companyID.toString(),
       Sess_branch_refno: branchID.toString(),
       Sess_designation_refno: designID.toString(),
-      pck_entrytype_refno: pktEntryTypeID,
+      pck_entrytype_refno: pktEntryTypeID.toString(),
       pck_mode_refno: receiptModeFullData
         .filter((el) => {
           return el.pckModeName === receiptMode;
@@ -1543,7 +1452,7 @@ const AddSource = ({ route, navigation }) => {
     if (projectListStatus) {
       params.cont_project_refno = projectListFullData.filter((el) => {
         return el.project_name === projectList;
-      })[0].cont_project_refno;
+      })[0].cont_project_refno.toString();
     }
 
     if (invoiceStatus) {
@@ -1555,7 +1464,7 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (paymentGroupStatus) {
-      params.payment_group_refno = paymentGroupID;
+      params.payment_group_refno = paymentGroupID.toString();
     }
 
     if (contactTypeStatus) {
@@ -1563,11 +1472,22 @@ const AddSource = ({ route, navigation }) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
     }
+    else {
+      params.pck_contacttype_refno = "0";
+    }
+
+    if (newContactNameStatus) {
+      params.contact_name = contactName.trim() == "" ? "" : contactName.trim();
+    }
+
+    if (newMobileNumberStatus) {
+      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+    }
 
     if (rentalDescriptionStatus) {
       params.pck_sub_category_notes = rentalDescription.trim() == "" ? "" : rentalDescription.trim();
     }
-    console.log(params);
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "attach_receipt",
@@ -1585,11 +1505,14 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(
       Provider.API_URLS.pckaddsourcecreate,
       datas
     )
       .then((response) => {
+        //console.log('output=============');
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1638,7 +1561,7 @@ const AddSource = ({ route, navigation }) => {
       Sess_company_refno: companyID.toString(),
       Sess_branch_refno: branchID.toString(),
       Sess_designation_refno: designID.toString(),
-      pck_entrytype_refno: pktEntryTypeID,
+      pck_entrytype_refno: pktEntryTypeID.toString(),
       pck_mode_refno: "1",
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
@@ -1664,7 +1587,7 @@ const AddSource = ({ route, navigation }) => {
     if (projectListStatus) {
       params.cont_project_refno = projectListFullData.filter((el) => {
         return el.project_name === projectList;
-      })[0].cont_project_refno;
+      })[0].cont_project_refno.toString();
     }
 
     if (invoiceStatus) {
@@ -1676,7 +1599,7 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (paymentGroupStatus) {
-      params.payment_group_refno = paymentGroupID;
+      params.payment_group_refno = paymentGroupID.toString();
     }
 
     if (receivedStatus) {
@@ -1717,6 +1640,9 @@ const AddSource = ({ route, navigation }) => {
       params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
+    }
+    else {
+      params.pck_contacttype_refno = "0";
     }
 
     if (rentalDescriptionStatus) {
@@ -1857,29 +1783,29 @@ const AddSource = ({ route, navigation }) => {
           const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
           data.map((k, i) => {
             //if (i < 100) {
-              if (Array.isArray(k.phoneNumbers)) {
-                arrPhones.push(k);
-                if (k.phoneNumbers.length > 1) {
-                  if (k.phoneNumbers[0].number != null) {
-                    arrNumbers.push(
-                      k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
-                    );
-                    arrDisplayNumbers.push(
-                      k.phoneNumbers[0].number
-                    );
-                  }
-                }
-                else {
-                  if (k.phoneNumbers.number != null) {
-                    arrNumbers.push(
-                      k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
-                    );
-                    arrDisplayNumbers.push(
-                      k.phoneNumbers.number
-                    );
-                  }
+            if (Array.isArray(k.phoneNumbers)) {
+              arrPhones.push(k);
+              if (k.phoneNumbers.length > 1) {
+                if (k.phoneNumbers[0].number != null) {
+                  arrNumbers.push(
+                    k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                  );
+                  arrDisplayNumbers.push(
+                    k.phoneNumbers[0].number
+                  );
                 }
               }
+              else {
+                if (k.phoneNumbers.number != null) {
+                  arrNumbers.push(
+                    k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                  );
+                  arrDisplayNumbers.push(
+                    k.phoneNumbers.number
+                  );
+                }
+              }
+            }
             //}
           });
 
@@ -1907,7 +1833,7 @@ const AddSource = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         contact_name: name,
-        contact_phoneno: mobileNo,
+        contact_phoneno: mobileNo.length > 10 ? mobileNo.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10) : mobileNo,
         remarks: "",
         view_status: "1",
       },
@@ -1917,12 +1843,25 @@ const AddSource = ({ route, navigation }) => {
         console.log(response.data);
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
-          FetchReceiverList(null, name, subCategoryNameFullData.filter((el) => {
-            return el.subCategoryName === subCategoryName;
-          })[0].subcategoryID, null);
+
+          let subcatID = 0, ct = 0;
+          if (subCatStatus) {
+            subcatID = subCategoryNameFullData.filter((el) => {
+              return el.subCategoryName === subCategoryName;
+            })[0].subcategoryID;
+          }
+          if (contactTypeStatus) {
+            ct = contactTypeFullData.filter((el) => {
+              return el.pck_contacttype_name === contactType;
+            })[0].pck_contacttype_refno;
+          }
+
+          FetchReceiverList(null, name, subcatID, ct);
+
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
+
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);

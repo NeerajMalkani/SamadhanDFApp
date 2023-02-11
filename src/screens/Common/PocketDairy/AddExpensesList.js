@@ -90,14 +90,7 @@ const AddExpensesList = ({ navigation }) => {
     }
   };
 
-  const FetchData_Self = (from) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText(
-        "Item " + (from === "add" ? "added" : "updated") + " successfully"
-      );
-      setSnackbarColor(theme.colors.success);
-      setSnackbarVisible(true);
-    }
+  const FetchData_Self = () => {
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -138,14 +131,7 @@ const AddExpensesList = ({ navigation }) => {
       });
   };
 
-  const FetchData_Company = (from) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText(
-        "Item " + (from === "add" ? "added" : "updated") + " successfully"
-      );
-      setSnackbarColor(theme.colors.success);
-      setSnackbarVisible(true);
-    }
+  const FetchData_Company = () => {
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -158,10 +144,12 @@ const AddExpensesList = ({ navigation }) => {
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
     };
+    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
-          console.log(response.data.data);
+          //console.log(response.data.data);
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -186,6 +174,18 @@ const AddExpensesList = ({ navigation }) => {
         setSnackbarVisible(true);
         setRefreshing(false);
       });
+  };
+
+  const LoadAll = (from) => {
+    if (from === "add" || from === "update") {
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
+    FetchData_Self();
+    FetchData_Company();
   };
 
   useEffect(() => {
@@ -238,11 +238,10 @@ const AddExpensesList = ({ navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${
-            NullOrEmpty(data.item.pck_category_name)
-              ? ""
-              : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name)
+            ? ""
+            : data.item.pck_category_name
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
             setDate(data.item.pck_trans_date);
@@ -278,14 +277,14 @@ const AddExpensesList = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddExpenses", { type: "add", fetchData: FetchData_Self, tabIndex: index });
+    navigation.navigate("AddExpenses", { type: "add", fetchData: LoadAll, tabIndex: index });
   };
 
-  const EditCallback_Self = (data, rowMap) => {
+  const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddExpenses", {
       type: "edit",
-      fetchData: FetchData_Self,
+      fetchData: LoadAll,
       data: {
         pck_trans_refno: data.item.pck_trans_refno,
         createby_user_refno: data.item.createby_user_refno,
@@ -319,50 +318,12 @@ const AddExpensesList = ({ navigation }) => {
         invoice_no: data.item.invoice_no,
         payment_type_refno: data.item.payment_type_refno,
         dynamic_expenses_refno: data.item.dynamic_expenses_refno,
+        pck_contacttype_refno: data.item.pck_contacttype_refno,
+        pck_sub_category_notes: data.item.pck_sub_category_notes,
       },
     });
   };
-  const EditCallback_Company = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddExpenses", {
-      type: "edit",
-      fetchData: FetchData_Company,
-      data: {
-        pck_trans_refno: data.item.pck_trans_refno,
-        createby_user_refno: data.item.createby_user_refno,
-        pck_trans_date: data.item.pck_trans_date,
-        pck_entrytype_refno: data.item.pck_entrytype_refno,
-        pck_entrytype_name: data.item.pck_entrytype_name,
-        pck_mode_refno: data.item.pck_mode_refno,
-        pck_mode_name: data.item.pck_mode_name,
-        pck_category_refno: data.item.pck_category_refno,
-        pck_category_name: data.item.pck_category_name,
-        pck_sub_category_refno: data.item.pck_sub_category_refno,
-        pck_sub_category_name: data.item.pck_sub_category_name,
-        pck_mycontact_refno: data.item.pck_mycontact_refno,
-        pck_mybank_refno: data.item.pck_mybank_refno,
-        utr_no: data.item.utr_no,
-        deposit_type_refno: data.item.deposit_type_refno,
-        pdc_cheque_status: data.item.pdc_cheque_status,
-        cheque_date: data.item.cheque_date,
-        cheque_no: data.item.cheque_no,
-        amount: data.item.amount,
-        notes: data.item.notes,
-        recurring_status: data.item.recurring_status,
-        reminder_date: data.item.reminder_date,
-        attach_receipt_url: data.item.attach_receipt_url,
-        cardtype_refno: data.item.cardtype_refno,
-        pck_card_mybank_refno: data.item.pck_card_mybank_refno,
-        due_date: data.item.due_date,
-        view_status: data.item.view_status,
-        myclient_refno: data.item.myclient_refno,
-        cont_project_refno: data.item.cont_project_refno,
-        invoice_no: data.item.invoice_no,
-        payment_type_refno: data.item.payment_type_refno,
-        dynamic_expenses_refno: data.item.dynamic_expenses_refno,
-      },
-    });
-  };
+
   //#endregion
 
   const renderScene = ({ route }) => {
@@ -408,7 +369,7 @@ const AddExpensesList = ({ navigation }) => {
                       rightOpenValue={-72}
                       renderItem={(data) => RenderItems(data)}
                       renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback_Self])
+                        RenderHiddenItems(data, rowMap, [EditCallback])
                       }
                     />
                   </View>
@@ -463,7 +424,7 @@ const AddExpensesList = ({ navigation }) => {
                       rightOpenValue={-72}
                       renderItem={(data) => RenderItems(data)}
                       renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback_Company])
+                        RenderHiddenItems(data, rowMap, [EditCallback])
                       }
                     />
                   </View>

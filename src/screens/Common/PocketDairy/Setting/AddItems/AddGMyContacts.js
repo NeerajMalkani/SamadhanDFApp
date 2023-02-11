@@ -221,8 +221,8 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
             }
             // }
           });
-          console.log(arrNumbers[0]);
-          console.log(arrPhones[0]);
+          //console.log(arrNumbers[0]);
+          //console.log(arrPhones[0]);
           setIsContactLoading(false);
           navigation.navigate("PhoneContacts", {
             phoneNumbers: arrPhones,
