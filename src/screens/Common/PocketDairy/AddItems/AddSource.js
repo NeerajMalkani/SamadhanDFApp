@@ -415,13 +415,12 @@ const AddSource = ({ route, navigation }) => {
         r.selected = false;
         if (r.id == data.payment_type_refno) {
           r.selected = true;
+          setPaymentTypeID(r.value);
         }
       });
 
       setPaymentRB(recc);
     }
-
-
 
     setCommonStatus(true);
 
@@ -1562,7 +1561,11 @@ const AddSource = ({ route, navigation }) => {
       Sess_branch_refno: branchID.toString(),
       Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID.toString(),
-      pck_mode_refno: "1",
+      pck_mode_refno: receiptModeFullData
+      .filter((el) => {
+        return el.pckModeName === receiptMode;
+      })[0]
+      .pckModeID.toString(),
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
       })[0].pckCategoryID,
@@ -1663,8 +1666,16 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddsourceupdate, datas)
+    console.log(params);
+    console.log('params up================');
+    console.log(type);
+    Provider.createDFPocketDairyWithHeader(
+      type == "edit"
+      ? Provider.API_URLS.pckaddsourceupdate
+      : Provider.API_URLS.pck_companysource_verify_action,
+       datas)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();

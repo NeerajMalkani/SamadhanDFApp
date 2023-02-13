@@ -50,7 +50,9 @@ const VerifyCompanySource = ({ route, navigation }) => {
   const [upiquery, setUpiQuery] = React.useState("");
   const [verifyquery, setVerifyQuery] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
+  const [verified, setVerified] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(
     theme.colors.success
@@ -155,12 +157,15 @@ const VerifyCompanySource = ({ route, navigation }) => {
         Sess_branch_refno: branchID.toString(),
       },
     };
+    //console.log(params);
     Provider.createDFPocketDairy(
       Provider.API_URLS.pck_companysource_all_verified_gridlist,
       params
     )
       .then((response) => {
+        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
+
           if (response.data.data) {
             setAllVerifiedData(response.data.data);
           }
@@ -225,7 +230,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
   //   );
   // }, [allverifiedData, verifyquery]);
 
-  const RenderItems = (data, mode) => {
+  const RenderItems = (data, mode, isVerified) => {
     return (
       <View
         style={[
@@ -239,12 +244,12 @@ const VerifyCompanySource = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${
-            NullOrEmpty(data.item?.pck_category_name)
-              ? ""
-              : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Employee Name/Code: ${NullOrEmpty(data.item?.pck_category_name)
+            ? ""
+            : data.item.pck_category_name
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
+            setVerified(isVerified);
             setCurrent(data.item);
             setMode(mode);
             refRBSheet.current.open();
@@ -313,7 +318,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={cashData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data, route.key)}
+                      renderItem={(data) => RenderItems(data, route.key, false)}
                     />
                   </View>
                 ) : (
@@ -367,7 +372,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={upiData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data, route.key)}
+                      renderItem={(data) => RenderItems(data, route.key, false)}
                     />
                   </View>
                 ) : (
@@ -421,7 +426,7 @@ const VerifyCompanySource = ({ route, navigation }) => {
                       data={verifiedData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data, route.key)}
+                      renderItem={(data) => RenderItems(data, route.key, true)}
                     />
                   </View>
                 ) : (
@@ -507,30 +512,37 @@ const VerifyCompanySource = ({ route, navigation }) => {
           <ScrollView>
             <View
               style={[
+                Styles.flex1,
                 Styles.width100per,
                 Styles.paddingTop24,
-                Styles.paddingHorizontal32,
+                Styles.paddingHorizontal16,
                 { elevation: 3 },
               ]}
             >
-              <SheetElement current={current} />
-              <Button
-                icon={"cash-refund"}
-                mode="contained"
-                onPress={() => {
-                  navigation.navigate(
-                    mode == "cash" ? "AddExpenses" : "AddSource",
-                    {
-                      type: "verify",
-                      data: current,
-                      fetchData: LoadAll,
-                    }
-                  );
-                  refRBSheet.current.close();
-                }}
-              >
-                Verify
-              </Button>
+              <SheetElement current={current} type="fin-list" />
+              {verified == false &&
+                <>
+                  <Button
+                    icon={"cash-refund"}
+                    mode="contained"
+                    onPress={() => {
+                      navigation.navigate(
+                        mode == "cash" ? "AddExpenses" : "AddSource",
+                        {
+                          type: "verify",
+                          mode: "source",
+                          data: current,
+                          fetchData: LoadAll,
+                        }
+                      );
+                      refRBSheet.current.close();
+                    }}
+                  >
+                    Verify
+                  </Button>
+                </>
+              }
+
             </View>
           </ScrollView>
         </View>

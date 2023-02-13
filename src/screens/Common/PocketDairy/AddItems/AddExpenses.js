@@ -1,7 +1,7 @@
 import moment from "moment";
 import uuid from "react-native-uuid";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Image, View } from "react-native";
+import { ScrollView, Image, View, LogBox } from "react-native";
 import {
   Button,
   Card,
@@ -37,6 +37,12 @@ let userID = 0,
   _pktEntryTypeID = 0,
   designID = 0,
   companyAdminID = 0;
+
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+  "Material-UI: The `css` function is deprecated. Use the `styleFunctionSx` instead",
+  "source.uri should not be an empty string",
+]);
 
 const AddExpenses = ({ route, navigation }) => {
   const [RecurringRadioButtons, setRecurringRadioButtons] = useState([
@@ -283,6 +289,7 @@ const AddExpenses = ({ route, navigation }) => {
         SetEditData(route.params.data);
       }
       else if (route.params.type === "verify") {
+        console.log('verify data');
         FetchPayToCompanyData(route.params.data.pck_trans_refno);
       }
     }
@@ -299,7 +306,9 @@ const AddExpenses = ({ route, navigation }) => {
           projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
           :
           route.params.type === "verify" ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
-            : 0
+            :
+            route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText ?
+              projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO : 0
         ,
         pck_entrytype_refno:
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
@@ -309,6 +318,7 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            //console.log(response.data.data[0]);
             SetEditData(response.data.data[0]);
           }
         } else {
@@ -327,8 +337,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const SetEditData = (data) => {
-    //console.log('start edit data =====================');
-    //console.log(route.params);
 
     setcollectedAmount(data.Collected_ActualAmount);
     setpaidAmount(data.TotalPaidAmount);
@@ -471,6 +479,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       data.dynamic_expenses_refno != null &&
       data.dynamic_expenses_refno != "0"
+      || route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
     ) {
       setProjectExpenseStatus(true);
       FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
@@ -551,21 +560,14 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //console.log('payment mode ============');
-            //console.log(editID);
-            //console.log(response.data.data);
             response.data.data = APIConverter(response.data.data);
             setPayModeFullData(response.data.data);
             const receiptMode = response.data.data.map(
               (data) => data.pckModeName
             );
             setPayModeData(receiptMode);
-            //console.log(response.data.data);
             if (editID != "") {
-              //console.log('edit start ****************************');
-              //  //console.log(response.data.data.filter((el) => {
-              //     return el.pckModeID == editID;
-              //   })[0].pckModeName);
+
               setPayMode(
                 response.data.data.filter((el) => {
                   return el.pckModeID == editID;
@@ -656,12 +658,10 @@ const AddExpenses = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
       .then((response) => {
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setContactTypeFullData(response.data.data);
-            //console.log(response.data.data);
             const ct = response.data.data.map(
               (data) => data.pck_contacttype_name
             );
@@ -723,7 +723,6 @@ const AddExpenses = ({ route, navigation }) => {
         pck_category_refno: categoryID,
       },
     };
-    //console.log(params);
     Provider.createDFPocketDairy(
       Provider.API_URLS.getsubcategoryname_pckaddexpensesform,
       params
@@ -731,8 +730,6 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //console.log('edit data =============');
-            //console.log(response.data.data);
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
             setProjectExpenseFullData(response.data.data);
             if (
@@ -797,7 +794,8 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchBankList = (editID) => {
-    ////console.log('calling bank======');
+    console.log('calling bank');
+    console.log(editID);
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -810,10 +808,8 @@ const AddExpenses = ({ route, navigation }) => {
           projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO,
       },
     };
-    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -823,6 +819,11 @@ const AddExpenses = ({ route, navigation }) => {
             setMyBankData(bank);
 
             if (editID != null) {
+              console.log('=============');
+              console.log(response.data.data);
+              console.log(response.data.data.filter((el) => {
+                return el.bank_refno === editID;
+              })[0].bankName);
               setMyBank(
                 response.data.data.filter((el) => {
                   return el.bank_refno === editID;
@@ -866,7 +867,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchReceiverList = (editID, contactName, subCategoryID, contactTypeID) => {
-    ////console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -876,11 +876,8 @@ const AddExpenses = ({ route, navigation }) => {
         UserPhoneBookAllContactList: ""
       },
     };
-    ////console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        ////console.log('Receiiver contact==============');
-        ////console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -914,7 +911,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchCardType = (editID) => {
-    //console.log('start card type');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -925,18 +921,13 @@ const AddExpenses = ({ route, navigation }) => {
       params
     )
       .then((response) => {
-        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCardTypeFullData(response.data.data);
             const cardType = response.data.data.map(
               (data) => data.cardtype_name
             );
-            //console.log(cardType);
             setCardTypeData(cardType);
-            //console.log('card type setting===================');
-            //console.log(editID);
-            //console.log(response.data.data);
 
             if (editID != "") {
               setCardType(
@@ -952,14 +943,12 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
-    ////console.log('calling bank======');
     let params = {
       data: {
         Sess_UserRefno: userID,
         cardtype_refno: cardtypeID,
       },
     };
-    ////console.log(params);
     Provider.createDFPocketDairy(
       Provider.API_URLS.getcardbankname_pckaddexpensesform,
       params
@@ -1031,14 +1020,10 @@ const AddExpenses = ({ route, navigation }) => {
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
-        //console.log('granted permission =====================');
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-        //console.log(data.length);
         if (data.length > 0) {
-          //console.log(data[0]);
-          //console.log(data[1]);
           const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
           data.map((k, i) => {
             // if (i < 100) {
@@ -1069,9 +1054,6 @@ const AddExpenses = ({ route, navigation }) => {
             }
             // }
           });
-          //console.log('complete loop');
-          //console.log(arrPhones);
-          //console.log(arrPhones);
           let obj = {};
           arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
           CheckContactList(obj, arrPhones);
@@ -1088,7 +1070,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const CheckContactList = (contactList, originalList) => {
-    console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -1098,18 +1079,11 @@ const AddExpenses = ({ route, navigation }) => {
         UserPhoneBookAllContactList: contactList
       }
     };
-    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        //console.log('Receiiver contact==============');
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('updated phone contact');
-            //console.log(originalList);
-            //console.log(response.data.data);
             var margedList = [];
-            console.log(originalList.length);
             let ct = 0;
             if (contactTypeStatus) {
               ct = contactTypeFullData.filter((el) => {
@@ -1144,7 +1118,6 @@ const AddExpenses = ({ route, navigation }) => {
               }
             });
 
-            //console.log(margedList);
             setIsContactLoading(false);
             navigation.navigate("PhoneContactDirectUpload", {
               phoneNumbers: margedList,
@@ -1361,7 +1334,6 @@ const AddExpenses = ({ route, navigation }) => {
       setContactTypeStatus(true);
       FetchContactType();
     } else {
-      console.log('step-1');
       setSubCatStatus(true);
       setClientListstatus(false);
       FetchExpenseSubCategory(a[0].pckCategoryID);
@@ -1413,11 +1385,6 @@ const AddExpenses = ({ route, navigation }) => {
     let deposit = depositeTypeFullData.filter((el) => {
       return el.deposit_type_name === depositeType;
     });
-
-    //console.log(mode);
-    //console.log(category);
-    //console.log(subcat);
-    //console.log(deposit);
 
     if (mode[0].pckModeID == "1") {
       if (subcat[0].subcategoryID == "8") {
@@ -1497,10 +1464,6 @@ const AddExpenses = ({ route, navigation }) => {
       return el.deposit_type_name === text;
     });
 
-    //console.log(mode);
-    //console.log(subcat);
-    //console.log(deposit);
-
     FetchBankList();
     setBankStatus(true);
     setChequeNoStatus(true);
@@ -1540,7 +1503,6 @@ const AddExpenses = ({ route, navigation }) => {
     setCommonDisplayStatus(false);
     setButtonStatus(true);
     setrecurringDateFlag("1");
-    console.log('step-2');
     setSubCatStatus(true);
     setContactTypeStatus(false);
     setNewContactNameStatus(false);
@@ -1560,8 +1522,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const onAmount = (text) => {
-    //console.log(parseFloat(text));
-    //console.log(route.params);
 
     if (parseFloat(text) > parseFloat(balanceAmount.replace(/,/g, ""))) {
       settAmount("");
@@ -1633,7 +1593,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    //console.log('insert===================');
     const datas = new FormData();
     let params = {
       Sess_UserRefno: userID,
@@ -1644,14 +1603,11 @@ const AddExpenses = ({ route, navigation }) => {
       pck_mode_refno: payModeFullData.filter((el) => {
         return el.pckModeName === payMode;
       })[0].pckModeID,
-
       pck_category_refno: expensesFullData.filter((el) => {
         return el.categoryName === expenses;
       })[0].pckCategoryID,
-
       amount: amount.trim(),
       notes: notes.trim(),
-
       view_status: checked ? "1" : "0",
     };
 
@@ -1779,14 +1735,14 @@ const AddExpenses = ({ route, navigation }) => {
     );
 
     //console.log(params);
-    console.log('data params ================');
-    console.log(datas);
+    // console.log('data params ================');
+    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(
       Provider.API_URLS.pckaddexpensescreate,
       datas
     )
       .then((response) => {
-        //console.log(response.data);
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1805,8 +1761,8 @@ const AddExpenses = ({ route, navigation }) => {
       });
   };
 
-  const UpdateData = (type) => {
-    //console.log('update===================');
+  const UpdateData = (type, mode) => {
+    console.log('update===================');
     const datas = new FormData();
     let params = {
       Sess_UserRefno: userID,
@@ -1951,13 +1907,16 @@ const AddExpenses = ({ route, navigation }) => {
         }
         : ""
     );
-
+    console.log(params);
+    console.log('params up================');
+    console.log(type);
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddexpensesupdate
-        : Provider.API_URLS.pck_companyexpenses_verify_action,
+        : mode == "source" ? Provider.API_URLS.pck_companysource_verify_action : Provider.API_URLS.pck_companyexpenses_verify_action ,
       datas)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -2057,7 +2016,7 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (isValid) {
       if (route.params.type === "edit" || route.params.type === "verify") {
-        UpdateData(route.params.type);
+        UpdateData(route.params.type, route.params.mode);
       } else {
         InsertData();
       }
@@ -2550,10 +2509,10 @@ const AddExpenses = ({ route, navigation }) => {
                   Styles.marginTop16,
                 ]}
               >
-                <Image
+                {/* <Image
                   source={{ uri: image }}
                   style={[Styles.width104, Styles.height96, Styles.border1]}
-                />
+                /> */}
                 <Button mode="text" onPress={chooseFile}>
                   {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
                 </Button>

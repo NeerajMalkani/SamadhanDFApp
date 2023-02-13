@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, TouchableNativeFeedback, View, Modal, Image, ImageBackground } from "react-native";
+import { ScrollView, TouchableNativeFeedback, View, Modal, Image, ImageBackground, LogBox } from "react-native";
 import { ActivityIndicator, Avatar, Button, Caption, Card, Dialog, Paragraph, Portal, Snackbar, Text, Title, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Styles } from "../styles/styles";
@@ -22,6 +22,11 @@ let roleID = 0,
   userID = 0,
   groupRefNo = 0;
 var _user_count = null;
+
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+  "Material-UI: The `css` function is deprecated. Use the `styleFunctionSx` instead",
+]);
 
 const HomeScreen = ({ route, navigation }) => {
   //#region Variables

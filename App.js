@@ -929,6 +929,11 @@ export default function App() {
                 name="BranchListScreen"
                 component={BranchListScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionScreen"
+                component={PocketTransactionScreen}
+              />
             </Drawer.Navigator>
           );
         case 6:

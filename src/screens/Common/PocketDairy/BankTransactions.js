@@ -118,7 +118,9 @@ const BankTransactionScreen = ({ navigation }) => {
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
+                        console.log(response.data.data);
+                        //response.data.data = APIConverter(response.data.data);
+                        
                         setBankName(response.data.data[0].pck_mybank_name);
                         setAvailableBalance(response.data.data[0].pck_mybank_amount);
                         const lisData = [...response.data.data];
@@ -252,9 +254,9 @@ const BankTransactionScreen = ({ navigation }) => {
                 <TouchableOpacity activeOpacity={1}
                     onPress={() => {
                         refRBSheet.current.open();
-                        setCategoryName(data.item.categoryName);
+                        setCategoryName(data.item.pck_category_name);
                         setSubCategoryName(data.item.pck_sub_category_name);
-                        setTransactionTypeName(data.item.transTypeName);
+                        setTransactionTypeName(data.item.pck_transtype_name);
                         setAmount(data.item.amount);
                         setCurrentBalance(data.item.current_balance);
                         setNotes(data.item.notes);
@@ -265,7 +267,7 @@ const BankTransactionScreen = ({ navigation }) => {
                     Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
                     <View style={[Styles.width50per, Styles.flexColumn]}>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart, Styles.flexAlignCenter]}>
-                            <Text>{data.item.categoryName}</Text>
+                            <Text>{data.item.is_opening_balance == "1" ? "Opening Balance" : data.item.pck_category_name}</Text>
                         </View>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart,
                         Styles.flexAlignCenter, Styles.marginTop4]}>
@@ -277,7 +279,7 @@ const BankTransactionScreen = ({ navigation }) => {
                     </View>
                     <View style={[Styles.width50per, Styles.flexColumn, Styles.flexSpaceBetween]}>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyEnd, Styles.flexAlignCenter]}>
-                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
+                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
                         </View>
                         <View style={[Styles.width100per,]}>
                             <Text style={[Styles.textRight]}>Balance: <Icon name="currency-inr" size={14} />{data.item.current_balance}</Text>
@@ -285,14 +287,14 @@ const BankTransactionScreen = ({ navigation }) => {
                     </View>
                 </TouchableOpacity>
                 {/* <List.Item
-                    title={data.item.categoryName}
+                    title={data.item.pck_category_name}
                     titleStyle={{ fontSize: 18 }}
                     description={`Transaction Type: ${data.item.pck_sub_category_name}\nAmount: ${data.item.amount}`}
                     onPress={() => {
                         refRBSheet.current.open();
 
-                        setTransactionTypeName(data.item.transactionTypeName);
-                        setCategoryName(data.item.categoryName);
+                        setTransactionTypeName(data.item.pck_transtype_name);
+                        setCategoryName(data.item.pck_category_name);
                         setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
                         setDisplay(data.item.display);
                     }}
@@ -315,10 +317,10 @@ const BankTransactionScreen = ({ navigation }) => {
             fetchData: FetchData,
             data: {
                 id: data.item.id,
-                categoryName: data.item.categoryName,
+                categoryName: data.item.pck_category_name,
                 display: data.item.display,
-                pckCategoryID: data.item.pckCategoryID,
-                transactionTypeName: data.item.transactionTypeName,
+                pckCategoryID: data.item.pck_category_refno,
+                transactionTypeName: data.item.pck_transtype_name,
             },
         });
     };
@@ -417,8 +419,6 @@ const BankTransactionScreen = ({ navigation }) => {
                                             <View>
                                                 <Text style={[Styles.fontSize16]}>{transactionTypeName}</Text>
                                             </View>
-
-
                                         </View>
                                     </>
                                 ) :

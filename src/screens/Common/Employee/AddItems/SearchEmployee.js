@@ -156,7 +156,7 @@ const SearchEmployee = ({ route, navigation }) => {
     console.log("xyeff", params);
     Provider.createDFCommon(Provider.API_URLS.employeeadd, params)
       .then((response) => {
-        // console.log();
+        console.log(response.data);
         if (
           response.data &&
           response.data.code === 200 &&
@@ -521,7 +521,7 @@ const SearchEmployee = ({ route, navigation }) => {
           ) : (
             <NoItems
               icon="format-list-bulleted"
-              text="No records found. Add records by clicking on plus icon."
+              text="No records found"
             />
           )}
         </View>

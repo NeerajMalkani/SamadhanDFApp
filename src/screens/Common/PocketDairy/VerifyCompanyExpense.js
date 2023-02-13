@@ -56,6 +56,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
     theme.colors.success
   );
   const [current, setCurrent] = useState({});
+  const [verified, setVerified] = React.useState(false);
 
   const refRBSheet = useRef();
 
@@ -148,6 +149,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
       params
     )
       .then((response) => {
+        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setAllVerifiedData(response.data.data);
@@ -218,7 +220,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
     );
   }, [allverifiedData, verifyquery]);
 
-  const RenderItems = (data) => {
+  const RenderItems = (data, isVerified) => {
     return (
       <View
         style={[
@@ -232,12 +234,12 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Employee Name/Code: ${
-            NullOrEmpty(data.item.pck_category_name)
-              ? ""
-              : data.item.pck_category_name
-          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Employee Name/Code: ${NullOrEmpty(data.item.pck_category_name)
+            ? ""
+            : data.item.pck_category_name
+            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
+            setVerified(isVerified);
             setCurrent(data.item);
             refRBSheet.current.open();
           }}
@@ -305,7 +307,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                       data={cashData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, false)}
                     />
                   </View>
                 ) : (
@@ -359,7 +361,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                       data={upiData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, false)}
                     />
                   </View>
                 ) : (
@@ -413,7 +415,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                       data={verifiedData}
                       disableRightSwipe={true}
                       rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
+                      renderItem={(data) => RenderItems(data, true)}
                     />
                   </View>
                 ) : (
@@ -497,7 +499,7 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
             {current.pck_entrytype_name}
           </Title>
           <ScrollView>
-            <SheetElement current={current} />
+            <SheetElement current={current} type="fin-list" />
             <View
               style={[
                 Styles.width100per,
@@ -506,20 +508,26 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
                 { elevation: 3 },
               ]}
             >
-              <Button
-                icon={"cash-refund"}
-                mode="contained"
-                onPress={() => {
-                  navigation.navigate("AddExpenses", {
-                    type: "verify",
-                    data: current,
-                    fetchData: LoadAll,
-                  });
-                  refRBSheet.current.close();
-                }}
-              >
-                Verify
-              </Button>
+              {verified == false &&
+                <>
+                  <Button
+                    icon={"cash-refund"}
+                    mode="contained"
+                    onPress={() => {
+                      navigation.navigate("AddExpenses", {
+                        type: "verify",
+                        mode: "expenses",
+                        data: current,
+                        fetchData: LoadAll,
+                      });
+                      refRBSheet.current.close();
+                    }}
+                  >
+                    Verify
+                  </Button>
+                </>
+              }
+
             </View>
           </ScrollView>
         </View>

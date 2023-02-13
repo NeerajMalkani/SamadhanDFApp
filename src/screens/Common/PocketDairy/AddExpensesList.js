@@ -515,7 +515,7 @@ const AddExpensesList = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{entryType}</Title>
           <ScrollView>
-            <SheetElement current={current} />
+            <SheetElement current={current} type="fin-list" />
             {/* <List.Item title="Entry Type " description={entryType} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item

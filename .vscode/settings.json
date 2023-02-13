@@ -1,2 +1,7 @@
 {
+    "terminal.integrated.env.windows": {
+    
+    },
+    "terminal.integrated.showWarnings":false
+
 }

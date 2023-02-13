@@ -188,7 +188,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                     Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
                     <View style={[Styles.width50per, Styles.flexColumn]}>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart, Styles.flexAlignCenter]}>
-                            <Text>{data.item.categoryName}</Text>
+                            <Text>{data.item.pck_category_name}</Text>
                         </View>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart,
                         Styles.flexAlignCenter, Styles.marginTop4]}>
@@ -200,7 +200,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                     </View>
                     <View style={[Styles.width50per, Styles.flexColumn, Styles.flexSpaceBetween]}>
                         <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyEnd, Styles.flexAlignCenter]}>
-                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.transtypeID == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
+                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
                         </View>
                         <View style={[Styles.width100per,]}>
                             <Text style={[Styles.textRight]}>Balance: <Icon name="currency-inr" size={14} />{data.item.current_balance}</Text>

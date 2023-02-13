@@ -102,6 +102,12 @@ const AddSourceList = ({ route, navigation }) => {
     }
   };
 
+  const ResetFields = () => {
+    setPDCStatus(false);
+    setPayToCompanyStatus(false);
+
+  };
+
   const FetchData_Self = () => {
 
     let params = {
@@ -161,8 +167,6 @@ const AddSourceList = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log("*****************************************");
-            console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -189,6 +193,7 @@ const AddSourceList = ({ route, navigation }) => {
   };
 
   const LoadAll = (from) => {
+    ResetFields();
     if (from === "add" || from === "update") {
       setSnackbarText(
         "Item " + (from === "add" ? "added" : "updated") + " successfully"
@@ -274,8 +279,7 @@ const AddSourceList = ({ route, navigation }) => {
               data.item.BalanceUnPaidPayment != null &&
               parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, "")) >
               0 &&
-              data.item.pck_category_refno ==
-              projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
+              data.item.pck_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
             ) {
               setPayToCompanyStatus(true);
             }
@@ -310,7 +314,6 @@ const AddSourceList = ({ route, navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    //console.log(data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddSource", {
       type: "edit",
@@ -550,7 +553,7 @@ const AddSourceList = ({ route, navigation }) => {
             />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
             <List.Item title="Amount" description={amount} /> */}
-            <SheetElement current={current} />
+            <SheetElement current={current } type="fin-list" />
 
             {PayToCompanyStatus && (
               <>
