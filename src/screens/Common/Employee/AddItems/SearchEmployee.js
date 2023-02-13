@@ -304,13 +304,14 @@ const SearchEmployee = ({ route, navigation }) => {
   useEffect(() => {
     console.log(mobileNo);
     if (mobileNo.length > 0) {
-      console.log("here");
+      console.log("hereq");
       let params = {
         data: {
           Sess_UserRefno: userID.toString(),
           mobile_no: mobileNo,
         },
       };
+      setNumbers([]);
       Provider.createDFCommon(Provider.API_URLS.mobilenoautocomplete, params)
         .then((response) => {
           console.log(response.data);
@@ -330,10 +331,11 @@ const SearchEmployee = ({ route, navigation }) => {
     if (aadharNo.length > 0) {
       let params = {
         data: {
-          Sess_UserRefno: userID,
+          Sess_UserRefno: userID.toString(),
           aadhar_no: aadharNo,
         },
       };
+      setAadhar([]);
       Provider.createDFCommon(Provider.API_URLS.aadharnoautocomplete, params)
         .then((response) => {
           if (response.data?.data) {

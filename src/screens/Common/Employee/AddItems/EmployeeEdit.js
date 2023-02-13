@@ -869,12 +869,22 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const onDepartmentChanged = (selectedItem) => {
-    setDepartmentName(selectedItem);
+    let d = departmentFullData.filter((el) => {
+      return el.department_name === selectedItem;
+    });
+
+    setDepartmentName(d[0].department_name);
+    setDepartmentID(d[0].department_refno);
     setDepartmentError(false);
   };
 
   const onDesignationChanged = (selectedItem) => {
-    setDesignationName(selectedItem);
+    let b = designationFullData.filter((el) => {
+      return el.designation_name === selectedItem;
+    });
+
+    setDesignationName(b[0].designation_name);
+    setDesignationID(b[0].designation_refno);
     setDesignationError(false);
   };
 
