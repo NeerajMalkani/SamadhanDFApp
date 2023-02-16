@@ -43,7 +43,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const FetchEstimationData = () => {
-    //console.log('get details ==========');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -51,10 +50,8 @@ const GetEstimationScreen = ({ route, navigation }) => {
         estimation_refno: route.params.userDesignEstimationID.toString()
       }
     };
-    //console.log(params);
     Provider.createDFCommon(Provider.API_URLS.getsc_estimationdetail, params)
       .then((response) => {
-        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             FetchEstimationMaterialSetupData();
@@ -80,7 +77,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const FetchEstimationMaterialSetupData = (materialSetupID) => {
-    console.log('material details==========');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -88,15 +84,10 @@ const GetEstimationScreen = ({ route, navigation }) => {
         estimation_refno: route.params.userDesignEstimationID.toString(),
       }
     };
-    console.log(params);
+
     Provider.createDFCommon(Provider.API_URLS.getsc_estimationmaterialdetail, params)
       .then((response) => {
-        console.log('get data========');
-        // console.log("full data", response);
-        // console.log("half data", response.data);
-        console.log("data", response.data.data[0].material_data);
-        //console.log(JSON.stringify(response.data.data.material_data));
-        console.log('data done========');
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setEstimationDataForMaterialSetup(response.data.data);
@@ -122,17 +113,23 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
   const InsertDesignEstimationEnquiry = () => {
     let params = {
-      ID: route.params.userDesignEstimationID,
-      SubtotalAmount: parseFloat(subtotal),
-      LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost),
-      TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost)).toFixed(4),
-      Status: true,
+      // ID: route.params.userDesignEstimationID,
+      // SubtotalAmount: parseFloat(subtotal),
+      // LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost),
+      // TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost)).toFixed(4),
+      // Status: true,
+
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        estimation_refno: route.params.userDesignEstimationID.toString()
+      }
     };
-    if (route.params.isContractor) {
-      params.ClientID = route.params.clientID;
-      params.ApprovalStatus = 0;
-    }
-    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+    // if (route.params.isContractor) {
+    //   params.ClientID = route.params.clientID;
+    //   params.ApprovalStatus = 0;
+    // }
+    Provider.createDFCommon(Provider.API_URLS.sc_estimationsendenquiry, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (route.params.isContractor) {
@@ -179,7 +176,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
-    console.log('step 1');
     setBrandName(selectedItem);
     const selecedBrand = uniqueBrandsData[parseInt(index)];
     const appliedProducts = brandsFullData.filter((el) => {
@@ -231,42 +227,47 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const CreateMaterialsTable = () => {
-    console.log('step 2');
     if (subtotal === 0 || !route.params.isContractor) {
-      const targetSqFt = estimationData[0].totalfoot;
-      let subtotalCal = 0;
+      //const targetSqFt = estimationData[0].totalfoot;
+      //let subtotalCal = 0;
       return (
         <View style={[Styles.flexColumn]}>
-          {estimationDataForMaterialSetup.map((k, i) => {
-            const newQuant = parseFloat(parseFloat(targetSqFt) / parseFloat(k.formula));
-            let newAmount = parseFloat(newQuant) * parseFloat(k.rate);
-            let discountedNewAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
-            subtotalCal += discountedNewAmount;
-            if (parseInt(i) === estimationDataForMaterialSetup.length - 1) {
-              setSubtotal(subtotalCal);
-            }
+          {estimationDataForMaterialSetup[0].material_data.map((k, i) => {
+
+            //const newQuant = parseFloat(parseFloat(targetSqFt) / parseFloat(k.formula));
+            //let newAmount = parseFloat(newQuant) * parseFloat(k.rate);
+            //let discountedNewAmount = newAmount - newAmount * (parseFloat(k.generalDiscount) / 100);
+            //subtotalCal += discountedNewAmount;
+            // if (parseInt(i) === estimationDataForMaterialSetup.length - 1) {
+            //   setSubtotal(subtotalCal);
+            // }
             return (
               <View key={i} style={[Styles.marginTop8, Styles.border1]}>
+
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
-                  <Subheading style={[Styles.fontBold]}>{k.productName + " > "}</Subheading>
-                  <Subheading style={[Styles.fontBold, { color: theme.colors.primary }]}>{k.brandName}</Subheading>
+                  <Subheading style={[Styles.fontBold]}>{k.productname + " >> "}</Subheading>
+                  <Subheading style={[Styles.fontBold, { color: theme.colors.primary }]}>{k.brand_name}</Subheading>
                 </View>
+
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Quantity</Subheading>
-                  <Subheading style={[Styles.flex1]}>{newQuant.toFixed(2)}</Subheading>
+                  <Subheading style={[Styles.flex1]}>{k.qty}</Subheading>
                 </View>
+
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Rate</Subheading>
-                  <Subheading style={[Styles.flex1]}>{k.rate.toFixed(4)}</Subheading>
+                  <Subheading style={[Styles.flex1]}>{k.discount_rate}</Subheading>
                 </View>
+
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Amount</Subheading>
-                  <Subheading style={[Styles.flex1]}>{newAmount.toFixed(4)}</Subheading>
+                  <Subheading style={[Styles.flex1]}>{k.amount}</Subheading>
                 </View>
-                <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
+
+                {/* <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.paddingVertical4, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>{"Amount (-" + k.generalDiscount.toFixed(0) + "%)"}</Subheading>
                   <Subheading style={[Styles.flex1]}>{discountedNewAmount.toFixed(4)}</Subheading>
-                </View>
+                </View> */}
               </View>
             );
           })}
@@ -323,7 +324,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     <Card>
                       <Card.Content style={[Styles.paddingHorizontal0]}>
                         <Text style={[Styles.paddingHorizontal16]}>Material Cost</Text>
-                        <Subheading style={[Styles.fontBold, Styles.paddingHorizontal16]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                        <Subheading style={[Styles.fontBold, Styles.paddingHorizontal16]}>{estimationData[0].total_materials_cost}</Subheading>
                         {!showMCD && showMCLC && !route.params.isContractor && (
                           <View style={[Styles.flexRow]}>
                             <Button mode="text" style={[Styles.marginStart8]} labelStyle={[Styles.fontSize12]} compact onPress={() => setShowMCD(true)}>
@@ -355,31 +356,50 @@ const GetEstimationScreen = ({ route, navigation }) => {
             )}
             {(estimationData && estimationData[0] && !estimationData[0].status) || route.params.isContractor ? (
               <View style={[Styles.padding16]}>
-                <Button
-                  mode="contained"
-                  onPress={() => {
-                    InsertDesignEstimationEnquiry();
-                  }}
-                >
-                  {route.params.isContractor ? (route.params.isUpdate ? "Update and Send Quote" : "Send Quote to Client") : "Send Enquiry"}
-                </Button>
+                {route.params.isContractor &&
+                  <>
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        InsertDesignEstimationEnquiry();
+                      }}
+                    >
+                      {route.params.isUpdate ? "Update and Send Quote" : "Send Quote to Client"}
+                    </Button>
+                  </>
+                }
+                {!route.params.isContractor && !route.params.enquirySent &&
+                  <>
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        InsertDesignEstimationEnquiry();
+                      }}
+                    >
+                      Send Enquiry
+                    </Button>
+                  </>
+                }
+                
+
+
               </View>
             ) : null}
-            {estimationDataForMaterialSetup && (
+            {estimationDataForMaterialSetup.length > 0 && (
               <View style={[Styles.flex1, { opacity: showMCD ? 1 : 0, marginBottom: showMCD ? 64 : 0 }]}>
                 <Title style={[Styles.paddingHorizontal16]}>Material Details</Title>
                 <CreateMaterialsTable />
                 <View style={[Styles.flexRow, Styles.borderTop2, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Sub Total</Subheading>
-                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{subtotal.toFixed(4)}</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{estimationDataForMaterialSetup[0].subtotal}</Subheading>
                 </View>
                 <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Transport Charges</Subheading>
-                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{(subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold]}>{estimationDataForMaterialSetup[0].transport_charges}</Subheading>
                 </View>
                 <View style={[Styles.flexRow, Styles.borderTop1, Styles.paddingHorizontal16, Styles.paddingVertical8, Styles.flexAlignCenter, { borderTopColor: theme.colors.text }]}>
                   <Subheading style={[Styles.flex1, Styles.textSecondaryColor]}>Total</Subheading>
-                  <Subheading style={[Styles.flex1, Styles.fontBold, Styles.primaryColor]}>{(subtotal + subtotal * (5 / 100)).toFixed(4)}</Subheading>
+                  <Subheading style={[Styles.flex1, Styles.fontBold, Styles.primaryColor]}>{estimationDataForMaterialSetup[0].nettotal}</Subheading>
                 </View>
               </View>
             )}

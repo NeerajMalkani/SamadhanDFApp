@@ -421,6 +421,9 @@ class Provider {
     getsc_estimation: "getsc_estimation/",
     getsc_estimationdetail: "getsc_estimationdetail/",
     getsc_estimationmaterialdetail: "getsc_estimationmaterialdetail/",
+    sc_estimationsendenquiry: "sc_estimationsendenquiry/",
+    myestimationlist: "myestimationlist/",
+    myestimationcontractordetails: "myestimationcontractordetails/",
   };
 
   createDFPocketDairy(resource, params) {

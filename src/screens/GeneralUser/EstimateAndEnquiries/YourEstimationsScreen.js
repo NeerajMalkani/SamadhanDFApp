@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { Image, RefreshControl, ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { ActivityIndicator, List, Searchbar, Snackbar, Title } from "react-native-paper";
+import { ActivityIndicator, List, Searchbar, Snackbar, Title, Portal, Dialog, Paragraph, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -12,9 +12,9 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 
-let userID = 0;
+let userID = 0, groupID = 0;
 const YourEstimationsScreen = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const listData = React.useState([]);
@@ -30,26 +30,38 @@ const YourEstimationsScreen = ({ navigation }) => {
   const [productName, setProductName] = React.useState("");
   const [totalSqFt, setTotalSqFt] = React.useState("");
   const [status, setStatus] = React.useState(false);
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+  const [contractorEstimation, setContractorEstimation] = React.useState(false);
+  const [estimationID, setEstimationID] = React.useState("");
 
   const refRBSheet = useRef();
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
+
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
       FetchData();
     }
   };
+
   const FetchData = () => {
     let params = {
-      UserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      }
     };
-    Provider.getAll(`generaluserenquiryestimations/getuserallestimation?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.myestimationlist, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          //console.log(response.data.data);
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -75,15 +87,46 @@ const YourEstimationsScreen = ({ navigation }) => {
         setRefreshing(false);
       });
   };
-  const InsertDesignEstimationEnquiry = (userDesignEstimationID, totalAmount) => {
+
+  const CheckContractorStatusOnEstimation = (userDesignEstimationID) => {
     const params = {
-      ID: userDesignEstimationID,
-      TotalAmount: totalAmount,
-      Status: true,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        estimation_refno: userDesignEstimationID.toString()
+      }
     };
-    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+    Provider.createDFCommon(Provider.API_URLS.myestimationcontractordetails, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          setContractorEstimation(true);
+        }
+        else {
+          setContractorEstimation(false);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setContractorEstimation(false);
+      });
+  };
+
+
+  const InsertDesignEstimationEnquiry = (userDesignEstimationID, totalAmount) => {
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        estimation_refno: userDesignEstimationID.toString()
+      }
+    };
+    Provider.createDFCommon(Provider.API_URLS.sc_estimationsendenquiry, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          hideDialog();
           setSnackbarText(communication.EstimationSent);
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
@@ -101,6 +144,8 @@ const YourEstimationsScreen = ({ navigation }) => {
         setSnackbarVisible(true);
       });
   };
+
+
   useEffect(() => {
     GetUserID();
   }, []);
@@ -122,19 +167,25 @@ const YourEstimationsScreen = ({ navigation }) => {
     return (
       <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
         <List.Item
-          title={data.item.designTypeName}
+          title={data.item.designtype_name}
           titleStyle={{ fontSize: 18 }}
-          description={data.item.totalAmount}
+          description={`Product Name: ${data.item.service_product_name}\nTotal Amount: ${data.item.total_amount}`}
           onPress={() => {
+            setContractorEstimation(false);
+            setEstimationID(data.item.estimation_refno);
+            if (data.item.send_enquiry_status == "1") {
+              CheckContractorStatusOnEstimation(data.item.estimation_refno);
+            }
             refRBSheet.current.open();
-            setDesignTypeName(data.item.designTypeName);
-            setEstimationNo("AUG" + pad(data.item.id.toString(), 4, "0"));
-            setDesignCode("DS-" + pad(data.item.designTypeID.toString(), 4, "0"));
-            setProductName(data.item.productName);
-            setTotalSqFt(CalculateSqFt(data.item));
-            setStatus(data.item.status);
+            setEstimationNo(data.item.estimation_no_txt);
+            setDesignCode(data.item.design_no);
+            setDesignTypeName(data.item.designtype_name);
+            setProductName(data.item.service_product_name);
+            setTotalSqFt(data.item.totalfoot);
+            setStatus(data.item.send_enquiry_status);
+
           }}
-          left={() => <Image source={{ uri: data.item.designTypeImage }} style={[Styles.width56, Styles.height56]} />}
+          left={() => <Image source={{ uri: data.item.design_image_url }} style={[Styles.width56, Styles.height56]} />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
@@ -143,12 +194,19 @@ const YourEstimationsScreen = ({ navigation }) => {
 
   const SendEnquiryCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    InsertDesignEstimationEnquiry(data.item.id, data.item.totalAmount);
+    setEstimationID(data.item.estimation_refno);
+    showDialog();
   };
+
+  const SendEnquiry = () => {
+    InsertDesignEstimationEnquiry(estimationID);
+  };
+
+
 
   const ViewDetailsCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.id, designImage: data.item.designTypeImage });
+    navigation.navigate("GetEstimationScreen", { userDesignEstimationID: data.item.estimation_refno, designImage: data.item.design_image_url, enquirySent: true });
   };
 
   const CreateActionButtons = (icon, color, callback) => {
@@ -164,7 +222,8 @@ const YourEstimationsScreen = ({ navigation }) => {
   const RenderLocalHiddenItems = (data, rowMap, callbacks) => {
     return (
       <View style={[Styles.height64, Styles.flexRowReverse, Styles.flexAlignSelfEnd, Styles.flexAlignCenter, { width: 60 }]}>
-        {CreateActionButtons("send", !data.item.status ? theme.multicolors.blue : theme.colors.backgroundSecondary, !data.item.status ? () => callbacks[0](data, rowMap) : null)}
+        {data.item.send_enquiry_status == "0" && CreateActionButtons("send", !data.item.status ? theme.multicolors.blue : theme.colors.backgroundSecondary, !data.item.status ? () => callbacks[0](data, rowMap) : null)}
+
         {CreateActionButtons("newspaper-variant", theme.multicolors.red, () => callbacks[1](data, rowMap))}
       </View>
     );
@@ -190,7 +249,7 @@ const YourEstimationsScreen = ({ navigation }) => {
     n = n + "";
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
- //#endregion 
+  //#endregion 
 
   return (
     <View style={[Styles.flex1]}>
@@ -237,10 +296,34 @@ const YourEstimationsScreen = ({ navigation }) => {
             <List.Item title="Design Code" description={designCode} />
             <List.Item title="Product Name" description={productName} />
             <List.Item title="Total Sq.Ft." description={totalSqFt} />
-            <List.Item title="Enquiry Status" descriptionStyle={{ color: status ? theme.multicolors.green : theme.multicolors.red }} description={status ? "Yes" : "No"} />
+            <List.Item title="Enquiry Status" descriptionStyle={{ color: status == "1" ? theme.multicolors.green : theme.multicolors.red }} description={status == "1" ? "Yes" : "No"} />
+            {contractorEstimation &&
+              <>
+                <View style={[Styles.flex1, Styles.marginBottom24, Styles.paddingHorizontal16]}>
+                  <Button mode="contained"
+                    onPress={() => {
+                      refRBSheet.current.close();
+                      navigation.navigate("EstimationContractorStatusScreen", { userDesignEstimationID: estimationID });
+                    }}>Check Contractor List</Button>
+                </View>
+              </>
+            }
+
           </ScrollView>
         </View>
       </RBSheet>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Confirm to Send Enquiry?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={SendEnquiry}>Ok</Button>
+            <Button onPress={hideDialog}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };

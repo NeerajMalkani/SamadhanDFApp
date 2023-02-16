@@ -179,6 +179,7 @@ import ExpensesListGeneralUserScreen from "./src/screens/Common/PocketDairy/Expe
 import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy/PocketTransactionGeneralUser";
 import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
+import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -2226,6 +2227,17 @@ export default function App() {
                 component={BranchWiseTransactionScreen}
                 options={{
                   headerTitle: "BRANCH WISE CASH",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="EstimationContractorStatusScreen"
+                component={EstimationContractorStatusScreen}
+                options={{
+                  headerTitle: "Estimation Contractor List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
