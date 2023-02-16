@@ -135,13 +135,17 @@ const HomeScreen = ({ route, navigation }) => {
             setCatalogueImagesZoom(sliderImageZoomData);
           }
         } else {
-          listData[1]([]);
           setSnackbarText("No data found");
           setIsSnackbarVisible(true);
         }
         setIsLoading(false);
       })
       .catch((e) => {
+        if (e.code === 'ECONNABORTED') {
+          console.log('Request timed out');
+        } else {
+          console.log('Error occurred', e);
+        }
         setIsLoading(false);
         setSnackbarText(e.message);
         setIsSnackbarVisible(true);
@@ -729,10 +733,10 @@ const HomeScreen = ({ route, navigation }) => {
 
                 {/* Pocket Diary */}
                 <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("PocketDiary", { type: "add" });
-                }}
-                 style={[Styles.width100per, Styles.height150, Styles.flexRow, Styles.marginTop16, Styles.borderRadius8, { elevation: 4 }]}>
+                  onPress={() => {
+                    navigation.navigate("PocketDiary", { type: "add" });
+                  }}
+                  style={[Styles.width100per, Styles.height150, Styles.flexRow, Styles.marginTop16, Styles.borderRadius8, { elevation: 4 }]}>
                   <ImageBackground source={require("../../assets/pocket-diary-bg.png")} resizeMode="cover"
                     style={[{ flex: 1, justifyContent: "center" }]}
                     imageStyle={{ borderRadius: 8 }}>

@@ -11,8 +11,7 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
 
-let userID = 0,
-  Sess_group_refno = 0;
+let userID = 0, Sess_group_refno = 0;
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -262,7 +261,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchEstimationData = (userDesignEstimationID, from) => {
@@ -277,57 +276,77 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const InsertDesignEstimationEnquiry = (from, number, subtotal, userDesignEstimationID, labourCost) => {
     const totAm = subtotal + subtotal * (5 / 100) + parseFloat(totalSqFt) * parseFloat(labourCost);
     const params = {
-      UserID: userID,
-      DesignTypeID: route.params.data.designTypeID,
-      WorkLocationID: route.params.data.workLocationID,
-      Length: lengthFeet + "." + lengthInches,
-      Width: widthFeet + "." + widthInches,
-      Status: false,
-      SubtotalAmount: subtotal ? parseFloat(subtotal) : 0,
-      LabourCost: subtotal ? parseFloat(totalSqFt) * parseFloat(labourCost) : 0,
-      TotalAmount: subtotal ? totAm : 0,
+      // UserID: userID,
+      // DesignTypeID: route.params.data.designTypeID,
+      // WorkLocationID: route.params.data.workLocationID,
+      // Length: lengthFeet + "." + lengthInches,
+      // Width: widthFeet + "." + widthInches,
+      // Status: false,
+      // SubtotalAmount: subtotal ? parseFloat(subtotal) : 0,
+      // LabourCost: subtotal ? parseFloat(totalSqFt) * parseFloat(labourCost) : 0,
+      // TotalAmount: subtotal ? totAm : 0,
+
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        clickaddmorecheck: from == "add" ? "1" : "0",
+        service_refno: route.params.data.serviceID,
+        designtype_refno: route.params.data.designTypeID,
+        product_refno: route.params.data.productID,
+        designgallery_refno: route.params.data.id,
+        lengthfoot: lengthFeet,
+        lengthinches: lengthInches,
+        widthheightfoot: widthFeet,
+        widthheightinches: widthInches,
+        totalfoot: totalSqFt
+      }
+
     };
-    if (number === "2") {
-      params.ID = userDesignEstimationID;
-    }
-    if (route.params.isContractor) {
-      params.ClientID = clientsFullData.find((el) => {
-        return el.companyName === clientName;
-      }).id;
-      params.ApprovalStatus = 0;
-    }
-    Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+    // if (number === "2") {
+    //   params.ID = userDesignEstimationID;
+    // }
+    // if (route.params.isContractor) {
+    //   params.ClientID = clientsFullData.find((el) => {
+    //     return el.companyName === clientName;
+    //   }).id;
+    //   params.ApprovalStatus = 0;
+    // }
+    //Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
+    //console.log(params);
+    Provider.createDFCommon(Provider.API_URLS.getsc_estimation, params)
       .then((response) => {
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
-          if (number === "2") {
-            if (from === "add") {
-              if (route.params.from === "home") {
-                navigation.navigate("HomeScreen");
-              } else {
-                navigation.navigate("ImageGalleryScreen");
-              }
+          //if (number === "2") {
+          if (from === "add") {
+            if (route.params.from === "home") {
+              navigation.navigate("HomeScreen");
             } else {
-              navigation.navigate("GetEstimationScreen", {
-                userDesignEstimationID: response.data.data[0].userDesignEstimationID,
-                designImage: route.params.data.designImage,
-                isContractor: route.params.isContractor,
-                fetchData: route.params.fetchData,
-                clientID: route.params.isContractor
-                  ? clientsFullData.find((el) => {
-                      return el.companyName === clientName;
-                    }).id
-                  : 0,
-              });
+              navigation.navigate("ImageGalleryScreen");
             }
           } else {
-            FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
+            navigation.navigate("GetEstimationScreen", {
+              userDesignEstimationID: response.data.data.estimation_refno,
+              designImage: route.params.data.designImage,
+              isContractor: route.params.isContractor,
+              fetchData: route.params.fetchData,
+              clientID: route.params.isContractor
+                ? clientsFullData.find((el) => {
+                  return el.companyName === clientName;
+                }).id
+                : 0,
+            });
           }
+          // } else {
+          //   console.log('step-7');
+          //   FetchEstimationData(response.data.data.estimation_refno, from);
+          // }
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);

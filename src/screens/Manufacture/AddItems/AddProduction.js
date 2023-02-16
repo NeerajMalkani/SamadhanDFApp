@@ -457,7 +457,7 @@ const AddProductScreen = ({ route, navigation }) => {
                             </HelperText>
                         </View>
                     </View>
-                    <TextInput dense mode="flat" label="Raw Mterial Width in  mmm" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+                    <TextInput dense mode="flat" label="Raw Mterial Width in  mm" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
                     <HelperText type="error" visible={error}>
                         {communication.InvalidProductName}
                     </HelperText>

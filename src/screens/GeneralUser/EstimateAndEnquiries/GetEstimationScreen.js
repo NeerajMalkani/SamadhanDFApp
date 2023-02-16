@@ -8,10 +8,10 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 
-let userID = 0;
+let userID = 0, Sess_group_refno = 0;
 const GetEstimationScreen = ({ route, navigation }) => {
 
-   //#region Variables
+  //#region Variables
   const [isLoading, setIsLoading] = React.useState(true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -29,27 +29,38 @@ const GetEstimationScreen = ({ route, navigation }) => {
   const [uniqueBrandsData, setUniqueBrandsData] = React.useState([]);
   const [brandsData, setBrandsData] = React.useState([]);
   const [brandName, setBrandName] = React.useState([]);
- //#endregion 
+  //#endregion 
 
- //#region Functions
+  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
+      FetchEstimationData();
     }
   };
 
   const FetchEstimationData = () => {
+    //console.log('get details ==========');
     let params = {
-      UserDesignEstimationID: route.params.userDesignEstimationID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        estimation_refno: route.params.userDesignEstimationID.toString()
+      }
     };
-    Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiries?${new URLSearchParams(params)}`)
+    //console.log(params);
+    Provider.createDFCommon(Provider.API_URLS.getsc_estimationdetail, params)
       .then((response) => {
+        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            FetchEstimationMaterialSetupData(response.data.data[0].id);
+            FetchEstimationMaterialSetupData();
             setEstimationData(response.data.data);
+            setIsLoading(false);
+
           }
         } else {
           setEstimationData([]);
@@ -69,11 +80,23 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const FetchEstimationMaterialSetupData = (materialSetupID) => {
+    console.log('material details==========');
     let params = {
-      MaterialSetupID: materialSetupID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: Sess_group_refno,
+        estimation_refno: route.params.userDesignEstimationID.toString(),
+      }
     };
-    Provider.getAll(`generaluserenquiryestimations/getdesignestimateenquiriesformaterialsetup?${new URLSearchParams(params)}`)
+    console.log(params);
+    Provider.createDFCommon(Provider.API_URLS.getsc_estimationmaterialdetail, params)
       .then((response) => {
+        console.log('get data========');
+        // console.log("full data", response);
+        // console.log("half data", response.data);
+        console.log("data", response.data.data[0].material_data);
+        //console.log(JSON.stringify(response.data.data.material_data));
+        console.log('data done========');
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setEstimationDataForMaterialSetup(response.data.data);
@@ -101,8 +124,8 @@ const GetEstimationScreen = ({ route, navigation }) => {
     let params = {
       ID: route.params.userDesignEstimationID,
       SubtotalAmount: parseFloat(subtotal),
-      LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost),
-      TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4),
+      LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost),
+      TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost)).toFixed(4),
       Status: true,
     };
     if (route.params.isContractor) {
@@ -152,10 +175,11 @@ const GetEstimationScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
+    console.log('step 1');
     setBrandName(selectedItem);
     const selecedBrand = uniqueBrandsData[parseInt(index)];
     const appliedProducts = brandsFullData.filter((el) => {
@@ -188,7 +212,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    FetchEstimationData();
     GetUserID();
   }, []);
 
@@ -208,8 +231,9 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const CreateMaterialsTable = () => {
+    console.log('step 2');
     if (subtotal === 0 || !route.params.isContractor) {
-      const targetSqFt = CalculateSqFt(estimationData[0]);
+      const targetSqFt = estimationData[0].totalfoot;
       let subtotalCal = 0;
       return (
         <View style={[Styles.flexColumn]}>
@@ -252,8 +276,8 @@ const GetEstimationScreen = ({ route, navigation }) => {
       return null;
     }
   };
- //#endregion 
- 
+  //#endregion 
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       {isLoading ? (
@@ -271,7 +295,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     <Card>
                       <Card.Content>
                         <Text>Total Sq.Ft.</Text>
-                        <Subheading style={[Styles.fontBold]}>{CalculateSqFt(estimationData[0])}</Subheading>
+                        <Subheading style={[Styles.fontBold]}>{estimationData[0].totalfoot}</Subheading>
                       </Card.Content>
                     </Card>
                   </View>
@@ -279,7 +303,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     <Card>
                       <Card.Content>
                         <Text>Total Amount</Text>
-                        <Subheading style={[Styles.fontBold]}>{(subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                        <Subheading style={[Styles.fontBold]}>{estimationData[0].total_amount}</Subheading>
                       </Card.Content>
                     </Card>
                   </View>
@@ -317,7 +341,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                     <Card style={[Styles.flex1]}>
                       <Card.Content>
                         <Text>Labour Cost</Text>
-                        <Subheading style={[Styles.fontBold]}>{(parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].labourCost)).toFixed(4)}</Subheading>
+                        <Subheading style={[Styles.fontBold]}>{estimationData[0].total_labours_cost}</Subheading>
                       </Card.Content>
                     </Card>
                   </View>
@@ -364,7 +388,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
             <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, Styles.borderTop2, { position: "absolute", bottom: 0, elevation: 50 }]}>
               <Card.Content style={[Styles.flexRow, Styles.flexAlignCenter, { justifyContent: "flex-end" }]}>
                 <Subheading style={[Styles.paddingEnd16]}>To buy material</Subheading>
-                <Button mode="contained" onPress={() => {}}>
+                <Button mode="contained" onPress={() => { }}>
                   Add to Cart
                 </Button>
               </Card.Content>

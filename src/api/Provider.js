@@ -1,4 +1,5 @@
 import axios from "axios";
+import { onePixelImage, timeoutLimit } from "../utils/paths";
 
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
@@ -417,6 +418,9 @@ class Provider {
     pck_companyexpenses_all_verified_gridlist:
       "pck_companyexpenses_all_verified_gridlist/",
     get_contacttype: "get_contacttype/",
+    getsc_estimation: "getsc_estimation/",
+    getsc_estimationdetail: "getsc_estimationdetail/",
+    getsc_estimationmaterialdetail: "getsc_estimationmaterialdetail/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -445,13 +449,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;
@@ -574,10 +578,39 @@ class Provider {
 
   createDFDashboard(resource, params = null) {
     if (params) {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params);
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params, { timeout: timeoutLimit });
     } else {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`);
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, { timeout: timeoutLimit });
     }
+  }
+
+  checkServerActive() {
+    console.log('start');
+    // axios.get(onePixelImage)
+    //   .then(response => {
+    //     console.log(response);
+    //     if (response.status >= 200 && response.status < 300) {
+    //       console.log('Image is available on server');
+    //     } else {
+    //       console.log('Image is not available on server');
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.log('Error checking image availability', error);
+    //   });
+    axios.get(onePixelImage, { timeout: timeoutLimit })
+      .then(response => {
+        console.log('success');
+        console.log(response.data);
+        // Handle successful response
+      })
+      .catch(error => {
+        if (error.code === 'ECONNABORTED') {
+          console.log('Request timed out');
+        } else {
+          console.log('Error occurred', error);
+        }
+      });
   }
 
   createDFAPI(resource, params) {
