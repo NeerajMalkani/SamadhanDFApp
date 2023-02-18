@@ -30,16 +30,16 @@ const Header = ({ navigation, title, isDrawer }) => {
         </TouchableNativeFeedback>
       )}
       <Title style={[Styles.textColorWhite, Styles.flexGrow, Styles.paddingStart12]}>{title}</Title>
-      <TouchableNativeFeedback>
+      {/* <TouchableNativeFeedback>
         <View
-          style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
+          style={[Styles.width48,Styles.borderred, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}
           onTouchStart={() => {
             LogoutUser();
           }}
         >
           <Icon name="logout" size={24} color={theme.colors.textLight} />
         </View>
-      </TouchableNativeFeedback>
+      </TouchableNativeFeedback> */}
     </View>
   );
 };

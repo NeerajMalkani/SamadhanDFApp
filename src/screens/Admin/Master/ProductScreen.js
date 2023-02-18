@@ -50,9 +50,11 @@ const ProductScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductFromRefNo, params)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
+            response.data.data = APIConverter(response.data.data, null, "master_product");
+            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -105,12 +107,15 @@ const ProductScreen = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
+        id: data.item.productID,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
         productName: data.item.productName,
         categoryName: data.item.categoryName,
         display: data.item.display,
+        unitId: data.item.unitId,
+        hsnsacCode: data.item.hsnsacCode,
+
       },
     });
   };

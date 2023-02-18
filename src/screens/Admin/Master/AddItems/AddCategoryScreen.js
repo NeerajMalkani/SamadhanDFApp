@@ -20,7 +20,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
   const [servicesData, setServicesData] = React.useState([]);
   const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
   const [errorSN, setSNError] = React.useState(false);
-``
+
   const [unitOfSalesData, setUnitOfSalesData] = React.useState([]);
   const [unitOfSalesName, setUnitOfSalesName] = React.useState(route.params.type === "edit" ? route.params.data.unitName : "");
   const [errorUN, setUNError] = React.useState(false);
@@ -58,7 +58,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchServices = () => {
@@ -79,7 +79,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitOfSales = () => {
@@ -96,10 +96,11 @@ const AddCategoryScreen = ({ route, navigation }) => {
             response.data.data = APIConverter(response.data.data);
             let allUnits = "";
             if (route.params.type === "edit") {
+
               const arrunitOfSalesNameNew = [];
-              unitOfSalesName.split(",").map((o) => {
+              route.params.data.unitOfSalesID.map((o) => {
                 const objTemp = response.data.data.find((el) => {
-                  return o.trim() === el.displayUnit;
+                  return o.trim() === el.id;
                 });
                 if (objTemp) {
                   arrunitOfSalesNameNew.push(objTemp.id);
@@ -107,6 +108,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
               });
               allUnits = arrunitOfSalesNameNew.length > 0 ? arrunitOfSalesNameNew.join(",") : "";
             }
+
             const unitofsales = response.data.data.map((o) => ({
               ...o,
               isChecked: allUnits !== "" ? allUnits.split(",").indexOf(o.id.toString()) !== -1 : false,
@@ -116,7 +118,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -177,7 +179,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          
+
           route.params.fetchData("add");
           navigation.goBack();
         } else if (response.data.code === 304) {

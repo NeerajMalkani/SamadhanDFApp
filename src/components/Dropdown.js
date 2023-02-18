@@ -40,7 +40,7 @@ export default Dropdown = ({ data, label, onSelected, isError, selectedItem, ref
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       rowStyle={{ borderBottomWidth: 1, borderBottomColor: theme.colors.textLightSecondary, backgroundColor: theme.colors.textLight }}
-      selectedRowTextStyle={{ color: theme.colors.primary, textAlign: "left", fontSize: 16 }}
+      selectedRowTextStyle={{ color: theme.colors.primary, textAlign: "left", fontSize: 16, fontWeight: "600" }}
       rowTextStyle={{ color: theme.colors.text, textAlign: "left", fontSize: 16 }}
     />
   );

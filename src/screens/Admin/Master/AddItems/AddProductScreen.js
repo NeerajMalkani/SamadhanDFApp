@@ -68,17 +68,17 @@ const AddProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchServicesFromActivity = (selectedItem, activityDataParam) => {
     const actID = activityDataParam
       ? activityDataParam.find((el) => {
-          return el.activityRoleName === selectedItem;
-        }).id
+        return el.activityRoleName === selectedItem;
+      }).id
       : activityFullData.find((el) => {
-          return el.activityRoleName === selectedItem;
-        }).id;
+        return el.activityRoleName === selectedItem;
+      }).id;
     let params = {
       data: {
         Sess_UserRefno: "2",
@@ -99,7 +99,7 @@ const AddProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem, servicesDataParam, activityID) => {
@@ -109,15 +109,15 @@ const AddProductScreen = ({ route, navigation }) => {
         group_refno: activityID
           ? activityID
           : activityFullData.find((el) => {
-              return el.activityRoleName === acivityName;
-            }).id,
+            return el.activityRoleName === acivityName;
+          }).id,
         service_refno: servicesDataParam
           ? servicesDataParam.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id
+            return el.serviceName === selectedItem;
+          }).id
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryForProduct, params)
@@ -135,7 +135,7 @@ const AddProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
@@ -144,11 +144,11 @@ const AddProductScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryDataForProduct, params)
@@ -156,12 +156,18 @@ const AddProductScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            setHSN(response.data.data[0].hsnsacCode);
+            if(route.params.type === "edit") {
+              setHSN(route.params.data.hsnsacCode);
+            }
+            else {
+              setHSN(response.data.data[0].hsnsacCode);
+            }
+            
             setGST(response.data.data[0].gstRate);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitsFromCategory = (selectedItem, categoriesDataParam) => {
@@ -170,11 +176,11 @@ const AddProductScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.UnitNameForProduct, params)
@@ -183,15 +189,23 @@ const AddProductScreen = ({ route, navigation }) => {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setUnitFullData(response.data.data);
-            if (route.params.type === "edit") {
-              FetchUnitsFromProduct();
-            }
             const units = response.data.data.map((data) => data.displayUnit);
             setUnitsData(units);
+
+            if (route.params.type === "edit") {
+              //FetchUnitsFromProduct();
+              let unit = response.data.data.find((el) => {
+                return el.unitId === route.params.data.unitId;
+              })
+
+              if (unit != null) {
+                setUnitName(unit.displayUnit);
+              }
+            }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitsFromProduct = () => {
@@ -206,7 +220,7 @@ const AddProductScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            
+
             let str = "";
             response.data.data.map((k, i) => {
               str += str === "" ? k.displayUnit : " / " + k.displayUnit;
@@ -215,7 +229,7 @@ const AddProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -295,11 +309,12 @@ const AddProductScreen = ({ route, navigation }) => {
         category_refno: categoriesFullData.find((el) => {
           return el.categoryName && el.categoryName === categoriesName;
         }).id,
+        hsn_sac_code: hsn.trim(),
         unitcategoryrefno_unitrefno: unitFullData.find((el) => {
           return el.displayUnit && el.displayUnit === unitName;
-        }).id,
+        }).unitId,
         product_name: name,
-        view_status: checked ? 1 : 0,
+        view_status: checked ? "1" : "0",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameCreate, params)
@@ -325,6 +340,7 @@ const AddProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
+    
     const params = {
       data: {
         Sess_UserRefno: "2",
@@ -338,11 +354,12 @@ const AddProductScreen = ({ route, navigation }) => {
         category_refno: categoriesFullData.find((el) => {
           return el.categoryName && el.categoryName === categoriesName;
         }).id,
+        hsn_sac_code: hsn.trim(),
         unitcategoryrefno_unitrefno: unitFullData.find((el) => {
           return el.displayUnit && el.displayUnit === unitName;
-        }).id,
+        }).unitId,
         product_name: name,
-        view_status: checked ? 1 : 0,
+        view_status: checked ? "1" : "0",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameUpdate, params)
@@ -436,7 +453,7 @@ const AddProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>

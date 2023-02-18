@@ -37,7 +37,6 @@ const CategoryScreen = ({ navigation }) => {
 
   //#region Functions
   const FetchData = (from) => {
-    console.log('asdfasd');
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
@@ -51,11 +50,10 @@ const CategoryScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
-        console.log(response.data);
-        if (response.data && response.data.code === 200) { 
+        if (response.data && response.data.code === 200) {
           if (response.data.data) {
-             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
-            response.data.data = APIConverter(response.data.data);
+            response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno", "service_refno"]);
+            response.data.data = APIConverter(response.data.data, null, "master_category");
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -112,7 +110,7 @@ const CategoryScreen = ({ navigation }) => {
             setServiceName(data.item.serviceName);
             setHsnsacCode(data.item.hsnsacCode);
             setGstRate(data.item.gstRate + "%");
-            setUnitName(data.item.unitName ? data.item.unitName.join(",") : "");
+            setUnitName(data.item.unitName ? data.item.unitName.join(", ") : "");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -134,7 +132,8 @@ const CategoryScreen = ({ navigation }) => {
         id: data.item.id,
         activityRoleName: data.item.activityRoleName,
         serviceName: data.item.serviceName,
-        unitName: data.item.unitName ? data.item.unitName.join(",") : "",
+        unitName: data.item.unitName,
+        unitOfSalesID: data.item.unitOfSalesID,
         categoryName: data.item.categoryName,
         hsnsacCode: data.item.hsnsacCode,
         gstRate: data.item.gstRate,

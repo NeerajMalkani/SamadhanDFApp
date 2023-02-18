@@ -402,23 +402,17 @@ const HomeScreen = ({ route, navigation }) => {
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>{route.params.userDetails[0].FullName}</Title>
           <Text style={[Styles.textColorDarkSecondary, { marginTop: -4 }]}>{userRoleName}</Text>
         </View>
-        {
-          userRoleID === "2" ? (
-            <TouchableNativeFeedback>
-              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
-                <Icon name="bell-outline" size={24} color={theme.colors.iconOutline} />
-              </View>
-            </TouchableNativeFeedback>
-          ) : (
-            <TouchableNativeFeedback>
-              <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
-                <Icon name="logout" size={24} color={theme.colors.iconOutline} />
-              </View>
-            </TouchableNativeFeedback>
-          )
+        <TouchableNativeFeedback>
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+            <Icon name="bell-outline" size={24} color={theme.colors.iconOutline} />
+          </View>
+        </TouchableNativeFeedback>
 
-        }
-
+        <TouchableNativeFeedback>
+          <View style={[Styles.width48, Styles.height48, Styles.flexJustifyCenter, Styles.flexAlignCenter]} onTouchStart={() => LogoutUser()}>
+            <Icon name="logout" size={24} color={theme.colors.iconOutline} />
+          </View>
+        </TouchableNativeFeedback>
       </View>
       {isLoading ? (
         <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>

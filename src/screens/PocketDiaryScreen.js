@@ -117,7 +117,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   const LogoutUser = async () => {
     try {
       await AsyncStorage.setItem("user", "{}");
-      navigationRef.dispatch(StackActions.replace("Login"));
+      navigation.dispatch(StackActions.replace("Login"));
     } catch (error) {
       console.log(error);
     }
@@ -223,7 +223,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       };
       refreshScreen();
       return () => { };
-    }, [])
+    }, [navigationRef])
   );
 
   const GetUserData = async () => {
@@ -377,38 +377,38 @@ const PocketDiaryScreen = ({ route, navigation }) => {
             {userRoleName}
           </Text>
         </View>
-        {userRoleID === "2" ? (
-          <TouchableNativeFeedback>
-            <View
-              style={[
-                Styles.width48,
-                Styles.height48,
-                Styles.flexJustifyCenter,
-                Styles.flexAlignCenter,
-              ]}
-            >
-              <Icon
-                name="bell-outline"
-                size={24}
-                color={theme.colors.iconOutline}
-              />
-            </View>
-          </TouchableNativeFeedback>
-        ) : (
-          <TouchableNativeFeedback>
-            <View
-              style={[
-                Styles.width48,
-                Styles.height48,
-                Styles.flexJustifyCenter,
-                Styles.flexAlignCenter,
-              ]}
-              onTouchStart={() => LogoutUser()}
-            >
-              <Icon name="logout" size={24} color={theme.colors.iconOutline} />
-            </View>
-          </TouchableNativeFeedback>
-        )}
+
+        <TouchableNativeFeedback>
+          <View
+            style={[
+              Styles.width48,
+              Styles.height48,
+              Styles.flexJustifyCenter,
+              Styles.flexAlignCenter,
+            ]}
+          >
+            <Icon
+              name="bell-outline"
+              size={24}
+              color={theme.colors.iconOutline}
+            />
+          </View>
+        </TouchableNativeFeedback>
+
+        <TouchableNativeFeedback>
+          <View
+            style={[
+              Styles.width48,
+              Styles.height48,
+              Styles.flexJustifyCenter,
+              Styles.flexAlignCenter,
+            ]}
+            onTouchStart={() => LogoutUser()}
+          >
+            <Icon name="logout" size={24} color={theme.colors.iconOutline} />
+          </View>
+        </TouchableNativeFeedback>
+
       </View>
       <ScrollView>
         <View>
@@ -789,77 +789,77 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </View>
               {(roleID == 4 || roleID == 5 && (
-              <>
-                {/* Verify Company Source / Expenses */}
-                <View style={[Styles.paddingTop16]}>
-                  <Text style={[Styles.HomeTitle]}>Company Finance Verification</Text>
-                  <View
-                    style={[
-                      Styles.marginTop16,
-                      Styles.flexSpaceBetween,
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("VerifyCompanySource");
-                        // if (roleID == 3) {
-                        // navigation.navigate("VerifyCompanySource");
-                        // } else {
-                        //   navigation.navigate("AddSourceList");
-                        // }
-                      }}
+                <>
+                  {/* Verify Company Source / Expenses */}
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Company Finance Verification</Text>
+                    <View
                       style={[
-                        Styles.borderRadius8,
-                        Styles.homeBox,
-                        Styles.flexColumn,
-                        Styles.flexJustifyCenter,
-                        Styles.flexAlignCenter,
-                        Styles.paddingHorizontal12,
-                        { width: 156, height: 72 },
+                        Styles.marginTop16,
+                        Styles.flexSpaceBetween,
+                        Styles.flexRow,
                       ]}
                     >
-                      <Icon
-                        name="archive-arrow-down"
-                        size={22}
-                        color={theme.colors.masterIcons}
-                      />
-                      <Text style={[Styles.buttonIconLabel]}>
-                        Verify Company Source
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("VerifyCompanyExpense");
-                        // if (roleID == 3) {
-                        //   navigation.navigate("ExpensesListGeneralUserScreen");
-                        // } else {
-                        //   navigation.navigate("AddExpensesList");
-                        // }
-                      }}
-                      style={[
-                        Styles.borderRadius8,
-                        Styles.homeBox,
-                        Styles.flexColumn,
-                        Styles.flexJustifyCenter,
-                        Styles.flexAlignCenter,
-                        Styles.paddingHorizontal12,
-                        { width: 156, height: 72 },
-                      ]}
-                    >
-                      <Icon
-                        name="archive-arrow-down"
-                        size={22}
-                        color={theme.colors.masterIcons}
-                      />
-                      <Text style={[Styles.buttonIconLabel]}>
-                        Verify Company Expense
-                      </Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("VerifyCompanySource");
+                          // if (roleID == 3) {
+                          // navigation.navigate("VerifyCompanySource");
+                          // } else {
+                          //   navigation.navigate("AddSourceList");
+                          // }
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Verify Company Source
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("VerifyCompanyExpense");
+                          // if (roleID == 3) {
+                          //   navigation.navigate("ExpensesListGeneralUserScreen");
+                          // } else {
+                          //   navigation.navigate("AddExpensesList");
+                          // }
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Verify Company Expense
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-                {/* Verify Company Source / Expenses */}
-              </>
+                  {/* Verify Company Source / Expenses */}
+                </>
               ))}
               <View style={[Styles.paddingTop16]}>
                 <Text style={[Styles.HomeTitle]}>Settings</Text>

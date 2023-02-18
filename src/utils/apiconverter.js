@@ -32,9 +32,16 @@ export const APIConverter = (response, convertIDs, type) => {
       renameKey(obj, "branch_name", "companyBranchName");
       renameKey(obj, "branch_refno", "branchID");
       renameKey(obj, "bank_refno", "bankID");
-      
-      
 
+
+
+    }
+    if (type == "master_category") {
+      renameKey(obj, "unit_category_refno", "unit_refno");
+    }
+
+    if (type == "master_product") {
+      renameKey(obj, "product_refno", "productID");
     }
 
     if (type == "pkt_subcat") {
@@ -203,7 +210,7 @@ export const APIConverter = (response, convertIDs, type) => {
     renameKey(obj, "remarks", "remark");
     renameKey(obj, "bank_ac_holder_name", "acHolderName");
     // renameKey(obj, "bank_refno", "bankID");
-  
+
 
   });
 

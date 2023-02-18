@@ -1040,7 +1040,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             {communication.InvalidProductList}
           </HelperText>
           <View>
-            <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
+            <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected} 
+            selectedItem={brandName}
+             />
 
             {/* <MultiSelectDropDown
               label={"Select Product Brand"}
@@ -1075,7 +1077,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             //listMode="MODAL"
             /> */}
 
-            <View style={styles.container}>
+            {/* <View style={styles.container}>
               <DropDownPicker
                 items={[
                   { label: 'Each Monday', value: 'monday' },
@@ -1096,7 +1098,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 placeholderStyle={styles.labelStyles}
                 placeholder="Select Day"
               />
-            </View>
+            </View> */}
 
 
 
@@ -1109,8 +1111,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 <Card key={i} elevation={3} style={[Styles.marginTop16]}>
                   <Card.Content>
                     <View style={[Styles.flexRow, Styles.borderBottom1, Styles.marginBottom4, Styles.paddingHorizontal4, Styles.flexAlignStart]}>
-                      <Subheading style={[Styles.flex2, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
-                      <Subheading style={[Styles.flex1, Styles.bFontColor, Styles.fontBold, { textAlign: "right" }]}>{k.brandName === "" ? "" : k.brandName}</Subheading>
+                      <Subheading style={[Styles.flex2, Styles.textSecondaryColor, Styles.fontBold]}>{k.productName}</Subheading>
+                      <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold, { textAlign: "right" }]}>{k.brandName === "" ? "" : k.brandName}</Subheading>
                     </View>
                     <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
                       <View style={[Styles.width48per]}>

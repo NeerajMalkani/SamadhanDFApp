@@ -209,14 +209,15 @@ const SignupScreen = ({ route, navigation }) => {
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, Styles.paddingTop0]}>
           <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Create New Account</Headline>
-          <TextInput mode="flat" dense label="Full Name" autoComplete="name" value={fullName} onChangeText={onFullNameChanged} error={isFullNameInvalid} />
-          <HelperText type="error" visible={isFullNameInvalid}>
-            {communication.InvalidFullname}
-          </HelperText>
           <TextInput mode="flat" dense label="Mobile number" autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
           <HelperText type="error" visible={isMobileNumberInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>
+          <TextInput mode="flat" dense label="Full Name" autoComplete="name" value={fullName} onChangeText={onFullNameChanged} error={isFullNameInvalid} />
+          <HelperText type="error" visible={isFullNameInvalid}>
+            {communication.InvalidFullname}
+          </HelperText>
+          
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.paddingTop8]}>
             <TextInput mode="outlined" dense disabled value={otp1} onChangeText={onOTP1Changed} style={[Styles.width48, Styles.height48, Styles.textCenter]} />
             <TextInput mode="outlined" dense disabled value={otp2} onChangeText={onOTP2Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
