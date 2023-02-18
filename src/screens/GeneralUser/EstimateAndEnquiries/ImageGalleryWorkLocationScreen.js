@@ -38,7 +38,7 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: UserID,
         Sess_group_refno: Sess_group_refno,
-        service_refno: route.params.data.id,
+        service_refno: route.params.data.service_refno,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.GetserviceimagegalleryByServicerefno, params)

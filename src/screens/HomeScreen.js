@@ -84,7 +84,7 @@ const HomeScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
+            //response.data.data = APIConverter(response.data.data);
             setImageGalleryData(response.data.data);
           }
         } else {
@@ -641,7 +641,7 @@ const HomeScreen = ({ route, navigation }) => {
                 {imageGalleryData.map((k, i) => {
                   return (
                     <View key={i} style={[Styles.width50per, Styles.padding4, Styles.paddingTop0]}>
-                      <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />
+                      <CreateSCCards key={i} image={k.design_image_url} title={k.service_name} id={k.service_refno} subttitle={k.designtype_name} data={k} cardClick={SingleCardClick} />
                     </View>
                   );
                 })}

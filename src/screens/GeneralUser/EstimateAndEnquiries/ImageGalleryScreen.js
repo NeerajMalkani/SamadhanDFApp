@@ -7,6 +7,10 @@ import NoItems from "../../../components/NoItems";
 import CreateSCCards from "../../../components/SCCards";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+let userID = 0,
+  groupRefNo = 0;
 
 const ImageGalleryScreen = ({ navigation }) => {
    //#region Variables
@@ -20,10 +24,18 @@ const ImageGalleryScreen = ({ navigation }) => {
  //#region Functions
 
   const FetchImageGalleryData = () => {
-    Provider.getAll("generaluserenquiryestimations/getimagegallery")
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupRefNo,
+      },
+    };
+    Provider.createDFDashboard(Provider.API_URLS.GetdashboardServicecatalogue, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+
           if (response.data.data) {
+
             setImageGalleryData(response.data.data);
           }
         } else {
@@ -43,8 +55,18 @@ const ImageGalleryScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchImageGalleryData();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      const userDataParsed = JSON.parse(userData);
+      userID = userDataParsed.UserID;
+      groupRefNo = userDataParsed.Sess_group_refno;
+      FetchImageGalleryData();
+    }
+  };
 
   const SingleCardClick = (headerTitle, categoryID, data) => {
     navigation.navigate("ImageGalleryWorkLocationScreen", { headerTitle: headerTitle, categoryID: categoryID, data: data });
@@ -62,7 +84,7 @@ const ImageGalleryScreen = ({ navigation }) => {
         <ScrollView style={[Styles.flex1, Styles.flexColumn]}>
           <View style={[Styles.padding16, Styles.paddingTop0]}>
             {imageGalleryData.map((k, i) => {
-              return <CreateSCCards key={i} image={k.designImage} title={k.serviceName} id={k.serviceID} subttitle={k.designTypeName} data={k} cardClick={SingleCardClick} />;
+              return <CreateSCCards key={i} image={k.design_image_url} title={k.service_name} id={k.service_refno} subttitle={k.designtype_name} data={k} cardClick={SingleCardClick} />;
             })}
           </View>
         </ScrollView>

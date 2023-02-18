@@ -37,6 +37,7 @@ const CategoryScreen = ({ navigation }) => {
 
   //#region Functions
   const FetchData = (from) => {
+    console.log('asdfasd');
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
@@ -50,6 +51,7 @@ const CategoryScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) { 
           if (response.data.data) {
              response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);

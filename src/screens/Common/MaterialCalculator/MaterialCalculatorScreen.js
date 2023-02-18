@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList } from "react-native";
+import { Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList, StyleSheet } from "react-native";
 import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
@@ -17,6 +17,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../utils/apiconverter";
 import ImageViewer from "react-native-image-zoom-viewer";
 //import { FlatList } from "react-native-gesture-handler";
+//import MultiSelectDropDown from "react-native-paper-dropdown";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
   const scrollRef = useRef();
@@ -84,6 +86,22 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = React.useState(false);
+
+  // const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
+  // const [multiBrand, setMultiBrand] = React.useState("");
+  // const brandList = [
+  //   {
+  //     label: "Brand Name",
+  //     value: "Brand Name",
+  //   }
+  // ];
+
+  const [showMultiSelectDropDown, setShowMultiSelectDropDown] = React.useState(false);
+  const [multiBrand, setMultiBrand] = React.useState([]);
+  const [brandList, setBrandList] = React.useState([
+    { label: 'Brand Name', value: 'Brand Name' }
+  ]);
+
 
   //#endregion
 
@@ -260,7 +278,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (serviceName) => {
@@ -284,7 +302,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignImage = (designID) => {
@@ -304,7 +322,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (categoryName) => {
@@ -328,7 +346,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignTypeFromProduct = (selectedItem) => {
@@ -352,7 +370,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBrandsFromProductIds = () => {
@@ -370,22 +388,55 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getbrandnamelist_materialcalculatorform, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log('All Brands', response.data.data);
             setBrandsFullData(response.data.data);
             const key = "brandID";
+            const formattedResult = [];
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
-            setUniqueBrandsData(uniqueBrands);
+
+
+            uniqueBrands.map((item) => {
+              formattedResult.push({
+                brandID: item.brandID,
+                brandName: item.brandName,
+                categoryName: item.categoryName,
+                id: item.id,
+                fullBrandName: item.brandName + " (" + item.categoryName + ")"
+              });
+            });
+
+            // console.log('Unique Brands', uniqueBrands);
+            // console.log('Formatted Result', formattedResult);
+
+            setUniqueBrandsData(formattedResult);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
+            //console.log('Formated Brands', formattedData);
+            const brndLst = [];
+
+            formattedData.map((k) => {
+              brndLst.push({
+                label: k,
+                value: k,
+              });
+            });
+
+            // console.log('brndLst', brndLst);
+            // console.log('formattedData', formattedData);
+
+            setBrandList(brndLst);
             setBrandsData(formattedData);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductPriceOnBrandSelection = (brandID) => {
+
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -402,10 +453,12 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getproductrate_by_brandrefno_materialcalculatorform, params)
       .then((response) => {
+        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             const newData = [...arrProductData[0]];
+            //console.log("All Product Before Merge", newData);
             newData.map((k) => {
               const foundProduct = response.data.data.find((el) => el.productID == k.productID);
               if (foundProduct) {
@@ -413,24 +466,37 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 k.brandName = foundProduct.brandName;
                 k.price = foundProduct.price;
                 k.amount = foundProduct.amount;
-              } else {
-                k.amount = "0";
               }
+              // else {
+              //   k.amount = "0";
+              // }
             });
-            const amounts = newData.map((data) => data.amount);
+            //const amounts = newData.map((data) => data.amount);
+
+            const amounts = newData.map(data => {
+              if (data.amount > 0) {
+                return data.amount;
+              } else {
+                return null;
+              }
+            }).filter(data => data !== null);
+
+            //console.log(amounts);
             if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
               setTotal(0);
             } else {
               setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
             }
+            //console.log("All Product After Merge", newData);
             arrProductData[1](newData);
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromMaterialSetup = (callback) => {
+    //console.log('get all products');
     setIsButtonLoading(true);
     let params = {
       data: {
@@ -447,9 +513,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log('All Products', response.data.data);
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
@@ -480,7 +548,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           setSnackbarVisible(true);
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -553,9 +621,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const onBrandNameSelected = (selectedItem, index) => {
     const selecedBrand = uniqueBrandsData[parseInt(index)];
+    console.log(selecedBrand);
     setBrandName(selectedItem);
     setBNError(false);
-
     FetchProductPriceOnBrandSelection(selecedBrand.brandID);
 
     // const selecedBrand = uniqueBrandsData[parseInt(index)];
@@ -593,6 +661,16 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     // }
     // arrProductData[1](newData);
   };
+  const onBrandMultiSelect = (selectedItem) => {
+    console.log('current selected', selectedItem);
+    console.log('all item', multiBrand);
+    const brand = uniqueBrandsData.find((el) => el.fullBrandName === selectedItem[0].value);
+    FetchProductPriceOnBrandSelection(brand.brandID);
+  };
+
+
+
+
 
   const InsertData = () => {
     const arrMaterialProducts = [];
@@ -866,6 +944,39 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }, 2000);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: 22.5,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'row',
+      zIndex: 10,
+
+      //
+      marginTop: 150,
+      flex: 1,
+    },
+    containerStyles: {
+      minHeight: 50,
+      minWidth: 149,
+      // borderColor: '#6F8C95',
+      // borderRadius: 6,
+    },
+    dropDownStyles: {
+      backgroundColor: '#fff',
+    },
+    labelStyles: {
+      color: '#6F8C95',
+      fontSize: 14,
+      textAlign: 'left',
+    },
+    itemStyles: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+    },
+  });
+
   //#endregion
 
   return (
@@ -930,6 +1041,65 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           </HelperText>
           <View>
             <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected} selectedItem={brandName} />
+
+            {/* <MultiSelectDropDown
+              label={"Select Product Brand"}
+              mode={"outlined"}
+              visible={showMultiSelectDropDown}
+              showDropDown={() => setShowMultiSelectDropDown(true)}
+              onDismiss={() => setShowMultiSelectDropDown(false)}
+              value={multiBrand}
+              setValue={setMultiBrand}
+              list={brandList}
+              multiSelect
+            /> */}
+            {/* <DropDownPicker
+              open={showMultiSelectDropDown}
+              value={multiBrand}
+              items={brandList}
+              setOpen={setShowMultiSelectDropDown}
+              setValue={setMultiBrand}
+              setItems={setBrandList}
+              theme="LIGHT"
+              multiple={true}
+              mode="SIMPLE"
+              // onSelectItem={(item) => {
+              //   onBrandMultiSelect(item);
+              // }}
+
+              onChangeItem={item => console.log(item.label, item.value)}
+            // onChangeValue={(value) => {
+            //   console.log('onChangeValue', value);
+            // }}
+
+            //listMode="MODAL"
+            /> */}
+
+            <View style={styles.container}>
+              <DropDownPicker
+                items={[
+                  { label: 'Each Monday', value: 'monday' },
+                  { label: 'Each Tuesday', value: 'tuesday' },
+                  { label: 'Each Wednesday', value: 'wednesday' },
+                  { label: 'Each Thursday', value: 'thursday' },
+                  { label: 'Each Friday', value: 'friday' },
+                  { label: 'Each Saturday', value: 'saturday' },
+                  { label: 'Each Sunday', value: 'sunday' },
+                ]}
+                itemStyle={styles.itemStyles}
+                onChangeItem={(item) => setMultiBrand(item.value)}
+                containerStyle={styles.containerStyles}
+                style={styles.dropDownStyles}
+                dropDownStyle={styles.dropDownStyles}
+                defaultValue={multiBrand}
+                labelStyle={styles.labelStyles}
+                placeholderStyle={styles.labelStyles}
+                placeholder="Select Day"
+              />
+            </View>
+
+
+
             <HelperText type="error" visible={errorBN}>
               {communication.InvalidBrnadSelected}
             </HelperText>
@@ -1005,7 +1175,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <Button mode="outlined" style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16, backgroundColor: "white" }} onPress={() => setIsZoomShow(false)}>
             Close
           </Button>
-          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => {}} />
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => { }} />
         </View>
       </Modal>
     </View>
