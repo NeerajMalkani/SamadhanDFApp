@@ -26,7 +26,14 @@ export const TransactionListItem = ({ current, type }) => {
                             [Styles.width100per, Styles.flexRow, Styles.flexJustifyStart,
                             Styles.flexAlignCenter, Styles.marginTop4]
                         }>
-                            <Text>{current.item.pck_sub_category_name != null ? current.item.pck_sub_category_name : ""}</Text>
+                            {(current.item.pck_sub_category_name != null && current.item.pck_sub_category_name != "") ?
+                                (
+                                    <Text>{current.item.pck_sub_category_name != null ? current.item.pck_sub_category_name : ""}</Text>
+                                ) : (
+                                    <Text>{current.item.pck_sub_category_name_other != null ? current.item.pck_sub_category_name_other : ""}</Text>
+                                )
+                            }
+
                         </View>
                     )
 
