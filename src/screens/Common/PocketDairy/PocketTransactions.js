@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image, Dimensions } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image, Dimensions, TouchableOpacity } from "react-native";
 import { Button, FAB, List, Snackbar, Searchbar, Title, HelperText, Text, Divider } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -18,6 +18,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { TabBar, TabView } from "react-native-tab-view";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import moment from "moment";
+import { TransactionListItem } from "./TransactionListItem";
 
 let userID = 0, companyID = 0, branchID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
@@ -143,7 +144,7 @@ const PocketTransactionScreen = ({ route, navigation }) => {
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        //console.log(response.data.data);
+                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
@@ -235,36 +236,57 @@ const PocketTransactionScreen = ({ route, navigation }) => {
 
     const RenderItems = (data) => {
         return (
-            <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
-                <List.Item
-                    title={data.item.pck_mode_name}
-                    titleStyle={{ fontSize: 18 }}
-                    description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
-                    onPress={() => {
+            // <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+            //     <List.Item
+            //         title={data.item.pck_mode_name}
+            //         titleStyle={{ fontSize: 18 }}
+            //         description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name) ? "" : data.item.pck_category_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+            //         onPress={() => {
 
-                        refRBSheet.current.open();
-                        setTransactionID(data.item.pck_trans_refno);
-                        setDate(data.item.pck_trans_date);
-                        setEntryType(data.item.pck_entrytype_name);
-                        setCategoryName(data.item.pck_category_name);
-                        setSubCategoryName(data.item.pck_sub_category_name);
-                        setReceiptMode(data.item.pck_mode_name);
-                        setAmount(data.item.amount);
-                        setAttachment(data.item.attach_receipt_url);
-                        setAttachmentImage(data.item.attach_receipt_url);
-                        setPDCAttachmentImage(data.item.bankchallan_slip_url);
-                        setDisplay(data.item.view_status == "1" ? "Yes" : "No");
-                        setDepositType(data.item.deposit_type_refno);
-                        setPDCStatus(data.item.pdc_cheque_status);
+            //             refRBSheet.current.open();
+            //             setTransactionID(data.item.pck_trans_refno);
+            //             setDate(data.item.pck_trans_date);
+            //             setEntryType(data.item.pck_entrytype_name);
+            //             setCategoryName(data.item.pck_category_name);
+            //             setSubCategoryName(data.item.pck_sub_category_name);
+            //             setReceiptMode(data.item.pck_mode_name);
+            //             setAmount(data.item.amount);
+            //             setAttachment(data.item.attach_receipt_url);
+            //             setAttachmentImage(data.item.attach_receipt_url);
+            //             setPDCAttachmentImage(data.item.bankchallan_slip_url);
+            //             setDisplay(data.item.view_status == "1" ? "Yes" : "No");
+            //             setDepositType(data.item.deposit_type_refno);
+            //             setPDCStatus(data.item.pdc_cheque_status);
 
-                        if (data.item.BalanceUnPaidPayment != null && parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, '')) > 0 && data.item.pck_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
-                            setPayToCompanyStatus(true);
-                        }
+            //             if (data.item.BalanceUnPaidPayment != null && parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, '')) > 0 && data.item.pck_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+            //                 setPayToCompanyStatus(true);
+            //             }
 
-                    }}
-                    left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-                    right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-                />
+            //         }}
+            //         left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+            //         right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+            //     />
+            // </View>
+            <View style={[Styles.backgroundColor, Styles.flexJustifyCenter, Styles.paddingHorizontal16,
+            { height: 92, }]}>
+                <TouchableOpacity activeOpacity={1}
+                    // onPress={() => {
+                    //     refRBSheet.current.open();
+                    //     setCategoryName(data.item.pck_category_name);
+                    //     setSubCategoryName(data.item.pck_sub_category_name);
+                    //     setTransactionTypeName(data.item.pck_transtype_name);
+                    //     setAmount(data.item.amount);
+                    //     setCurrentBalance(data.item.current_balance);
+                    //     setNotes(data.item.notes);
+                    //     setTransactionDate(data.item.pck_trans_date);
+
+                    // }}
+                    style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
+                    Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
+
+                    <TransactionListItem current={data} type="fin-list" />
+
+                </TouchableOpacity>
             </View>
         );
     };
@@ -385,7 +407,7 @@ const PocketTransactionScreen = ({ route, navigation }) => {
 
         if (isValid) {
             FetchData_Company(fromDate_comp == "" ? "" : moment(fromDate_comp).format("DD-MM-YYYY"),
-            toDate_comp == "" ? "" : moment(toDate_comp).format("DD-MM-YYYY"));
+                toDate_comp == "" ? "" : moment(toDate_comp).format("DD-MM-YYYY"));
         }
     };
     //#endregion 
@@ -469,7 +491,7 @@ const PocketTransactionScreen = ({ route, navigation }) => {
                 return (
                     <View style={[Styles.flex1]}>
                         <ScrollView style={[Styles.flex1, Styles.backgroundColor]} keyboardShouldPersistTaps="handled">
-                        <View style={[Styles.padding16]}>
+                            <View style={[Styles.padding16]}>
                                 <View>
                                     <Text style={[Styles.fontSize24, Styles.fontBold, Styles.textCenter, { color: "green", width: "100%" }, Styles.paddingBottom12]}>Balance:<Icon name="currency-inr" size={24} />{companyCashBalance}</Text>
                                     <Divider />
@@ -550,7 +572,7 @@ const PocketTransactionScreen = ({ route, navigation }) => {
             labelStyle={[Styles.fontSize10, Styles.fontBold]} />;
 
     const [routes] = React.useState([
-        { key: "selfDetail", title: "Self | Cash Balance" },
+        { key: "selfDetail", title: "Self | Cash Balance",  },
         { key: "companyDetail", title: "Company | Cash Balance" },
     ]);
 

@@ -15,6 +15,7 @@ import Dropdown from "../../../components/Dropdown";
 import { projectVariables } from "../../../utils/credentials";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "react-native-inset-shadow/src/styles";
+import { TransactionListItem } from "./TransactionListItem";
 
 
 let userID = 0, groupID = 0, companyID = 0, branchID = 0, designID = 0, roleID = 0;
@@ -265,43 +266,10 @@ const BankTransactionScreen = ({ navigation }) => {
                     }}
                     style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
                     Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
-                    <View style={[Styles.width50per, Styles.flexColumn]}>
-                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart, Styles.flexAlignCenter]}>
-                            <Text>{data.item.is_opening_balance == "1" ? "Opening Balance" : data.item.pck_category_name}</Text>
-                        </View>
-                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyStart,
-                        Styles.flexAlignCenter, Styles.marginTop4]}>
-                            <Text>{data.item.pck_sub_category_name}</Text>
-                        </View>
-                        <View style={[Styles.width100per, Styles.marginTop4]}>
-                            <Text style={[Styles.textLeft]}>{data.item.pck_trans_date}</Text>
-                        </View>
-                    </View>
-                    <View style={[Styles.width50per, Styles.flexColumn, Styles.flexSpaceBetween]}>
-                        <View style={[Styles.width100per, Styles.flexRow, Styles.flexJustifyEnd, Styles.flexAlignCenter]}>
-                            <Icon name="currency-inr" size={14} /><Text>{data.item.amount}</Text><Icon style={[Styles.marginStart4]} color={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? theme.multicolors.green : theme.multicolors.red} name={data.item.pck_transtype_refno == projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO ? "plus-circle" : "minus-circle"} size={14} />
-                        </View>
-                        <View style={[Styles.width100per,]}>
-                            <Text style={[Styles.textRight]}>Balance: <Icon name="currency-inr" size={14} />{data.item.current_balance}</Text>
-                        </View>
-                    </View>
-                </TouchableOpacity>
-                {/* <List.Item
-                    title={data.item.pck_category_name}
-                    titleStyle={{ fontSize: 18 }}
-                    description={`Transaction Type: ${data.item.pck_sub_category_name}\nAmount: ${data.item.amount}`}
-                    onPress={() => {
-                        refRBSheet.current.open();
 
-                        setTransactionTypeName(data.item.pck_transtype_name);
-                        setCategoryName(data.item.pck_category_name);
-                        setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
-                        setDisplay(data.item.display);
-                    }}
-                    left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-                    //left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name={data.item.transtypeID == } />}
-                    right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-                /> */}
+                        <TransactionListItem current={data} type="fin-list" />
+                    
+                </TouchableOpacity>
             </View>
         );
     };

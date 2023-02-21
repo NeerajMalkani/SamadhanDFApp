@@ -490,6 +490,18 @@ const HomeScreen = ({ route, navigation }) => {
                         <Text style={[Styles.buttonIconLabel,]}>Decline ></Text>
                       </TouchableOpacity>
                     </View>
+
+                  </View>
+                  <View style={[Styles.marginTop16, Styles.borderRadius8, Styles.homeBox, { height: 140 }]}>
+
+                    <ImageBackground source={require("../../assets/user-access.jpg")} resizeMode="cover"
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                      imageStyle={{ borderRadius: 8 }}>
+                      <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                      { top: 8 }]}>Control User Access</Text>
+                    </ImageBackground>
+
+
                   </View>
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Service Catlogue</Text>
@@ -625,6 +637,17 @@ const HomeScreen = ({ route, navigation }) => {
                       </Button>
                     </View>
                   </View>
+                  <View style={[Styles.marginTop16, Styles.borderRadius8, Styles.homeBox, { height: 140 }]}>
+
+                    <ImageBackground source={require("../../assets/referral-wallet-1.jpg")} resizeMode="cover"
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                      imageStyle={{ borderRadius: 8 }}>
+                      <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                      { top: 8 }]}>Refer and Earn</Text>
+                    </ImageBackground>
+
+
+                  </View>
                 </View>
               </View>
             </View>
@@ -725,6 +748,23 @@ const HomeScreen = ({ route, navigation }) => {
                   </View>
                 </View>
 
+                {(userRoleID === "4" || userRoleID === "5") &&
+                  <>
+                    <View style={[Styles.marginTop16, Styles.borderRadius8, Styles.homeBox, { height: 140 }]}>
+
+                      <ImageBackground source={require("../../assets/user-access.jpg")} resizeMode="cover"
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                        imageStyle={{ borderRadius: 8 }}>
+                        <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                        { top: 8 }]}>Control User Access</Text>
+                      </ImageBackground>
+
+
+                    </View></>
+
+
+                }
+
                 {/* Pocket Diary */}
                 <TouchableOpacity
                   onPress={() => {
@@ -749,6 +789,20 @@ const HomeScreen = ({ route, navigation }) => {
                     { top: 8 }]}>Looking For Jobs ?</Text>
                   </ImageBackground>
                 </View>
+                {(userRoleID !== "2") &&
+                  <>
+                    <View style={[Styles.marginTop16, Styles.borderRadius8, Styles.homeBox, { height: 140 }]}>
+
+                      <ImageBackground source={require("../../assets/referral-wallet-1.jpg")} resizeMode="cover"
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                        imageStyle={{ borderRadius: 8 }}>
+                        <Text style={[Styles.positionAbsolute, Styles.marginTop8, Styles.marginStart16, Styles.fontSize18, Styles.textColorWhite, Styles.fontBold,
+                        { top: 8 }]}>Refer and Earn</Text>
+                      </ImageBackground>
+
+                    </View>
+                  </>
+                }
                 {/* Looking For Jobs */}
 
                 {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
@@ -811,7 +865,6 @@ const HomeScreen = ({ route, navigation }) => {
               </View>
             </View>
           }
-
         </ScrollView>
       )
       }

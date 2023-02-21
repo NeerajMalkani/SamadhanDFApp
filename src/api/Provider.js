@@ -12,6 +12,9 @@ const BASE_URL_PocketDiary =
   "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
 const BASE_URL_Contractor =
   "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
+const BASE_URL_Manufactoring =
+  "https://dfsolutions.in/api/apimanufacturer/spawu7S4urax/tYjD/";
+
 
 class Provider {
   //#region Old API's
@@ -369,7 +372,6 @@ class Provider {
     pckmypersonalbankcreate: "pckmypersonalbankcreate/",
     pckaddsourceupdate: "pckaddsourceupdate/",
     pck_companysource_verify_action: "pck_companysource_verify_action/",
-    pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
     getsubcategoryname_pckaddexpensesform:
       "getsubcategoryname_pckaddexpensesform/",
@@ -424,6 +426,9 @@ class Provider {
     sc_estimationsendenquiry: "sc_estimationsendenquiry/",
     myestimationlist: "myestimationlist/",
     myestimationcontractordetails: "myestimationcontractordetails/",
+    getservicenamebrandconversionform: "getservicenamebrandconversionform/",
+    pckdashboard_cashinbranch: "pckdashboard_cashinbranch/",
+    pckdashboard_cashinbranch_pocket: "pckdashboard_cashinbranch_pocket/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -565,6 +570,10 @@ class Provider {
 
   createDFContractor(resource, params) {
     return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
+  }
+
+  createDFManufactoring(resource, params) {
+    return axios.post(`${BASE_URL_Manufactoring}/${resource}`, params);
   }
 
   createDFAdminWithHeader(resource, params) {

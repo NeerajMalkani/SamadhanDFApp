@@ -930,10 +930,50 @@ export default function App() {
                 name="BranchListScreen"
                 component={BranchListScreen}
               />
+               <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddSourceList"
+                component={AddSourceList}
+              />
+               <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddExpensesList"
+                component={AddExpensesList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanySource"
+                component={VerifyCompanySource}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
               />
             </Drawer.Navigator>
           );

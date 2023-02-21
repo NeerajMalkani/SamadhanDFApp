@@ -11,6 +11,9 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import RBSheet from "react-native-raw-bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+let userID = 0;
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -34,6 +37,16 @@ const GCategoryNameScreen = ({ navigation }) => {
   //#endregion
 
   //#region Functions
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      FetchData();
+    }
+  };
+
+
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -42,7 +55,7 @@ const GCategoryNameScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         pck_category_refno: "all",
       },
     };
@@ -77,7 +90,7 @@ const GCategoryNameScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {

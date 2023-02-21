@@ -182,7 +182,6 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
 
   useEffect(() => {
     if (isFocused) {
-      console.log("hereuuuu");
       GetUserID();
     }
   }, [isFocused]);
