@@ -180,7 +180,8 @@ import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy
 import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
-
+import Design from "./src/screens/Design Your Dream/Categories";
+import DesignForm from "./src/screens/Design Your Dream/Form";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -391,20 +392,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                      ? expanded2
-                      : i == 2
-                        ? expanded3
-                        : i == 3
-                          ? expanded4
-                          : i == 4
-                            ? expanded5
-                            : i == 5
-                              ? expanded6
-                              : i == 6
-                                ? expanded7
-                                : i == 7
-                                  ? expanded8
-                                  : expanded9
+                    ? expanded2
+                    : i == 2
+                    ? expanded3
+                    : i == 3
+                    ? expanded4
+                    : i == 4
+                    ? expanded5
+                    : i == 5
+                    ? expanded6
+                    : i == 6
+                    ? expanded7
+                    : i == 7
+                    ? expanded8
+                    : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -930,50 +931,10 @@ export default function App() {
                 name="BranchListScreen"
                 component={BranchListScreen}
               />
-               <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="BankTransactionScreen"
-                component={BankTransactionScreen}
-              />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="AddSourceList"
-                component={AddSourceList}
-              />
-               <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="AddExpensesList"
-                component={AddExpensesList}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="VerifyCompanySource"
-                component={VerifyCompanySource}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="VerifyCompanyExpense"
-                component={VerifyCompanyExpense}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="GCategoryNameScreen"
-                component={GCategoryNameScreen}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="GSubCategoryNameScreen"
-                component={GSubCategoryNameScreen}
-              />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="GMyContactsScreen"
-                component={GMyContactsScreen}
               />
             </Drawer.Navigator>
           );
@@ -1181,7 +1142,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => { });
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
 
@@ -1276,14 +1237,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                    ? UserProfile
-                    : parseInt(userDetails[0].RoleID) === 2
-                      ? UserProfile
-                      : parseInt(userDetails[0].RoleID) === 5
-                        ? BasicDetailsScreen
-                        : parseInt(userDetails[0].RoleID) === 6
-                          ? UserProfile
-                          : UserProfileScreen
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 2
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 5
+                  ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 6
+                  ? UserProfile
+                  : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,
@@ -1373,6 +1334,28 @@ export default function App() {
                 component={AddActivityRolesScreen}
                 options={{
                   headerTitle: "Add Activity Roles",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="DesignYourDreamScreen"
+                component={Design}
+                options={{
+                  headerTitle: "Design Your Dream",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="DesignYourDreamForm"
+                component={DesignForm}
+                options={{
+                  headerTitle: "Property Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

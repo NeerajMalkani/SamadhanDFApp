@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image,TouchableOpacity } from "react-native";
+import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -12,7 +12,6 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PayableReceivableTransactionListItem } from "./PayableReceivableTransactionListItem";
 
 let userID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
@@ -49,7 +48,7 @@ const PayableList = ({ route, navigation }) => {
     };
 
     const FetchData = () => {
-
+        
         let params = {
             data: {
                 Sess_UserRefno: userID
@@ -103,8 +102,11 @@ const PayableList = ({ route, navigation }) => {
 
     const RenderItems = (data) => {
         return (
-            <View style={[Styles.backgroundColor, Styles.paddingHorizontal16, Styles.flexJustifyCenter, { height: 100 }]}>
-                <TouchableOpacity activeOpacity={1}
+            <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+                <List.Item
+                    title={data.item.contact_name}
+                    titleStyle={{ fontSize: 18 }}
+                    description={`Pay Mode: ${NullOrEmpty(data.item.pck_mode_name) ? "" : data.item.pck_mode_name}\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
                     onPress={() => {
 
                         refRBSheet.current.open();
@@ -113,14 +115,11 @@ const PayableList = ({ route, navigation }) => {
                         setAmount(data.item.amount);
                         setpaymentMode(data.item.pck_mode_name);
                         setPaymentDate(data.item.pck_trans_date);
-
+                        
                     }}
-                    style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
-                    Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
-
-                    <PayableReceivableTransactionListItem current={data} type="pay" />
-
-                </TouchableOpacity>
+                    left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
+                    right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+                />
             </View>
         );
     };

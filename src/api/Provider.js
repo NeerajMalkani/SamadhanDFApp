@@ -12,9 +12,6 @@ const BASE_URL_PocketDiary =
   "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
 const BASE_URL_Contractor =
   "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
-const BASE_URL_Manufactoring =
-  "https://dfsolutions.in/api/apimanufacturer/spawu7S4urax/tYjD/";
-
 
 class Provider {
   //#region Old API's
@@ -372,6 +369,7 @@ class Provider {
     pckmypersonalbankcreate: "pckmypersonalbankcreate/",
     pckaddsourceupdate: "pckaddsourceupdate/",
     pck_companysource_verify_action: "pck_companysource_verify_action/",
+    pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
     getsubcategoryname_pckaddexpensesform:
       "getsubcategoryname_pckaddexpensesform/",
@@ -426,9 +424,21 @@ class Provider {
     sc_estimationsendenquiry: "sc_estimationsendenquiry/",
     myestimationlist: "myestimationlist/",
     myestimationcontractordetails: "myestimationcontractordetails/",
-    getservicenamebrandconversionform: "getservicenamebrandconversionform/",
-    pckdashboard_cashinbranch: "pckdashboard_cashinbranch/",
-    pckdashboard_cashinbranch_pocket: "pckdashboard_cashinbranch_pocket/",
+
+    getpropertytypename_designyourdream_enquiryform:
+      "getpropertytypename_designyourdream_enquiryform/",
+    getlength: "getlength/",
+    getlengthinches: "getlengthinches/",
+    getwidthheightfoot: "getwidthheightfoot/",
+    getwidthheightinches: "getwidthheightinches/",
+    getservicename_designyourdream_enquiryform:
+      "getservicename_designyourdream_enquiryform/",
+    getpropertycategoryname_designyourdream_enquiryform:
+      "getpropertycategoryname_designyourdream_enquiryform/",
+    getsqftcalculation: "getsqftcalculation/",
+    designyourdream_enquiry_create: "designyourdream_enquiry_create/",
+    getgroupname_designyourdream_enquiryform:
+      "getgroupname_designyourdream_enquiryform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -457,13 +467,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     return datas;
@@ -572,10 +582,6 @@ class Provider {
     return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
   }
 
-  createDFManufactoring(resource, params) {
-    return axios.post(`${BASE_URL_Manufactoring}/${resource}`, params);
-  }
-
   createDFAdminWithHeader(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_Admin}/${resource}`, params, {
@@ -590,14 +596,18 @@ class Provider {
 
   createDFDashboard(resource, params = null) {
     if (params) {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params, { timeout: timeoutLimit });
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params, {
+        timeout: timeoutLimit,
+      });
     } else {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`, { timeout: timeoutLimit });
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, {
+        timeout: timeoutLimit,
+      });
     }
   }
 
   checkServerActive() {
-    console.log('start');
+    console.log("start");
     // axios.get(onePixelImage)
     //   .then(response => {
     //     console.log(response);
@@ -610,17 +620,18 @@ class Provider {
     //   .catch(error => {
     //     console.log('Error checking image availability', error);
     //   });
-    axios.get(onePixelImage, { timeout: timeoutLimit })
-      .then(response => {
-        console.log('success');
+    axios
+      .get(onePixelImage, { timeout: timeoutLimit })
+      .then((response) => {
+        console.log("success");
         console.log(response.data);
         // Handle successful response
       })
-      .catch(error => {
-        if (error.code === 'ECONNABORTED') {
-          console.log('Request timed out');
+      .catch((error) => {
+        if (error.code === "ECONNABORTED") {
+          console.log("Request timed out");
         } else {
-          console.log('Error occurred', error);
+          console.log("Error occurred", error);
         }
       });
   }

@@ -6,8 +6,6 @@ import { Styles } from "../../../../../styles/styles";
 import { theme } from "../../../../../theme/apptheme";
 import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-let userID = 0;
 
 const AddGCategoryNameScreen = ({ route, navigation }) => {
   //#region Variables
@@ -29,22 +27,15 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
   ]);
 
   useEffect(() => {
-    GetUserID();
-  }, []);
+    let isEdit = route.params.type === "edit" ? true : false;
 
-  const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem("user");
-    if (userData !== null) {
-      userID = JSON.parse(userData).UserID;
-      let isEdit = route.params.type === "edit" ? true : false;
-      FetchTransactionType(isEdit);
-    }
-  };
+    FetchTransactionType(isEdit);
+  }, []);
 
   const FetchTransactionType = (edit) => {
     let params = {
       data: {
-        Sess_UserRefno: userID,
+        Sess_UserRefno: "2",
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.gettransactiontype_pckcategoryform_user, params)

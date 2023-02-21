@@ -208,8 +208,6 @@ const AddExpenses = ({ route, navigation }) => {
 
   const [mobileNumber, setMobileNumber] = React.useState("");
 
-
-
   const [recurring, setRecurring] = useState({
     value: "",
     list: [],
@@ -248,7 +246,8 @@ const AddExpenses = ({ route, navigation }) => {
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [subCatStatus, setSubCatStatus] = React.useState(true);
   const [contactTypeStatus, setContactTypeStatus] = useState(false);
-  const [newMobileNumberStatus, setNewMobileNumberStatus] = React.useState(false);
+  const [newMobileNumberStatus, setNewMobileNumberStatus] =
+    React.useState(false);
   const [newContactNameStatus, setNewContactNameStatus] = React.useState(false);
   const [clientListStatus, setClientListstatus] = React.useState(false);
   const [projectListStatus, setProjectListstatus] = React.useState(false);
@@ -283,13 +282,14 @@ const AddExpenses = ({ route, navigation }) => {
       FetchEntryType();
 
       if (
-        route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+        route.params.type ===
+        projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+      ) {
         FetchPayToCompanyData(route.params.data.transactionID);
       } else if (route.params.type === "edit") {
         SetEditData(route.params.data);
-      }
-      else if (route.params.type === "verify") {
-        console.log('verify data');
+      } else if (route.params.type === "verify") {
+        console.log("verify data");
         FetchPayToCompanyData(route.params.data.pck_trans_refno);
       }
     }
@@ -302,14 +302,15 @@ const AddExpenses = ({ route, navigation }) => {
         pck_trans_refno: transactionID,
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
-        pck_transtype_refno: route.params.type === "edit" ?
-          projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
-          :
-          route.params.type === "verify" ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
-            :
-            route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText ?
-              projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO : 0
-        ,
+        pck_transtype_refno:
+          route.params.type === "edit"
+            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
+            : route.params.type === "verify"
+            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
+            : route.params.type ===
+              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
+            : 0,
         pck_entrytype_refno:
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
@@ -337,7 +338,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const SetEditData = (data) => {
-
     setcollectedAmount(data.Collected_ActualAmount);
     setpaidAmount(data.TotalPaidAmount);
     setbalanceAmount(data.BalanceUnPaidPayment);
@@ -392,17 +392,19 @@ const AddExpenses = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
-    if (
-      data.pck_contacttype_refno != "" &&
-      data.pck_contacttype_refno != "0"
-    ) {
+    if (data.pck_contacttype_refno != "" && data.pck_contacttype_refno != "0") {
       setContactTypeStatus(true);
       FetchContactType(data.pck_contacttype_refno);
     }
 
     if (data.pck_mycontact_refno != "" && data.pck_mycontact_refno != "0") {
       setPaidToStatus(true);
-      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno, data.pck_contacttype_refno);
+      FetchReceiverList(
+        data.pck_mycontact_refno,
+        null,
+        data.pck_sub_category_refno,
+        data.pck_contacttype_refno
+      );
     }
 
     if (data.recurring_status != "" && data.recurring_status != "0") {
@@ -477,9 +479,10 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (
-      data.dynamic_expenses_refno != null &&
-      data.dynamic_expenses_refno != "0"
-      || route.params.type === projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+      (data.dynamic_expenses_refno != null &&
+        data.dynamic_expenses_refno != "0") ||
+      route.params.type ===
+        projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
     ) {
       setProjectExpenseStatus(true);
       FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
@@ -529,12 +532,15 @@ const AddExpenses = ({ route, navigation }) => {
               setEntryTypeStatus(true);
 
               if (route.params.type === "add") {
-
-                setEntryType(response.data.data[route.params.tabIndex].pck_entrytype_name);
-                setPktEntryTypeID(response.data.data[route.params.tabIndex].pck_entrytype_refno);
-                _pktEntryTypeID = response.data.data[route.params.tabIndex].pck_entrytype_refno;
+                setEntryType(
+                  response.data.data[route.params.tabIndex].pck_entrytype_name
+                );
+                setPktEntryTypeID(
+                  response.data.data[route.params.tabIndex].pck_entrytype_refno
+                );
+                _pktEntryTypeID =
+                  response.data.data[route.params.tabIndex].pck_entrytype_refno;
               }
-
             }
 
             if (route.params.type != "edit" || route.params.type != "verify") {
@@ -543,7 +549,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchPaymentMode = (editID) => {
@@ -567,7 +573,6 @@ const AddExpenses = ({ route, navigation }) => {
             );
             setPayModeData(receiptMode);
             if (editID != "") {
-
               setPayMode(
                 response.data.data.filter((el) => {
                   return el.pckModeID == editID;
@@ -577,7 +582,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchClientList = (clientID) => {
@@ -611,7 +616,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchExpenseCategory = (receiptModeID, editID) => {
@@ -647,13 +652,13 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchContactType = (editID) => {
     let params = {
       data: {
-        Sess_UserRefno: userID
+        Sess_UserRefno: userID,
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
@@ -677,7 +682,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchExpenseSubCategory = (categoryID, editID) => {
@@ -712,7 +717,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProjectExpense = (categoryID, editID) => {
@@ -734,9 +739,9 @@ const AddExpenses = ({ route, navigation }) => {
             setProjectExpenseFullData(response.data.data);
             if (
               route.params.type !=
-              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
-              && route.params.type != "verify") {
-
+                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
+              route.params.type != "verify"
+            ) {
               response.data.data = response.data.data.filter((el) => {
                 return (
                   el.subcategoryID !=
@@ -745,8 +750,10 @@ const AddExpenses = ({ route, navigation }) => {
               });
               setProjectExpenseDisable(false);
             } else {
-
-              if (route.params.type == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText) {
+              if (
+                route.params.type ==
+                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+              ) {
                 response.data.data = response.data.data.filter((el) => {
                   return (
                     el.subcategoryID ==
@@ -782,19 +789,21 @@ const AddExpenses = ({ route, navigation }) => {
                 })[0].subCategoryName
               );
 
-
-              if (editID == projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO) {
+              if (
+                editID ==
+                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_REFNO
+              ) {
                 setProjectExpenseDisable(true);
               }
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBankList = (editID) => {
-    console.log('calling bank');
+    console.log("calling bank");
     console.log(editID);
     let params = {
       data: {
@@ -819,11 +828,13 @@ const AddExpenses = ({ route, navigation }) => {
             setMyBankData(bank);
 
             if (editID != null) {
-              console.log('=============');
+              console.log("=============");
               console.log(response.data.data);
-              console.log(response.data.data.filter((el) => {
-                return el.bank_refno === editID;
-              })[0].bankName);
+              console.log(
+                response.data.data.filter((el) => {
+                  return el.bank_refno === editID;
+                })[0].bankName
+              );
               setMyBank(
                 response.data.data.filter((el) => {
                   return el.bank_refno === editID;
@@ -833,7 +844,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDepositType = (editID) => {
@@ -863,17 +874,27 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchReceiverList = (editID, contactName, subCategoryID, contactTypeID) => {
+  const FetchReceiverList = (
+    editID,
+    contactName,
+    subCategoryID,
+    contactTypeID
+  ) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
         pck_sub_category_refno: subCategoryID.toString(),
-        pck_contacttype_refno: contactTypeID == null ? 0 : contactTypeID == "" ? 0 : contactTypeID.toString(),
+        pck_contacttype_refno:
+          contactTypeID == null
+            ? 0
+            : contactTypeID == ""
+            ? 0
+            : contactTypeID.toString(),
         AddNew: "NO",
-        UserPhoneBookAllContactList: ""
+        UserPhoneBookAllContactList: "",
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
@@ -907,7 +928,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCardType = (editID) => {
@@ -939,7 +960,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
@@ -972,7 +993,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -1012,7 +1033,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const ShowContactList = () => {
@@ -1024,7 +1045,9 @@ const AddExpenses = ({ route, navigation }) => {
           fields: [Contacts.Fields.PhoneNumbers],
         });
         if (data.length > 0) {
-          const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
+          const arrPhones = [],
+            arrNumbers = [],
+            arrDisplayNumbers = [];
           data.map((k, i) => {
             // if (i < 100) {
             //console.log('==================================');
@@ -1034,21 +1057,38 @@ const AddExpenses = ({ route, navigation }) => {
               if (k.phoneNumbers.length > 1) {
                 if (k.phoneNumbers[0].number != null) {
                   arrNumbers.push(
-                    k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    k.phoneNumbers[0].number == ""
+                      ? ""
+                      : k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "").length <= 10
+                      ? k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                      : k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                          .slice(-10)
                   );
-                  arrDisplayNumbers.push(
-                    k.phoneNumbers[0].number
-                  );
+                  arrDisplayNumbers.push(k.phoneNumbers[0].number);
                 }
-              }
-              else {
+              } else {
                 if (k.phoneNumbers.number != null) {
                   arrNumbers.push(
-                    k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    k.phoneNumbers.number == ""
+                      ? ""
+                      : k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "").length <= 10
+                      ? k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                      : k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                          .slice(-10)
                   );
-                  arrDisplayNumbers.push(
-                    k.phoneNumbers.number
-                  );
+                  arrDisplayNumbers.push(k.phoneNumbers.number);
                 }
               }
             }
@@ -1057,7 +1097,6 @@ const AddExpenses = ({ route, navigation }) => {
           let obj = {};
           arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
           CheckContactList(obj, arrPhones);
-
         }
       }
     })();
@@ -1076,8 +1115,8 @@ const AddExpenses = ({ route, navigation }) => {
         pck_sub_category_refno: "0",
         pck_contacttype_refno: "0",
         AddNew: "YES",
-        UserPhoneBookAllContactList: contactList
-      }
+        UserPhoneBookAllContactList: contactList,
+      },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
@@ -1092,13 +1131,11 @@ const AddExpenses = ({ route, navigation }) => {
             }
 
             originalList.map((data) => {
-
               let n = response.data.data.find((el) => {
                 return el.Actual_no === data.phoneNumbers[0].number;
               });
 
               if (n != null) {
-
                 if (ct == 1 && n.Is_SamadhanUser == 1) {
                   margedList.push({
                     name: data.name,
@@ -1106,8 +1143,7 @@ const AddExpenses = ({ route, navigation }) => {
                     Is_MyContactList: n.Is_MyContactList,
                     Is_SamadhanUser: n.Is_SamadhanUser,
                   });
-                }
-                else if (ct == 2 && n.Is_SamadhanUser == 0) {
+                } else if (ct == 2 && n.Is_SamadhanUser == 0) {
                   margedList.push({
                     name: data.name,
                     number: data.phoneNumbers[0].number,
@@ -1126,7 +1162,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const InsertNewContact = (name, mobileNo) => {
@@ -1134,7 +1170,13 @@ const AddExpenses = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         contact_name: name,
-        contact_phoneno: mobileNo.length > 10 ? mobileNo.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10) : mobileNo,
+        contact_phoneno:
+          mobileNo.length > 10
+            ? mobileNo
+                .replace(/\s+/g, "")
+                .replace(/[^0-9]/g, "")
+                .slice(-10)
+            : mobileNo,
         remarks: "",
         view_status: "1",
       },
@@ -1143,8 +1185,8 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
-
-          let subcatID = 0, ct = 0;
+          let subcatID = 0,
+            ct = 0;
           if (subCatStatus) {
             subcatID = subCategoryNameFullData.filter((el) => {
               return el.subCategoryName === subCategoryName;
@@ -1212,7 +1254,6 @@ const AddExpenses = ({ route, navigation }) => {
     setCommonDisplayStatus(true);
     setButtonStatus(false);
 
-
     let contact = contactTypeFullData.filter((el) => {
       return el.pck_contacttype_name === text;
     });
@@ -1235,8 +1276,7 @@ const AddExpenses = ({ route, navigation }) => {
       setNewMobileNumberStatus(true);
       setNewContactNameStatus(true);
       setPaidToStatus(false);
-    }
-    else {
+    } else {
       setNewMobileNumberStatus(false);
       setNewContactNameStatus(false);
       setPaidToStatus(true);
@@ -1245,14 +1285,12 @@ const AddExpenses = ({ route, navigation }) => {
     if (category[0].pckCategoryID == 4) {
       setRecurringReminderDateStatus(true);
       setRecurringStatus(true);
-    }
-    else {
+    } else {
       setRecurringReminderDateStatus(false);
       setRecurringStatus(false);
     }
 
     if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-
       setBankStatus(true);
       FetchBankList();
       setUtrNoStatus(true);
@@ -1261,7 +1299,6 @@ const AddExpenses = ({ route, navigation }) => {
       setDepositTypeStatus(true);
       FetchDepositType();
     }
-
   };
 
   const onProjectExpenseChanged = (text) => {
@@ -1522,7 +1559,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const onAmount = (text) => {
-
     if (parseFloat(text) > parseFloat(balanceAmount.replace(/,/g, ""))) {
       settAmount("");
       setAmountError(true);
@@ -1703,8 +1739,7 @@ const AddExpenses = ({ route, navigation }) => {
       params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
-    }
-    else {
+    } else {
       params.pck_contacttype_refno = "0";
     }
 
@@ -1713,7 +1748,8 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (newMobileNumberStatus) {
-      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+      params.contact_phoneno =
+        mobileNumber.trim() == "" ? "" : mobileNumber.trim();
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1724,13 +1760,13 @@ const AddExpenses = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
 
@@ -1762,7 +1798,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const UpdateData = (type, mode) => {
-    console.log('update===================');
+    console.log("update===================");
     const datas = new FormData();
     let params = {
       Sess_UserRefno: userID,
@@ -1771,9 +1807,11 @@ const AddExpenses = ({ route, navigation }) => {
       Sess_branch_refno: branchID.toString(),
       Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID,
-      pck_mode_refno: payModeFullData.filter((el) => {
-        return el.pckModeName === payMode;
-      })[0].pckModeID.toString(),
+      pck_mode_refno: payModeFullData
+        .filter((el) => {
+          return el.pckModeName === payMode;
+        })[0]
+        .pckModeID.toString(),
 
       pck_category_refno: expensesFullData.filter((el) => {
         return el.categoryName === expenses;
@@ -1861,9 +1899,11 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (projectListStatus) {
-      params.cont_project_refno = projectListFullData.filter((el) => {
-        return el.project_name === projectList;
-      })[0].cont_project_refno.toString();
+      params.cont_project_refno = projectListFullData
+        .filter((el) => {
+          return el.project_name === projectList;
+        })[0]
+        .cont_project_refno.toString();
     }
 
     if (projectExpenseStatus) {
@@ -1880,8 +1920,7 @@ const AddExpenses = ({ route, navigation }) => {
       params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
-    }
-    else {
+    } else {
       params.pck_contacttype_refno = "0";
     }
 
@@ -1890,7 +1929,8 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (newMobileNumberStatus) {
-      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+      params.contact_phoneno =
+        mobileNumber.trim() == "" ? "" : mobileNumber.trim();
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1898,23 +1938,26 @@ const AddExpenses = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     console.log(params);
-    console.log('params up================');
+    console.log("params up================");
     console.log(type);
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddexpensesupdate
-        : mode == "source" ? Provider.API_URLS.pck_companysource_verify_action : Provider.API_URLS.pck_companyexpenses_verify_action ,
-      datas)
+        : mode == "source"
+        ? Provider.API_URLS.pck_companysource_verify_action
+        : Provider.API_URLS.pck_companyexpenses_verify_action,
+      datas
+    )
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
@@ -2048,87 +2091,72 @@ const AddExpenses = ({ route, navigation }) => {
             </>
           )}
 
-          <TextInput
-            mode="flat"
-            label="Amount"
-            value={amount}
-            returnKeyType="next"
-            keyboardType="number-pad"
-            onSubmitEditing={() => ref_input2.current.focus()}
-            onChangeText={onAmount}
-            style={{ backgroundColor: "white" }}
-            error={amountError}
-          />
-          <HelperText type="error" visible={amountError}>
-            {amountInvalidBalance}
-          </HelperText>
-
           {route.params.type ===
             projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText && (
-              <>
-                <View style={[Styles.padding16]}>
-                  <DataTable
-                    style={[
-                      Styles.backgroundSecondaryColor,
-                      Styles.borderRadius4,
-                      Styles.flexJustifyCenter,
-                      Styles.bordergray,
-                      Styles.fontBold,
-                    ]}
-                  >
-                    <DataTable.Header>
-                      <DataTable.Title
-                        style={[{ flex: 1, justifyContent: "center" }]}
-                      >
-                        Collected
-                      </DataTable.Title>
-                      <DataTable.Title
-                        style={[
-                          Styles.borderLeft1,
-                          { flex: 1, justifyContent: "center" },
-                        ]}
-                        numeric
-                      >
-                        Paid
-                      </DataTable.Title>
-                      <DataTable.Title
-                        style={[
-                          Styles.borderLeft1,
-                          { flex: 1, justifyContent: "center" },
-                        ]}
-                        numeric
-                      >
-                        Balance
-                      </DataTable.Title>
-                    </DataTable.Header>
+            <>
+              <View style={[Styles.padding16]}>
+                <DataTable
+                  style={[
+                    Styles.backgroundSecondaryColor,
+                    Styles.borderRadius4,
+                    Styles.flexJustifyCenter,
+                    Styles.bordergray,
+                    Styles.fontBold,
+                  ]}
+                >
+                  <DataTable.Header>
+                    <DataTable.Title
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                    >
+                      Collected
+                    </DataTable.Title>
+                    <DataTable.Title
+                      style={[
+                        Styles.borderLeft1,
+                        { flex: 1, justifyContent: "center" },
+                      ]}
+                      numeric
+                    >
+                      Paid
+                    </DataTable.Title>
+                    <DataTable.Title
+                      style={[
+                        Styles.borderLeft1,
+                        { flex: 1, justifyContent: "center" },
+                      ]}
+                      numeric
+                    >
+                      Balance
+                    </DataTable.Title>
+                  </DataTable.Header>
 
-                    <DataTable.Row style={[Styles.backgroundColor]}>
-                      <DataTable.Cell
-                        style={[{ flex: 1, justifyContent: "center" }]}
-                      >
-                        {collectedAmount}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={[
-                          Styles.borderLeft1,
-                          { flex: 1, justifyContent: "center" },
-                        ]}
-                      >
-                        {paidAmount}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={[
-                          Styles.borderLeft1,
-                          { flex: 1, justifyContent: "center" },
-                        ]}
-                      >
-                        {balanceAmount}
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  </DataTable>
-                </View>
-              </>
-            )}
+                  <DataTable.Row style={[Styles.backgroundColor]}>
+                    <DataTable.Cell
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                    >
+                      {collectedAmount}
+                    </DataTable.Cell>
+                    <DataTable.Cell
+                      style={[
+                        Styles.borderLeft1,
+                        { flex: 1, justifyContent: "center" },
+                      ]}
+                    >
+                      {paidAmount}
+                    </DataTable.Cell>
+                    <DataTable.Cell
+                      style={[
+                        Styles.borderLeft1,
+                        { flex: 1, justifyContent: "center" },
+                      ]}
+                    >
+                      {balanceAmount}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                </DataTable>
+              </View>
+            </>
+          )}
 
           <Dropdown
             label="Payment Mode"
@@ -2340,7 +2368,6 @@ const AddExpenses = ({ route, navigation }) => {
                 onChangeText={onNewContactChange}
                 style={{ backgroundColor: "white" }}
               />
-
             </>
           )}
 
@@ -2356,7 +2383,6 @@ const AddExpenses = ({ route, navigation }) => {
                 onChangeText={onMobileNoChange}
                 style={{ backgroundColor: "white" }}
               />
-
             </>
           )}
 

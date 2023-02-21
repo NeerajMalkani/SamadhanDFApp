@@ -86,7 +86,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
   const [pocketAmount, setPocketAmount] = React.useState("");
   const [bankAmount, setBankAmount] = React.useState("");
-  const [branchAmount, setBranchAmount] = React.useState("");
 
   //#endregion
 
@@ -190,27 +189,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const GetBranchAmount = (userID, companyID, branchID) => {
-    //console.log('get pocket amount');
-    let params = {
-      data: {
-        Sess_UserRefno: userID,
-        Sess_company_refno: companyID.toString(),
-        Sess_branch_refno: branchID.toString(),
-      },
-    };
-    Provider.createDFPocketDairy(
-      Provider.API_URLS.pckdashboard_cashinbranch,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          setBranchAmount(response.data.data[0].TotalCashinCompany.toString());
-        }
-      })
-      .catch((e) => { });
-  };
-
   const GetBankAmount = (userID, companyID, branchID) => {
     //console.log('get bank amount');
     let params = {
@@ -290,7 +268,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       GetUserCount(userID, groupRefNo);
       GetPocketAmount(userID, companyID, branchID);
       GetBankAmount(userID, companyID, branchID);
-      GetBranchAmount(userID, companyID, branchID);
     }
   };
 
@@ -645,8 +622,8 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </TouchableOpacity>
             </View>
-            {(roleID == 4 ||
-              (roleID == 5) && (
+            {roleID == 4 ||
+              (roleID == 5 && (
                 <>
                   <View
                     style={[
@@ -711,7 +688,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                             { color: "#fff", fontWeight: "bold" },
                           ]}
                         >
-                          {branchAmount}
+                          {pocketAmount}
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -811,7 +788,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              {(roleID == 4 || roleID == 5) && (
+              {(roleID == 4 || roleID == 5 && (
                 <>
                   {/* Verify Company Source / Expenses */}
                   <View style={[Styles.paddingTop16]}>
@@ -883,7 +860,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </View>
                   {/* Verify Company Source / Expenses */}
                 </>
-              )}
+              ))}
               <View style={[Styles.paddingTop16]}>
                 <Text style={[Styles.HomeTitle]}>Settings</Text>
                 <View
