@@ -236,6 +236,7 @@ const AddExpenses = ({ route, navigation }) => {
     React.useState(false);
   const [depositTypeStatus, setDepositTypeStatus] = React.useState(false);
   const [bankStatus, setBankStatus] = React.useState(false);
+  const [personalBankStatus, setPersonalBankStatus] = React.useState(false);
   const [utrNoStatus, setUtrNoStatus] = React.useState(false);
   const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
   const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
@@ -261,6 +262,9 @@ const AddExpenses = ({ route, navigation }) => {
   const [collectedAmount, setcollectedAmount] = React.useState("");
   const [paidAmount, setpaidAmount] = React.useState("");
   const [balanceAmount, setbalanceAmount] = React.useState("");
+  const [personalBankName, setPersonalBankName] = React.useState("");
+  const [personalBankAccNo, setPersonalBankAccNo] = React.useState("");
+  const [bankRefNo, setBankRefNo] = React.useState("");
 
   //#endregion
 
@@ -317,6 +321,7 @@ const AddExpenses = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             //console.log(response.data.data[0]);
@@ -445,6 +450,14 @@ const AddExpenses = ({ route, navigation }) => {
     if (data.pck_mybank_refno != "" && data.pck_mybank_refno != "0") {
       setBankStatus(true);
       FetchBankList(data.pck_mybank_refno);
+    }
+
+    if (route.params.type === "verify" && data.banktype_refno != null && data.banktype_refno == "1") {
+      setPersonalBankStatus(true);
+      setBankStatus(false);
+      setPersonalBankName(data.personal_bank_name);
+      setPersonalBankAccNo(data.personal_bank_account_no);
+      setBankRefNo(data.pck_mybank_refno);
     }
 
     if (data.utr_no != "" && data.utr_no != "0") {
@@ -803,8 +816,9 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchBankList = (editID) => {
-    console.log("calling bank");
-    console.log(editID);
+
+    //console.log('calling bank');
+    //console.log(editID);
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -828,13 +842,7 @@ const AddExpenses = ({ route, navigation }) => {
             setMyBankData(bank);
 
             if (editID != null) {
-              console.log("=============");
-              console.log(response.data.data);
-              console.log(
-                response.data.data.filter((el) => {
-                  return el.bank_refno === editID;
-                })[0].bankName
-              );
+
               setMyBank(
                 response.data.data.filter((el) => {
                   return el.bank_refno === editID;
@@ -1778,7 +1786,7 @@ const AddExpenses = ({ route, navigation }) => {
       datas
     )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1856,6 +1864,10 @@ const AddExpenses = ({ route, navigation }) => {
       params.pck_mybank_refno = myBankFullData.filter((el) => {
         return el.bankName === MyBank;
       })[0].bank_refno;
+    }
+
+    if (personalBankStatus && route.params.type === "verify") {
+      params.pck_mybank_refno = bankRefNo;
     }
 
     if (utrNoStatus) {
@@ -1958,6 +1970,7 @@ const AddExpenses = ({ route, navigation }) => {
         : Provider.API_URLS.pck_companyexpenses_verify_action,
       datas
     )
+
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
@@ -2466,6 +2479,20 @@ const AddExpenses = ({ route, navigation }) => {
                   Add Bank Account
                 </Button>
               </View>
+            </>
+          )}
+
+          {personalBankStatus && (
+            <>
+              <TextInput
+                mode="flat"
+                label="Employee Personal Bank"
+                value={personalBankName + ">>" + personalBankAccNo}
+                disabled={true}
+                returnKeyType="next"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                style={{ backgroundColor: "white" }}
+              />
             </>
           )}
 

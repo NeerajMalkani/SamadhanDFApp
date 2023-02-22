@@ -50,7 +50,6 @@ const Design = ({ route, navigation }) => {
       params
     )
       .then((res) => {
-        console.log(res.data.data);
         setGroups(res.data.data);
       })
       .catch((error) => console.log(error));
@@ -121,7 +120,7 @@ const Design = ({ route, navigation }) => {
               key={obj.propertytype_refno}
             >
               <CreateSCCards
-                image="https://dfsolutions.in/uploads/ServiceCatelogueDesign/designimage_2_14_1660750974.jpeg"
+                image={obj.propertytype_image}
                 title={obj.propertytype_name}
                 cardClick={() => {
                   setSelectedProperty(obj);

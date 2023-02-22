@@ -452,8 +452,16 @@ const AddSourceList = ({ route, navigation }) => {
                       disableRightSwipe={true}
                       rightOpenValue={-72}
                       renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback])
+                      renderHiddenItem={(data, rowMap) => {
+                        if (data.item.verified_status == "1") {
+                          return null
+                        }
+                        else {
+                          return RenderHiddenItems(data, rowMap, [EditCallback])
+                        }
+
+                      }
+
                       }
                     />
                   </View>
@@ -553,7 +561,7 @@ const AddSourceList = ({ route, navigation }) => {
             />
             <List.Item title="Receipt Mode Type" description={receiptMode} />
             <List.Item title="Amount" description={amount} /> */}
-            <SheetElement current={current } type="fin-list" />
+            <SheetElement current={current} type="fin-list" />
 
             {PayToCompanyStatus && (
               <>

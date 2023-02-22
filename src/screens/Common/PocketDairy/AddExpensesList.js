@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SwipeListView } from "react-native-swipe-list-view";
+import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
@@ -147,7 +147,7 @@ const AddExpensesList = ({ navigation }) => {
     //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
-        //console.log(response.data);
+        //console.log("company data: ", response.data.data);
         if (response.data && response.data.code === 200) {
           //console.log(response.data.data);
           if (response.data.data) {
@@ -226,6 +226,7 @@ const AddExpensesList = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
+
       <View
         style={[
           Styles.backgroundColor,
@@ -423,8 +424,19 @@ const AddExpensesList = ({ navigation }) => {
                       disableRightSwipe={true}
                       rightOpenValue={-72}
                       renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback])
+                      renderHiddenItem={(data, rowMap) => {
+                        if (data.item.verified_status == "1") {
+                          return null
+                        }
+                        else {
+                          return RenderHiddenItems(data, rowMap, [EditCallback])
+                        }
+
+
+                      }
+
+
+
                       }
                     />
                   </View>

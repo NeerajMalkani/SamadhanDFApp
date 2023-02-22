@@ -134,24 +134,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
     navigation.navigate("AddGSubCategoryNameScreen", { type: "add", fetchData: FetchData });
   };
 
-  const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddGSubCategoryNameScreen", {
-      type: "edit",
-      fetchData: FetchData,
-      data: {
-        id: data.item.id,
-        transtypeID: data.item.transtypeID,
-        transactionTypeName: data.item.transactionTypeName,
-        categoryName: data.item.categoryName,
-        pckCategoryID: data.item.pckCategoryID,
-        subCategoryName: data.item.subCategoryName,
-        subcategoryID: data.item.subcategoryID,
-        notes: data.item.notes,
-        display: data.item.display,
-      },
-    });
-  };
+  
   //#endregion
 
   return (
@@ -175,7 +158,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            
           />
         </View>
       ) : (

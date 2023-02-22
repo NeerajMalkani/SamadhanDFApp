@@ -55,7 +55,7 @@ const Form = ({ route, navigation }) => {
 
   const [widthInches, setWidthInches] = useState([]);
   const [widthFeet, setWidthFeet] = useState([]);
-
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [services, setServices] = useState([]);
   const [categories, setCategories] = useState([]);
   const [changed, setChanged] = useState(false);
@@ -76,6 +76,7 @@ const Form = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
+    
     let errors = false;
 
     if (state.service_refno.length < 1) {
@@ -118,6 +119,7 @@ const Form = ({ route, navigation }) => {
       setErrors((state) => ({ ...state, contact_mobile_no: true }));
     }
     if (!errors) {
+      setIsButtonLoading(true);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -132,13 +134,13 @@ const Form = ({ route, navigation }) => {
           ).propertycategory_refno,
         },
       };
-
       Provider.createDFCommon(
         Provider.API_URLS.designyourdream_enquiry_create,
         params
       )
         .then((res) => {
           if (res.data.data) {
+            setIsButtonLoading(false);
             setState({
               service_refno: [],
               propertycategory_refno: "",
@@ -146,7 +148,6 @@ const Form = ({ route, navigation }) => {
               lengthinches: "",
               widthheightfoot: "",
               widthheightinches: "",
-
               contact_name: "",
               contact_mobile_no: "",
               property_address: "",
@@ -157,10 +158,12 @@ const Form = ({ route, navigation }) => {
             setSnackbarVisible(true);
             navigation.navigate("HomeScreen");
           } else {
+            setIsButtonLoading(false);
             throw "Something went wrong";
           }
         })
         .catch((error) => {
+          setIsButtonLoading(false);
           setSnackbarText("Something Went Wrong...");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -195,7 +198,6 @@ const Form = ({ route, navigation }) => {
         .catch((error) => console.log(error));
     }
   }, [state, setTotal, userID]);
-  console.log(total);
   useEffect(() => {
     if (isFocused) {
       GetUserID();
@@ -315,7 +317,79 @@ const Form = ({ route, navigation }) => {
           <HelperText type="error" visible={errors.propertycategory_refno}>
             Please Select a property category
           </HelperText>
+          <View style={[Styles.width100per, Styles.flexRow]}>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Length (in feet)"
+                reference={refs.lengthfeet}
+                data={lengthFeet.map((item) => item.lengthfoot)}
+                selectedItem={state.lengthfoot}
+                isError={errors.lengthfoot}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "lengthfoot");
+                }}
+              />
+              <HelperText type="error" visible={errors.lengthfoot}>
+                Please Select a length{" "}
+              </HelperText>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Length (in inches)"
+                reference={refs.lengthinches}
+                isError={errors.lengthinches}
+                selectedItem={state.lengthinches}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "lengthinches");
+                }}
+                data={lengthInches.map((item) => item.lengthinches)}
+              />
+              <HelperText type="error" visible={errors.lengthinches}>
+                Please Select a length{" "}
+              </HelperText>
+            </View>
+          </View>
 
+          <View style={[Styles.width100per, Styles.flexRow]}>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Width/Height (in feet)"
+                reference={refs.widhtfeet}
+                isError={errors.widthheightfoot}
+                selectedItem={state.widthheightfoot}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "widthheightfoot");
+                }}
+                data={widthFeet.map((item) => item.widthheightfoot)}
+              />
+              <HelperText type="error" visible={errors.widthheightfoot}>
+                Please Select a width
+              </HelperText>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Width/height (in inches)"
+                reference={refs.widthinches}
+                selectedItem={state.widthheightinches}
+                isError={errors.widthheightinches}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "widthheightinches");
+                }}
+                data={widthInches.map((item) => item.widthheightinches)}
+              />
+              <HelperText type="error" visible={errors.widthheightinches}>
+                Please Select a width
+              </HelperText>
+            </View>
+          </View>
+
+
+
+<<<<<<< HEAD
           <Dropdown
             label="Length (in feet)"
             reference={refs.lengthfeet}
@@ -372,6 +446,8 @@ const Form = ({ route, navigation }) => {
           <HelperText type="error" visible={errors.widthheightinches}>
             Please Select a width
           </HelperText>
+=======
+>>>>>>> efea31403210a036bab2a5ab59be56c2e62fa8e9
           <TextInput
             mode="flat"
             label="Total (Sq.ft)"
@@ -433,7 +509,8 @@ const Form = ({ route, navigation }) => {
           <Button
             mode="contained"
             onPress={onSubmit}
-            style={{ alignSelf: "center", marginTop: 20 }}
+            loading={isButtonLoading} disabled={isButtonLoading}
+            style={[Styles.width100per, { alignSelf: "center", marginTop: 20 }]}
           >
             Submit
           </Button>

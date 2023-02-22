@@ -439,6 +439,12 @@ class Provider {
     designyourdream_enquiry_create: "designyourdream_enquiry_create/",
     getgroupname_designyourdream_enquiryform:
       "getgroupname_designyourdream_enquiryform/",
+    getservicenamebrandconversionform: "getservicenamebrandconversionform/",
+    pckdashboard_cashinbranch: "pckdashboard_cashinbranch/",
+    pckdashboard_cashinbranch_pocket: "pckdashboard_cashinbranch_pocket/",
+    pckdashboard_cashinbranch_bank: "pckdashboard_cashinbranch_bank/",
+    pckdashboard_cashinbranch_pocket_gridlist: "pckdashboard_cashinbranch_pocket_gridlist/",
+    pckdashboard_cashinbranch_bank_gridlist: "pckdashboard_cashinbranch_bank_gridlist/",
   };
 
   createDFPocketDairy(resource, params) {
