@@ -76,7 +76,6 @@ const Form = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
-    
     let errors = false;
 
     if (state.service_refno.length < 1) {
@@ -387,67 +386,6 @@ const Form = ({ route, navigation }) => {
             </View>
           </View>
 
-
-
-<<<<<<< HEAD
-          <Dropdown
-            label="Length (in feet)"
-            reference={refs.lengthfeet}
-            data={lengthFeet?.map((item) => item.lengthfoot)}
-            selectedItem={state.lengthfoot}
-            isError={errors.lengthfoot}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "lengthfoot");
-            }}
-          />
-          <HelperText type="error" visible={errors.lengthfoot}>
-            Please Select a length{" "}
-          </HelperText>
-          <Dropdown
-            label="Length (in inches)"
-            reference={refs.lengthinches}
-            isError={errors.lengthinches}
-            selectedItem={state.lengthinches}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "lengthinches");
-            }}
-            data={lengthInches?.map((item) => item.lengthinches)}
-          />
-          <HelperText type="error" visible={errors.lengthinches}>
-            Please Select a length{" "}
-          </HelperText>
-          <Dropdown
-            label="Width/Height (in feet)"
-            reference={refs.widhtfeet}
-            isError={errors.widthheightfoot}
-            selectedItem={state.widthheightfoot}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "widthheightfoot");
-            }}
-            data={widthFeet?.map((item) => item.widthheightfoot)}
-          />
-          <HelperText type="error" visible={errors.widthheightfoot}>
-            Please Select a width
-          </HelperText>
-          <Dropdown
-            label="Width/height (in inches)"
-            reference={refs.widthinches}
-            selectedItem={state.widthheightinches}
-            isError={errors.widthheightinches}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "widthheightinches");
-            }}
-            data={widthInches?.map((item) => item.widthheightinches)}
-          />
-          <HelperText type="error" visible={errors.widthheightinches}>
-            Please Select a width
-          </HelperText>
-=======
->>>>>>> efea31403210a036bab2a5ab59be56c2e62fa8e9
           <TextInput
             mode="flat"
             label="Total (Sq.ft)"
@@ -509,7 +447,8 @@ const Form = ({ route, navigation }) => {
           <Button
             mode="contained"
             onPress={onSubmit}
-            loading={isButtonLoading} disabled={isButtonLoading}
+            loading={isButtonLoading}
+            disabled={isButtonLoading}
             style={[Styles.width100per, { alignSelf: "center", marginTop: 20 }]}
           >
             Submit
