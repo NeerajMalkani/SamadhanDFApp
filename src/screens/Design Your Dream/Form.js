@@ -77,6 +77,7 @@ const Form = ({ route, navigation }) => {
 
   const onSubmit = () => {
     let errors = false;
+
     if (state.service_refno.length < 1) {
       errors = true;
       setErrors((state) => ({ ...state, service_refno: true }));
@@ -109,7 +110,10 @@ const Form = ({ route, navigation }) => {
       errors = true;
       setErrors((state) => ({ ...state, contact_name: true }));
     }
-    if (state.contact_mobile_no === "") {
+    if (
+      state.contact_mobile_no === "" ||
+      state.contact_mobile_no.length !== 10
+    ) {
       errors = true;
       setErrors((state) => ({ ...state, contact_mobile_no: true }));
     }
@@ -121,7 +125,7 @@ const Form = ({ route, navigation }) => {
           ...state,
           propertytype_refno: route.params.selectedProperty.propertytype_refno,
           totalfoot: total,
-          service_refno: state.service_refno.map((obj) => obj._id),
+          service_refno: state.service_refno?.map((obj) => obj._id),
           propertycategory_refno: categories.find(
             (item) =>
               item.propertycategory_name === state.propertycategory_refno
@@ -134,10 +138,9 @@ const Form = ({ route, navigation }) => {
         params
       )
         .then((res) => {
-          console.log(res.data);
           if (res.data.data) {
             setState({
-              service_refno: "",
+              service_refno: [],
               propertycategory_refno: "",
               lengthfoot: "",
               lengthinches: "",
@@ -284,8 +287,8 @@ const Form = ({ route, navigation }) => {
             textInputMode="flat"
             underlineColor={errors.service_refno ? theme.colors.error : "black"}
             errorStyle={{ color: theme.colors.error }}
-            value={state.service_refno.map((item) => item.value).join(",")}
-            arrayList={services.map((obj) => {
+            value={state.service_refno?.map((item) => item.value).join(",")}
+            arrayList={services?.map((obj) => {
               return { _id: obj.service_refno, value: obj.service_name };
             })}
             selectAllEnable={false}
@@ -299,7 +302,7 @@ const Form = ({ route, navigation }) => {
           />
 
           <Dropdown
-            data={categories.map((item) => {
+            data={categories?.map((item) => {
               return item.propertycategory_name;
             })}
             selectedItem={state.propertycategory_refno}
@@ -316,7 +319,7 @@ const Form = ({ route, navigation }) => {
           <Dropdown
             label="Length (in feet)"
             reference={refs.lengthfeet}
-            data={lengthFeet.map((item) => item.lengthfoot)}
+            data={lengthFeet?.map((item) => item.lengthfoot)}
             selectedItem={state.lengthfoot}
             isError={errors.lengthfoot}
             onSelected={(e) => {
@@ -336,7 +339,7 @@ const Form = ({ route, navigation }) => {
               setChanged(true);
               onChange(e, "lengthinches");
             }}
-            data={lengthInches.map((item) => item.lengthinches)}
+            data={lengthInches?.map((item) => item.lengthinches)}
           />
           <HelperText type="error" visible={errors.lengthinches}>
             Please Select a length{" "}
@@ -350,7 +353,7 @@ const Form = ({ route, navigation }) => {
               setChanged(true);
               onChange(e, "widthheightfoot");
             }}
-            data={widthFeet.map((item) => item.widthheightfoot)}
+            data={widthFeet?.map((item) => item.widthheightfoot)}
           />
           <HelperText type="error" visible={errors.widthheightfoot}>
             Please Select a width
@@ -364,7 +367,7 @@ const Form = ({ route, navigation }) => {
               setChanged(true);
               onChange(e, "widthheightinches");
             }}
-            data={widthInches.map((item) => item.widthheightinches)}
+            data={widthInches?.map((item) => item.widthheightinches)}
           />
           <HelperText type="error" visible={errors.widthheightinches}>
             Please Select a width
@@ -405,7 +408,9 @@ const Form = ({ route, navigation }) => {
             error={errors.contact_mobile_no}
             returnKeyType="next"
             value={state.contact_mobile_no}
-            onChangeText={(e) => onChange(e, "contact_mobile_no")}
+            onChangeText={(e) => {
+              if (e.length < 11) onChange(e, "contact_mobile_no");
+            }}
             style={{ backgroundColor: "white" }}
           />
           <HelperText type="error" visible={errors.contact_mobile_no}>
