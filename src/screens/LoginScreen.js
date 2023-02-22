@@ -1,12 +1,5 @@
 import { View, Image, ScrollView, Keyboard } from "react-native";
-import {
-  Button,
-  Snackbar,
-  TextInput,
-  Title,
-  HelperText,
-  Text,
-} from "react-native-paper";
+import { Button, Snackbar, TextInput, Title, HelperText, Text } from "react-native-paper";
 import { Styles } from "../styles/styles";
 import React from "react";
 import { theme } from "../theme/apptheme";
@@ -93,10 +86,7 @@ const LoginScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           const user = {
             UserID: response.data.data.Sess_UserRefno,
-            FullName:
-              response.data.data.Sess_FName === ""
-                ? response.data.data.Sess_Username
-                : response.data.data.Sess_FName,
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
             RoleID: response.data.data.Sess_group_refno,
             RoleName: response.data.data.Sess_Username,
             Sess_FName: response.data.data.Sess_FName,
@@ -106,19 +96,14 @@ const LoginScreen = ({ route, navigation }) => {
             Sess_group_refno: response.data.data.Sess_group_refno,
             Sess_designation_refno: response.data.data.Sess_designation_refno,
             Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
-            Sess_group_refno_extra_1:
-              response.data.data.Sess_group_refno_extra_1,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
             Sess_if_create_brand: response.data.data.Sess_if_create_brand,
-            Sess_User_All_GroupRefnos:
-              response.data.data.Sess_User_All_GroupRefnos,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
             Sess_branch_refno: response.data.data.Sess_branch_refno,
             Sess_company_refno: response.data.data.Sess_company_refno,
-            Sess_CompanyAdmin_UserRefno:
-              response.data.data.Sess_CompanyAdmin_UserRefno,
-            Sess_CompanyAdmin_group_refno:
-              response.data.data.Sess_CompanyAdmin_group_refno,
-            Sess_RegionalOffice_Branch_Refno:
-              response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
           };
 
@@ -170,95 +155,34 @@ const LoginScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, { paddingTop: 80 }]}>
-          <Image
-            source={require("../../assets/icon.png")}
-            style={[
-              Styles.width104,
-              Styles.height104,
-              Styles.flexAlignSelfCenter,
-            ]}
-          />
-          <Title style={[Styles.padding24, Styles.textCenter]}>
-            Login to continue
-          </Title>
-          <TextInput
-            mode="flat"
-            dense
-            label="Username"
-            autoComplete="username"
-            value={username}
-            onChangeText={onUsernameChanged}
-            error={isUsernameInvalid}
-          />
+          <Image source={require("../../assets/icon.png")} style={[Styles.width104, Styles.height104, Styles.flexAlignSelfCenter]} />
+          <Title style={[Styles.padding24, Styles.textCenter]}>Login to continue</Title>
+          <TextInput mode="flat" dense label="Username" autoComplete="username" value={username} onChangeText={onUsernameChanged} error={isUsernameInvalid} />
           <HelperText type="error" visible={isUsernameInvalid}>
             {communication.InvalidUsername}
           </HelperText>
-          <TextInput
-            mode="flat"
-            dense
-            secureTextEntry={true}
-            label="Password"
-            value={password}
-            style={[Styles.marginTop8]}
-            onChangeText={onPasswordChanged}
-            error={isPasswordInvalid}
-          />
+          <TextInput mode="flat" dense secureTextEntry={true} label="Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
           </HelperText>
-          <Button
-            mode="text"
-            uppercase={false}
-            style={[Styles.flexAlignEnd, { marginTop: -12 }]}
-            onPress={() => ForgotPassword()}
-          >
+          <Button mode="text" uppercase={false} style={[Styles.flexAlignEnd, { marginTop: -12 }]} onPress={() => ForgotPassword()}>
             Forgot Password?
           </Button>
-          <Button
-            mode="contained"
-            style={[Styles.marginTop16]}
-            loading={isButtonLoading}
-            disabled={isButtonLoading}
-            onPress={() => ValidateLogin()}
-          >
+          <Button mode="contained" style={[Styles.marginTop16]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateLogin()}>
             Login
           </Button>
           <View>
-            <View
-              style={[
-                Styles.marginTop32,
-                Styles.marginHorizontal24,
-                Styles.flexJustifyCenter,
-                Styles.flexAlignCenter,
-                Styles.borderBottom1,
-              ]}
-            ></View>
-            <View
-              style={[
-                Styles.flexAlignSelfCenter,
-                Styles.flexAlignCenter,
-                Styles.width32,
-                Styles.backgroundColor,
-                { marginTop: -10 },
-              ]}
-            >
+            <View style={[Styles.marginTop32, Styles.marginHorizontal24, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.borderBottom1]}></View>
+            <View style={[Styles.flexAlignSelfCenter, Styles.flexAlignCenter, Styles.width32, Styles.backgroundColor, { marginTop: -10 }]}>
               <Text>OR</Text>
             </View>
-            <Button
-              mode="outlined"
-              style={[Styles.marginTop24]}
-              onPress={() => NewUser()}
-            >
+            <Button mode="outlined" style={[Styles.marginTop24]} onPress={() => NewUser()}>
               New User
             </Button>
           </View>
         </View>
       </ScrollView>
-      <Snackbar
-        visible={isSnackbarVisible}
-        onDismiss={() => setIsSnackbarVisible(false)}
-        style={{ backgroundColor: theme.colors.error }}
-      >
+      <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
       </Snackbar>
     </View>

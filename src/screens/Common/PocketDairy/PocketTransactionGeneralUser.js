@@ -18,6 +18,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { TabBar, TabView } from "react-native-tab-view";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import moment from "moment";
+import { TransactionListItem } from "./TransactionListItem";
 
 let userID = 0, companyID = 0, branchID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
@@ -126,6 +127,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
         }
         Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinpocket_gridlist, params)
             .then((response) => {
+                console.log('data ==============', response.data.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         console.log(response.data.data);
@@ -173,6 +175,14 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             <View style={[Styles.backgroundColor, Styles.flexJustifyCenter, Styles.paddingHorizontal4,
             Styles.paddingHorizontal16, { height: 92, }]}>
                 <TouchableOpacity activeOpacity={1}
+                    style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
+                    Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
+
+                    <TransactionListItem current={data} type="fin-list" />
+                    
+                </TouchableOpacity>
+
+                {/* <TouchableOpacity activeOpacity={1}
                     // onPress={() => {
                     //     refRBSheet.current.open();
                     //     setCategoryName(data.item.categoryName);
@@ -206,8 +216,8 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                             <Text style={[Styles.textRight]}>Balance: <Icon name="currency-inr" size={14} />{data.item.current_balance}</Text>
                         </View>
                     </View>
-                </TouchableOpacity>
-                
+                </TouchableOpacity> */}
+
             </View>
         );
     };

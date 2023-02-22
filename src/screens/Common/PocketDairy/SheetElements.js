@@ -47,26 +47,20 @@ export const SheetElement = ({ current, type }) => {
           )}
 
           {current?.employee_code && (
-            <List.Item
-              title="Employee Code"
-              description={current.employee_code}
-            />
+            <List.Item title="Employee Code" description={current.employee_code} />
           )}
 
           {current?.employee_name && (
-            <List.Item
-              title="Employee Name"
-              description={current.employee_name}
-            />
+            <List.Item title="Employee Name" description={current.employee_name} />
           )}
 
           {current?.pck_trans_refno && (
-            <List.Item
-              title="Reference No"
-              description={current.pck_trans_refno}
-            />
+            <List.Item title="Reference No" description={current.pck_trans_refno} />
           )}
         </>
       );
+
+
   }
+
 };
