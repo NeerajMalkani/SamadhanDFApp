@@ -148,6 +148,7 @@ const AddSource = ({ route, navigation }) => {
   const [receivedStatus, setReceivedStatus] = React.useState(false);
   const [depositTypeStatus, setDepositTypeStatus] = React.useState(false);
   const [bankListStatus, setBankListStatus] = React.useState(false);
+  const [bankBalanceStatus, setBankBalanceStatus] = React.useState(false);
   const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
   const [newMobileNumberStatus, setNewMobileNumberStatus] = React.useState(false);
   const [newContactNameStatus, setNewContactNameStatus] = React.useState(false);
@@ -171,6 +172,7 @@ const AddSource = ({ route, navigation }) => {
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [paymentTypeID, setPaymentTypeID] = useState(0);
   const [paymentGroupID, setPaymentGroupID] = useState(0);
+  const [bankBalance, setBankBalance] = useState(0);
   const [errorPG, setErrorPG] = React.useState(false);
   const [errorPT, setErrorPT] = React.useState(false);
   const [paymentRB, setPaymentRB] = useState([
@@ -607,6 +609,41 @@ const AddSource = ({ route, navigation }) => {
                 })[0].bankName
               );
             }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchBankCurrentBalance = (bankID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID.toString(),
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_entrytype_refno: _pktEntryTypeID,
+        pck_mybank_refno: bankID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_sourceform, params)
+      .then((response) => {
+        console.log('bank balance', response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setBankBalance(response.data.data[0].cashinbank.toString());
+
+            let amt = amount == "" ? 0 : parseFloat(amount);
+            let bankAmt = response.data.data[0].cashinbank == "" ? 0 : parseFloat(response.data.data[0].cashinbank);
+
+            if (amt > bankAmt) {
+              settAmount("");
+              setSnackbarText("Your entered amount is greater than for available balance.");
+              setSnackbarColor(theme.colors.error);
+              setSnackbarVisible(true);
+
+            }
+
           }
         }
       })
@@ -1324,11 +1361,58 @@ const AddSource = ({ route, navigation }) => {
   const onBankListChanged = (text) => {
     setMyBankList(text);
     setBLError(false);
+
+    let mode = receiptModeFullData.filter((el) => {
+      return el.pckModeName === receiptMode;
+    });
+
+    let category = sourceFullData.filter((el) => {
+      return el.categoryName === source;
+    });
+
+    console.log(mode);
+    console.log(category);
+    if (mode[0].pckModeID == 1 && category[0].pckCategoryID == 1) {
+      setBankBalanceStatus(true);
+
+      let bankID = myBankListFullData.filter((el) => {
+        return el.bankName === text;
+      })[0].bank_refno;
+
+      FetchBankCurrentBalance(bankID);
+    }
+    else {
+      setBankBalanceStatus(false);
+      setBankBalance(0);
+    }
   };
 
   const onAmount = (text) => {
     settAmount(text);
     setAmountError(false);
+
+    let mode = receiptModeFullData.filter((el) => {
+      return el.pckModeName === receiptMode;
+    });
+
+    let category = sourceFullData.filter((el) => {
+      return el.categoryName === source;
+    });
+
+    if (mode.length > 0 && category.length > 0) {
+      if (mode[0].pckModeID == 1 && category[0].pckCategoryID == 1 && bankBalanceStatus) {
+        let amt = text == "" ? 0 : parseFloat(text);
+        let bankAmt = bankBalance == "" ? 0 : parseFloat(bankBalance);
+
+        if (amt > bankAmt) {
+          settAmount("");
+          setSnackbarText("Your entered amount is greater than your available balance.");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+      }
+    }
+
   };
 
   const onrentalDescriptionChange = (text) => {
@@ -1562,10 +1646,10 @@ const AddSource = ({ route, navigation }) => {
       Sess_designation_refno: designID.toString(),
       pck_entrytype_refno: pktEntryTypeID.toString(),
       pck_mode_refno: receiptModeFullData
-      .filter((el) => {
-        return el.pckModeName === receiptMode;
-      })[0]
-      .pckModeID.toString(),
+        .filter((el) => {
+          return el.pckModeName === receiptMode;
+        })[0]
+        .pckModeID.toString(),
       pck_category_refno: sourceFullData.filter((el) => {
         return el.categoryName === source;
       })[0].pckCategoryID,
@@ -1671,9 +1755,9 @@ const AddSource = ({ route, navigation }) => {
     console.log(type);
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
-      ? Provider.API_URLS.pckaddsourceupdate
-      : Provider.API_URLS.pck_companysource_verify_action,
-       datas)
+        ? Provider.API_URLS.pckaddsourceupdate
+        : Provider.API_URLS.pck_companysource_verify_action,
+      datas)
       .then((response) => {
         console.log(response.data);
         if (response.data && response.data.code === 200) {
@@ -2229,6 +2313,22 @@ const AddSource = ({ route, navigation }) => {
                   Add Bank Account
                 </Button>
               </View>
+            </>
+          )}
+
+          {bankBalanceStatus && (
+            <>
+              <TextInput
+                mode="outlined"
+                label="Available Balance"
+                value={bankBalance}
+                returnKeyType="next"
+                outlineColor={theme.colors.primary}
+                keyboardType="number-pad"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                disabled={true}
+                style={[Styles.marginTop8, { backgroundColor: "white" }]}
+              />
             </>
           )}
 

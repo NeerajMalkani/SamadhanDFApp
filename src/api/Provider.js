@@ -445,6 +445,7 @@ class Provider {
     pckdashboard_cashinbranch_bank: "pckdashboard_cashinbranch_bank/",
     pckdashboard_cashinbranch_pocket_gridlist: "pckdashboard_cashinbranch_pocket_gridlist/",
     pckdashboard_cashinbranch_bank_gridlist: "pckdashboard_cashinbranch_bank_gridlist/",
+    get_availablebalance_cashinbank_sourceform: "get_availablebalance_cashinbank_sourceform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -473,13 +474,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;
