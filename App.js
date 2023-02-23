@@ -4,11 +4,31 @@ import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { theme } from "./src/theme/apptheme";
 import { Styles } from "./src/styles/styles";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+} from "@react-navigation/drawer";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { SafeAreaView, Platform, StatusBar, LayoutAnimation, View } from "react-native";
-import { MenuItemsAdmin, MenuItemsContractor, MenuItemsDealer, MenuItemsGeneralUser, MenuItemsArchitect, MenuItemsManufacture, MenuItemsProjectSupervisor } from "./src/json/MenuItems";
+import {
+  SafeAreaView,
+  Platform,
+  StatusBar,
+  LayoutAnimation,
+  View,
+} from "react-native";
+import DesignYourDreamCategories from "./src/screens/Design Your Dream/Categories";
+import DesignYourDreamForm from "./src/screens/Design Your Dream/Form";
+import {
+  MenuItemsAdmin,
+  MenuItemsContractor,
+  MenuItemsDealer,
+  MenuItemsGeneralUser,
+  MenuItemsArchitect,
+  MenuItemsManufacture,
+  MenuItemsProjectSupervisor,
+} from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
 import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
@@ -227,8 +247,28 @@ export default function App() {
     const [expanded7, setExpanded7] = React.useState(false);
     const [expanded8, setExpanded8] = React.useState(false);
     const [expanded9, setExpanded9] = React.useState(false);
-    const masterExpanded = [expanded1, expanded2, expanded3, expanded4, expanded5, expanded6, expanded7, expanded8, expanded9];
-    const masterSetExpanded = [setExpanded1, setExpanded2, setExpanded3, setExpanded4, setExpanded5, setExpanded6, setExpanded7, setExpanded8, setExpanded9];
+    const masterExpanded = [
+      expanded1,
+      expanded2,
+      expanded3,
+      expanded4,
+      expanded5,
+      expanded6,
+      expanded7,
+      expanded8,
+      expanded9,
+    ];
+    const masterSetExpanded = [
+      setExpanded1,
+      setExpanded2,
+      setExpanded3,
+      setExpanded4,
+      setExpanded5,
+      setExpanded6,
+      setExpanded7,
+      setExpanded8,
+      setExpanded9,
+    ];
     return (
       <DrawerContentScrollView {...props}>
         <DrawerItem
@@ -252,7 +292,15 @@ export default function App() {
               </Text>
             );
           }}
-          icon={({ focused }) => <Icon color={focused ? theme.colors.textLight : theme.colors.textSecondary} size={24} name="view-dashboard" />}
+          icon={({ focused }) => (
+            <Icon
+              color={
+                focused ? theme.colors.textLight : theme.colors.textSecondary
+              }
+              size={24}
+              name="view-dashboard"
+            />
+          )}
           onPress={(e) => {
             activeIndex = -1;
             props.navigation.navigate("HomeScreen");
@@ -272,7 +320,9 @@ export default function App() {
                         Styles.textColor,
                         Styles.fontSize16,
                         {
-                          color: focused ? theme.colors.primary : theme.colors.text,
+                          color: focused
+                            ? theme.colors.primary
+                            : theme.colors.text,
                         },
                       ]}
                     >
@@ -280,7 +330,17 @@ export default function App() {
                     </Text>
                   );
                 }}
-                icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
+                icon={({ focused }) => (
+                  <Icon
+                    color={
+                      focused
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                    size={24}
+                    name={k.icon}
+                  />
+                )}
                 onPress={(e) => {
                   if (k.navigation !== undefined) {
                     activeIndex = parseInt(i);
@@ -300,7 +360,9 @@ export default function App() {
                         Styles.textColor,
                         Styles.fontSize16,
                         {
-                          color: focused ? theme.colors.primary : theme.colors.text,
+                          color: focused
+                            ? theme.colors.primary
+                            : theme.colors.text,
                         },
                       ]}
                     >
@@ -308,7 +370,17 @@ export default function App() {
                     </Text>
                   );
                 }}
-                icon={({ focused }) => <Icon color={focused ? theme.colors.primary : theme.colors.textSecondary} size={24} name={k.icon} />}
+                icon={({ focused }) => (
+                  <Icon
+                    color={
+                      focused
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                    size={24}
+                    name={k.icon}
+                  />
+                )}
                 onPress={(e) => {
                   LogoutUser();
                 }}
@@ -317,9 +389,32 @@ export default function App() {
               <List.Accordion
                 key={i}
                 title={k.title}
-                expanded={i == 0 ? expanded1 : i == 1 ? expanded2 : i == 2 ? expanded3 : i == 3 ? expanded4 : i == 4 ? expanded5 : i == 5 ? expanded6 : i == 6 ? expanded7 : i == 7 ? expanded8 : expanded9}
+                expanded={
+                  i == 0
+                    ? expanded1
+                    : i == 1
+                    ? expanded2
+                    : i == 2
+                    ? expanded3
+                    : i == 3
+                    ? expanded4
+                    : i == 4
+                    ? expanded5
+                    : i == 5
+                    ? expanded6
+                    : i == 6
+                    ? expanded7
+                    : i == 7
+                    ? expanded8
+                    : expanded9
+                }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
-                style={[Styles.backgroundColor, Styles.borderBottom1, Styles.height56, { paddingTop: -8 }]}
+                style={[
+                  Styles.backgroundColor,
+                  Styles.borderBottom1,
+                  Styles.height56,
+                  { paddingTop: -8 },
+                ]}
                 onPress={() => {
                   LayoutAnimation.easeInEaseOut();
                   for (let a = 0; a < masterExpanded.length; a++) {
@@ -341,14 +436,20 @@ export default function App() {
                         borderBottomColor: theme.colors.textLightSecondary,
                         borderBottomWidth: 1,
                       }}
-                      focused={activeIndex === parseInt(i.toString() + l.toString()) ? true : false}
+                      focused={
+                        activeIndex === parseInt(i.toString() + l.toString())
+                          ? true
+                          : false
+                      }
                       label={({ focused }) => (
                         <Text
                           style={[
                             Styles.textColor,
                             Styles.fontSize16,
                             {
-                              color: focused ? theme.colors.textLight : theme.colors.text,
+                              color: focused
+                                ? theme.colors.textLight
+                                : theme.colors.text,
                             },
                           ]}
                         >
@@ -377,15 +478,26 @@ export default function App() {
   const DrawerNavigator = () => {
     if (Object.keys(userDetails[0]).length === 0) {
       return (
-        <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
-          <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="HomeScreen" component={HomeScreen} initialParams={{ userDetails: userDetails, setUserFunc: SetUser }} />
+        <Drawer.Navigator
+          drawerContent={(props) => <DrawerContent {...props} />}
+          initialRouteName="HomeScreen"
+        >
+          <Drawer.Screen
+            options={{ headerShown: false, unmountOnBlur: true }}
+            name="HomeScreen"
+            component={HomeScreen}
+            initialParams={{ userDetails: userDetails, setUserFunc: SetUser }}
+          />
         </Drawer.Navigator>
       );
     } else {
       switch (parseInt(userDetails[0].RoleID)) {
         case 0:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -399,7 +511,10 @@ export default function App() {
           );
         case 2:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -409,35 +524,134 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ActivityRolesScreen" component={ActivityRolesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ServicesScreen" component={ServicesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="UnitOfSalesScreen" component={UnitOfSalesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryScreen" component={CategoryScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductScreen" component={ProductScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DepartmentScreen" component={DepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="LocationTypeScreen" component={LocationTypeScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignationScreen" component={DesignationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ServiceProductScreen" component={ServiceProductScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EWayBillScreen" component={EWayBillScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WorkFloorScreen" component={WorkFloorScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WorkLocationScreen" component={WorkLocationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignTypeScreen" component={DesignTypeScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MaterialSetupScreen" component={MaterialSetupScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PostNewDesignScreen" component={PostNewDesignScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApprovedUserScreen" component={ApprovedUserScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DeclinedUserScreen" component={DeclinedUserScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PendingUserScreen" component={PendingUserScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ApiMaster" component={ApiMaster} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CategoryNameScreen" component={CategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SubCategoryNameScreen" component={SubCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ABrandConversationValue" component={ABrandConversationValue} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="WidthOfGpCoil" component={WidthOfGpCoil} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MassOfZincCoating" component={MassOfZincCoating} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ActivityRolesScreen"
+                component={ActivityRolesScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ServicesScreen"
+                component={ServicesScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="UnitOfSalesScreen"
+                component={UnitOfSalesScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CategoryScreen"
+                component={CategoryScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductScreen"
+                component={ProductScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DepartmentScreen"
+                component={DepartmentScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="LocationTypeScreen"
+                component={LocationTypeScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DesignationScreen"
+                component={DesignationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ServiceProductScreen"
+                component={ServiceProductScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EWayBillScreen"
+                component={EWayBillScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="WorkFloorScreen"
+                component={WorkFloorScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="WorkLocationScreen"
+                component={WorkLocationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DesignTypeScreen"
+                component={DesignTypeScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MaterialSetupScreen"
+                component={MaterialSetupScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PostNewDesignScreen"
+                component={PostNewDesignScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ApprovedUserScreen"
+                component={ApprovedUserScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DeclinedUserScreen"
+                component={DeclinedUserScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PendingUserScreen"
+                component={PendingUserScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ApiMaster"
+                component={ApiMaster}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CategoryNameScreen"
+                component={CategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="SubCategoryNameScreen"
+                component={SubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ABrandConversationValue"
+                component={ABrandConversationValue}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="WidthOfGpCoil"
+                component={WidthOfGpCoil}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MassOfZincCoating"
+                component={MassOfZincCoating}
+              />
             </Drawer.Navigator>
           );
         case 3:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -447,24 +661,75 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ImageGalleryScreen" component={ImageGalleryScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="YourEstimationsScreen" component={YourEstimationsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ExpensesListGeneralUserScreen" component={ExpensesListGeneralUserScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="SourceListGeneralUserScreen" component={SourceListGeneralUserScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionGeneralUserScreen" component={PocketTransactionGeneralUserScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ImageGalleryScreen"
+                component={ImageGalleryScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="YourEstimationsScreen"
+                component={YourEstimationsScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyBankScreen"
+                component={GMyBankScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BudgetSetup"
+                component={BudgetSetup}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ExpensesListGeneralUserScreen"
+                component={ExpensesListGeneralUserScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="SourceListGeneralUserScreen"
+                component={SourceListGeneralUserScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionGeneralUserScreen"
+                component={PocketTransactionGeneralUserScreen}
+              />
 
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="Demo" component={Demo} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="Demo"
+                component={Demo}
+              />
             </Drawer.Navigator>
           );
         case 5: // Contractor
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -474,35 +739,134 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyServicesScreen" component={MyServicesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DesignWiseScreen" component={DesignWiseScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="QuotationWiseScreen" component={QuotationWiseScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EnquiryWise" component={EnquiryWise} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="RateCardSetUp" component={RateCardSetUp} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanySource" component={VerifyCompanySource} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanyExpense" component={VerifyCompanyExpense} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddBankScreen" component={AddBankScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankListScreen" component={BankListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyPersonalBankScreen" component={MyPersonalBankScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyServicesScreen"
+                component={MyServicesScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDepartmentScreen"
+                component={CommonDepartmentScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDesignationScreen"
+                component={CommonDesignationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DesignWiseScreen"
+                component={DesignWiseScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="QuotationWiseScreen"
+                component={QuotationWiseScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ClientScreen"
+                component={ClientScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EmployeeListScreen"
+                component={EmployeeListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BranchListScreen"
+                component={BranchListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EnquiryWise"
+                component={EnquiryWise}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="RateCardSetUp"
+                component={RateCardSetUp}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyBankScreen"
+                component={GMyBankScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BudgetSetup"
+                component={BudgetSetup}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddExpensesList"
+                component={AddExpensesList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddSourceList"
+                component={AddSourceList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanySource"
+                component={VerifyCompanySource}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddBankScreen"
+                component={AddBankScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankListScreen"
+                component={BankListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyPersonalBankScreen"
+                component={MyPersonalBankScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionScreen"
+                component={PocketTransactionScreen}
+              />
             </Drawer.Navigator>
           );
         case 4:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -512,31 +876,115 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyServicesScreen" component={MyServicesScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerPresentationScreen" component={DealerPresentationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandMasterScreen" component={DealerBrandMasterScreen} initialParams={{ activeIndex: activeIndex }} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBrandSetupScreen" component={DealerBrandSetupScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerBuyerCategoryScreen" component={DealerBuyerCategoryScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="DealerProductScreen" component={DealerProductScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanySource" component={VerifyCompanySource} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanyExpense" component={VerifyCompanyExpense} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyServicesScreen"
+                component={MyServicesScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DealerPresentationScreen"
+                component={DealerPresentationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DealerBrandMasterScreen"
+                component={DealerBrandMasterScreen}
+                initialParams={{ activeIndex: activeIndex }}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DealerBrandSetupScreen"
+                component={DealerBrandSetupScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DealerBuyerCategoryScreen"
+                component={DealerBuyerCategoryScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="DealerProductScreen"
+                component={DealerProductScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDepartmentScreen"
+                component={CommonDepartmentScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDesignationScreen"
+                component={CommonDesignationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ClientScreen"
+                component={ClientScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EmployeeListScreen"
+                component={EmployeeListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BranchListScreen"
+                component={BranchListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionScreen"
+                component={PocketTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddSourceList"
+                component={AddSourceList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddExpensesList"
+                component={AddExpensesList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanySource"
+                component={VerifyCompanySource}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
+              />
             </Drawer.Navigator>
           );
         case 6:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -546,17 +994,44 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDepartmentScreen" component={CommonDepartmentScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="CommonDesignationScreen" component={CommonDesignationScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ClientScreen" component={ClientScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="EmployeeListScreen" component={EmployeeListScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BranchListScreen" component={BranchListScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDepartmentScreen"
+                component={CommonDepartmentScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CommonDesignationScreen"
+                component={CommonDesignationScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ClientScreen"
+                component={ClientScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EmployeeListScreen"
+                component={EmployeeListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ArchitectRateCardSetup"
+                component={ArchitectRateCardSetup}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BranchListScreen"
+                component={BranchListScreen}
+              />
             </Drawer.Navigator>
           );
         case 7:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -566,24 +1041,88 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockScrap" component={OpeningStockScrap} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductforProduction" component={ProductforProduction} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionStatus" component={ProductionStatus} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionOrderList" component={ProductionOrderList} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BrandConversionValue"
+                component={BrandConversionValue}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="OpeningStockList"
+                component={OpeningStockList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="OpeningStockScrap"
+                component={OpeningStockScrap}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductforProduction"
+                component={ProductforProduction}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionStatus"
+                component={ProductionStatus}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionOrderList"
+                component={ProductionOrderList}
+              />
 
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GCategoryNameScreen" component={GCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GSubCategoryNameScreen" component={GSubCategoryNameScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyContactsScreen" component={GMyContactsScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="MyPersonalBankScreen" component={MyPersonalBankScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyPersonalBankScreen"
+                component={MyPersonalBankScreen}
+              />
 
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddExpensesList" component={AddExpensesList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="AddSourceList" component={AddSourceList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanySource" component={VerifyCompanySource} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="VerifyCompanyExpense" component={VerifyCompanyExpense} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BankTransactionScreen" component={BankTransactionScreen} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="PocketTransactionScreen" component={PocketTransactionScreen} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddExpensesList"
+                component={AddExpensesList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddSourceList"
+                component={AddSourceList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanySource"
+                component={VerifyCompanySource}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionScreen"
+                component={PocketTransactionScreen}
+              />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               
@@ -593,7 +1132,10 @@ export default function App() {
           );
         case 8:
           return (
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} initialRouteName="HomeScreen">
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+              initialRouteName="HomeScreen"
+            >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -603,12 +1145,36 @@ export default function App() {
                   setUserFunc: SetUser,
                 }}
               />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BrandConversionValue" component={BrandConversionValue} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockList" component={OpeningStockList} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="OpeningStockScrap" component={OpeningStockScrap} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductforProduction" component={ProductforProduction} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionStatus" component={ProductionStatus} />
-              <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="ProductionOrderList" component={ProductionOrderList} />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BrandConversionValue"
+                component={BrandConversionValue}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="OpeningStockList"
+                component={OpeningStockList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="OpeningStockScrap"
+                component={OpeningStockScrap}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductforProduction"
+                component={ProductforProduction}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionStatus"
+                component={ProductionStatus}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionOrderList"
+                component={ProductionOrderList}
+              />
             </Drawer.Navigator>
           );
       }
@@ -641,7 +1207,9 @@ export default function App() {
               options={{
                 unmountOnBlur: false,
                 tabBarLabel: "Dashboard",
-                tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="view-dashboard" color={color} size={26} />
+                ),
               }}
             />
             <Tab.Screen
@@ -650,7 +1218,9 @@ export default function App() {
               options={{
                 unmountOnBlur: true,
                 tabBarLabel: "Suggestions",
-                tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="comment-alert" color={color} size={26} />
+                ),
               }}
             />
           </Tab.Navigator>
@@ -674,7 +1244,9 @@ export default function App() {
               options={{
                 unmountOnBlur: false,
                 tabBarLabel: "Dashboard",
-                tabBarIcon: ({ color }) => <Icon name="view-dashboard" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="view-dashboard" color={color} size={26} />
+                ),
               }}
             />
             <Tab.Screen
@@ -684,7 +1256,9 @@ export default function App() {
               options={{
                 unmountOnBlur: true,
                 tabBarLabel: "Pocket Diary",
-                tabBarIcon: ({ color }) => <Icon name="calculator-variant" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="calculator-variant" color={color} size={26} />
+                ),
               }}
             />
             <Tab.Screen
@@ -693,16 +1267,32 @@ export default function App() {
               options={{
                 unmountOnBlur: true,
                 tabBarLabel: "Suggestions",
-                tabBarIcon: ({ color }) => <Icon name="comment-alert" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="comment-alert" color={color} size={26} />
+                ),
               }}
             />
             <Tab.Screen
               name="UserProfile"
-              component={parseInt(userDetails[0].RoleID) === 4 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 3 ? UserProfile : parseInt(userDetails[0].RoleID) === 2 ? UserProfile : parseInt(userDetails[0].RoleID) === 5 ? BasicDetailsScreen : parseInt(userDetails[0].RoleID) === 6 ? UserProfile : UserProfileScreen}
+              component={
+                parseInt(userDetails[0].RoleID) === 4
+                  ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 3
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 2
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 5
+                  ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 6
+                  ? UserProfile
+                  : UserProfileScreen
+              }
               options={{
                 unmountOnBlur: true,
                 tabBarLabel: "User Profile",
-                tabBarIcon: ({ color }) => <Icon name="account" color={color} size={26} />,
+                tabBarIcon: ({ color }) => (
+                  <Icon name="account" color={color} size={26} />
+                ),
               }}
             />
           </Tab.Navigator>
@@ -711,23 +1301,52 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[Styles.flex1, Styles.backgroundColorWhite, { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }]}>
+    <SafeAreaView
+      style={[
+        Styles.flex1,
+        Styles.backgroundColorWhite,
+        { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 },
+      ]}
+    >
       <PaperProvider theme={theme}>
         {userDetails[0] === null ? (
-          <View style={[Styles.flex1, Styles.flexGrow, Styles.flexJustifyCenter, Styles.flexAlignCenter, Styles.backgroundColor]}>
+          <View
+            style={[
+              Styles.flex1,
+              Styles.flexGrow,
+              Styles.flexJustifyCenter,
+              Styles.flexAlignCenter,
+              Styles.backgroundColor,
+            ]}
+          >
             <Text>Initilizing Application...</Text>
           </View>
         ) : (
           <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName={Object.keys(userDetails[0]).length !== 0 ? "HomeStack" : "Login"}>
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} initialParams={{ setUserFunc: SetUser }} />
+            <Stack.Navigator
+              initialRouteName={
+                Object.keys(userDetails[0]).length !== 0 ? "HomeStack" : "Login"
+              }
+            >
+              <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ headerShown: false }}
+                initialParams={{ setUserFunc: SetUser }}
+              />
               <Stack.Screen
                 name="Signup"
                 component={SignupScreen}
                 options={{
                   headerTitle: "",
                   headerTintColor: theme.colors.primary,
-                  headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} />,
+                  headerBackImage: () => (
+                    <Icon
+                      name="arrow-left-thin"
+                      color={theme.colors.primary}
+                      size={32}
+                    />
+                  ),
                 }}
                 initialParams={{ setUserFunc: SetUser }}
               />
@@ -737,10 +1356,43 @@ export default function App() {
                 options={{
                   headerTitle: "",
                   headerTintColor: theme.colors.primary,
-                  headerBackImage: () => <Icon name="arrow-left-thin" color={theme.colors.primary} size={32} />,
+                  headerBackImage: () => (
+                    <Icon
+                      name="arrow-left-thin"
+                      color={theme.colors.primary}
+                      size={32}
+                    />
+                  ),
                 }}
               />
-              <Stack.Screen name="HomeStack" component={BottomTabs} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="HomeStack"
+                component={BottomTabs}
+                options={{ headerShown: false }}
+              />
+
+              <Stack.Screen
+                name="DesignYourDreamCategories"
+                component={DesignYourDreamCategories}
+                options={{
+                  headerTitle: "Design Your Dream",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="DesignYourDreamForm"
+                component={DesignYourDreamForm}
+                options={{
+                  headerTitle: "Property Details",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
               <Stack.Screen
                 name="AddActivityRolesScreen"
                 component={AddActivityRolesScreen}
@@ -1051,7 +1703,11 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-              <Stack.Screen name="PocketScreenOne" component={PocketDiaryScreenOne} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="PocketScreenOne"
+                component={PocketDiaryScreenOne}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen
                 name="SearchNAdd"
                 component={SearchNAdd}
@@ -1074,9 +1730,16 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-              <Stack.Screen name="RateCardSetup" component={RateCardSetUp} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="RateCardSetup"
+                component={RateCardSetUp}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="AddRateCard" component={AddRateCard} />
-              <Stack.Screen name="ArchitectRateCardSetup" component={ArchitectRateCardSetup} />
+              <Stack.Screen
+                name="ArchitectRateCardSetup"
+                component={ArchitectRateCardSetup}
+              />
               <Stack.Screen
                 name="MaterialCalculatorScreen"
                 component={MaterialCalculatorScreen}
@@ -1131,7 +1794,11 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-              <Stack.Screen name="SendRateCard" component={SendRateCard} options={{ headerShown: false }} />
+              <Stack.Screen
+                name="SendRateCard"
+                component={SendRateCard}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen
                 name="BranchEditScreen"
                 component={BranchEditScreen}
