@@ -334,9 +334,8 @@ const UserProfile = ({ route, navigation }) => {
       }
     }
   };
-  useEffect(() => {
-    FetchData();
-  }, []);
+
+
 
 
   const FetchData = (from) => {
@@ -370,9 +369,9 @@ const UserProfile = ({ route, navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          // setSnackbarText("No data found");
+          // setSnackbarColor(theme.colors.error);
+          // setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -511,6 +510,13 @@ const UserProfile = ({ route, navigation }) => {
                 </Button>
               </Card.Content>
             </View> */}
+            <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+              <Card.Content>
+                <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+                  Update
+                </Button>
+              </Card.Content>
+            </View>
             <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
               {snackbarText}
             </Snackbar>
@@ -598,17 +604,11 @@ const UserProfile = ({ route, navigation }) => {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : (
-          <TabView style={{ marginBottom: 64, }}
+          <TabView
             renderTabBar={renderTabBar} navigationState={{ index, routes }}
             renderScene={renderScene} onIndexChange={setIndex} />
         )}
-        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-          <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
-              Update
-            </Button>
-          </Card.Content>
-        </View>
+
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
           {snackbarText}
         </Snackbar>
