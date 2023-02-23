@@ -23,8 +23,13 @@ const Form = ({ route, navigation }) => {
     contact_name: "",
     contact_mobile_no: "",
     property_address: "",
+    state_refno: "",
+    district_refno: "",
+    pincode: "",
   });
   const [total, setTotal] = useState("");
+  const [states, setStates] = useState([]);
+  const [district, setDistrict] = useState([]);
   const refs = {
     category: useRef(),
     address: useRef(),
@@ -35,7 +40,6 @@ const Form = ({ route, navigation }) => {
     contact_name: useRef(),
     contact_no: useRef(),
   };
-
   const [errors, setErrors] = useState({
     service_refno: false,
     propertycategory_refno: false,
@@ -46,7 +50,11 @@ const Form = ({ route, navigation }) => {
     contact_name: false,
     contact_mobile_no: false,
     property_address: false,
+    state_refno: false,
+    district_refno: false,
+    pincode: false,
   });
+
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarColor, setSnackbarColor] = useState("");
@@ -63,22 +71,49 @@ const Form = ({ route, navigation }) => {
     const data = await AsyncStorage.getItem("user");
     if (data) {
       userID = JSON.parse(data).UserID;
-      groupID = JSON.parse(data).Sess_group_refno;
       fetchLength();
       fetchWidth();
       fetchServices();
       fetchCategories();
+      fetchState();
     }
   };
+  const fetchDistricts = (state_refno) => {
+    Provider.createDFCommon(
+      Provider.API_URLS.getdistrictdetails_by_state_refno,
+      {
+        data: {
+          Sess_UserRefno: userID,
+          state_refno: states.find((item) => item.state_name === state_refno)
+            .state_refno,
+        },
+      }
+    )
+      .then((res) => {
+        if (res.data.data) setDistrict(res.data.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const onChange = (text, name) => {
     setState((state) => ({ ...state, [name]: text }));
     setErrors((state) => ({ ...state, [name]: false }));
+  };
+  const fetchState = () => {
+    Provider.createDFCommon(Provider.API_URLS.getstatedetails)
+      .then((res) => {
+        if (res.data.data) setStates(res.data.data);
+      })
+      .catch((error) => console.log(error));
   };
 
   const onSubmit = () => {
     let errors = false;
 
-    if (state.service_refno.length < 1) {
+    if (
+      state.service_refno.length < 1 &&
+      route.params.workgiven.group_refno !== 9
+    ) {
       errors = true;
       setErrors((state) => ({ ...state, service_refno: true }));
     }
@@ -117,6 +152,18 @@ const Form = ({ route, navigation }) => {
       errors = true;
       setErrors((state) => ({ ...state, contact_mobile_no: true }));
     }
+    if (state.state_refno === "") {
+      errors = true;
+      setErrors((state) => ({ ...state, state_refno: true }));
+    }
+    if (state.district_refno === "") {
+      errors = true;
+      setErrors((state) => ({ ...state, district_refno: true }));
+    }
+    if (state.pincode === "") {
+      errors = true;
+      setErrors((state) => ({ ...state, pincode: true }));
+    }
     if (!errors) {
       const params = {
         data: {
@@ -125,11 +172,20 @@ const Form = ({ route, navigation }) => {
           ...state,
           propertytype_refno: route.params.selectedProperty.propertytype_refno,
           totalfoot: total,
-          service_refno: state.service_refno?.map((obj) => obj._id),
+          ...(route.params.workgiven.group_refno !== 9
+            ? { service_refno: state.service_refno.map((obj) => obj._id) }
+            : {}),
           propertycategory_refno: categories.find(
             (item) =>
               item.propertycategory_name === state.propertycategory_refno
           ).propertycategory_refno,
+          state_refno: states.find(
+            (item) => item.state_name === state.state_refno
+          ).state_refno,
+          district_refno: district.find(
+            (item) => item.district_name === state.district_refno
+          ).district_refno,
+          pincode: state.pincode,
         },
       };
 
@@ -158,10 +214,11 @@ const Form = ({ route, navigation }) => {
             setSnackbarVisible(true);
             navigation.navigate("HomeScreen");
           } else {
-            throw "Something went wrong";
+            throw res;
           }
         })
         .catch((error) => {
+          console.log(error);
           setSnackbarText("Something Went Wrong...");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -196,7 +253,7 @@ const Form = ({ route, navigation }) => {
         .catch((error) => console.log(error));
     }
   }, [state, setTotal, userID]);
-  console.log(total);
+
   useEffect(() => {
     if (isFocused) {
       GetUserID();
@@ -224,6 +281,7 @@ const Form = ({ route, navigation }) => {
         Sess_UserRefno: userID,
       },
     };
+
     Provider.createDFCommon(
       Provider.API_URLS.getservicename_designyourdream_enquiryform,
       params
@@ -282,25 +340,29 @@ const Form = ({ route, navigation }) => {
             style={{ backgroundColor: "white" }}
           />
           {/* <MultiSelect /> */}
-          <PaperSelect
-            multiEnable={true}
-            label="Services"
-            textInputMode="flat"
-            underlineColor={errors.service_refno ? theme.colors.error : "black"}
-            errorStyle={{ color: theme.colors.error }}
-            value={state.service_refno?.map((item) => item.value).join(",")}
-            arrayList={services?.map((obj) => {
-              return { _id: obj.service_refno, value: obj.service_name };
-            })}
-            selectAllEnable={false}
-            selectedItem={state.service_refno}
-            selectedArrayList={state.service_refno}
-            hideSearchBox={true}
-            errorText={errors.service_refno ? "Please Select a service" : ""}
-            onSelection={(e) => {
-              onChange(e.selectedList, "service_refno");
-            }}
-          />
+          {route.params.workgiven.group_refno !== 9 && (
+            <PaperSelect
+              multiEnable={true}
+              label="Services"
+              textInputMode="flat"
+              underlineColor={
+                errors.service_refno ? theme.colors.error : "black"
+              }
+              errorStyle={{ color: theme.colors.error }}
+              value={state.service_refno?.map((item) => item.value).join(",")}
+              arrayList={services?.map((obj) => {
+                return { _id: obj.service_refno, value: obj.service_name };
+              })}
+              selectAllEnable={false}
+              selectedItem={state.service_refno}
+              selectedArrayList={state.service_refno}
+              hideSearchBox={true}
+              errorText={errors.service_refno ? "Please Select a service" : ""}
+              onSelection={(e) => {
+                onChange(e.selectedList, "service_refno");
+              }}
+            />
+          )}
 
           <Dropdown
             data={categories?.map((item) => {
@@ -443,6 +505,55 @@ const Form = ({ route, navigation }) => {
           />
           <HelperText type="error" visible={errors.property_address}>
             Please enter address
+          </HelperText>
+          <Dropdown
+            data={states?.map((item) => {
+              return item.state_name;
+            })}
+            selectedItem={state.state_refno}
+            value={state.state_refno}
+            isError={errors.state_refno}
+            label="State"
+            onSelected={(e) => {
+              onChange(e, "state_refno");
+              fetchDistricts(e);
+              setState((state) => ({
+                ...state,
+                district_refno: "",
+              }));
+            }}
+          />
+          <HelperText type="error" visible={errors.state_refno}>
+            Please Select a state
+          </HelperText>
+          <Dropdown
+            data={district?.map((item) => {
+              return item.district_name;
+            })}
+            selectedItem={state.district_refno}
+            value={state.district_refno}
+            isError={errors.district_refno}
+            label="District"
+            onSelected={(e) => {
+              onChange(e, "district_refno");
+            }}
+          />
+          <HelperText type="error" visible={errors.district_refno}>
+            Please Select a district
+          </HelperText>
+          <TextInput
+            mode="flat"
+            label="Pincode"
+            multiline={true}
+            value={state.pincode}
+            error={errors.pincode}
+            onChangeText={(e) => onChange(e, "pincode")}
+            reference={refs.address}
+            returnKeyType="next"
+            style={{ backgroundColor: "white" }}
+          />
+          <HelperText type="error" visible={errors.pincode}>
+            Please enter a pincode
           </HelperText>
           <Button
             mode="contained"

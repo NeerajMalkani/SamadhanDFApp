@@ -442,9 +442,13 @@ class Provider {
     getservicenamebrandconversionform: "getservicenamebrandconversionform/",
     pckdashboard_cashinbranch: "pckdashboard_cashinbranch/",
     pckdashboard_cashinbranch_pocket: "pckdashboard_cashinbranch_pocket/",
-    pckdashboard_cashinbranch_pocket_gridlist:"pckdashboard_cashinbranch_pocket_gridlist/",
-    pckdashboard_cashinbranch_bank_gridlist:"pckdashboard_cashinbranch_bank_gridlist/",
-    pckdashboard_cashinbranch_bank:"pckdashboard_cashinbranch_bank/",
+    pckdashboard_cashinbranch_pocket_gridlist:
+      "pckdashboard_cashinbranch_pocket_gridlist/",
+    pckdashboard_cashinbranch_bank_gridlist:
+      "pckdashboard_cashinbranch_bank_gridlist/",
+    pckdashboard_cashinbranch_bank: "pckdashboard_cashinbranch_bank/",
+    getstatedetails: "getstatedetails/",
+    getdistrictdetails_by_state_refno: "getdistrictdetails_by_state_refno/",
   };
 
   createDFPocketDairy(resource, params) {
