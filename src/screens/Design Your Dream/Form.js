@@ -138,6 +138,7 @@ const Form = ({ route, navigation }) => {
         params
       )
         .then((res) => {
+          console.log(res.data);
           if (res.data.data) {
             setState({
               service_refno: [],
@@ -316,62 +317,75 @@ const Form = ({ route, navigation }) => {
             Please Select a property category
           </HelperText>
 
-          <Dropdown
-            label="Length (in feet)"
-            reference={refs.lengthfeet}
-            data={lengthFeet?.map((item) => item.lengthfoot)}
-            selectedItem={state.lengthfoot}
-            isError={errors.lengthfoot}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "lengthfoot");
-            }}
-          />
-          <HelperText type="error" visible={errors.lengthfoot}>
-            Please Select a length{" "}
-          </HelperText>
-          <Dropdown
-            label="Length (in inches)"
-            reference={refs.lengthinches}
-            isError={errors.lengthinches}
-            selectedItem={state.lengthinches}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "lengthinches");
-            }}
-            data={lengthInches?.map((item) => item.lengthinches)}
-          />
-          <HelperText type="error" visible={errors.lengthinches}>
-            Please Select a length{" "}
-          </HelperText>
-          <Dropdown
-            label="Width/Height (in feet)"
-            reference={refs.widhtfeet}
-            isError={errors.widthheightfoot}
-            selectedItem={state.widthheightfoot}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "widthheightfoot");
-            }}
-            data={widthFeet?.map((item) => item.widthheightfoot)}
-          />
-          <HelperText type="error" visible={errors.widthheightfoot}>
-            Please Select a width
-          </HelperText>
-          <Dropdown
-            label="Width/height (in inches)"
-            reference={refs.widthinches}
-            selectedItem={state.widthheightinches}
-            isError={errors.widthheightinches}
-            onSelected={(e) => {
-              setChanged(true);
-              onChange(e, "widthheightinches");
-            }}
-            data={widthInches?.map((item) => item.widthheightinches)}
-          />
-          <HelperText type="error" visible={errors.widthheightinches}>
-            Please Select a width
-          </HelperText>
+          <View style={[Styles.width100per, Styles.flexRow]}>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Length (in feet)"
+                reference={refs.lengthfeet}
+                data={lengthFeet.map((item) => item.lengthfoot)}
+                selectedItem={state.lengthfoot}
+                isError={errors.lengthfoot}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "lengthfoot");
+                }}
+              />
+              <HelperText type="error" visible={errors.lengthfoot}>
+                Please Select a length{" "}
+              </HelperText>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Length (in inches)"
+                reference={refs.lengthinches}
+                isError={errors.lengthinches}
+                selectedItem={state.lengthinches}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "lengthinches");
+                }}
+                data={lengthInches.map((item) => item.lengthinches)}
+              />
+              <HelperText type="error" visible={errors.lengthinches}>
+                Please Select a length{" "}
+              </HelperText>
+            </View>
+          </View>
+
+          <View style={[Styles.width100per, Styles.flexRow]}>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Width/Height (in feet)"
+                reference={refs.widhtfeet}
+                isError={errors.widthheightfoot}
+                selectedItem={state.widthheightfoot}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "widthheightfoot");
+                }}
+                data={widthFeet.map((item) => item.widthheightfoot)}
+              />
+              <HelperText type="error" visible={errors.widthheightfoot}>
+                Please Select a width
+              </HelperText>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Dropdown
+                label="Width/height (in inches)"
+                reference={refs.widthinches}
+                selectedItem={state.widthheightinches}
+                isError={errors.widthheightinches}
+                onSelected={(e) => {
+                  setChanged(true);
+                  onChange(e, "widthheightinches");
+                }}
+                data={widthInches.map((item) => item.widthheightinches)}
+              />
+              <HelperText type="error" visible={errors.widthheightinches}>
+                Please Select a width
+              </HelperText>
+            </View>
+          </View>
           <TextInput
             mode="flat"
             label="Total (Sq.ft)"
@@ -433,7 +447,7 @@ const Form = ({ route, navigation }) => {
           <Button
             mode="contained"
             onPress={onSubmit}
-            style={{ alignSelf: "center", marginTop: 20 }}
+            style={[Styles.width100per, { alignSelf: "center", marginTop: 20 }]}
           >
             Submit
           </Button>

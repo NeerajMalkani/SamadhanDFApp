@@ -16,7 +16,12 @@ const CreateSCCards = ({ image, title, id, subttitle, data, cardImageClick, card
           <Title numberOfLines={1} style={[Styles.paddingTop12, Styles.fontSize14, Styles.textColorWhite]}>
             {title}
           </Title>
-          <Subheading style={[Styles.paddingBottom12, Styles.fontSize12, Styles.textColorWhite]}>({subttitle})</Subheading>
+          {subttitle != null &&
+            <>
+              <Subheading style={[Styles.paddingBottom12, Styles.fontSize12, Styles.textColorWhite]}>({subttitle})</Subheading>
+            </>
+          }
+
         </Card.Content>
         {buttonData && (
           <Card.Actions>
