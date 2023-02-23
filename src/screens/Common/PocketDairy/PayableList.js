@@ -55,10 +55,8 @@ const PayableList = ({ route, navigation }) => {
                 Sess_UserRefno: userID
             }
         }
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_payablelist, params)
             .then((response) => {
-                console.log('payable list data', response.data.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         const lisData = [...response.data.data];

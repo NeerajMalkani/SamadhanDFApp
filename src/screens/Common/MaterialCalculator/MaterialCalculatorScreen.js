@@ -392,7 +392,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            //console.log('All Brands', response.data.data);
             setBrandsFullData(response.data.data);
             const key = "brandID";
             const formattedResult = [];
@@ -409,12 +408,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               });
             });
 
-            // console.log('Unique Brands', uniqueBrands);
-            // console.log('Formatted Result', formattedResult);
 
             setUniqueBrandsData(formattedResult);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
-            //console.log('Formated Brands', formattedData);
             const brndLst = [];
 
             formattedData.map((k) => {
@@ -424,8 +420,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               });
             });
 
-            // console.log('brndLst', brndLst);
-            // console.log('formattedData', formattedData);
 
             setBrandList(brndLst);
             setBrandsData(formattedData);
@@ -453,12 +447,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getproductrate_by_brandrefno_materialcalculatorform, params)
       .then((response) => {
-        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             const newData = [...arrProductData[0]];
-            //console.log("All Product Before Merge", newData);
             newData.map((k) => {
               const foundProduct = response.data.data.find((el) => el.productID == k.productID);
               if (foundProduct) {
@@ -481,13 +473,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               }
             }).filter(data => data !== null);
 
-            //console.log(amounts);
             if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
               setTotal(0);
             } else {
               setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
             }
-            //console.log("All Product After Merge", newData);
             arrProductData[1](newData);
           }
         }
@@ -496,7 +486,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   };
 
   const FetchProductsFromMaterialSetup = (callback) => {
-    //console.log('get all products');
     setIsButtonLoading(true);
     let params = {
       data: {
@@ -517,7 +506,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            //console.log('All Products', response.data.data);
             const tempArr = [];
             setTotal(0);
             let totalTemp = 0;
@@ -621,7 +609,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const onBrandNameSelected = (selectedItem, index) => {
     const selecedBrand = uniqueBrandsData[parseInt(index)];
-    console.log(selecedBrand);
     setBrandName(selectedItem);
     setBNError(false);
     FetchProductPriceOnBrandSelection(selecedBrand.brandID);
@@ -662,8 +649,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     // arrProductData[1](newData);
   };
   const onBrandMultiSelect = (selectedItem) => {
-    console.log('current selected', selectedItem);
-    console.log('all item', multiBrand);
     const brand = uniqueBrandsData.find((el) => el.fullBrandName === selectedItem[0].value);
     FetchProductPriceOnBrandSelection(brand.brandID);
   };

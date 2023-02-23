@@ -139,12 +139,10 @@ const PocketTransactionScreen = ({ route, navigation }) => {
                 to_date: toDate
             }
         }
-        console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinpocket_gridlist, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
@@ -296,7 +294,6 @@ const PocketTransactionScreen = ({ route, navigation }) => {
     };
 
     const EditCallback_Self = (data, rowMap) => {
-        //console.log(data.item);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddSource", {
             type: "edit",
@@ -336,7 +333,6 @@ const PocketTransactionScreen = ({ route, navigation }) => {
     };
 
     const EditCallback_Company = (data, rowMap) => {
-        //console.log(data.item);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddSource", {
             type: "edit",

@@ -63,7 +63,6 @@ const BranchWiseCashDetailScreen = ({ route, navigation }) => {
     };
 
     const FetchData = () => {
-        console.log('start');
         let params = {
 
             data: {
@@ -76,7 +75,6 @@ const BranchWiseCashDetailScreen = ({ route, navigation }) => {
         if (route.params.type == "bank") {
             params.data.bank_refno = route.params.data.bank_refno;
         }
-        console.log(params);
         Provider.createDFPocketDairy(
             route.params.type == "pocket" ?
                 Provider.API_URLS.pckdashboard_cashinbranch_pocket_gridlist
@@ -84,10 +82,8 @@ const BranchWiseCashDetailScreen = ({ route, navigation }) => {
                 Provider.API_URLS.pckdashboard_cashinbranch_bank_gridlist,
             params)
             .then((response) => {
-                console.log('data ==============', response.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();

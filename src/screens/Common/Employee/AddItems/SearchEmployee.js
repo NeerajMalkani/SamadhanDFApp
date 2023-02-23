@@ -153,10 +153,8 @@ const SearchEmployee = ({ route, navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
       },
     };
-    console.log("xyeff", params);
     Provider.createDFCommon(Provider.API_URLS.employeeadd, params)
       .then((response) => {
-        console.log(response.data);
         if (
           response.data &&
           response.data.code === 200 &&
@@ -206,7 +204,6 @@ const SearchEmployee = ({ route, navigation }) => {
         mobile_no_s: mobileNo.trim(),
       },
     };
-    // console.log(params);
     setIsButtonLoading(true);
     Provider.createDFCommon(Provider.API_URLS.employeesearch, params)
       .then((response) => {
@@ -216,7 +213,6 @@ const SearchEmployee = ({ route, navigation }) => {
           response.data !== null
         ) {
           if (response.data.data) {
-            console.log(response.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -246,7 +242,6 @@ const SearchEmployee = ({ route, navigation }) => {
       });
   };
   const EditCallback = (data) => {
-    // console.log(data.item);
     InsertExistingEmployee(data.item.Search_employee_refno);
   };
 
@@ -302,9 +297,7 @@ const SearchEmployee = ({ route, navigation }) => {
   };
   const [numbers, setNumbers] = useState([]);
   useEffect(() => {
-    console.log(mobileNo);
     if (mobileNo.length > 0) {
-      console.log("hereq");
       let params = {
         data: {
           Sess_UserRefno: userID.toString(),
@@ -314,8 +307,6 @@ const SearchEmployee = ({ route, navigation }) => {
       setNumbers([]);
       Provider.createDFCommon(Provider.API_URLS.mobilenoautocomplete, params)
         .then((response) => {
-          console.log(response.data);
-          console.log("params", params);
           if (response.data?.data) {
             setNumbers(() => {
               return response.data?.data;

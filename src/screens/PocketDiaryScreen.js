@@ -169,7 +169,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   };
 
   const GetPocketAmount = (userID, companyID, branchID) => {
-    //console.log('get pocket amount');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -183,7 +182,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          //console.log(response.data.data);
           setPocketAmount(response.data.data[0].TotalCashinHand.toString());
         }
       })
@@ -191,7 +189,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   };
 
   const GetBranchAmount = (userID, companyID, branchID) => {
-    //console.log('get pocket amount');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -212,7 +209,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   };
 
   const GetBankAmount = (userID, companyID, branchID) => {
-    //console.log('get bank amount');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -226,7 +222,6 @@ const PocketDiaryScreen = ({ route, navigation }) => {
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          //console.log(response.data.data);
           setBankAmount(response.data.data[0].TotalCashinBank.toString());
         }
       })

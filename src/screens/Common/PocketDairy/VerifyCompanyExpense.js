@@ -149,7 +149,6 @@ const VerifyCompanyExpense = ({ route, navigation }) => {
       params
     )
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setAllVerifiedData(response.data.data);

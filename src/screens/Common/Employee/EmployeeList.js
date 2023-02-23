@@ -114,7 +114,6 @@ const EmployeeListScreen = ({ navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.myemployeelist, params)
       .then((response) => {
-        console.log(response.data.data[0]);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -156,7 +155,6 @@ const EmployeeListScreen = ({ navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.employeeotpverify, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          console.log(response.data);
           FetchData();
           hideDialog();
           setSnackbarText(communication.UpdateSuccess);
@@ -220,7 +218,6 @@ const EmployeeListScreen = ({ navigation }) => {
           employee_mobile_no: data.item.employee_mobile_no,
         },
       };
-      console.log(params);
       Provider.createDFCommon(Provider.API_URLS.sendotptoemployee, params)
         .then((response) => {
           if (response && response.data && response.data.status === "Success") {
@@ -282,7 +279,6 @@ const EmployeeListScreen = ({ navigation }) => {
           } `}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
             setEmpCode(data.item.common_employee_code);
             setEmployeeName(data.item.employee_name);
             setMobileNo(data.item.employee_mobile_no);

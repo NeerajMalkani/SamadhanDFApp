@@ -144,12 +144,9 @@ const AddExpensesList = ({ navigation }) => {
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
     };
-    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
       .then((response) => {
-        //console.log("company data: ", response.data.data);
         if (response.data && response.data.code === 200) {
-          //console.log(response.data.data);
           if (response.data.data) {
             const lisData = [...response.data.data];
             lisData.map((k, i) => {

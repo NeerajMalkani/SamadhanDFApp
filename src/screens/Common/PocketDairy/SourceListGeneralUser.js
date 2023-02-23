@@ -79,12 +79,10 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 pck_entrytype_refno: projectVariables.DEF_PCKDIARY_ENTRYTYPE_SELF_REFNO,
             }
         }
-        //console.log(params);
         Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        //console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();
@@ -160,7 +158,6 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
     };
 
     const EditCallback = (data, rowMap) => {
-        //console.log(data.item);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddSource", {
             type: "edit",

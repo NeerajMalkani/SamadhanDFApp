@@ -129,7 +129,6 @@ const BankTransactionScreen = ({ navigation }) => {
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        console.log(response.data.data);
                         //response.data.data = APIConverter(response.data.data);
 
                         setBankName(response.data.data[0].pck_mybank_name);

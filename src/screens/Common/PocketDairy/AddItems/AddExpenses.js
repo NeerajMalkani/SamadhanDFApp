@@ -247,7 +247,6 @@ const AddExpenses = ({ route, navigation }) => {
       } else if (route.params.type === "edit") {
         SetEditData(route.params.data);
       } else if (route.params.type === "verify") {
-        console.log("verify data");
         FetchPayToCompanyData(route.params.data.pck_trans_refno);
       }
     }
@@ -268,7 +267,6 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //console.log(response.data.data[0]);
             SetEditData(response.data.data[0]);
           }
         } else {
@@ -671,8 +669,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchBankList = (editID) => {
-    //console.log('calling bank');
-    //console.log(editID);
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -883,8 +879,6 @@ const AddExpenses = ({ route, navigation }) => {
             arrDisplayNumbers = [];
           data.map((k, i) => {
             // if (i < 100) {
-            //console.log('==================================');
-            //console.log(k);
             if (Array.isArray(k.phoneNumbers)) {
               arrPhones.push(k);
               if (k.phoneNumbers.length > 1) {
@@ -1571,12 +1565,8 @@ const AddExpenses = ({ route, navigation }) => {
         : ""
     );
 
-    //console.log(params);
-    // console.log('data params ================');
-    //console.log(datas);
     Provider.createDFPocketDairyWithHeader(Provider.API_URLS.pckaddexpensescreate, datas)
       .then((response) => {
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1596,7 +1586,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const UpdateData = (type, mode) => {
-    console.log("update===================");
     const datas = new FormData();
     let params = {
       Sess_UserRefno: userID,
@@ -1742,13 +1731,9 @@ const AddExpenses = ({ route, navigation }) => {
           }
         : ""
     );
-    console.log(params);
-    console.log("params up================");
-    console.log(type);
     Provider.createDFPocketDairyWithHeader(type == "edit" ? Provider.API_URLS.pckaddexpensesupdate : mode == "source" ? Provider.API_URLS.pck_companysource_verify_action : Provider.API_URLS.pck_companyexpenses_verify_action, datas)
 
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();

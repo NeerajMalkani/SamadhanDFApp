@@ -348,7 +348,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         let reporting_data = {};
         let bankDetails_data = data.payDetails[0];
         let work_data = data.workdata[0];
-        console.log("paydata", bankDetails_data);
 
         if (!NullOrEmpty(employee_data)) {
           setEmployeeName(
@@ -699,7 +698,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               (data) => data.department_name
             );
             setDepartmentData(department);
-            console.log("depart", response.data.data);
             if (d_ID > 0) {
               let d = response.data.data.filter((el) => {
                 return el.department_refno === d_ID;
@@ -765,7 +763,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log("reorting", response.data.data);
             let rd = response.data.data.map((data) => {
               return {
                 _id: data.reporting_user_refno.toString(),
@@ -776,8 +773,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               return sample.includes(data._id);
             });
 
-            console.log("123e", rd);
-            console.log("456e", ct);
             setReporting({
               ...reporting,
               list: rd,

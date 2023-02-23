@@ -127,10 +127,8 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
         }
         Provider.createDFPocketDairy(Provider.API_URLS.pckdashboard_cashinpocket_gridlist, params)
             .then((response) => {
-                console.log('data ==============', response.data.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
-                        console.log(response.data.data);
                         const lisData = [...response.data.data];
                         lisData.map((k, i) => {
                             k.key = (parseInt(i) + 1).toString();

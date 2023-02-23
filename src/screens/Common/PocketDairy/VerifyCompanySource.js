@@ -157,13 +157,11 @@ const VerifyCompanySource = ({ route, navigation }) => {
         Sess_branch_refno: branchID.toString(),
       },
     };
-    //console.log(params);
     Provider.createDFPocketDairy(
       Provider.API_URLS.pck_companysource_all_verified_gridlist,
       params
     )
       .then((response) => {
-        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
 
           if (response.data.data) {

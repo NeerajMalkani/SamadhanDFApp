@@ -220,8 +220,6 @@ const AddBankScreen = ({ route, navigation }) => {
     };
 
     const ValidateSubmitButton = () => {
-        console.log('validate start');
-        console.log('start update');
         let isValid = true;
         if (companyBranchName.length === 0) {
             setCompanyBranchNameError(true);
@@ -233,7 +231,6 @@ const AddBankScreen = ({ route, navigation }) => {
         }
         if (isValid) {
             if (route.params.type === "edit") {
-                console.log('update data');
                 UpdateData();
             } else {
                 InsertData();
@@ -265,14 +262,12 @@ const AddBankScreen = ({ route, navigation }) => {
                 view_status: checked ? 1 : 0,
             }
         };
-        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.branchbankcreate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
-                    // console.log(response.data.code);
                     setSnackbarText(communication.AlreadyExists);
                     setSnackbarVisible(true);
                 } else {
@@ -312,11 +307,9 @@ const AddBankScreen = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             },
         };
-        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.branchbankupdate, params)
             .then((response) => {
                 if (response.data && response.data.code === 200) {
-                    // console.log(response.data);
                     route.params.fetchData("update");
                     navigation.goBack();
                 } else if (response.data.code === 304) {

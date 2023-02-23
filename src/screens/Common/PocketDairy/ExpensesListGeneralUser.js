@@ -64,7 +64,6 @@ const ExpensesListGeneralUserScreen = ({ route, navigation }) => {
 
     const FetchData = (from) => {
         if (from === "add" || from === "update") {
-            console.log('new record');
             setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
             setSnackbarColor(theme.colors.success);
             setSnackbarVisible(true);

@@ -291,7 +291,6 @@ const AddSource = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
-    //console.log(data.pck_contacttype_refno);
     if (
       data.pck_contacttype_refno != "" &&
       data.pck_contacttype_refno != "0"
