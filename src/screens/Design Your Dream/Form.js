@@ -480,6 +480,7 @@ const Form = ({ route, navigation }) => {
             mode="flat"
             ref={refs.contact_no}
             label="Contact Number"
+            maxLength={10}
             keyboardType="phone-pad"
             error={errors.contact_mobile_no}
             returnKeyType="next"
@@ -544,7 +545,8 @@ const Form = ({ route, navigation }) => {
           <TextInput
             mode="flat"
             label="Pincode"
-            multiline={true}
+            keyboardType="number-pad"
+            multiline={false}
             value={state.pincode}
             error={errors.pincode}
             onChangeText={(e) => onChange(e, "pincode")}

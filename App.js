@@ -217,6 +217,9 @@ export default function App() {
         case 8:
           menuItems = [...MenuItemsManufacture];
           break;
+        case 9:
+          menuItems = [...MenuItemsArchitect];
+          break;
       }
       userDetails[1](ud);
     } else {
@@ -394,20 +397,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -980,7 +983,7 @@ export default function App() {
               />
             </Drawer.Navigator>
           );
-        case 6:
+        case 9:
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
@@ -1024,6 +1027,51 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="BranchListScreen"
                 component={BranchListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="PocketTransactionScreen"
+                component={PocketTransactionScreen}
+              />
+               <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankTransactionScreen"
+                component={BankTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddExpensesList"
+                component={AddExpensesList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="AddSourceList"
+                component={AddSourceList}
+              />
+               <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GCategoryNameScreen"
+                component={GCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GSubCategoryNameScreen"
+                component={GSubCategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="GMyContactsScreen"
+                component={GMyContactsScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanySource"
+                component={VerifyCompanySource}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="VerifyCompanyExpense"
+                component={VerifyCompanyExpense}
               />
             </Drawer.Navigator>
           );
@@ -1184,7 +1232,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
       return unsubscribe;
     }, [navigation]);
 
@@ -1279,14 +1327,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfileScreen
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 6
+                          ? UserProfile
+                          : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,

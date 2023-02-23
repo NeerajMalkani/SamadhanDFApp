@@ -46,7 +46,6 @@ const GCategoryNameScreen = ({ navigation }) => {
     }
   };
 
-
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
@@ -61,9 +60,11 @@ const GCategoryNameScreen = ({ navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategoryrefnocheck_user, params)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log('category data', response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -131,7 +132,22 @@ const GCategoryNameScreen = ({ navigation }) => {
   const AddCallback = () => {
     navigation.navigate("AddGCategoryNameScreen", { type: "add", fetchData: FetchData });
   };
-  
+
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
+    navigation.navigate("AddGCategoryNameScreen", {
+      type: "edit",
+      fetchData: FetchData,
+      data: {
+        id: data.item.id,
+        categoryName: data.item.categoryName,
+        display: data.item.display,
+        pckCategoryID: data.item.pckCategoryID,
+        transactionTypeName: data.item.transactionTypeName,
+      },
+    });
+  };
+
   //#endregion
 
   return (
@@ -155,6 +171,17 @@ const GCategoryNameScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
+            renderHiddenItem={(data, rowMap) => {
+
+              if (data.item.createbyID == "2") {
+                return null;
+              }
+              else {
+                return RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+              
+            }}
+            
           />
         </View>
       ) : (

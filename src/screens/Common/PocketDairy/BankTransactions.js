@@ -98,6 +98,16 @@ const BankTransactionScreen = ({ navigation }) => {
                         const bank = bankList.map((data) => data.bankDisplay);
                         setMyBankListData(bank);
                     }
+                    else {
+                        setSnackbarText("No Bank available");
+                        setSnackbarColor(theme.colors.error);
+                        setSnackbarVisible(true);
+                    }
+                }
+                else {
+                    setSnackbarText("No Bank available");
+                    setSnackbarColor(theme.colors.error);
+                    setSnackbarVisible(true);
                 }
             })
             .catch((e) => { });
@@ -121,7 +131,7 @@ const BankTransactionScreen = ({ navigation }) => {
                     if (response.data.data) {
                         console.log(response.data.data);
                         //response.data.data = APIConverter(response.data.data);
-                        
+
                         setBankName(response.data.data[0].pck_mybank_name);
                         setAvailableBalance(response.data.data[0].pck_mybank_amount);
                         const lisData = [...response.data.data];
@@ -267,8 +277,8 @@ const BankTransactionScreen = ({ navigation }) => {
                     style={[Styles.paddingVertical8, Styles.paddingHorizontal8, Styles.flexRow, Styles.borderRadius8,
                     Styles.backgroundSecondaryLightColor, { elevation: 4 }]}>
 
-                        <TransactionListItem current={data} type="fin-list" />
-                    
+                    <TransactionListItem current={data} type="fin-list" />
+
                 </TouchableOpacity>
             </View>
         );

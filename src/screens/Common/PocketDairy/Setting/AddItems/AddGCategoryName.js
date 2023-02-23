@@ -106,12 +106,12 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     let tt = [];
     transactionTypeName.map((k, i) => {
       if (k.isChecked) {
-        tt.push(k.id);
+        tt.push(k.id.toString());
       }
     });
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         category_name: categoryName,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
@@ -143,19 +143,20 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     let tt = [];
     transactionTypeName.map((k, i) => {
       if (k.isChecked) {
-        tt.push(k.id);
+        tt.push(k.id.toString());
       }
     });
 
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         pck_category_refno: route.params.data.pckCategoryID,
         category_name: categoryName,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
       },
     };
+    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);

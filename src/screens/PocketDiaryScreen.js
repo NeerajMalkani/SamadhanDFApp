@@ -392,7 +392,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
           ]}
           source={require("../../assets/defaultIcon.png")}
         />
-        <View style={[Styles.flexColumn, Styles.flexGrow]}>
+        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150}]}>
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>
             {route.params.userDetails[0].FullName}
           </Title>
@@ -645,7 +645,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </TouchableOpacity>
             </View>
-            {(roleID == 4 || roleID == 5) && (
+            {(roleID == 4 || roleID == 5  || roleID == 9) && (
               <>
                 <View
                   style={[
@@ -810,7 +810,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              {(roleID == 4 || roleID == 5) && (
+              {(roleID == 4 || roleID == 5 || roleID == 9) && (
                 <>
                   {/* Verify Company Source / Expenses */}
                   <View style={[Styles.paddingTop16]}>

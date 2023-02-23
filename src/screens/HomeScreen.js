@@ -496,7 +496,7 @@ const HomeScreen = ({ route, navigation }) => {
           ]}
           source={require("../../assets/defaultIcon.png")}
         />
-        <View style={[Styles.flexColumn, Styles.flexGrow]}>
+        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150}]}>
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>
             {route.params.userDetails[0].FullName}
           </Title>
@@ -1956,7 +1956,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Button
             mode="contained"
             style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
-            onPress={() => {}}
+            onPress={() => { }}
           >
             View
           </Button>

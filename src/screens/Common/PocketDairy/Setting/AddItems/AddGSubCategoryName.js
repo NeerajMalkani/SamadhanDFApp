@@ -80,7 +80,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
 
           }
         } else {
-          listData[1]([]);
+          //listData[1]([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -104,9 +104,10 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
-        pck_transtype_refno: transactionType
+        pck_transtype_refno: transactionType.toString()
       },
     };
+    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -120,7 +121,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
             setCategoryData(category);
           }
         } else {
-          listData[1]([]);
+          //listData[1]([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -141,7 +142,6 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
 
     setCategoryData([]);
     setCategoryName("");
-
     FetchCategory(transID);
     setTTNError(false);
 
