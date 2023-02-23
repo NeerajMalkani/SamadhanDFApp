@@ -4,11 +4,14 @@ import { onePixelImage, timeoutLimit } from "../utils/paths";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = "https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD";
 const BASE_URL = "https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD";
-const BASE_URL_Admin = "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
-const BASE_URL_Dashboard = "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
-const BASE_URL_PocketDiary = "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
-const BASE_URL_Contractor = "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
-const BASE_URL_Manufactoring = "https://dfsolutions.in/api/apimanufacturer/spawu7S4urax/tYjD/";
+const BASE_URL_Admin =
+  "https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD";
+const BASE_URL_Dashboard =
+  "https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD";
+const BASE_URL_PocketDiary =
+  "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
+const BASE_URL_Contractor =
+  "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
 
 class Provider {
   //#region Old API's
@@ -130,7 +133,8 @@ class Provider {
     CategoryNameServiceProduct: "getcategorynameserviceproductform/",
     CategoryDataServiceProduct: "getcategorydataserviceproductform/",
     ProductServiceProduct: "getproductnameserviceproductform/",
-    AlternativeUnitOfSalesServiceProduct: "getalternativeunitofsalesserviceproductform/",
+    AlternativeUnitOfSalesServiceProduct:
+      "getalternativeunitofsalesserviceproductform/",
     ServiceProductCreate: "serviceproductcreate/",
     ServiceProductUpdate: "serviceproductupdate/",
     ServiceProductrefNoCheck: "serviceproductrefnocheck/",
@@ -178,7 +182,8 @@ class Provider {
     CategoryNamePopupMaterialSetup: "getcategoryname_popup_materialsetupform/",
     ProductListPopupMaterialSetup: "getproductlist_popup_materialsetupform/",
     BrandNamelistPopupMaterialSetup: "getbrandnamelist_materialsetupform/",
-    ProductRateBrandRefNoMaterialSetup: "getproductrate_by_brandrefno_materialsetupform/",
+    ProductRateBrandRefNoMaterialSetup:
+      "getproductrate_by_brandrefno_materialsetupform/",
     MaterialsSetupRefNoCheck: "materialssetuprefnocheck/",
     MaterialsSetupCreate: "materialsetupcreate/",
     MaterialsSetupUpdate: "materialsetupupdate/",
@@ -200,7 +205,8 @@ class Provider {
     GetdashboardUserswitchto: "getdashboard_userswitchto/",
     Getdashboard_Userswitchto_Proceed: "getdashboard_userswitchto_proceed/",
     GetdashboardServicecatalogue: "getdashboard_servicecatalogue/",
-    GetserviceimagegalleryByServicerefno: "getserviceimagegallery_by_servicerefno/",
+    GetserviceimagegalleryByServicerefno:
+      "getserviceimagegallery_by_servicerefno/",
     Getgotoestimation: "getgotoestimation/",
     MyDepartmentRefnoCheck: "mydepartmentrefnocheck/",
     MyDesignationRefnoCheck: "mydesignationrefnocheck/",
@@ -226,7 +232,8 @@ class Provider {
     CategoryDataDealerBrandSetup: "getcategorydatadealerbrandsetupform/",
     UnitOfSaleDealerBrandSetup: "getunitofsaledealerbrandsetupform/",
     BrandNameDealerBrandSetup: "getbrandnamedealerbrandsetupform/",
-    BuyerCategoryDiscountDealerBrandSetup: "getbuyercategorydiscountdealerbrandsetupform/",
+    BuyerCategoryDiscountDealerBrandSetup:
+      "getbuyercategorydiscountdealerbrandsetupform/",
     DealerBrandRefNoCheck: "dealerbrandrefnocheck/",
     DealerBrandSetupCreate: "dealerbrandsetupcreate/",
     DealerBrandSetupUpdate: "dealerbrandsetupupdate/",
@@ -243,15 +250,24 @@ class Provider {
     GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
 
-    getservicenamematerialcalculatorform: "getservicenamematerialcalculatorform/",
-    getcategorynamematerialcalculatorform: "getcategorynamematerialcalculatorform/",
-    getproductnamematerialcalculatorform: "getproductnamematerialcalculatorform/",
-    getproductdesigntypematerialcalculatorform: "getproductdesigntypematerialcalculatorform/",
-    getdesigntypeimagematerialcalculatorform: "getdesigntypeimagematerialcalculatorform/",
-    getsqftcalculation_materialcalculatorform: "getservicenamematerialcalculatorform/",
-    getviewmaterials_materialcalculatorform: "getviewmaterials_materialcalculatorform/",
-    getproductrate_by_brandrefno_materialcalculatorform: "getproductrate_by_brandrefno_materialcalculatorform/",
-    getbrandnamelist_materialcalculatorform: "getbrandnamelist_materialcalculatorform/",
+    getservicenamematerialcalculatorform:
+      "getservicenamematerialcalculatorform/",
+    getcategorynamematerialcalculatorform:
+      "getcategorynamematerialcalculatorform/",
+    getproductnamematerialcalculatorform:
+      "getproductnamematerialcalculatorform/",
+    getproductdesigntypematerialcalculatorform:
+      "getproductdesigntypematerialcalculatorform/",
+    getdesigntypeimagematerialcalculatorform:
+      "getdesigntypeimagematerialcalculatorform/",
+    getsqftcalculation_materialcalculatorform:
+      "getservicenamematerialcalculatorform/",
+    getviewmaterials_materialcalculatorform:
+      "getviewmaterials_materialcalculatorform/",
+    getproductrate_by_brandrefno_materialcalculatorform:
+      "getproductrate_by_brandrefno_materialcalculatorform/",
+    getbrandnamelist_materialcalculatorform:
+      "getbrandnamelist_materialcalculatorform/",
 
     getservicenamedealermyserviceform: "getservicenamedealermyserviceform/",
     dealermyservicecreate: "dealermyservicecreate/",
@@ -300,20 +316,26 @@ class Provider {
     userprofileupdate: "userprofileupdate/",
     pckcategoryrefnocheck_appadmin: "pckcategoryrefnocheck_appadmin/",
     pckcategorynamecreate_appadmin: "pckcategorynamecreate_appadmin/",
-    gettransactiontype_pckcategoryform_appadmin: "gettransactiontype_pckcategoryform_appadmin/",
+    gettransactiontype_pckcategoryform_appadmin:
+      "gettransactiontype_pckcategoryform_appadmin/",
     pckcategorynameupdate_appadmin: "pckcategorynameupdate_appadmin/",
     pcksubcategoryrefnocheck_appadmin: "pcksubcategoryrefnocheck_appadmin/",
-    gettransactiontype_pcksubcategoryform_appadmin: "gettransactiontype_pcksubcategoryform_appadmin/",
-    getpckcategoryname_pcksubcategoryform_appadmin: "getpckcategoryname_pcksubcategoryform_appadmin/",
+    gettransactiontype_pcksubcategoryform_appadmin:
+      "gettransactiontype_pcksubcategoryform_appadmin/",
+    getpckcategoryname_pcksubcategoryform_appadmin:
+      "getpckcategoryname_pcksubcategoryform_appadmin/",
     pcksubcategorynamecreate_appadmin: "pcksubcategorynamecreate_appadmin/",
     pcksubcategorynameupdate_appadmin: "pcksubcategorynameupdate_appadmin/",
     pckcategoryrefnocheck_user: "pckcategoryrefnocheck_user/",
-    gettransactiontype_pckcategoryform_user: "gettransactiontype_pckcategoryform_user/",
+    gettransactiontype_pckcategoryform_user:
+      "gettransactiontype_pckcategoryform_user/",
     pckcategorynamecreate_user: "pckcategorynamecreate_user/",
     pckcategorynameupdate_user: "pckcategorynameupdate_user/",
     pcksubcategoryrefnocheck_user: "pcksubcategoryrefnocheck_user/",
-    gettransactiontype_pcksubcategoryform_user: "gettransactiontype_pcksubcategoryform_user/",
-    getpckcategoryname_pcksubcategoryform_user: "getpckcategoryname_pcksubcategoryform_user/",
+    gettransactiontype_pcksubcategoryform_user:
+      "gettransactiontype_pcksubcategoryform_user/",
+    getpckcategoryname_pcksubcategoryform_user:
+      "getpckcategoryname_pcksubcategoryform_user/",
     pcksubcategorynamecreate_user: "pcksubcategorynamecreate_user/",
     pcksubcategorynameupdate_user: "pcksubcategorynameupdate_user/",
     pckmycontactrefnocheck: "pckmycontactrefnocheck/",
@@ -326,9 +348,12 @@ class Provider {
     getproductnameratecardform: "getproductnameratecardform/",
     getunitofsaleratecardform: "getunitofsaleratecardform/",
     getmaterialratedataratecardform: "getmaterialratedataratecardform/",
-    getmaterialratedata_unitofsaleonchange_ratecardform: "getmaterialratedata_unitofsaleonchange_ratecardform/",
-    getmaterialratedata_withmaterialrateblur_ratecardform: "getmaterialratedata_withmaterialrateblur_ratecardform/",
-    getmaterialratedata_withoutmaterialrateblur_ratecardform: "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
+    getmaterialratedata_unitofsaleonchange_ratecardform:
+      "getmaterialratedata_unitofsaleonchange_ratecardform/",
+    getmaterialratedata_withmaterialrateblur_ratecardform:
+      "getmaterialratedata_withmaterialrateblur_ratecardform/",
+    getmaterialratedata_withoutmaterialrateblur_ratecardform:
+      "getmaterialratedata_withoutmaterialrateblur_ratecardform/",
     ratecardcreate: "ratecardcreate/",
     ratecardupdate: "ratecardupdate/",
     pcktransrefnocheck: "pcktransrefnocheck/",
@@ -344,8 +369,10 @@ class Provider {
     pckmypersonalbankcreate: "pckmypersonalbankcreate/",
     pckaddsourceupdate: "pckaddsourceupdate/",
     pck_companysource_verify_action: "pck_companysource_verify_action/",
+    pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
-    getsubcategoryname_pckaddexpensesform: "getsubcategoryname_pckaddexpensesform/",
+    getsubcategoryname_pckaddexpensesform:
+      "getsubcategoryname_pckaddexpensesform/",
     getcardtype_pckaddexpensesform: "getcardtype_pckaddexpensesform/",
     getcardbankname_pckaddexpensesform: "getcardbankname_pckaddexpensesform/",
     pckaddexpensescreate: "pckaddexpensescreate/",
@@ -377,13 +404,19 @@ class Provider {
     pckdashboard_cashinpocket_gridlist: "pckdashboard_cashinpocket_gridlist/",
     get_pckpaymentgroup: "get_pckpaymentgroup/",
 
-    pck_companysource_cash_verify_gridlist: "pck_companysource_cash_verify_gridlist/",
-    pck_companysource_bank_verify_gridlist: "pck_companysource_bank_verify_gridlist/",
-    pck_companysource_all_verified_gridlist: "pck_companysource_all_verified_gridlist/",
+    pck_companysource_cash_verify_gridlist:
+      "pck_companysource_cash_verify_gridlist/",
+    pck_companysource_bank_verify_gridlist:
+      "pck_companysource_bank_verify_gridlist/",
+    pck_companysource_all_verified_gridlist:
+      "pck_companysource_all_verified_gridlist/",
 
-    pck_companyexpenses_cash_verify_gridlist: "pck_companyexpenses_cash_verify_gridlist/",
-    pck_companyexpenses_bank_verify_gridlist: "pck_companyexpenses_bank_verify_gridlist/",
-    pck_companyexpenses_all_verified_gridlist: "pck_companyexpenses_all_verified_gridlist/",
+    pck_companyexpenses_cash_verify_gridlist:
+      "pck_companyexpenses_cash_verify_gridlist/",
+    pck_companyexpenses_bank_verify_gridlist:
+      "pck_companyexpenses_bank_verify_gridlist/",
+    pck_companyexpenses_all_verified_gridlist:
+      "pck_companyexpenses_all_verified_gridlist/",
     get_contacttype: "get_contacttype/",
     getsc_estimation: "getsc_estimation/",
     getsc_estimationdetail: "getsc_estimationdetail/",
@@ -391,9 +424,21 @@ class Provider {
     sc_estimationsendenquiry: "sc_estimationsendenquiry/",
     myestimationlist: "myestimationlist/",
     myestimationcontractordetails: "myestimationcontractordetails/",
-    getservicenamebrandconversionform: "getservicenamebrandconversionform/",
-    pckdashboard_cashinbranch: "pckdashboard_cashinbranch/",
-    pckdashboard_cashinbranch_pocket: "pckdashboard_cashinbranch_pocket/",
+
+    getpropertytypename_designyourdream_enquiryform:
+      "getpropertytypename_designyourdream_enquiryform/",
+    getlength: "getlength/",
+    getlengthinches: "getlengthinches/",
+    getwidthheightfoot: "getwidthheightfoot/",
+    getwidthheightinches: "getwidthheightinches/",
+    getservicename_designyourdream_enquiryform:
+      "getservicename_designyourdream_enquiryform/",
+    getpropertycategoryname_designyourdream_enquiryform:
+      "getpropertycategoryname_designyourdream_enquiryform/",
+    getsqftcalculation: "getsqftcalculation/",
+    designyourdream_enquiry_create: "designyourdream_enquiry_create/",
+    getgroupname_designyourdream_enquiryform:
+      "getgroupname_designyourdream_enquiryform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -424,28 +469,49 @@ class Provider {
         ? {
             name: "appimage1212.jpg",
             type: filePath.type + "/*",
-            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
           }
         : ""
     );
     return datas;
   }
-  async updateEmployee(basic, work, pay, isImageReplaced, filePath, logoImage, unload) {
+  async updateEmployee(
+    basic,
+    work,
+    pay,
+    isImageReplaced,
+    filePath,
+    logoImage,
+    unload
+  ) {
     try {
-      const empbasicdata = await axios.post(`${BASE_URL}/employeebasicdataupdate/`, this.convert(basic, isImageReplaced, filePath), {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const empbasicdata = await axios.post(
+        `${BASE_URL}/employeebasicdataupdate/`,
+        this.convert(basic, isImageReplaced, filePath),
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       const workData = await axios.post(`${BASE_URL}/employeeworkdataupdate/`, {
         data: work,
       });
-      const payDetails = await axios.post(`${BASE_URL}/employeepaydataupdate/`, { data: pay });
+      const payDetails = await axios.post(
+        `${BASE_URL}/employeepaydataupdate/`,
+        { data: pay }
+      );
       console.log("workparam", work);
       console.log(workData.data);
       console.log({
         data: work,
       });
       return {
-        sucess: empbasicdata.data.status === "Success" && workData.data.status === "Success" && payDetails.data.status === "Success",
+        sucess:
+          empbasicdata.data.status === "Success" &&
+          workData.data.status === "Success" &&
+          payDetails.data.status === "Success",
       };
     } catch (e) {
       console.log(e);
@@ -455,11 +521,26 @@ class Provider {
   async getEmployeebasicDetails(params, unload) {
     console.log(params);
     try {
-      const empdata = await axios.post(`${BASE_URL}/getemployeepaydata//`, params);
-      const empbasicdata = await axios.post(`${BASE_URL}/getemployeebasicdata/`, params);
-      const workdata = await axios.post(`${BASE_URL}/getemployeeworkdata/`, params);
-      const payDetails = await axios.post(`${BASE_URL}/getemployeepaydata/`, params);
-      const reportingDetails = await axios.post(`${BASE_URL}/getreportingtoemployeeworkform/`, params);
+      const empdata = await axios.post(
+        `${BASE_URL}/getemployeepaydata//`,
+        params
+      );
+      const empbasicdata = await axios.post(
+        `${BASE_URL}/getemployeebasicdata/`,
+        params
+      );
+      const workdata = await axios.post(
+        `${BASE_URL}/getemployeeworkdata/`,
+        params
+      );
+      const payDetails = await axios.post(
+        `${BASE_URL}/getemployeepaydata/`,
+        params
+      );
+      const reportingDetails = await axios.post(
+        `${BASE_URL}/getreportingtoemployeeworkform/`,
+        params
+      );
       return {
         empbasicdata: empbasicdata.data.data,
         workdata: workdata.data.data,
@@ -501,10 +582,6 @@ class Provider {
     return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
   }
 
-  createDFManufactoring(resource, params) {
-    return axios.post(`${BASE_URL_Manufactoring}/${resource}`, params);
-  }
-
   createDFAdminWithHeader(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_Admin}/${resource}`, params, {
@@ -519,9 +596,13 @@ class Provider {
 
   createDFDashboard(resource, params = null) {
     if (params) {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params, { timeout: timeoutLimit });
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, params, {
+        timeout: timeoutLimit,
+      });
     } else {
-      return axios.post(`${BASE_URL_Dashboard}/${resource}`, { timeout: timeoutLimit });
+      return axios.post(`${BASE_URL_Dashboard}/${resource}`, {
+        timeout: timeoutLimit,
+      });
     }
   }
 
