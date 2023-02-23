@@ -645,79 +645,78 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </TouchableOpacity>
             </View>
-            {(roleID == 4 ||
-              (roleID == 5) && (
-                <>
-                  <View
+            {(roleID == 4 || roleID == 5) && (
+              <>
+                <View
+                  style={[
+                    Styles.marginTop16,
+                    Styles.flexSpaceBetween,
+                    Styles.flexRow,
+                    Styles.flexJustifyCenter,
+                  ]}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("BranchWiseTransactionScreen");
+                    }}
                     style={[
-                      Styles.marginTop16,
-                      Styles.flexSpaceBetween,
-                      Styles.flexRow,
-                      Styles.flexJustifyCenter,
+                      Styles.height80,
+                      Styles.borderRadius8,
+                      Styles.backgroundGreen,
+                      Styles.padding14,
+                      Styles.boxElevation,
+                      { width: 200 },
                     ]}
                   >
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("BranchWiseTransactionScreen");
-                      }}
+                    <Icon
+                      name="graph"
+                      size={24}
+                      color={theme.colors.textLight}
+                    />
+                    <Text
                       style={[
-                        Styles.height80,
-                        Styles.borderRadius8,
-                        Styles.backgroundGreen,
-                        Styles.padding14,
-                        Styles.boxElevation,
-                        { width: 200 },
+                        Styles.fontSize16,
+                        {
+                          color: "#fff",
+                          width: "100%",
+                          fontWeight: "bold",
+                          position: "absolute",
+                          bottom: 14,
+                          left: 14,
+                        },
+                      ]}
+                    >
+                      Branch (Pocket/Bank)
+                    </Text>
+                    <View
+                      style={[
+                        Styles.width50per,
+                        Styles.height32,
+                        Styles.flexRow,
+                        Styles.flexAlignEnd,
+                        Styles.flexAlignStart,
+                        { position: "absolute", right: 14, top: 14 },
                       ]}
                     >
                       <Icon
-                        name="graph"
-                        size={24}
+                        name="currency-inr"
+                        size={20}
                         color={theme.colors.textLight}
                       />
                       <Text
                         style={[
                           Styles.fontSize16,
-                          {
-                            color: "#fff",
-                            width: "100%",
-                            fontWeight: "bold",
-                            position: "absolute",
-                            bottom: 14,
-                            left: 14,
-                          },
+                          Styles.textLeft,
+                          { color: "#fff", fontWeight: "bold" },
                         ]}
                       >
-                        Branch (Pocket/Bank)
+                        {branchAmount}
                       </Text>
-                      <View
-                        style={[
-                          Styles.width50per,
-                          Styles.height32,
-                          Styles.flexRow,
-                          Styles.flexAlignEnd,
-                          Styles.flexAlignStart,
-                          { position: "absolute", right: 14, top: 14 },
-                        ]}
-                      >
-                        <Icon
-                          name="currency-inr"
-                          size={20}
-                          color={theme.colors.textLight}
-                        />
-                        <Text
-                          style={[
-                            Styles.fontSize16,
-                            Styles.textLeft,
-                            { color: "#fff", fontWeight: "bold" },
-                          ]}
-                        >
-                          {branchAmount}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ))}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
           <View
             style={[

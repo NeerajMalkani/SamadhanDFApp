@@ -161,7 +161,7 @@ const ReceivableList = ({ route, navigation }) => {
                     />
                 </View>
             ) : (
-                <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+                <NoItems icon="format-list-bulleted" text="No records found" />
             )}
 
             <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={440} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>

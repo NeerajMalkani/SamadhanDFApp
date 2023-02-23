@@ -162,6 +162,7 @@ import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy
 import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
+import BranchWiseCashDetailScreen from "./src/screens/Common/PocketDairy/BranchWiseCashDetails";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
