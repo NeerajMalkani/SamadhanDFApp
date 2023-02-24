@@ -1418,8 +1418,56 @@ export default function App() {
                 name="HomeStack"
                 component={BottomTabs}
                 options={{ headerShown: false }}
+              />{" "}
+              <Stack.Screen
+                name="JobPostingForm"
+                component={JobPostingForm}
+                options={{
+                  headerTitle: "Post a Job",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
               />
-
+              <Stack.Screen
+                name="LookingForAJobJobGroup"
+                component={SelectGroupType}
+                options={{
+                  headerTitle: "Select Job Group",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="AreaOfInterest"
+                component={AreaOfInterest}
+                options={{
+                  headerTitle: "Area Of Interest",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="JobListingEmployee"
+                component={JobListing}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="JobSeekerForm"
+                component={JobSeekerForm}
+                options={{
+                  headerTitle: "Job Seeker Form",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
               <Stack.Screen
                 name="DesignYourDreamCategories"
                 component={DesignYourDreamCategories}
@@ -1662,7 +1710,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="AddMyServicesScreen"
                 component={AddMyServicesScreen}
@@ -1729,7 +1776,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="EmployeeEditScreen"
                 component={EmployeeEditScreen}
@@ -1801,7 +1847,6 @@ export default function App() {
                 }}
               />
               <Stack.Screen name="Demo" component={Demo} />
-
               <Stack.Screen
                 name="SearchClientScreen"
                 component={SearchClientScreen}
@@ -1822,7 +1867,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="SearchEmployee"
                 component={SearchEmployee}
@@ -1868,7 +1912,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="BudgetSetup"
                 component={BudgetSetup}
@@ -1899,7 +1942,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="AddSource"
                 component={AddSource}
@@ -2025,7 +2067,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="EditProductionStatus"
                 component={EditProductionStatus}
@@ -2037,7 +2078,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="ProductionOrderList"
                 component={ProductionOrderList}
@@ -2081,7 +2121,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="CategoryNameScreen"
                 component={CategoryNameScreen}
@@ -2126,7 +2165,6 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
               <Stack.Screen
                 name="SubCategoryNameScreen"
                 component={SubCategoryNameScreen}

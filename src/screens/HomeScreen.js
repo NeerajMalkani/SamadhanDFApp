@@ -1811,37 +1811,52 @@ const HomeScreen = ({ route, navigation }) => {
                 {/* Looking For Jobs */}
                 {(designID == "0" || designID == "1" || designID == "2") && (
                   <>
-                    <View
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("LookingForAJobJobGroup");
+                        // navigation.navigate("JobListingEmployee");
+                      }}
                       style={[
+                        Styles.padding0,
                         Styles.width100per,
-                        Styles.height150,
+                        Styles.height200,
                         Styles.flexRow,
                         Styles.marginTop16,
                         Styles.borderRadius8,
-                        { elevation: 4 },
                       ]}
                     >
-                      <ImageBackground
-                        source={require("../../assets/jobs-bg.jpg")}
-                        resizeMode="cover"
-                        style={[{ flex: 1, justifyContent: "center" }]}
-                        imageStyle={{ borderRadius: 8 }}
+                      <View
+                        style={[
+                          Styles.width100per,
+                          Styles.height150,
+                          Styles.flexRow,
+                          Styles.marginTop16,
+                          Styles.borderRadius8,
+                          { elevation: 4 },
+                        ]}
                       >
-                        <Text
-                          style={[
-                            Styles.positionAbsolute,
-                            Styles.marginTop8,
-                            Styles.marginStart16,
-                            Styles.fontSize18,
-                            Styles.textColorWhite,
-                            Styles.fontBold,
-                            { top: 8 },
-                          ]}
+                        <ImageBackground
+                          source={require("../../assets/jobs-bg.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
                         >
-                          Looking For Jobs ?
-                        </Text>
-                      </ImageBackground>
-                    </View>
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
+                          >
+                            Looking For Jobs ?
+                          </Text>
+                        </ImageBackground>
+                      </View>
+                    </TouchableOpacity>
                   </>
                 )}
                 {/* Looking For Jobs */}
@@ -1962,7 +1977,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Button
             mode="contained"
             style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
-            onPress={() => { }}
+            onPress={() => {}}
           >
             View
           </Button>
