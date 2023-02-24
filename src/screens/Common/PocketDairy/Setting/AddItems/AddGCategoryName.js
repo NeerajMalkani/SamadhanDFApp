@@ -117,6 +117,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     };
+    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);

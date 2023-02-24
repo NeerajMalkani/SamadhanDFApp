@@ -520,8 +520,8 @@ const AddSource = ({ route, navigation }) => {
       params
     )
       .then((response) => {
-        //console.log('recept data +++++++++++++');
-        //console.log(response.data);
+        // console.log('recept data +++++++++++++');
+        // console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);

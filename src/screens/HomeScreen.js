@@ -44,7 +44,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
   userID = 0,
-  groupRefNo = 0;
+  groupRefNo = 0,
+  designID = 0;
 var _user_count = null;
 
 LogBox.ignoreLogs([
@@ -259,6 +260,7 @@ const HomeScreen = ({ route, navigation }) => {
       roleID = userDataParsed.RoleID;
       userID = userDataParsed.UserID;
       groupRefNo = userDataParsed.Sess_group_refno;
+      designID = userDataParsed.Sess_designation_refno;
       let roleName = "";
       switch (roleID) {
         case "1":
@@ -496,7 +498,7 @@ const HomeScreen = ({ route, navigation }) => {
           ]}
           source={require("../../assets/defaultIcon.png")}
         />
-        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150}]}>
+        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150 }]}>
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>
             {route.params.userDetails[0].FullName}
           </Title>
@@ -1807,37 +1809,43 @@ const HomeScreen = ({ route, navigation }) => {
                 {/* Pocket Diary */}
 
                 {/* Looking For Jobs */}
-                <View
-                  style={[
-                    Styles.width100per,
-                    Styles.height150,
-                    Styles.flexRow,
-                    Styles.marginTop16,
-                    Styles.borderRadius8,
-                    { elevation: 4 },
-                  ]}
-                >
-                  <ImageBackground
-                    source={require("../../assets/jobs-bg.jpg")}
-                    resizeMode="cover"
-                    style={[{ flex: 1, justifyContent: "center" }]}
-                    imageStyle={{ borderRadius: 8 }}
-                  >
-                    <Text
+                {(designID == "0" || designID == "1" || designID == "2") && (
+                  <>
+                    <View
                       style={[
-                        Styles.positionAbsolute,
-                        Styles.marginTop8,
-                        Styles.marginStart16,
-                        Styles.fontSize18,
-                        Styles.textColorWhite,
-                        Styles.fontBold,
-                        { top: 8 },
+                        Styles.width100per,
+                        Styles.height150,
+                        Styles.flexRow,
+                        Styles.marginTop16,
+                        Styles.borderRadius8,
+                        { elevation: 4 },
                       ]}
                     >
-                      Looking For Jobs ?
-                    </Text>
-                  </ImageBackground>
-                </View>
+                      <ImageBackground
+                        source={require("../../assets/jobs-bg.jpg")}
+                        resizeMode="cover"
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                        imageStyle={{ borderRadius: 8 }}
+                      >
+                        <Text
+                          style={[
+                            Styles.positionAbsolute,
+                            Styles.marginTop8,
+                            Styles.marginStart16,
+                            Styles.fontSize18,
+                            Styles.textColorWhite,
+                            Styles.fontBold,
+                            { top: 8 },
+                          ]}
+                        >
+                          Looking For Jobs ?
+                        </Text>
+                      </ImageBackground>
+                    </View>
+                  </>
+                )}
+                {/* Looking For Jobs */}
+
                 {userRoleID !== "2" && (
                   <>
                     <View
@@ -1871,8 +1879,6 @@ const HomeScreen = ({ route, navigation }) => {
                     </View>
                   </>
                 )}
-                {/* Looking For Jobs */}
-
                 {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
                   <View style={Styles.width50per}>
                     <Card
