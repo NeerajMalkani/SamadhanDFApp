@@ -54,7 +54,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
       ? route.params.data.view_status === "1"
         ? true
         : false
-      : false
+      : true
   );
 
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);

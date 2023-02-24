@@ -1422,7 +1422,7 @@ export default function App() {
                 name="HomeStack"
                 component={BottomTabs}
                 options={{ headerShown: false }}
-              />{" "}
+              />
               <Stack.Screen
                 name="JobPostingForm"
                 component={JobPostingForm}
