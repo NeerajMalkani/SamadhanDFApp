@@ -36,6 +36,22 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
+  // Entry Type changes
+  // const [entryTypeName, setEntryTypeName] = useState([
+  //   {
+  //     title: "Self",
+  //     isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("1") ? true : false,
+  //     id: "1",
+  //   },
+  //   {
+  //     title: "Company",
+  //     isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("2") ? true : false,
+  //     id: "2",
+  //   },
+  // ]);
+  // const [entryTypeInvalid, setEntryTypeInvalid] = useState(false);
+  // Entry Type changes
+
   //#endregion
 
 
@@ -59,6 +75,51 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
       FetchCategory(route.params.data.transtypeID);
     }
   };
+
+  // Entry Type changes
+  // const FetchEntryType = (edit) => {
+  //   console.log('start entry');
+  //   let params = {
+  //     data: {
+  //       Sess_UserRefno: userID,
+  //       Sess_group_refno: groupID
+  //     },
+  //   };
+  //   console.log('params', params);
+  //   Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
+  //     .then((response) => {
+  //       console.log('data', response.data.data);
+  //       if (response.data && response.data.code === 200) {
+  //         if (response.data.data) {
+  //           response.data.data = APIConverter(response.data.data);
+
+  //           const entryType = [];
+  //           response.data.data.map((data, i) => {
+  //             let checked = false;
+  //             if (edit && route.params.data.entryType.includes(data.entryType)) {
+  //               checked = true;
+  //             }
+
+  //             entryType.push({
+  //               title: data.transTypeName,
+  //               isChecked: checked,
+  //               id: data.transtypeID,
+  //             });
+  //           });
+  //           setEntryTypeName(entryType);
+  //         }
+  //       }
+
+  //     })
+  //     .catch((e) => {
+  //       //setIsLoading(false);
+  //       setSnackbarText(e.message);
+  //       setSnackbarColor(theme.colors.error);
+  //       setSnackbarVisible(true);
+  //       setRefreshing(false);
+  //     });
+  // };
+  // Entry Type changes
 
 
   const FetchTransactionType = () => {
@@ -274,6 +335,36 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
+          {/* Entry Type changes */}
+          {/* <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Entry Type</Subheading>
+          <View style={[Styles.flexRow]}>
+            {entryTypeName.map((k, i) => {
+              return (
+                <View key={i} style={[Styles.flex1]}>
+                  <Checkbox.Item
+                    label={k.title}
+                    position="leading"
+                    style={[Styles.paddingHorizontal0]}
+                    labelStyle={[Styles.textLeft, Styles.paddingStart4, Styles.fontSize14]}
+                    color={theme.colors.primary}
+                    status={k.isChecked ? "checked" : "unchecked"}
+                    onPress={() => {
+                      let temp = entryTypeName.map((u) => {
+                        if (k.title === u.title) {
+                          return { ...u, isChecked: !u.isChecked };
+                        }
+                        return u;
+                      });
+                      setEntryTypeInvalid(false);
+                      setEntryTypeName(temp);
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </View> */}
+          {/* Entry Type changes */}
+
           <Dropdown label="Transaction Type" data={transactionTypeData} onSelected={onTransactionTypeName} isError={errorTTN} selectedItem={transactionTypeName} />
           <HelperText type="error" visible={errorTTN}>
             {communication.InvalidTransactionTypeName}

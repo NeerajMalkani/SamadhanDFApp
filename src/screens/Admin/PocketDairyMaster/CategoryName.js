@@ -44,9 +44,11 @@ const CategoryNameScreen = ({ navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
       .then((response) => {
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log("grid data", response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -102,7 +104,7 @@ const CategoryNameScreen = ({ navigation }) => {
           //   setCategoryName(data.item.categoryName);
           // }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+        //right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
       </View>
     );
@@ -113,6 +115,7 @@ const CategoryNameScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
+    console.log("edit data", data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddCategoryNameScreen", {
       type: "edit",
@@ -123,6 +126,8 @@ const CategoryNameScreen = ({ navigation }) => {
         display: data.item.display,
         pckCategoryID: data.item.pckCategoryID,
         transactionTypeName: data.item.transactionTypeName,
+        entryType: data.item.entrytype_name,
+
       },
     });
   };
