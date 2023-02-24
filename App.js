@@ -183,7 +183,11 @@ import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/Branch
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
 import BranchWiseCashDetailScreen from "./src/screens/Common/PocketDairy/BranchWiseCashDetails";
-
+import SelectGroupType from "./src/screens/Common/Looking for a Job/SelectGroupType";
+import AreaOfInterest from "./src/screens/Common/Looking for a Job/Employee/AreaOfInterest";
+import JobSeekerForm from "./src/screens/Common/Looking for a Job/Employee/JobSeekerForm";
+import JobListing from "./src/screens/Common/Looking for a Job/Employee/JobListing";
+import JobPostingForm from "./src/screens/Common/Looking for a Job/Employer/JobPostingForm";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -397,20 +401,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                      ? expanded2
-                      : i == 2
-                        ? expanded3
-                        : i == 3
-                          ? expanded4
-                          : i == 4
-                            ? expanded5
-                            : i == 5
-                              ? expanded6
-                              : i == 6
-                                ? expanded7
-                                : i == 7
-                                  ? expanded8
-                                  : expanded9
+                    ? expanded2
+                    : i == 2
+                    ? expanded3
+                    : i == 3
+                    ? expanded4
+                    : i == 4
+                    ? expanded5
+                    : i == 5
+                    ? expanded6
+                    : i == 6
+                    ? expanded7
+                    : i == 7
+                    ? expanded8
+                    : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -1033,7 +1037,7 @@ export default function App() {
                 name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
               />
-               <Drawer.Screen
+              <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="BankTransactionScreen"
                 component={BankTransactionScreen}
@@ -1048,7 +1052,7 @@ export default function App() {
                 name="AddSourceList"
                 component={AddSourceList}
               />
-               <Drawer.Screen
+              <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
@@ -1232,7 +1236,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => { });
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
 
@@ -1327,14 +1331,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                    ? UserProfile
-                    : parseInt(userDetails[0].RoleID) === 2
-                      ? UserProfile
-                      : parseInt(userDetails[0].RoleID) === 5
-                        ? BasicDetailsScreen
-                        : parseInt(userDetails[0].RoleID) === 6
-                          ? UserProfile
-                          : UserProfileScreen
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 2
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 5
+                  ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 6
+                  ? UserProfile
+                  : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,
