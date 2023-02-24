@@ -12,7 +12,9 @@ const BASE_URL_PocketDiary =
   "https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD";
 const BASE_URL_Contractor =
   "https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/";
-
+const BASE_URL_Manufacturer =
+  "https://dfsolutions.in/api/apimanufacturer/spawu7S4urax/tYjD/";
+const BASE_ = "https://dfsolutions.in/api";
 class Provider {
   //#region Old API's
   getAll(resource) {
@@ -116,7 +118,7 @@ class Provider {
     CategoryFromRefNo: "categoryrefnocheck/",
     CategoryNameCreate: "categorynamecreate/",
     CategoryNameUpdate: "categorynameupdate/",
-
+    mfbrandvaluerefnocheck: "mfbrandvaluerefnocheck/",
     ProductFromRefNo: "productrefnocheck/",
     ActivityRoleForProduct: "getactivityroleproductform/",
     ServiceForProduct: "getservicenameproductform/",
@@ -126,7 +128,14 @@ class Provider {
     UnitNameForProduct: "getunitnameproductform/",
     ProductNameCreate: "productnamecreate/",
     ProductNameUpdate: "productnameupdate/",
-
+    brandconversionupdate: "brandconversionupdate/",
+    gpcoilrefnocheck: "gpcoilrefnocheck/",
+    widthofgpcoilupdate: "widthofgpcoilupdate/",
+    widthofgpcoilcreate: "widthofgpcoilcreate/",
+    brandconversioncreate: "brandconversioncreate/",
+    gsmrefnocheck: "gsmrefnocheck/",
+    gsmnamecreate: "gsmnamecreate/",
+    gsmnameupdate: "gsmnameupdate/",
     ServiceProductFilter: "serviceproductfilter/",
     ActivityRoleServiceProduct: "getactivityroleserviceproductform/",
     ServiceNameServiceProduct: "getservicenameserviceproductform/",
@@ -371,6 +380,7 @@ class Provider {
     pck_companysource_verify_action: "pck_companysource_verify_action/",
     pcktransrefnocheck: "pcktransrefnocheck/",
     getcategoryname_pckaddexpensesform: "getcategoryname_pckaddexpensesform/",
+    getcategorynamebrandconversionform: "getcategorynamebrandconversionform/",
     getsubcategoryname_pckaddexpensesform:
       "getsubcategoryname_pckaddexpensesform/",
     getcardtype_pckaddexpensesform: "getcardtype_pckaddexpensesform/",
@@ -380,7 +390,7 @@ class Provider {
     pck_companyexpenses_verify_action: "pck_companyexpenses_verify_action/",
     pckdashboard_payablelist: "pckdashboard_payablelist/",
     pckdashboard_receivablelist: "pckdashboard_receivablelist/",
-
+    getbrandnamebrandconversionform: "getbrandnamebrandconversionform/",
     branchbankrefnocheck: "branchbankrefnocheck/",
     getbranchnamebankform: "	getbranchnamebankform/",
     pckaddsource_pdc_cheque_update: "pckaddsource_pdc_cheque_update/",
@@ -469,6 +479,9 @@ class Provider {
 
   createDFCommon(resource, params) {
     return axios.post(`${BASE_URL}/${resource}`, params);
+  }
+  createDFManufacturer(resource, params) {
+    return axios.post(`${BASE_URL_Manufacturer}/${resource}`, params);
   }
   convert(params, isImageReplaced, filePath) {
     const datas = new FormData();
@@ -564,6 +577,20 @@ class Provider {
     }
   }
 
+  async getbrandvalueconversion(params, unload) {
+    console.log(params);
+    try {
+      const servicename = await axios.post(
+        `${BASE_}/apimanufacturer/spawu7S4urax/tYjD/getservicenamebrandconversionform/`,
+        params
+      );
+      unload();
+      return servicename.data.data;
+    } catch (e) {
+      console.log(e);
+      unload();
+    }
+  }
   createDFCommonWithouParam(resource) {
     return axios.post(`${BASE_URL}/${resource}`);
   }

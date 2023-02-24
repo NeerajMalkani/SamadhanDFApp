@@ -1,5 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  View,
+  LogBox,
+  RefreshControl,
+  ScrollView,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -10,10 +17,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
 
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
+let Sess_UserRefno = 0;
+let Sess_company_refno = 0;
 const ABrandConversationValue = ({ navigation }) => {
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -23,9 +33,10 @@ const ABrandConversationValue = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
 
- 
   const [serviceName, setServiceName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [brandName, setBrandName] = React.useState("");
@@ -37,26 +48,28 @@ const ABrandConversationValue = ({ navigation }) => {
   //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
-        category_refno: "all",
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        mf_brandvalue_refno: "all",
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.CategoryFromRefNo, params)
+    Provider.createDFManufacturer(
+      Provider.API_URLS.mfbrandvaluerefnocheck,
+      params
+    )
       .then((response) => {
-        if (response.data && response.data.code === 200) { 
+        console.log(response.data);
+        if (response.data && response.data.code === 200) {
           if (response.data.data) {
-             response.data.data = RemoveUnwantedParameters(response.data.data, ["group_refno","service_refno","unit_category_refno"]);
-            response.data.data = APIConverter(response.data.data);
-            const lisData = [...response.data.data];
-            lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
-            });
+            console.log(response.data.data);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
@@ -78,10 +91,24 @@ const ABrandConversationValue = ({ navigation }) => {
       });
   };
 
+  const GetUserID = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData !== null) {
+        Sess_UserRefno = JSON.parse(userData).UserID;
+        Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+        FetchData();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
+  const [item, setItem] = useState({});
   const onChangeSearch = (query) => {
     setSearchQuery(query);
     if (query === "") {
@@ -89,7 +116,10 @@ const ABrandConversationValue = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.categoryName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.categoryName
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase());
         })
       );
     }
@@ -97,45 +127,61 @@ const ABrandConversationValue = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.borderBottom1,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          { height: 72 },
+        ]}
+      >
         <List.Item
-          title={data.item.serviceName}
+          title={data.item.service_name}
           titleStyle={{ fontSize: 18 }}
-          description={"Display: " + (data.item.display ? "Yes" : "No")}
+          description={
+            "Display: " + (data.item.view_status === "1" ? "Yes" : "No")
+          }
           onPress={() => {
             refRBSheet.current.open();
-            setServiceName(data.item.serviceName);
-            setCategoryName(data.item.categoryName);
-            setBrandName(data.item.brandName);
-            setConversionValue(data.item.conversionValue);
-            setDisplay(data.item.display);
-           
+            setItem(data.item);
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          left={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="file-tree"
+            />
+          )}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+            />
+          )}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddBrandConversationValue", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddBrandConversationValue", {
+      type: "add",
+      fetchData: FetchData,
+    });
   };
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
+    console.log(data.item);
     navigation.navigate("AddBrandConversationValue", {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        serviceName: data.item.serviceName,
-        unitName: data.item.unitName ? data.item.unitName.join(",") : "",
-        categoryName: data.item.categoryName,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate,
-        display: data.item.display,
+        ...data.item,
       },
     });
   };
@@ -145,12 +191,23 @@ const ABrandConversationValue = ({ navigation }) => {
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Brand Conversion Value" />
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+          <Searchbar
+            style={[Styles.margin16]}
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+          />
           <SwipeListView
             previewDuration={1000}
             previewOpenValue={-72}
@@ -169,25 +226,62 @@ const ABrandConversationValue = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) =>
+              RenderHiddenItems(data, rowMap, [EditCallback])
+            }
           />
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", right: 16, bottom: 16 },
+        ]}
+        icon="plus"
+        onPress={AddCallback}
+      />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={420}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>
+            {item.service_name}
+          </Title>
           <ScrollView>
-            <List.Item title="Service Name" description={serviceName} />
-            <List.Item title="Category Name" description={categoryName} />
-            <List.Item title="Brand Name" description={brandName} />
-            <List.Item title="Conversion Value" description={conversionValue} />
-            <List.Item title="Display" description={display} />
+            <List.Item title="Service Name" description={item.service_name} />
+            <List.Item title="Category Name" description={item.category_name} />
+            <List.Item title="Brand Name" description={item.brand_name} />
+            <List.Item
+              title="Conversion Value"
+              description={item.conversion_value}
+            />
+            <List.Item
+              title="Display"
+              description={item.view_status === "1" ? "Yes" : "No"}
+            />
           </ScrollView>
         </View>
       </RBSheet>
