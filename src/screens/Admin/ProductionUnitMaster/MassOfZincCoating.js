@@ -188,7 +188,7 @@ const MassOfZincCoating = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Mass Of Zinc Coating" />
+      <Header navigation={navigation} title="Mass Zinc Coating" />
       {isLoading ? (
         <View
           style={[

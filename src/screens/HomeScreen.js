@@ -813,35 +813,6 @@ const HomeScreen = ({ route, navigation }) => {
                       </Text>
                     </ImageBackground>
                   </View>
-                  <View
-                    style={[
-                      Styles.marginTop16,
-                      Styles.borderRadius8,
-                      Styles.homeBox,
-                      { height: 140 },
-                    ]}
-                  >
-                    <ImageBackground
-                      source={require("../../assets/user-access.jpg")}
-                      resizeMode="cover"
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                      imageStyle={{ borderRadius: 8 }}
-                    >
-                      <Text
-                        style={[
-                          Styles.positionAbsolute,
-                          Styles.marginTop8,
-                          Styles.marginStart16,
-                          Styles.fontSize18,
-                          Styles.textColorWhite,
-                          Styles.fontBold,
-                          { top: 8 },
-                        ]}
-                      >
-                        Control User Access
-                      </Text>
-                    </ImageBackground>
-                  </View>
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Service Catlogue</Text>
                     <View
