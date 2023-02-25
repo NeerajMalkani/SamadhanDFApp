@@ -18,9 +18,10 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ], [
-        "expo-document-picker"]
-        
+      ],
+      [
+        "expo-document-picker"
+      ]
     ],
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -48,7 +49,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "d7e43c07-849e-49c3-b922-d6166e46a4c4"
+        "projectId": "34190087-2801-4064-9e37-acd0a46ad280"
       }
     }
   }
