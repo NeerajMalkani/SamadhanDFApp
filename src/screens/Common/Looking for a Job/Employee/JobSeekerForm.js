@@ -66,12 +66,11 @@ const JobSeekerForm = ({ route, navigation }) => {
     setErrors((state) => ({ ...state, resume: false }));
     try {
       const result = await DocumentPicker.getDocumentAsync({
-         type: [
-            "application/pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          ],
+        type: [
+          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ],
       });
-        console.log(result);
 
       setResume(result);
     } catch (error) {
@@ -114,7 +113,7 @@ const JobSeekerForm = ({ route, navigation }) => {
       error = true;
       setErrors((state) => ({ ...state, resume: true }));
     }
-    console.log(route.params);
+
     if (error) {
       setSnackbar(true);
       setSnackbarText("Please fill all the fields");
@@ -122,19 +121,23 @@ const JobSeekerForm = ({ route, navigation }) => {
     } else {
       const formdata = new FormData();
 
-      formdata.append("data", {
-        ...state,
-        state_refno: JSON.stringify(
-          state.state_refno.map(
-            (obj) => states.find((item) => item.state_name === obj).state_refno
-          )
-        ),
-        district_refno: JSON.stringify(
-          state.district_refno.map((obj) => obj._id)
-        ),
-        Sess_UserRefno: userID,
-        employergroup_refno: route.params.employergroup.employergroup_refno,
-      });
+      formdata.append(
+        "data",
+        JSON.stringify({
+          ...state,
+          state_refno: JSON.stringify(
+            state.state_refno.map(
+              (obj) =>
+                states.find((item) => item.state_name === obj).state_refno
+            )
+          ),
+          district_refno: JSON.stringify(
+            state.district_refno.map((obj) => obj._id)
+          ),
+          Sess_UserRefno: userID,
+          employergroup_refno: route.params.employergroup.employergroup_refno,
+        })
+      );
       formdata.append("employee_resume", {
         name: resume.name,
         type: resume.mimetype + "/*",
@@ -143,26 +146,23 @@ const JobSeekerForm = ({ route, navigation }) => {
             ? resume.uri
             : resume.uri.replace("file://", ""),
       });
-      console.log(formdata);
       Provider.createDFCommonWithHeader(
         Provider.API_URLS.employee_job_apply,
         formdata
       )
-        .then((res) => {
-          if (res.data.data) {
+        .then((response) => {
+          if (response.data.data) {
             setSnackbar(true);
+            setSnackbarText("Applied Successfully");
             setSnackbarType(theme.colors.greenBorder);
-            setSnackbarText("Form filled Successfully");
-            navigation.navigate("JobListing");
-          } else {
-            throw res.data;
+            navigation.navigate("HomeScreen");
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((e) => {
+          console.log(e);
           setSnackbar(true);
+          setSnackbarText("Something Went Wrong");
           setSnackbarType(theme.colors.error);
-          setSnackbarText("something went wrong");
         });
     }
   };
