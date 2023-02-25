@@ -183,6 +183,7 @@ import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/Branch
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
 import BranchWiseCashDetailScreen from "./src/screens/Common/PocketDairy/BranchWiseCashDetails";
+
 import SelectGroupType from "./src/screens/Common/Looking for a Job/SelectGroupType";
 import AreaOfInterest from "./src/screens/Common/Looking for a Job/Employee/AreaOfInterest";
 import JobSeekerForm from "./src/screens/Common/Looking for a Job/Employee/JobSeekerForm";
@@ -1422,7 +1423,7 @@ export default function App() {
                 name="HomeStack"
                 component={BottomTabs}
                 options={{ headerShown: false }}
-              />{" "}
+              />
               <Stack.Screen
                 name="JobPostingForm"
                 component={JobPostingForm}

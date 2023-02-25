@@ -64,13 +64,19 @@ const JobSeekerForm = ({ route, navigation }) => {
 
   const pickDocument = async () => {
     setErrors((state) => ({ ...state, resume: false }));
-    const result = await DocumentPicker.getDocumentAsync({
-      type: [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ],
-    });
-    setResume(result);
+    try {
+      const result = await DocumentPicker.getDocumentAsync() //DocumentPicker.pickSingle({
+        // type: [
+        //     "application/pdf",
+        //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        //   ],
+        // });
+        .console.log(result);
+
+      setResume(result);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onSubmit = () => {

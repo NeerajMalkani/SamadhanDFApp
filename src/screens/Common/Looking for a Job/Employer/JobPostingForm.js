@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Provider from "../../../../api/Provider";
 import { theme } from "../../../../theme/apptheme";
 import { useIsFocused } from "@react-navigation/native";
-import * as DocumentPicker from "expo-document-picker";
+
 let userID = null;
 let user = null;
 LogBox.ignoreLogs([

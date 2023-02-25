@@ -33,6 +33,7 @@
     "expo": "^47.0.0",
     "expo-cli": "^6.0.8",
     "expo-contacts": "~11.0.1",
+    "expo-document-picker": "~11.0.1",
     "expo-image-picker": "~14.0.2",
     "expo-linear-gradient": "^12.0.1",
     "expo-notifications": "~0.17.0",
