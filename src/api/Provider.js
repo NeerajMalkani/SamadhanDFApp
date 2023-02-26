@@ -604,7 +604,7 @@ class Provider {
   createDFCommonWithHeader(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL}/${resource}`, params, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data" }, 
       });
     } else {
       return axios.post(`${BASE_URL}/${resource}`, {
