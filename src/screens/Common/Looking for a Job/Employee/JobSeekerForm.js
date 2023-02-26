@@ -123,29 +123,31 @@ const JobSeekerForm = ({ route, navigation }) => {
 
       formdata.append(
         "data",
-        JSON.stringify({
+{
           ...state,
-          state_refno: JSON.stringify(
+          designation_refno:designations.find(item=>item.designation_name===state.designation_refno).designation_refno,
+          state_refno: 
             state.state_refno.map(
               (obj) =>
                 states.find((item) => item.state_name === obj).state_refno
             )
-          ),
-          district_refno: JSON.stringify(
+          ,
+          district_refno: 
             state.district_refno.map((obj) => obj._id)
-          ),
+          ,
           Sess_UserRefno: userID,
           employergroup_refno: route.params.employergroup.employergroup_refno,
-        })
+        }
       );
       formdata.append("employee_resume", {
-        name: resume.name,
-        type: resume.mimetype + "/*",
+        name: resume.name.split("/").pop(),
+        type: "multipart/form-data" ,
         uri:
-          Platform.OS === "android"
-            ? resume.uri
-            : resume.uri.replace("file://", ""),
+        
+        "file:///" + resume.uri.split("file:/").join("")
+          
       });
+
       Provider.createDFCommonWithHeader(
         Provider.API_URLS.employee_job_apply,
         formdata
