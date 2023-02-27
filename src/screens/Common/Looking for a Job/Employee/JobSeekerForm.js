@@ -1,37 +1,37 @@
-import { View, LogBox, ScrollView, Text } from "react-native";
-import FormData from 'form-data'
-import { Styles } from "../../../../styles/styles";
-import { TextInput, Button, HelperText, Snackbar } from "react-native-paper";
-import React, { useState, useEffect } from "react";
-import { PaperSelect } from "react-native-paper-select";
-import Dropdown from "../../../../components/Dropdown";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Provider from "../../../../api/Provider";
-import { theme } from "../../../../theme/apptheme";
-import { useIsFocused } from "@react-navigation/native";
-import * as DocumentPicker from "expo-document-picker";
+import { View, LogBox, ScrollView, Text } from 'react-native';
+import FormData from 'form-data';
+import { Styles } from '../../../../styles/styles';
+import { TextInput, Button, HelperText, Snackbar } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { PaperSelect } from 'react-native-paper-select';
+import Dropdown from '../../../../components/Dropdown';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Provider from '../../../../api/Provider';
+import { theme } from '../../../../theme/apptheme';
+import { useIsFocused } from '@react-navigation/native';
+import * as DocumentPicker from 'expo-document-picker';
 let userID = null;
 LogBox.ignoreLogs([
-  "Non-serializable values were found in the navigation state",
-  "Material-UI: The `css` function is deprecated. Use the `styleFunctionSx` instead",
-  "source.uri should not be an empty string",
+  'Non-serializable values were found in the navigation state',
+  'Material-UI: The `css` function is deprecated. Use the `styleFunctionSx` instead',
+  'source.uri should not be an empty string',
 ]);
 
 const JobSeekerForm = ({ route, navigation }) => {
   const [snackbar, setSnackbar] = useState(false);
-  const [snackbarType, setSnackbarType] = useState("info");
-  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarType, setSnackbarType] = useState('info');
+  const [snackbarText, setSnackbarText] = useState('');
   const isFocused = useIsFocused();
   const [resume, setResume] = useState(null);
-  const [currentState, setCurrentState] = useState("");
+  const [currentState, setCurrentState] = useState('');
   const [state, setState] = useState({
-    designation_refno: "",
+    designation_refno: '',
     state_refno: [],
     district_refno: [],
-    experience_year: "",
-    experience_month: "",
-    expected_salary: "",
-    subscription_fees: "",
+    experience_year: '',
+    experience_month: '',
+    expected_salary: '',
+    subscription_fees: '',
   });
   const [errors, setErrors] = useState({
     designation_refno: false,
@@ -48,7 +48,7 @@ const JobSeekerForm = ({ route, navigation }) => {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const onChange = (text, name) => {
-    if (name === "state_refno") {
+    if (name === 'state_refno') {
       setState((state) => ({
         ...state,
         state_refno:
@@ -68,8 +68,8 @@ const JobSeekerForm = ({ route, navigation }) => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: [
-          "application/pdf",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ],
       });
 
@@ -79,26 +79,25 @@ const JobSeekerForm = ({ route, navigation }) => {
     }
   };
 
-
   const onSubmit = () => {
     let error = false;
-    if (state.designation_refno === "") {
+    if (state.designation_refno === '') {
       error = true;
       setErrors((state) => ({ ...state, designation_refno: true }));
     }
-    if (state.experience_month === "") {
+    if (state.experience_month === '') {
       error = true;
       setErrors((state) => ({ ...state, experience_month: true }));
     }
-    if (state.experience_year === "") {
+    if (state.experience_year === '') {
       error = true;
       setErrors((state) => ({ ...state, experience_year: true }));
     }
-    if (state.expected_salary === "") {
+    if (state.expected_salary === '') {
       error = true;
       setErrors((state) => ({ ...state, expected_salary: true }));
     }
-    if (state.subscription_fees === "") {
+    if (state.subscription_fees === '') {
       error = true;
       setErrors((state) => ({ ...state, subscription_fees: true }));
     }
@@ -118,53 +117,52 @@ const JobSeekerForm = ({ route, navigation }) => {
 
     if (error) {
       setSnackbar(true);
-      setSnackbarText("Please fill all the fields");
+      setSnackbarText('Please fill all the fields');
       setSnackbarType(theme.colors.error);
     } else {
-    
-      const params = {data:{
-        ...state,
-        designation_refno:designations.find(item=>item.designation_name===state.designation_refno).designation_refno,
-        state_refno: 
-          state.state_refno.map(
-            (obj) =>
-              states.find((item) => item.state_name === obj).state_refno
-          )
-        ,
-        district_refno: 
-          state.district_refno.map((obj) => obj._id)
-        ,
-        Sess_UserRefno: userID,
-        employergroup_refno: route.params.employergroup.employergroup_refno,
-        
-      },employee_resume :{
-        name: resume.name,
-        // type: resume.mimeType ,
-        uri:
-            resume.uri
-          
-      }}
-      const formdata = new FormData()
-      formdata.append("data",JSON.stringify(params.data))
-      formdata.append("employee_resume",JSON.stringify(params.employee_resume))
-console.log(formdata)
+      const params = {
+        data: {
+          ...state,
+          designation_refno: designations.find(
+            (item) => item.designation_name === state.designation_refno,
+          ).designation_refno,
+          state_refno: state.state_refno.map(
+            (obj) => states.find((item) => item.state_name === obj).state_refno,
+          ),
+          district_refno: state.district_refno.map((obj) => obj._id),
+          Sess_UserRefno: userID,
+          employergroup_refno: route.params.employergroup.employergroup_refno,
+        },
+        employee_resume: {
+          name: resume.name,
+          // type: resume.mimeType ,
+          uri: resume.uri,
+        },
+      };
+      const formdata = new FormData();
+      formdata.append('data', JSON.stringify(params.data));
+      formdata.append(
+        'employee_resume',
+        JSON.stringify(params.employee_resume),
+      );
+      console.log(formdata);
       Provider.createDFCommonWithHeader(
         Provider.API_URLS.employee_job_apply,
-        formdata
+        formdata,
       )
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
           if (response.data.data) {
             setSnackbar(true);
-            setSnackbarText("Applied Successfully");
+            setSnackbarText('Applied Successfully');
             setSnackbarType(theme.colors.greenBorder);
-            navigation.navigate("HomeScreen");
+            navigation.navigate('HomeScreen');
           }
         })
         .catch((e) => {
           console.log(e);
           setSnackbar(true);
-          setSnackbarText("Something Went Wrong");
+          setSnackbarText('Something Went Wrong');
           setSnackbarType(theme.colors.error);
         });
     }
@@ -181,15 +179,12 @@ console.log(formdata)
       .catch((error) => console.log(error));
   };
   const fetchDistricts = (state_refno) => {
-    Provider.createDFCommon(
-      Provider.API_URLS.GetDistrictDetailsByStateRefno,
-      {
-        data: {
-          Sess_UserRefno: userID,
-          state_refno,
-        },
-      }
-    )
+    Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, {
+      data: {
+        Sess_UserRefno: userID,
+        state_refno,
+      },
+    })
       .then((res) => {
         if (res.data.data) setDistricts(res.data.data);
       })
@@ -197,13 +192,13 @@ console.log(formdata)
   };
   const GetUserID = async () => {
     try {
-      const userData = await AsyncStorage.getItem("user");
+      const userData = await AsyncStorage.getItem('user');
       if (userData !== null) {
         userID = JSON.parse(userData).UserID;
         fetchState();
         fetchDesignation();
       } else {
-        navigation.navigate("LoginScreen");
+        navigation.navigate('LoginScreen');
       }
     } catch (error) {
       console.log(error);
@@ -213,7 +208,7 @@ console.log(formdata)
     Provider.createDFCommon(Provider.API_URLS.getdesignationname_employeeform, {
       data: {
         Sess_UserRefno: userID,
-        designation_refno: "all",
+        designation_refno: 'all',
       },
     })
       .then((res) => setDesignations(res.data.data))
@@ -221,25 +216,25 @@ console.log(formdata)
   };
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
-      <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps="handled">
+      <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps='handled'>
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
-            label="Job Seeking From"
+            mode='flat'
+            label='Job Seeking From'
             disabled={true}
             value={route.params.employergroup.employergroup_name}
-            returnKeyType="next"
-            style={{ backgroundColor: "white" }}
+            returnKeyType='next'
+            style={{ backgroundColor: 'white' }}
           />
           <Dropdown
             data={designations.map((obj) => obj.designation_name)}
             selectedItem={state.designation_refno}
             value={state.designation_refno}
             isError={errors.designation_refno}
-            label="Designation Name"
-            onSelected={(e) => onChange(e, "designation_refno")}
+            label='Designation Name'
+            onSelected={(e) => onChange(e, 'designation_refno')}
           />
-          <HelperText type="error" visible={errors.designation_refno}>
+          <HelperText type='error' visible={errors.designation_refno}>
             Please Select a designation
           </HelperText>
           <Dropdown
@@ -247,27 +242,27 @@ console.log(formdata)
             selectedItem={currentState}
             value={currentState}
             isError={errors.state_refno}
-            label="State"
+            label='State'
             onSelected={(e) => {
               setCurrentState(e);
-              onChange(e, "state_refno");
+              onChange(e, 'state_refno');
               fetchDistricts(
-                states.find((item) => item.state_name === e).state_refno
+                states.find((item) => item.state_name === e).state_refno,
               );
             }}
           />
-          <HelperText type="error" visible={errors.state_refno}>
+          <HelperText type='error' visible={errors.state_refno}>
             Please select states
           </HelperText>
           <PaperSelect
             multiEnable={true}
-            label="Cities"
-            textInputMode="flat"
+            label='Cities'
+            textInputMode='flat'
             underlineColor={
-              errors.district_refno ? theme.colors.error : "black"
+              errors.district_refno ? theme.colors.error : 'black'
             }
             errorStyle={{ color: theme.colors.error }}
-            value={state.district_refno?.map((item) => item.value).join(",")}
+            value={state.district_refno?.map((item) => item.value).join(',')}
             arrayList={districts?.map((obj) => {
               return { _id: obj.district_refno, value: obj.district_name };
             })}
@@ -275,15 +270,15 @@ console.log(formdata)
             selectedItem={state.district_refno}
             selectedArrayList={state.district_refno}
             hideSearchBox={true}
-            errorText={errors.district_refno ? "Please Select cities" : ""}
+            errorText={errors.district_refno ? 'Please Select cities' : ''}
             onSelection={(e) => {
               onChange(
                 [...new Set([...e.selectedList, ...state.district_refno])],
-                "district_refno"
+                'district_refno',
               );
             }}
           />
-          <HelperText type="error" visible={errors.district_refno}>
+          <HelperText type='error' visible={errors.district_refno}>
             Please select cities
           </HelperText>
           <View style={[Styles.width100per, Styles.flexRow]}>
@@ -293,10 +288,10 @@ console.log(formdata)
                 selectedItem={state.experience_year}
                 value={state.experience_year}
                 isError={errors.experience_year}
-                label="Experience (Years)"
-                onSelected={(e) => onChange(e, "experience_year")}
+                label='Experience (Years)'
+                onSelected={(e) => onChange(e, 'experience_year')}
               />
-              <HelperText type="error" visible={errors.experience_year}>
+              <HelperText type='error' visible={errors.experience_year}>
                 Please select experience in years
               </HelperText>
             </View>
@@ -306,52 +301,52 @@ console.log(formdata)
                 selectedItem={state.experience_month}
                 value={state.experience_month}
                 isError={errors.experience_month}
-                label="Experience (Months)"
-                onSelected={(e) => onChange(e, "experience_month")}
+                label='Experience (Months)'
+                onSelected={(e) => onChange(e, 'experience_month')}
               />
-              <HelperText type="error" visible={errors.experience_month}>
+              <HelperText type='error' visible={errors.experience_month}>
                 Please select experience in months
               </HelperText>
             </View>
           </View>
           <TextInput
-            mode="flat"
-            label="Expected Salary"
-            returnKeyType="next"
-            onChangeText={(e) => onChange(e, "expected_salary")}
+            mode='flat'
+            label='Expected Salary'
+            returnKeyType='next'
+            onChangeText={(e) => onChange(e, 'expected_salary')}
             value={state.expected_salary}
             error={errors.expected_salary}
-            keyboardType="numeric"
-            style={{ backgroundColor: "white" }}
+            keyboardType='numeric'
+            style={{ backgroundColor: 'white' }}
           />
-          <HelperText type="error" visible={errors.expected_salary}>
+          <HelperText type='error' visible={errors.expected_salary}>
             Please enter expected salary
           </HelperText>
           <TextInput
-            mode="flat"
-            label="Subscription Fees"
-            onChangeText={(e) => onChange(e, "subscription_fees")}
+            mode='flat'
+            label='Subscription Fees'
+            onChangeText={(e) => onChange(e, 'subscription_fees')}
             value={state.subscription_fees}
             error={errors.subscription_fees}
-            returnKeyType="next"
-            keyboardType="numeric"
-            style={{ backgroundColor: "white" }}
+            returnKeyType='next'
+            keyboardType='numeric'
+            style={{ backgroundColor: 'white' }}
           />
           <HelperText
-            type="error"
+            type='error'
             visible={errors.subscription_fees}
             style={{ marginBottom: 24 }}
           >
             Please enter subscription fees
           </HelperText>
           <View>
-            <Button mode="text" onPress={pickDocument}>
+            <Button mode='text' onPress={pickDocument}>
               Resume / CV
             </Button>
             {resume ? <Text>{resume.name}</Text> : null}
-            <HelperText type="error" visible={errors.resume}></HelperText>
+            <HelperText type='error' visible={errors.resume}></HelperText>
           </View>
-          <Button mode="contained" onPress={onSubmit} style={{ marginTop: 25 }}>
+          <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
             Submit
           </Button>
         </View>
