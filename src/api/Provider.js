@@ -457,8 +457,6 @@ class Provider {
     pckdashboard_cashinbranch_bank_gridlist:
       "pckdashboard_cashinbranch_bank_gridlist/",
     pckdashboard_cashinbranch_bank: "pckdashboard_cashinbranch_bank/",
-    getstatedetails: "getstatedetails/",
-    getdistrictdetails_by_state_refno: "getdistrictdetails_by_state_refno/",
 
     getjobgroupname_employeeform: "getjobgroupname_employeeform/",
     getemployergroupname_employeeform: "getemployergroupname_employeeform/",

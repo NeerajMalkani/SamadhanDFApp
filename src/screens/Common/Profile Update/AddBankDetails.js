@@ -85,12 +85,10 @@ const AddBankDetails = ({ route, navigation }) => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
-            companyID = JSON.parse(userData).Sess_company_refno; +0.
+            companyID = JSON.parse(userData).Sess_company_refno;
             branchID = JSON.parse(userData).Sess_branch_refno;
-            console.log(route.params.data.bankID);
             if (route.params.type === "edit") {
                 FetchCardType(route.params.data.cardtypeID);
-
             }
             else {
                 FetchCardType();
@@ -134,9 +132,7 @@ const AddBankDetails = ({ route, navigation }) => {
     }, []);
 
     const FetchCardType = (selectedCards) => {
-        console.log('card type ================');
-        console.log(selectedCards);
-        console.log('card type end ============================');
+        
         let params = {
             data: {
                 Sess_UserRefno: userID
@@ -154,7 +150,6 @@ const AddBankDetails = ({ route, navigation }) => {
                                 if (selectedCards.includes(data.cardtype_refno.toString())) {
                                     selected = true;
                                 }
-
                             }
                             cardType.push(
                                 {
@@ -173,8 +168,6 @@ const AddBankDetails = ({ route, navigation }) => {
     };
 
     const ValidateSubmitButton = () => {
-        console.log('validate start');
-        console.log('start update');
         let isValid = true;
         if (accountHolderName.length === 0) {
             setAccountNoInvalid(true);
@@ -185,22 +178,20 @@ const AddBankDetails = ({ route, navigation }) => {
             isValid = false;
         }
         if (isValid) {
+            setIsButtonLoading(true);
             if (route.params.type === "edit") {
-                console.log('update data');
                 UpdateData();
             } else {
-                console.log('insert data');
                 InsertData();
             }
         }
     };
 
     const InsertData = () => {
-        console.log('insert start');
         let ct = [];
         cardType.map((k, i) => {
             if (k.isChecked) {
-                ct.push(k.id);
+                ct.push(k.id.toString());
             }
         });
         let params = {
@@ -219,18 +210,14 @@ const AddBankDetails = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             }
         };
-        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.userbankcreate, params)
             .then((response) => {
-                console.log('stat.................');
-                console.log(response.data);
-                console.log('end............');
+                setIsButtonLoading(false);
+                
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
-                    // console.log(response.data.code);
                     setSnackbarText(communication.AlreadyExists);
                     setSnackbarVisible(true);
                 } else {
@@ -239,9 +226,10 @@ const AddBankDetails = ({ route, navigation }) => {
                 }
             })
             .catch((e) => {
-                // console.log(e);
+                console.log(e);
                 setSnackbarText(communication.NetworkError);
                 setSnackbarVisible(true);
+                setIsButtonLoading(false);
             });
     };
 
@@ -249,7 +237,7 @@ const AddBankDetails = ({ route, navigation }) => {
         let ct = [];
         cardType.map((k, i) => {
             if (k.isChecked) {
-                ct.push(k.id);
+                ct.push(k.id.toString());
             }
         });
         let params = {
@@ -269,11 +257,10 @@ const AddBankDetails = ({ route, navigation }) => {
                 view_status: checked ? "1" : "0",
             }
         };
-        console.log(params);
         Provider.createDFCommon(Provider.API_URLS.userbankupdate, params)
             .then((response) => {
+                setIsButtonLoading(false);
                 if (response.data && response.data.code === 200) {
-                    console.log(response.data);
                     route.params.fetchData("update");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
@@ -288,6 +275,7 @@ const AddBankDetails = ({ route, navigation }) => {
                 console.log(e);
                 setSnackbarText(communication.NetworkError);
                 setSnackbarVisible(true);
+                setIsButtonLoading(false);
             });
     };
     //#endregion
@@ -301,7 +289,7 @@ const AddBankDetails = ({ route, navigation }) => {
                 <HelperText type="error" visible={accountHolderNameInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+                <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" keyboardType="number-pad" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
                 <HelperText type="error" visible={accountNoInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
