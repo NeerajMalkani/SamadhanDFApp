@@ -32,7 +32,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.diamondframes.samadhan",
-      "buildNumber": "1.0.4"
+      "buildNumber": "1.0.4",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow the app to access your photo library",
+        "NSCameraUsageDescription": "Allow the app to use your camera",
+        "NSMicrophoneUsageDescription": "Allow the app to use your microphone",
+        "NSAppleMusicUsageDescription": "Allow the app to access your music library",
+        "NSDocumentPickerUsageDescription": "Allow the app to access your documents"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -41,7 +48,9 @@
       },
       "package": "com.diamondframes.samadhan",
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {

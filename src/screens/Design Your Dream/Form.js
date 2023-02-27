@@ -80,7 +80,7 @@ const Form = ({ route, navigation }) => {
   };
   const fetchDistricts = (state_refno) => {
     Provider.createDFCommon(
-      Provider.API_URLS.getdistrictdetails_by_state_refno,
+      Provider.API_URLS.GetDistrictDetailsByStateRefno,
       {
         data: {
           Sess_UserRefno: userID,
@@ -100,7 +100,7 @@ const Form = ({ route, navigation }) => {
     setErrors((state) => ({ ...state, [name]: false }));
   };
   const fetchState = () => {
-    Provider.createDFCommon(Provider.API_URLS.getstatedetails)
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails)
       .then((res) => {
         if (res.data.data) setStates(res.data.data);
       })

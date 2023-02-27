@@ -14,7 +14,7 @@ import { creds } from "../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
 import { NullOrEmpty } from "../../../utils/validations";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -35,7 +35,7 @@ const windowWidth = Dimensions.get("window").width;
 //   groupID = 0;
 
 let st_ID = 0,
-  ci_ID = 0;
+  ct_ID = 0;
 
 const UserProfile = ({ route, navigation }) => {
   //#region Variables
@@ -121,6 +121,7 @@ const UserProfile = ({ route, navigation }) => {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       companyID = JSON.parse(userData).Sess_company_refno;
+      groupID = JSON.parse(userData).Sess_group_refno;
       // branchID = JSON.parse(userData).Sess_branch_refno;
       FetchBasicDetails();
       FetchData();
@@ -129,31 +130,35 @@ const UserProfile = ({ route, navigation }) => {
   let tempStateName = "";
   const FetchBasicDetails = () => {
     let params = {
-      UserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      }
     };
-    Provider.getAll(`master/getusergeneralprofile?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.getuserprofile, params)
       .then((response) => {
+
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             if (response.data.data[0] != null) {
-              setCompanyName(!NullOrEmpty(response.data.data[0].companyName) ? response.data.data[0].companyName : "");
-              setContactName(!NullOrEmpty(response.data.data[0].contactPersonName) ? response.data.data[0].contactPersonName : "");
-              setContactNumber(!NullOrEmpty(response.data.data[0].contactPersonNumber) ? response.data.data[0].contactPersonNumber : "");
-              setGSTNumber(!NullOrEmpty(response.data.data[0].gstNumber) ? response.data.data[0].gstNumber : "");
-              setPANNumber(!NullOrEmpty(response.data.data[0].pan) ? response.data.data[0].pan : "");
-              setAddress(!NullOrEmpty(response.data.data[0].addressLine) ? response.data.data[0].addressLine : "");
+              setCompanyName(!NullOrEmpty(response.data.data[0].company_name) ? response.data.data[0].company_name : "");
+              setContactName(!NullOrEmpty(response.data.data[0].contact_person) ? response.data.data[0].contact_person : "");
+              setContactNumber(!NullOrEmpty(response.data.data[0].contact_person_mobile_no) ? response.data.data[0].contact_person_mobile_no : "");
+              setGSTNumber(!NullOrEmpty(response.data.data[0].gst_no) ? response.data.data[0].gst_no : "");
+              setPANNumber(!NullOrEmpty(response.data.data[0].pan_no) ? response.data.data[0].pan_no : "");
+              setAddress(!NullOrEmpty(response.data.data[0].address) ? response.data.data[0].address : "");
               setPincode(!NullOrEmpty(response.data.data[0].pincode) ? response.data.data[0].pincode.toString() : "");
-
-              if (!NullOrEmpty(response.data.data[0].stateID)) {
-                st_ID = response.data.data[0].stateID;
+              if (!NullOrEmpty(response.data.data[0].state_refno)) {
+                st_ID = response.data.data[0].state_refno;
               }
-              if (!NullOrEmpty(response.data.data[0].cityID)) {
-                ct_ID = response.data.data[0].cityID;
+              if (!NullOrEmpty(response.data.data[0].district_refno)) {
+                ct_ID = response.data.data[0].district_refno;
               }
             }
           }
         }
-        FetchStates();
+
+        FetchStates(response.data.data[0].state_refno);
         setIsLoading(false);
       })
       .catch((e) => {
@@ -161,11 +166,12 @@ const UserProfile = ({ route, navigation }) => {
       });
   };
 
-  const FetchStates = () => {
-    Provider.getAll("master/getstates")
+  const FetchStates = (editID) => {
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails, null)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
             setStatesFullData(response.data.data);
 
             const states = response.data.data.map((data) => data.stateName);
@@ -174,13 +180,14 @@ const UserProfile = ({ route, navigation }) => {
             const stateData = [];
             response.data.data.map((data, i) => {
               stateData.push({
-                id: data.id,
+                id: data.stateID,
                 label: data.stateName,
               });
             });
-            if (st_ID > 0) {
+
+            if (editID != null) {
               let a = stateData.filter((el) => {
-                return el.id === st_ID;
+                return el.id == editID;
               });
               setStateName(a[0].label);
             }
@@ -194,21 +201,24 @@ const UserProfile = ({ route, navigation }) => {
 
   const FetchCities = (stateID) => {
     let params = {
-      ID: stateID,
+      data: {
+        Sess_UserRefno: userID,
+        state_refno: stateID,
+      },
     };
-    Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
+    Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setCityFullData(response.data.data);
-            const cities = response.data.data.map((data) => data.cityName);
+            const cities = response.data.data.map((data) => data.district_name);
             setCityData(cities);
 
             const cityData = [];
             response.data.data.map((data, i) => {
               cityData.push({
-                id: data.id,
-                label: data.cityName,
+                id: data.district_refno,
+                label: data.district_name,
               });
             });
 
@@ -237,6 +247,17 @@ const UserProfile = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const refreshScreen = () => {
+  //       // Refresh the screen here
+  //       GetUserID();
+  //     };
+  //     refreshScreen();
+  //     return () => { };
+  //   }, [])
+  // );
 
   const onCompanyNameChanged = (text) => {
     setCompanyName(text);
@@ -268,8 +289,6 @@ const UserProfile = ({ route, navigation }) => {
     setCNError(false);
   };
 
-
-
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
     setSNError(false);
@@ -287,35 +306,43 @@ const UserProfile = ({ route, navigation }) => {
     setPincodeInvalid(false);
   };
 
-
-
-  const InsertData = () => {
+  const UpdateData = () => {
+    setIsButtonLoading(true);
     const params = {
-      UserID: userID,
-      CompanyName: companyName,
-      ContactPersonName: contactName,
-      ContactPersonNumber: contactNumber,
-      AddressLine: address,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
-      Pincode: pincode ? pincode : 0,
-      GSTNumber: gstNumber,
-      PAN: panNumber,
-      ShowBrand: false,
+
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID,
+        company_name: companyName,
+        contact_person: contactName,
+        contact_person_mobile_no: contactNumber,
+        address: address,
+        state_refno: stateName ? statesFullData.find((el) => el.stateName === stateName).stateID : 0,
+        district_refno: cityName ? cityFullData.find((el) => el.district_name === cityName).district_refno : 0,
+        pincode: pincode ? pincode : 0,
+        gst_no: gstNumber,
+        pan_no: panNumber
+      }
     };
-    Provider.create("master/updategeneraluserprofile", params)
+    Provider.createDFCommon(Provider.API_URLS.userprofileupdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
+          setTimeout(function () {
+            setIsButtonLoading(false);
+            navigation.goBack();
+          }, 500)
         } else {
           setSnackbarColor(theme.colors.error);
           setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);
+          setIsButtonLoading(false);
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
@@ -330,13 +357,10 @@ const UserProfile = ({ route, navigation }) => {
       if (filePath !== null) {
         uploadFile();
       } else {
-        InsertData();
+        UpdateData();
       }
     }
   };
-
-
-
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
@@ -358,13 +382,11 @@ const UserProfile = ({ route, navigation }) => {
           if (response.data.data) {
 
             response.data.data = APIConverter(response.data.data);
-            //console.log(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
             listData[1](response.data.data);
-            console.log(response.data.data);
             listSearchData[1](response.data.data);
           }
         } else {
@@ -417,7 +439,6 @@ const UserProfile = ({ route, navigation }) => {
             setRemarks(data.item.remark);
             setDisplay(data.item.display);
 
-
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -431,7 +452,6 @@ const UserProfile = ({ route, navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log(data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddBankDetails", {
       type: "edit",
@@ -452,7 +472,6 @@ const UserProfile = ({ route, navigation }) => {
       },
     });
   };
-
 
 
   //#endregion
@@ -493,11 +512,11 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={pincodeInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+                <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
                 <HelperText type="error" visible={gstNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                 <HelperText type="error" visible={panNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
@@ -512,7 +531,7 @@ const UserProfile = ({ route, navigation }) => {
             </View> */}
             <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
               <Card.Content>
-                <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+                <Button mode="contained" onPress={ValidateData} loading={isButtonLoading} disabled={isButtonLoading}>
                   Update
                 </Button>
               </Card.Content>
@@ -606,7 +625,7 @@ const UserProfile = ({ route, navigation }) => {
         ) : (
           <TabView
             renderTabBar={renderTabBar} navigationState={{ index, routes }}
-            renderScene={renderScene} onIndexChange={setIndex} />
+            renderScene={renderScene} onIndexChange={setIndex} swipeEnabled={false} />
         )}
 
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
