@@ -135,10 +135,29 @@ const JobListing = ({ route, navigation }) => {
       setSnackbarText('Please input atleast 1 field to search');
       return;
     }
+    const params = {
+      designation_refno: designations.find(
+        (item) => item.designation_name === filters.designation_refno,
+      ).designation_refno,
+      state_refno:
+        filters.state_refno === 'all'
+          ? 'all'
+          : states.find((item) => item.state_name === filters.state_refno)
+              .state_refno,
+      district_refno:
+        filters.district_refno === 'all'
+          ? 'all'
+          : districts.find(
+              (item) => item.district_name === filters.district_refno,
+            ).district_refno,
+      Sess_UserRefno: userID,
+    };
+    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.employee_job_search, {
-      data: { ...filters, Sess_UserRefno: userID },
+      data: params,
     })
       .then((res) => {
+        console.log(res.data);
         if (res.data.data) {
           setJobs(res.data.data);
         } else {
