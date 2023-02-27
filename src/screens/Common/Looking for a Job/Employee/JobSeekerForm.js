@@ -1,4 +1,5 @@
 import { View, LogBox, ScrollView, Text } from "react-native";
+import FormData from 'form-data'
 import { Styles } from "../../../../styles/styles";
 import { TextInput, Button, HelperText, Snackbar } from "react-native-paper";
 import React, { useState, useEffect } from "react";
@@ -78,6 +79,7 @@ const JobSeekerForm = ({ route, navigation }) => {
     }
   };
 
+
   const onSubmit = () => {
     let error = false;
     if (state.designation_refno === "") {
@@ -119,40 +121,39 @@ const JobSeekerForm = ({ route, navigation }) => {
       setSnackbarText("Please fill all the fields");
       setSnackbarType(theme.colors.error);
     } else {
-      const formdata = new FormData();
-
-      formdata.append(
-        "data",
-{
-          ...state,
-          designation_refno:designations.find(item=>item.designation_name===state.designation_refno).designation_refno,
-          state_refno: 
-            state.state_refno.map(
-              (obj) =>
-                states.find((item) => item.state_name === obj).state_refno
-            )
-          ,
-          district_refno: 
-            state.district_refno.map((obj) => obj._id)
-          ,
-          Sess_UserRefno: userID,
-          employergroup_refno: route.params.employergroup.employergroup_refno,
-        }
-      );
-      formdata.append("employee_resume", {
-        name: resume.name.split("/").pop(),
-        type: "multipart/form-data" ,
-        uri:
+    
+      const params = {data:{
+        ...state,
+        designation_refno:designations.find(item=>item.designation_name===state.designation_refno).designation_refno,
+        state_refno: 
+          state.state_refno.map(
+            (obj) =>
+              states.find((item) => item.state_name === obj).state_refno
+          )
+        ,
+        district_refno: 
+          state.district_refno.map((obj) => obj._id)
+        ,
+        Sess_UserRefno: userID,
+        employergroup_refno: route.params.employergroup.employergroup_refno,
         
-        "file:///" + resume.uri.split("file:/").join("")
+      },employee_resume :{
+        name: resume.name,
+        // type: resume.mimeType ,
+        uri:
+            resume.uri
           
-      });
-
+      }}
+      const formdata = new FormData()
+      formdata.append("data",JSON.stringify(params.data))
+      formdata.append("employee_resume",JSON.stringify(params.employee_resume))
+console.log(formdata)
       Provider.createDFCommonWithHeader(
         Provider.API_URLS.employee_job_apply,
         formdata
       )
         .then((response) => {
+          console.log(response.data)
           if (response.data.data) {
             setSnackbar(true);
             setSnackbarText("Applied Successfully");
@@ -168,6 +169,7 @@ const JobSeekerForm = ({ route, navigation }) => {
         });
     }
   };
+
   useEffect(() => {
     if (isFocused) GetUserID();
   }, [isFocused]);
