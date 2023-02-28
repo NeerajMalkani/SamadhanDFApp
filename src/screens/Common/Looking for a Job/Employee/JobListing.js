@@ -11,7 +11,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { theme } from '../../../../theme/apptheme';
 
 let userID = null;
-const Jobs = () => {
+const Jobs = ({ data }) => {
   return (
     <View
       style={[
@@ -42,39 +42,48 @@ const Jobs = () => {
               fontSize: 17,
             }}
           >
-            Project Supervisor
+            {data.designation_name}
           </Text>
-          <Text>Diamond Frames Pvt Ltd</Text>
+          <Text>{data.company_name}</Text>
         </View>
       </View>
-      <View style={[Styles.flexRow, Styles.marginTop16]}>
-        <Chip style={{ width: '50%' }} mode='outlined'>
-          <Text style={{ fontSize: 12 }}>Min Experience: 3 years</Text>
+      <View style={[Styles.marginTop16]}>
+        <Chip mode='outlined'>
+          <Text style={{ fontSize: 14 }}>
+            Min Experience: {data.experience_year} years{' '}
+            {data.experience_month + ' '}
+            months
+          </Text>
         </Chip>
 
-        <Chip style={{ width: '50%' }} mode='outlined'>
-          <Text style={{ fontSize: 12 }}>Salary: 40000/month</Text>
+        <Chip mode='outlined' style={{ marginTop: 5 }}>
+          <Text style={{ fontSize: 14, marginTop: 10 }}>
+            Salary: {data.ctc_salary}/month
+          </Text>
         </Chip>
       </View>
-      <Text style={{ marginTop: 16 }}>Job Location:Mumbai</Text>
+      <Text style={{ marginTop: 16 }}>
+        Job Location: {Object.values(data.job_locations).join(',')}
+      </Text>
       <View style={{ marginBottom: 50 }} />
-      <Text
+      {/* <Text
         style={{ position: 'absolute', bottom: 5, left: 200, color: 'gray' }}
       >
         posted 5 days ago
-      </Text>
+      </Text> */}
     </View>
   );
 };
 const JobListing = ({ route, navigation }) => {
+  const [expanded, setExpanded] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('info');
   const [snackbarText, setSnackbarText] = useState('');
   const isFocused = useIsFocused();
   const [filters, setFilters] = useState({
     designation_refno: '',
-    state_refno: 'all',
-    district_refno: 'all',
+    state_refno: '0',
+    district_refno: '0',
   });
   const [jobs, setJobs] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -127,8 +136,8 @@ const JobListing = ({ route, navigation }) => {
   const search = () => {
     if (
       filters.designation_refno === '' &&
-      filters.district_refno === 'all' &&
-      filters.state_refno === 'all'
+      filters.district_refno === '0' &&
+      filters.state_refno === '0'
     ) {
       setSnackbar(true);
       setSnackbarType(theme.colors.error);
@@ -140,19 +149,19 @@ const JobListing = ({ route, navigation }) => {
         (item) => item.designation_name === filters.designation_refno,
       ).designation_refno,
       state_refno:
-        filters.state_refno === 'all'
-          ? 'all'
+        filters.state_refno === '0'
+          ? '0'
           : states.find((item) => item.state_name === filters.state_refno)
               .state_refno,
       district_refno:
-        filters.district_refno === 'all'
-          ? 'all'
+        filters.district_refno === '0'
+          ? '0'
           : districts.find(
               (item) => item.district_name === filters.district_refno,
             ).district_refno,
       Sess_UserRefno: userID,
     };
-    console.log(params);
+    console.log('here');
     Provider.createDFCommon(Provider.API_URLS.employee_job_search, {
       data: params,
     })
@@ -183,7 +192,7 @@ const JobListing = ({ route, navigation }) => {
           <List.Section>
             <Dropdown
               label='Designation'
-              data={designations.map((obj) => obj.designation_name)}
+              data={designations?.map((obj) => obj.designation_name)}
               selectedItem={filters.designation_refno}
               onSelected={(text) => onChange(text, 'designation_refno')}
             />
@@ -194,7 +203,7 @@ const JobListing = ({ route, navigation }) => {
             <List.Accordion title='More Filters'>
               <Dropdown
                 label='State'
-                data={states.map((obj) => obj.state_name)}
+                data={states?.map((obj) => obj.state_name)}
                 selectedItem={filters.state_refno}
                 onSelected={(text) => {
                   onChange(text, 'state_refno');
@@ -205,7 +214,7 @@ const JobListing = ({ route, navigation }) => {
               />
               <Dropdown
                 label='City'
-                data={districts.map((obj) => obj.district_name)}
+                data={districts?.map((obj) => obj.district_name)}
                 selectedItem={filters.district_refno}
                 onSelected={(text) => {
                   onChange(text, 'district_refno');
@@ -218,8 +227,8 @@ const JobListing = ({ route, navigation }) => {
           </List.Section>
         </View>
         <View style={[Styles.padding16]}>
-          {jobs.map((obj) => (
-            <Jobs />
+          {jobs?.map((obj) => (
+            <Jobs data={obj} key={obj.empr_refno} />
           ))}
         </View>
       </ScrollView>

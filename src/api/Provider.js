@@ -4,18 +4,13 @@ import { onePixelImage, timeoutLimit } from '../utils/paths';
 const BASE_OLD = 'https://dfsolutions.in/api';
 const BASE_ = 'https://samadhanerp.com/api';
 const BASE_URL_OLD = 'https://api.starselector.com/api';
-const BASE_URL_API = `${ BASE_ }/apiurl/spawu7S4urax/tYjD`;
-const BASE_URL = `${ BASE_ }/apicommon/spawu7S4urax/tYjD`;
-const BASE_URL_Admin =
-  `${ BASE_ }/apiappadmin/spawu7S4urax/tYjD`;
-const BASE_URL_Dashboard =
-  `${ BASE_ }/apidashboard/spawu7S4urax/tYjD`;
-const BASE_URL_PocketDiary =
-  `${ BASE_ }/apipocketdiary/spawu7S4urax/tYjD`;
-const BASE_URL_Contractor =
-  `${ BASE_ }/apicontractor/spawu7S4urax/tYjD/`;
-const BASE_URL_Manufacturer =
-  `${ BASE_ }/apimanufacturer/spawu7S4urax/tYjD/`;
+const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
+const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
+const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
+const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
+const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
+const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
+const BASE_URL_Manufacturer = `${BASE_}/apimanufacturer/spawu7S4urax/tYjD/`;
 
 class Provider {
   //#region Old API's
@@ -467,8 +462,10 @@ class Provider {
 
     employee_job_search: 'employee_job_search/',
     employer_job_search: 'employer_job_search/',
-    employee_profile_fullview: "employee_profile_fullview/",
-    get_availablebalance_cashinbank_sourceform: "get_availablebalance_cashinbank_sourceform/",
+    employee_profile_fullview: 'employee_profile_fullview/',
+    get_availablebalance_cashinbank_sourceform:
+      'get_availablebalance_cashinbank_sourceform/',
+    employee_profile_fullview: 'employee_profile_fullview/',
   };
 
   createDFPocketDairy(resource, params) {
@@ -500,13 +497,13 @@ class Provider {
       'attach_receipt',
       isImageReplaced
         ? {
-          name: 'appimage1212.jpg',
-          type: filePath.type + '/*',
-          uri:
-            Platform.OS === 'android'
-              ? filePath.uri
-              : filePath.uri.replace('file://', ''),
-        }
+            name: 'appimage1212.jpg',
+            type: filePath.type + '/*',
+            uri:
+              Platform.OS === 'android'
+                ? filePath.uri
+                : filePath.uri.replace('file://', ''),
+          }
         : '',
     );
     return datas;

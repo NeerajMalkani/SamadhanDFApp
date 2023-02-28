@@ -11,6 +11,7 @@ import { theme } from '../../../../theme/apptheme';
 import { useIsFocused } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
 let userID = null;
+let empe_refno = null;
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
   'Material-UI: The `css` function is deprecated. Use the `styleFunctionSx` instead',
@@ -123,6 +124,7 @@ const JobSeekerForm = ({ route, navigation }) => {
       const params = {
         data: {
           ...state,
+          action_type: Number(empe_refno) === 1 ? 'update' : 'insert',
           designation_refno: designations.find(
             (item) => item.designation_name === state.designation_refno,
           ).designation_refno,
@@ -132,26 +134,27 @@ const JobSeekerForm = ({ route, navigation }) => {
           district_refno: state.district_refno.map((obj) => obj._id),
           Sess_UserRefno: userID,
           employergroup_refno: route.params.employergroup.employergroup_refno,
+          ...(Number(empe_refno) === 1 ? { Sess_empe_refno: empe_refno } : {}),
         },
         employee_resume: {
           name: resume.name,
-          // type: resume.mimeType ,
+          type: resume.mimeType,
           uri: resume.uri,
         },
       };
       const formdata = new FormData();
       formdata.append('data', JSON.stringify(params.data));
-      formdata.append(
-        'employee_resume',
-        JSON.stringify(params.employee_resume),
-      );
-      console.log(formdata);
+      if (resume.name)
+        formdata.append(
+          'employee_resume',
+          JSON.stringify(params.employee_resume),
+        );
+
       Provider.createDFCommonWithHeader(
         Provider.API_URLS.employee_job_apply,
         formdata,
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data.data) {
             setSnackbar(true);
             setSnackbarText('Applied Successfully');
@@ -190,13 +193,86 @@ const JobSeekerForm = ({ route, navigation }) => {
       })
       .catch((error) => console.log(error));
   };
+  const fetchProfile = () => {
+    Provider.createDFCommon(Provider.API_URLS.employee_profile_fullview, {
+      data: { Sess_UserRefno: userID, empe_refno },
+    })
+      .then((res) => {
+        let cities = [];
+        Object.keys(res.data.data[0].preferred_job_location).map(
+          (obj, index) => {
+            if (
+              index ===
+              Object.keys(res.data.data[0].preferred_job_location).length - 1
+            ) {
+              setCurrentState(obj);
+              fetchDistricts(
+                states.find((item) => item.state_name === obj).state_refno,
+              );
+            }
+            if (
+              res.data.data[0].preferred_job_location[obj].split(',').length > 0
+            ) {
+              const districts =
+                res.data.data[0].preferred_job_location[obj].split(',');
+              const state = states.find((item) => item.state_name === obj);
+              Provider.createDFCommon(
+                Provider.API_URLS.GetDistrictDetailsByStateRefno,
+                {
+                  data: {
+                    Sess_UserRefno: userID,
+                    state_refno: state.state_refno,
+                  },
+                },
+              ).then((resp) => {
+                districts.map((name) => {
+                  const city = resp.data.data.find(
+                    (item) => item.district_name === name,
+                  );
+
+                  if (city)
+                    cities.push({
+                      _id: city.district_refno,
+                      value: city.district_name,
+                    });
+                });
+              });
+            }
+          },
+        );
+
+        setState({
+          designation_refno: res.data.data[0].designation_name,
+          state_refno: res.data.data[0].state_refno.map((obj, index) => {
+            return states.find(
+              (item) => Number(item.state_refno) === Number(obj),
+            )?.state_name;
+          }),
+          district_refno: cities,
+          experience_year: res.data.data[0].experience_year,
+          experience_month: res.data.data[0].experience_month,
+          expected_salary: res.data.data[0].expected_salary,
+          subscription_fees: '',
+        }),
+          setResume({ uri: res.data.data[0].employee_resume_url });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const GetUserID = async () => {
     try {
       const userData = await AsyncStorage.getItem('user');
+
       if (userData !== null) {
         userID = JSON.parse(userData).UserID;
+        empe_refno = JSON.parse(userData).Sess_empe_refno;
         fetchState();
         fetchDesignation();
+        if (JSON.parse(userData).Sess_empe_refno) {
+          fetchProfile();
+        }
       } else {
         navigation.navigate('LoginScreen');
       }
@@ -285,8 +361,8 @@ const JobSeekerForm = ({ route, navigation }) => {
             <View style={[Styles.width50per]}>
               <Dropdown
                 data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                selectedItem={state.experience_year}
-                value={state.experience_year}
+                selectedItem={Number(state.experience_year)}
+                value={Number(state.experience_year)}
                 isError={errors.experience_year}
                 label='Experience (Years)'
                 onSelected={(e) => onChange(e, 'experience_year')}
@@ -298,8 +374,8 @@ const JobSeekerForm = ({ route, navigation }) => {
             <View style={[Styles.width50per]}>
               <Dropdown
                 data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
-                selectedItem={state.experience_month}
-                value={state.experience_month}
+                selectedItem={Number(state.experience_month)}
+                value={Number(state.experience_month)}
                 isError={errors.experience_month}
                 label='Experience (Months)'
                 onSelected={(e) => onChange(e, 'experience_month')}
