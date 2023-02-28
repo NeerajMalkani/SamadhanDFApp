@@ -51,6 +51,7 @@ const LoginScreen = ({ route, navigation }) => {
     } catch (error) {}
   };
   const CheckLogin = () => {
+    console.log('start');
     setIsButtonLoading(true);
     let params = {
       data: {
@@ -60,6 +61,7 @@ const LoginScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.LoginCheck, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           GetUserDetails(response.data.data.user_refno);
         } else {

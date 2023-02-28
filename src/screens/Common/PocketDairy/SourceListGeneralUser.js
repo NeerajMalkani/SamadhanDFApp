@@ -63,8 +63,9 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
     };
 
     const FetchData = (from) => {
+        
         if (from === "add" || from === "update") {
-            
+
             setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
             setSnackbarColor(theme.colors.success);
             setSnackbarVisible(true);
@@ -81,6 +82,7 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
         }
         Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
             .then((response) => {
+                console.log('Complete Data:', response.data.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         const lisData = [...response.data.data];
@@ -192,7 +194,7 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
                 invoice_no: data.item.invoice_no,
                 payment_type_refno: data.item.payment_type_refno,
                 pck_contacttype_refno: data.item.pck_contacttype_refno,
-                pck_sub_category_notes:data.item.pck_sub_category_notes,
+                pck_sub_category_notes: data.item.pck_sub_category_notes,
             },
         });
     };

@@ -1,20 +1,22 @@
 import axios from 'axios';
 import { onePixelImage, timeoutLimit } from '../utils/paths';
 
+const BASE_OLD = 'https://dfsolutions.in/api';
+const BASE_ = 'https://samadhanerp.com/api';
 const BASE_URL_OLD = 'https://api.starselector.com/api';
-const BASE_URL_API = 'https://dfsolutions.in/api/apiurl/spawu7S4urax/tYjD';
-const BASE_URL = 'https://dfsolutions.in/api/apicommon/spawu7S4urax/tYjD';
+const BASE_URL_API = `${ BASE_ }/apiurl/spawu7S4urax/tYjD`;
+const BASE_URL = `${ BASE_ }/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin =
-  'https://dfsolutions.in/api/apiappadmin/spawu7S4urax/tYjD';
+  `${ BASE_ }/apiappadmin/spawu7S4urax/tYjD`;
 const BASE_URL_Dashboard =
-  'https://dfsolutions.in/api/apidashboard/spawu7S4urax/tYjD';
+  `${ BASE_ }/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary =
-  'https://dfsolutions.in/api/apipocketdiary/spawu7S4urax/tYjD';
+  `${ BASE_ }/apipocketdiary/spawu7S4urax/tYjD`;
 const BASE_URL_Contractor =
-  'https://dfsolutions.in/api/apicontractor/spawu7S4urax/tYjD/';
+  `${ BASE_ }/apicontractor/spawu7S4urax/tYjD/`;
 const BASE_URL_Manufacturer =
-  'https://dfsolutions.in/api/apimanufacturer/spawu7S4urax/tYjD/';
-const BASE_ = 'https://dfsolutions.in/api';
+  `${ BASE_ }/apimanufacturer/spawu7S4urax/tYjD/`;
+
 class Provider {
   //#region Old API's
   getAll(resource) {
@@ -378,7 +380,6 @@ class Provider {
     pckmypersonalbankcreate: 'pckmypersonalbankcreate/',
     pckaddsourceupdate: 'pckaddsourceupdate/',
     pck_companysource_verify_action: 'pck_companysource_verify_action/',
-    pcktransrefnocheck: 'pcktransrefnocheck/',
     getcategoryname_pckaddexpensesform: 'getcategoryname_pckaddexpensesform/',
     getcategorynamebrandconversionform: 'getcategorynamebrandconversionform/',
     getsubcategoryname_pckaddexpensesform:
@@ -467,6 +468,7 @@ class Provider {
     employee_job_search: 'employee_job_search/',
     employer_job_search: 'employer_job_search/',
     employee_profile_fullview: "employee_profile_fullview/",
+    get_availablebalance_cashinbank_sourceform: "get_availablebalance_cashinbank_sourceform/",
   };
 
   createDFPocketDairy(resource, params) {

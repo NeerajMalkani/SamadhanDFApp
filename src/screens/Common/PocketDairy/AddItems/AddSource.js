@@ -627,6 +627,7 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_sourceform, params)
       .then((response) => {
+
         console.log('bank balance', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -1587,14 +1588,14 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    //console.log(datas);
+    console.log(datas);
     Provider.createDFPocketDairyWithHeader(
       Provider.API_URLS.pckaddsourcecreate,
       datas
     )
       .then((response) => {
-        //console.log('output=============');
-        //console.log(response.data);
+        console.log('output=============');
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
