@@ -82,7 +82,6 @@ const SourceListGeneralUserScreen = ({ route, navigation }) => {
         }
         Provider.createDFPocketDairy(Provider.API_URLS.pcktransrefnocheck, params)
             .then((response) => {
-                console.log('Complete Data:', response.data.data);
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         const lisData = [...response.data.data];

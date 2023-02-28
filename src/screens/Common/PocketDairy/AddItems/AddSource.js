@@ -325,7 +325,8 @@ const AddSource = ({ route, navigation }) => {
       setBankListStatus(true);
       //setMyBankList(data.pck_mybank_refno);
       setMyBankListEditID(data.pck_mybank_refno);
-      FetchBankList(data.pck_mybank_refno);
+      console.log('edit bank');
+      FetchBankList(data.pck_mybank_refno, data.pck_mode_refno, data.pck_category_refno);
     }
 
     if (data.cheque_no != "") {
@@ -579,7 +580,10 @@ const AddSource = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchBankList = (bankID) => {
+  const FetchBankList = (bankID, receiptModeID, categoryID) => {
+    console.log(bankID);
+    console.log(receiptModeID);
+    console.log(categoryID);
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -607,6 +611,17 @@ const AddSource = ({ route, navigation }) => {
                   return el.bank_refno === bankID;
                 })[0].bankName
               );
+
+              if (receiptModeID == 1 && categoryID == 1) {
+                setBankBalanceStatus(true);
+                FetchBankCurrentBalance(bankID);
+              }
+              else {
+                setBankBalanceStatus(false);
+                setBankBalance(0);
+              }
+
+
             }
           }
         }
@@ -1370,8 +1385,6 @@ const AddSource = ({ route, navigation }) => {
       return el.categoryName === source;
     });
 
-    console.log(mode);
-    console.log(category);
     if (mode[0].pckModeID == 1 && category[0].pckCategoryID == 1) {
       setBankBalanceStatus(true);
 
