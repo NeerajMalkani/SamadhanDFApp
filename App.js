@@ -1189,6 +1189,11 @@ export default function App() {
                 name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EmployeeListScreen"
+                component={EmployeeListScreen}
+              />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               

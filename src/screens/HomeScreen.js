@@ -1648,9 +1648,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        // onPress={() => {
-                        //   navigation.navigate("MaterialSetupScreen");
-                        // }}
+                        onPress={() => {
+                          navigation.navigate("EmployeeListScreen");
+                        }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
