@@ -190,6 +190,7 @@ import JobSeekerForm from './src/screens/Common/Looking for a Job/Employee/JobSe
 import JobListing from './src/screens/Common/Looking for a Job/Employee/JobListing';
 import JobListingEmployer from './src/screens/Common/Looking for a Job/Employer/JobListing';
 import JobPostingForm from './src/screens/Common/Looking for a Job/Employer/JobPostingForm';
+import VendorOrderFormList from './src/screens/Manufacture/VendorOrderFormList';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -1117,6 +1118,11 @@ export default function App() {
                 component={ProductforProduction}
               />
               <Drawer.Screen
+                name='VendorOrderForm'
+                component={VendorOrderFormList}
+                options={{ headerShown: false, unmountOnBlur: true }}
+              />
+              <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name='ProductionStatus'
                 component={ProductionStatus}
@@ -1436,6 +1442,7 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
+
               <Stack.Screen
                 name='LookingForAJobJobGroup'
                 component={SelectGroupType}
@@ -1975,6 +1982,7 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
+
               {/* <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
               <Stack.Screen
                 name='BrandConversionValue'
@@ -2069,6 +2077,13 @@ export default function App() {
                 }}
               />
               <Stack.Screen
+                name='VendorOrderForm'
+                component={VendorOrderFormList}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
                 name='AddProduction'
                 component={AddProduction}
                 options={{
@@ -2090,6 +2105,7 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
+
               <Stack.Screen
                 name='EditProductionStatus'
                 component={EditProductionStatus}
