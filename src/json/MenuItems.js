@@ -1281,6 +1281,18 @@ export const MenuItemsProjectSupervisor = [
         navigation: 'JobOrderForm',
       },
       {
+        title: 'Production Achieved',
+        type: 'accordian',
+        index: 80,
+        navigation: 'ProductionAchieved',
+      },
+      {
+        title: 'Production Status',
+        type: 'accordian',
+        index: 80,
+        navigation: 'ProductionStatus',
+      },
+      {
         title: 'Vendor Order List',
         type: 'accordian',
         index: 80,

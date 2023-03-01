@@ -1,25 +1,25 @@
-import './src/components/ignoreWarnings';
-import { Provider as PaperProvider, Text, List } from 'react-native-paper';
-import { NavigationContainer, StackActions } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { theme } from './src/theme/apptheme';
-import { Styles } from './src/styles/styles';
+import "./src/components/ignoreWarnings";
+import { Provider as PaperProvider, Text, List } from "react-native-paper";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { theme } from "./src/theme/apptheme";
+import { Styles } from "./src/styles/styles";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItem,
-} from '@react-navigation/drawer';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+} from "@react-navigation/drawer";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   SafeAreaView,
   Platform,
   StatusBar,
   LayoutAnimation,
   View,
-} from 'react-native';
-import DesignYourDreamCategories from './src/screens/Design Your Dream/Categories';
-import DesignYourDreamForm from './src/screens/Design Your Dream/Form';
+} from "react-native";
+import DesignYourDreamCategories from "./src/screens/Design Your Dream/Categories";
+import DesignYourDreamForm from "./src/screens/Design Your Dream/Form";
 import {
   MenuItemsAdmin,
   MenuItemsContractor,
@@ -28,162 +28,164 @@ import {
   MenuItemsArchitect,
   MenuItemsManufacture,
   MenuItemsProjectSupervisor,
-} from './src/json/MenuItems';
-import ActivityRolesScreen from './src/screens/Admin/Master/ActivityRolesScreen';
-import ServicesScreen from './src/screens/Admin/Master/ServicesScreen';
-import UnitOfSalesScreen from './src/screens/Admin/Master/UnitOfSalesScreen';
-import AddActivityRolesScreen from './src/screens/Admin/Master/AddItems/AddActivityRolesScreen';
-import AddServicesScreen from './src/screens/Admin/Master/AddItems/AddServicesScreen';
-import AddUnitOfSalesScreen from './src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen';
-import CategoryScreen from './src/screens/Admin/Master/CategoryScreen';
-import AddCategoryScreen from './src/screens/Admin/Master/AddItems/AddCategoryScreen';
-import ImageGalleryScreen from './src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryScreen';
-import YourEstimationsScreen from './src/screens/GeneralUser/EstimateAndEnquiries/YourEstimationsScreen';
-import React, { useEffect, useState } from 'react';
-import LoginScreen from './src/screens/LoginScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import SignupScreen from './src/screens/SignupScreen';
-import ForgotPassword from './src/screens/ForgotPassword';
-import HomeScreen, { navigationRef } from './src/screens/HomeScreen';
-import PocketDiaryScreen from './src/screens/PocketDiaryScreen';
-import PocketDiaryScreenOne from './src/screens/PocketDiary/PocketDiaryScreenOne';
-import FeedbackScreen from './src/screens/FeedbackScreen';
-import UserProfileScreen from './src/screens/UserProfile';
-import BasicDetailsScreen from './src/screens/Common/CompanyProfile/BasicDetailsScreen';
-import MyServicesScreen from './src/screens/Common/CompanyProfile/MyServicesScreen';
+} from "./src/json/MenuItems";
+import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
+import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
+import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
+import AddActivityRolesScreen from "./src/screens/Admin/Master/AddItems/AddActivityRolesScreen";
+import AddServicesScreen from "./src/screens/Admin/Master/AddItems/AddServicesScreen";
+import AddUnitOfSalesScreen from "./src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen";
+import CategoryScreen from "./src/screens/Admin/Master/CategoryScreen";
+import ProductionAchieved from "./src/screens/Manufacture/ProductionAchieved";
+import AddCategoryScreen from "./src/screens/Admin/Master/AddItems/AddCategoryScreen";
+import ImageGalleryScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryScreen";
+import YourEstimationsScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/YourEstimationsScreen";
+import React, { useEffect, useState } from "react";
+import LoginScreen from "./src/screens/LoginScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SignupScreen from "./src/screens/SignupScreen";
+import ForgotPassword from "./src/screens/ForgotPassword";
+import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
+import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
+import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
+import FeedbackScreen from "./src/screens/FeedbackScreen";
+import UserProfileScreen from "./src/screens/UserProfile";
+import BasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
+import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
+import JobOrderForm from "./src/screens/Manufacture/JobOrderForm";
+import AddProductScreen from "./src/screens/Admin/Master/AddItems/AddProductScreen";
+import ProductScreen from "./src/screens/Admin/Master/ProductScreen";
+import DepartmentScreen from "./src/screens/Admin/Master/DepartmentScreen";
+import AddDepartmentScreen from "./src/screens/Admin/Master/AddItems/AddDepartmentScreen";
+import AddDesignationScreen from "./src/screens/Admin/Master/AddItems/AddDesignationScreen";
+import DesignationScreen from "./src/screens/Admin/Master/DesignationScreen";
+import ServiceProductScreen from "./src/screens/Admin/Master/ServiceProductScreen";
+import AddServiceProductScreen from "./src/screens/Admin/Master/AddItems/AddServiceProductScreen";
+import EWayBillScreen from "./src/screens/Admin/Master/EWayBillScreen";
+import AddEWayBillScreen from "./src/screens/Admin/Master/AddItems/AddEWayBillScreen";
+import LocationTypeScreen from "./src/screens/Admin/Master/LocationTypeScreen";
+import AddLocationTypeScreen from "./src/screens/Admin/Master/AddItems/AddLocationTypeScreen";
+import WorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/WorkFloorScreen";
+import AddWorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkFloorScreen";
+import WorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/WorkLocationScreen";
+import AddWorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkLocationScreen";
+import DesignTypeScreen from "./src/screens/Admin/ServiceCatalogue/DesignTypeScreen";
+import AddDesignTypeScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddDesignTypeScreen";
+import PostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/PostNewDesignScreen";
+import AddPostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen";
+import DealerPresentationScreen from "./src/screens/Dealer/CompanyProfile/PresentationScreen";
+import DealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/BuyerCategoryScreen";
+import AddDealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen";
+import DealerBrandMasterScreen from "./src/screens/Dealer/Brand/BrandMasterScreen";
+import AddDealerBrandMasterScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen";
+import DealerBrandSetupScreen from "./src/screens/Dealer/Brand/BrandSetupScreen";
+import AddDealerBrandSetupScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen";
+import DealerProductScreen from "./src/screens/Dealer/Product/ProductScreen";
+import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProductScreen";
+import MaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/MaterialSetupScreen";
+import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen";
+import AddMyServicesScreen from "./src/screens/Common/CompanyProfile/AddItem/AddMyServicesScreen";
+import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
+import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
+import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
 
-import AddProductScreen from './src/screens/Admin/Master/AddItems/AddProductScreen';
-import ProductScreen from './src/screens/Admin/Master/ProductScreen';
-import DepartmentScreen from './src/screens/Admin/Master/DepartmentScreen';
-import AddDepartmentScreen from './src/screens/Admin/Master/AddItems/AddDepartmentScreen';
-import AddDesignationScreen from './src/screens/Admin/Master/AddItems/AddDesignationScreen';
-import DesignationScreen from './src/screens/Admin/Master/DesignationScreen';
-import ServiceProductScreen from './src/screens/Admin/Master/ServiceProductScreen';
-import AddServiceProductScreen from './src/screens/Admin/Master/AddItems/AddServiceProductScreen';
-import EWayBillScreen from './src/screens/Admin/Master/EWayBillScreen';
-import AddEWayBillScreen from './src/screens/Admin/Master/AddItems/AddEWayBillScreen';
-import LocationTypeScreen from './src/screens/Admin/Master/LocationTypeScreen';
-import AddLocationTypeScreen from './src/screens/Admin/Master/AddItems/AddLocationTypeScreen';
-import WorkFloorScreen from './src/screens/Admin/ServiceCatalogue/WorkFloorScreen';
-import AddWorkFloorScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddWorkFloorScreen';
-import WorkLocationScreen from './src/screens/Admin/ServiceCatalogue/WorkLocationScreen';
-import AddWorkLocationScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddWorkLocationScreen';
-import DesignTypeScreen from './src/screens/Admin/ServiceCatalogue/DesignTypeScreen';
-import AddDesignTypeScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddDesignTypeScreen';
-import PostNewDesignScreen from './src/screens/Admin/ServiceCatalogue/PostNewDesignScreen';
-import AddPostNewDesignScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen';
-import DealerPresentationScreen from './src/screens/Dealer/CompanyProfile/PresentationScreen';
-import DealerBuyerCategoryScreen from './src/screens/Dealer/Brand/BuyerCategoryScreen';
-import AddDealerBuyerCategoryScreen from './src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen';
-import DealerBrandMasterScreen from './src/screens/Dealer/Brand/BrandMasterScreen';
-import AddDealerBrandMasterScreen from './src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen';
-import DealerBrandSetupScreen from './src/screens/Dealer/Brand/BrandSetupScreen';
-import AddDealerBrandSetupScreen from './src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen';
-import DealerProductScreen from './src/screens/Dealer/Product/ProductScreen';
-import AddDealerProductScreen from './src/screens/Dealer/Product/AddItem/AddProductScreen';
-import MaterialSetupScreen from './src/screens/Admin/ServiceCatalogue/MaterialSetupScreen';
-import AddMaterialSetupScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen';
-import AddMyServicesScreen from './src/screens/Common/CompanyProfile/AddItem/AddMyServicesScreen';
-import ImageGalleryWorkLocationScreen from './src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen';
-import EstimationPreviewScreen from './src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen';
-import GetEstimationScreen from './src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen';
+import MaterialCalculatorScreen from "./src/screens/Common/MaterialCalculator/MaterialCalculatorScreen";
+import CommonDepartmentScreen from "./src/screens/Common/Organization/DepartmentScreen";
+import AddCommonDepartmentScreen from "./src/screens/Common/Organization/AddItem/AddDepartmentScreen";
+import CommonDesignationScreen from "./src/screens/Common/Organization/DesignationScreen";
+import AddCommonDesignationScreen from "./src/screens/Common/Organization/AddItem/AddDesignationScreen";
+import PhoneContacts from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContacts";
+import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
+import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
+import ClientScreen from "./src/screens/Common/Client/ClientScreen";
+import ClientEditScreen from "./src/screens/Common/Client/AddItems/ClientEdit";
+import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
+import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
+import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
+import SearchNAdd from "./src/screens/Common/Employee/AddItems/SearchNAdd";
+import EmployeeListScreen from "./src/screens/Common/Employee/EmployeeList";
+import EmployeeEditScreen from "./src/screens/Common/Employee/AddItems/EmployeeEdit";
+import BranchListScreen from "./src/screens/Common/Organization/BranchScreen";
+import BranchEditScreen from "./src/screens/Common/Organization/AddItem/AddBranchScreen";
+import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
+import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
+import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
+import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
+import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
+import Demo from "./src/screens/GeneralUser/Demo";
+import SearchClientScreen from "./src/screens/Common/Client/AddItems/SearchClientScreen";
+import AddClientScreen from "./src/screens/Common/Client/AddItems/AddClientScreen";
+import SearchEmployee from "./src/screens/Common/Employee/AddItems/SearchEmployee";
+import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
+import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
+import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
 
-import MaterialCalculatorScreen from './src/screens/Common/MaterialCalculator/MaterialCalculatorScreen';
-import CommonDepartmentScreen from './src/screens/Common/Organization/DepartmentScreen';
-import AddCommonDepartmentScreen from './src/screens/Common/Organization/AddItem/AddDepartmentScreen';
-import CommonDesignationScreen from './src/screens/Common/Organization/DesignationScreen';
-import AddCommonDesignationScreen from './src/screens/Common/Organization/AddItem/AddDesignationScreen';
-import PhoneContacts from './src/screens/Common/PocketDairy/Setting/AddItems/PhoneContacts';
-import DesignWiseScreen from './src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen';
-import QuotationWiseScreen from './src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen';
-import ClientScreen from './src/screens/Common/Client/ClientScreen';
-import ClientEditScreen from './src/screens/Common/Client/AddItems/ClientEdit';
-import ApprovedUserScreen from './src/screens/Admin/Users/ApprovedUserScreen';
-import DeclinedUserScreen from './src/screens/Admin/Users/DeclinedUserScreen';
-import PendingUserScreen from './src/screens/Admin/Users/PendingUserScreen';
-import SearchNAdd from './src/screens/Common/Employee/AddItems/SearchNAdd';
-import EmployeeListScreen from './src/screens/Common/Employee/EmployeeList';
-import EmployeeEditScreen from './src/screens/Common/Employee/AddItems/EmployeeEdit';
-import BranchListScreen from './src/screens/Common/Organization/BranchScreen';
-import BranchEditScreen from './src/screens/Common/Organization/AddItem/AddBranchScreen';
-import EnquiryWise from './src/screens/Contractor/Enquiries/Enquiry_Wise';
-import UserProfile from './src/screens/Common/Profile Update/UserProfile';
-import RateCardSetUp from './src/screens/Contractor/RateCard/RateCardSetup';
-import AddRateCard from './src/screens/Contractor/RateCard/AddRateCard';
-import ArchitectRateCardSetup from './src/screens/Architect/ArchitectRateCardSetup';
-import Demo from './src/screens/GeneralUser/Demo';
-import SearchClientScreen from './src/screens/Common/Client/AddItems/SearchClientScreen';
-import AddClientScreen from './src/screens/Common/Client/AddItems/AddClientScreen';
-import SearchEmployee from './src/screens/Common/Employee/AddItems/SearchEmployee';
-import AddEmployee from './src/screens/Common/Employee/AddItems/AddEmployee';
-import SendRateCard from './src/screens/Contractor/RateCard/SendRateCard/sendRateCard';
-import AddSendRateCard from './src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard';
-
-import BudgetSetup from './src/screens/Common/PocketDairy/Setting/BudgetSetup';
-import AddBudgetSetup from './src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup';
-import AddExpensesList from './src/screens/Common/PocketDairy/AddExpensesList';
-import AddExpenses from './src/screens/Common/PocketDairy/AddItems/AddExpenses';
-import AddSourceList from './src/screens/Common/PocketDairy/AddSourceList';
-import VerifyCompanySource from './src/screens/Common/PocketDairy/VerifyCompanySource';
-import VerifyCompanyExpense from './src/screens/Common/PocketDairy/VerifyCompanyExpense';
-import AddSource from './src/screens/Common/PocketDairy/AddItems/AddSource';
+import BudgetSetup from "./src/screens/Common/PocketDairy/Setting/BudgetSetup";
+import AddBudgetSetup from "./src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup";
+import AddExpensesList from "./src/screens/Common/PocketDairy/AddExpensesList";
+import AddExpenses from "./src/screens/Common/PocketDairy/AddItems/AddExpenses";
+import AddSourceList from "./src/screens/Common/PocketDairy/AddSourceList";
+import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
+import VerifyCompanyExpense from "./src/screens/Common/PocketDairy/VerifyCompanyExpense";
+import AddSource from "./src/screens/Common/PocketDairy/AddItems/AddSource";
 //import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
-import BrandConversionValue from './src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue';
-import OpeningStockList from './src/screens/Manufacture/ProductionUnitMaster/OpeningStockList';
-import ApiMaster from './src/screens/Admin/Master/ApiMaster';
-import AddApiMaster from './src/screens/Admin/Master/AddItems/AddApiMaster';
-import openingStockScrap from './src/screens/Manufacture/openingStockScrap';
-import OpeningStockScrap from './src/screens/Manufacture/openingStockScrap';
-import AddOpeningStockScrap from './src/screens/Manufacture/AddItems/AddOpeningStockScrap';
-import AddStockList from './src/screens/Manufacture/AddItems/AddStockList';
-import EditStockList from './src/screens/Manufacture/AddItems/EditStockList';
-import EditStockScrap from './src/screens/Manufacture/AddItems/EditOpeningStockScrap';
-import ProductforProduction from './src/screens/Manufacture/ProductforProduction';
-import AddProduction from './src/screens/Manufacture/AddItems/AddProduction';
-import ProductionStatus from './src/screens/Manufacture/ProductionStatus';
-import AddProductionStatus from './src/screens/Manufacture/AddItems/AddProductionStatus';
-import EditProductionStatus from './src/screens/Manufacture/AddItems/EditProductionStatus';
-import EditProductForProduction from './src/screens/Manufacture/AddItems/EditProductForProduction';
-import ProductionOrderList from './src/screens/Manufacture/ProductionOrderList';
-import AddProductOrderList from './src/screens/Manufacture/AddItems/AddProductOrderList';
-import EditProductOrderList from './src/screens/Manufacture/AddItems/EditProductOrderList';
-import CategoryNameScreen from './src/screens/Admin/PocketDairyMaster/CategoryName';
-import AddCategoryNameScreen from './src/screens/Admin/PocketDairyMaster/AddCategoryName';
-import SubCategoryNameScreen from './src/screens/Admin/PocketDairyMaster/SubCategoryName';
-import AddSubCategoryNameScreen from './src/screens/Admin/PocketDairyMaster/AddSubCategoryName';
-import GCategoryNameScreen from './src/screens/Common/PocketDairy/Setting/GCategoryName';
-import AddGCategoryNameScreen from './src/screens/Common/PocketDairy/Setting/AddItems/AddGCategoryName';
-import GSubCategoryNameScreen from './src/screens/Common/PocketDairy/Setting/GSubCategoryName';
-import AddGSubCategoryNameScreen from './src/screens/Common/PocketDairy/Setting/AddItems/AddGSubCategoryName';
-import GMyContactsScreen from './src/screens/Common/PocketDairy/Setting/GMyContacts';
-import AddGMyContactsScreen from './src/screens/Common/PocketDairy/Setting/AddItems/AddGMyContacts';
-import GMyBankScreen from './src/screens/Common/PocketDairy/Setting/GMyBank';
-import AddGMyBankScreen from './src/screens/Common/PocketDairy/Setting/AddItems/AddGMyBank';
-import ABrandConversationValue from './src/screens/Admin/ProductionUnitMaster/BrandConversationValue';
-import AddBrandConversationValue from './src/screens/Admin/ProductionUnitMaster/AddItems/AddBrandConversationValue';
-import WidthOfGpCoil from './src/screens/Admin/ProductionUnitMaster/WidthOfGPCoil';
-import AddWidthOfGpCoil from './src/screens/Admin/ProductionUnitMaster/AddItems/AddWidthOfGpCoil';
-import MassOfZincCoating from './src/screens/Admin/ProductionUnitMaster/MassOfZincCoating';
-import AddMassOfZincCoating from './src/screens/Admin/ProductionUnitMaster/AddItems/AddMassOfZincCoating';
-import AddBankDetails from './src/screens/Common/Profile Update/AddBankDetails';
-import PayableList from './src/screens/Common/PocketDairy/PayableList';
-import ReceivableList from './src/screens/Common/PocketDairy/ReceivableList';
-import BankListScreen from './src/screens/Common/Organization/BankScreen';
-import AddBankScreen from './src/screens/Common/Organization/AddItem/AddBankScreen';
+import BrandConversionValue from "./src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue";
+import OpeningStockList from "./src/screens/Manufacture/ProductionUnitMaster/OpeningStockList";
+import ApiMaster from "./src/screens/Admin/Master/ApiMaster";
+import AddApiMaster from "./src/screens/Admin/Master/AddItems/AddApiMaster";
+import openingStockScrap from "./src/screens/Manufacture/openingStockScrap";
+import OpeningStockScrap from "./src/screens/Manufacture/openingStockScrap";
+import AddOpeningStockScrap from "./src/screens/Manufacture/AddItems/AddOpeningStockScrap";
+import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
+import EditStockList from "./src/screens/Manufacture/AddItems/EditStockList";
+import EditStockScrap from "./src/screens/Manufacture/AddItems/EditOpeningStockScrap";
+import ProductforProduction from "./src/screens/Manufacture/ProductforProduction";
+import AddProduction from "./src/screens/Manufacture/AddItems/AddProduction";
+import ProductionStatus from "./src/screens/Manufacture/ProductionStatus";
+import AddProductionStatus from "./src/screens/Manufacture/AddItems/AddProductionStatus";
+import EditProductionStatus from "./src/screens/Manufacture/AddItems/EditProductionStatus";
+import EditProductForProduction from "./src/screens/Manufacture/AddItems/EditProductForProduction";
+import ProductionOrderList from "./src/screens/Manufacture/ProductionOrderList";
+import AddProductOrderList from "./src/screens/Manufacture/AddItems/AddProductOrderList";
+import EditProductOrderList from "./src/screens/Manufacture/AddItems/EditProductOrderList";
+import CategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/CategoryName";
+import AddCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/AddCategoryName";
+import SubCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/SubCategoryName";
+import AddSubCategoryNameScreen from "./src/screens/Admin/PocketDairyMaster/AddSubCategoryName";
+import GCategoryNameScreen from "./src/screens/Common/PocketDairy/Setting/GCategoryName";
+import AddGCategoryNameScreen from "./src/screens/Common/PocketDairy/Setting/AddItems/AddGCategoryName";
+import GSubCategoryNameScreen from "./src/screens/Common/PocketDairy/Setting/GSubCategoryName";
+import AddGSubCategoryNameScreen from "./src/screens/Common/PocketDairy/Setting/AddItems/AddGSubCategoryName";
+import GMyContactsScreen from "./src/screens/Common/PocketDairy/Setting/GMyContacts";
+import AddGMyContactsScreen from "./src/screens/Common/PocketDairy/Setting/AddItems/AddGMyContacts";
+import GMyBankScreen from "./src/screens/Common/PocketDairy/Setting/GMyBank";
+import AddGMyBankScreen from "./src/screens/Common/PocketDairy/Setting/AddItems/AddGMyBank";
+import ABrandConversationValue from "./src/screens/Admin/ProductionUnitMaster/BrandConversationValue";
+import AddBrandConversationValue from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddBrandConversationValue";
+import WidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/WidthOfGPCoil";
+import AddWidthOfGpCoil from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddWidthOfGpCoil";
+import MassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/MassOfZincCoating";
+import AddMassOfZincCoating from "./src/screens/Admin/ProductionUnitMaster/AddItems/AddMassOfZincCoating";
+import AddBankDetails from "./src/screens/Common/Profile Update/AddBankDetails";
+import PayableList from "./src/screens/Common/PocketDairy/PayableList";
+import ReceivableList from "./src/screens/Common/PocketDairy/ReceivableList";
+import BankListScreen from "./src/screens/Common/Organization/BankScreen";
+import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScreen";
 
-import PDCDataUpdate from './src/screens/Common/PocketDairy/PDCDataUpdate';
-import MyPersonalBankScreen from './src/screens/Common/PocketDairy/Setting/MyPersonalBank';
-import AddMyPersonalBank from './src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank';
-import BankTransactionScreen from './src/screens/Common/PocketDairy/BankTransactions';
-import PocketTransactionScreen from './src/screens/Common/PocketDairy/PocketTransactions';
-import SourceListGeneralUserScreen from './src/screens/Common/PocketDairy/SourceListGeneralUser';
-import ExpensesListGeneralUserScreen from './src/screens/Common/PocketDairy/ExpensesListGeneralUser';
-import PocketTransactionGeneralUserScreen from './src/screens/Common/PocketDairy/PocketTransactionGeneralUser';
-import BranchWiseTransactionScreen from './src/screens/Common/PocketDairy/BranchWiseTransactions';
-import PhoneContactDirectUpload from './src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload';
-import EstimationContractorStatusScreen from './src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus';
-import BranchWiseCashDetailScreen from './src/screens/Common/PocketDairy/BranchWiseCashDetails';
+import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
+import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
+import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
+import BankTransactionScreen from "./src/screens/Common/PocketDairy/BankTransactions";
+import PocketTransactionScreen from "./src/screens/Common/PocketDairy/PocketTransactions";
+import SourceListGeneralUserScreen from "./src/screens/Common/PocketDairy/SourceListGeneralUser";
+import ExpensesListGeneralUserScreen from "./src/screens/Common/PocketDairy/ExpensesListGeneralUser";
+import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy/PocketTransactionGeneralUser";
+import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
+import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
+import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
+import BranchWiseCashDetailScreen from "./src/screens/Common/PocketDairy/BranchWiseCashDetails";
 
+<<<<<<< HEAD
 import SelectGroupType from './src/screens/Common/Looking for a Job/SelectGroupType';
 import AreaOfInterest from './src/screens/Common/Looking for a Job/Employee/AreaOfInterest';
 import JobSeekerForm from './src/screens/Common/Looking for a Job/Employee/JobSeekerForm';
@@ -191,6 +193,14 @@ import JobListing from './src/screens/Common/Looking for a Job/Employee/JobListi
 import JobListingEmployer from './src/screens/Common/Looking for a Job/Employer/JobListing';
 import JobPostingForm from './src/screens/Common/Looking for a Job/Employer/JobPostingForm';
 import VendorOrderFormList from './src/screens/Manufacture/VendorOrderFormList';
+=======
+import SelectGroupType from "./src/screens/Common/Looking for a Job/SelectGroupType";
+import AreaOfInterest from "./src/screens/Common/Looking for a Job/Employee/AreaOfInterest";
+import JobSeekerForm from "./src/screens/Common/Looking for a Job/Employee/JobSeekerForm";
+import JobListing from "./src/screens/Common/Looking for a Job/Employee/JobListing";
+import JobListingEmployer from "./src/screens/Common/Looking for a Job/Employer/JobListing";
+import JobPostingForm from "./src/screens/Common/Looking for a Job/Employer/JobPostingForm";
+>>>>>>> bf8edf0f238b127624d71675eab95078a9949628
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -199,7 +209,7 @@ let menuItems = [];
 export default function App() {
   const userDetails = React.useState(null);
   const SetUser = async () => {
-    const userData = await AsyncStorage.getItem('user');
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       const ud = JSON.parse(userData);
       switch (parseInt(ud.RoleID)) {
@@ -236,8 +246,8 @@ export default function App() {
 
   const LogoutUser = async () => {
     try {
-      await AsyncStorage.setItem('user', '{}');
-      navigationRef.dispatch(StackActions.replace('Login'));
+      await AsyncStorage.setItem("user", "{}");
+      navigationRef.dispatch(StackActions.replace("Login"));
     } catch (error) {
       console.log(error);
     }
@@ -283,7 +293,7 @@ export default function App() {
     return (
       <DrawerContentScrollView {...props}>
         <DrawerItem
-          key='Home'
+          key="Home"
           focused={activeIndex === -1 ? true : false}
           style={[Styles.borderBottom1]}
           activeBackgroundColor={theme.colors.primary}
@@ -309,17 +319,17 @@ export default function App() {
                 focused ? theme.colors.textLight : theme.colors.textSecondary
               }
               size={24}
-              name='view-dashboard'
+              name="view-dashboard"
             />
           )}
           onPress={(e) => {
             activeIndex = -1;
-            props.navigation.navigate('HomeScreen');
+            props.navigation.navigate("HomeScreen");
           }}
         />
         {menuItems.map((k, i) => {
           return k.roleID === parseInt(userDetails[0].RoleID) ? (
-            k.type === 'item' && k.title != 'Logout' ? (
+            k.type === "item" && k.title != "Logout" ? (
               <DrawerItem
                 key={i}
                 focused={activeIndex === parseInt(i) ? true : false}
@@ -359,7 +369,7 @@ export default function App() {
                   }
                 }}
               />
-            ) : k.type === 'item' && k.title == 'Logout' ? (
+            ) : k.type === "item" && k.title == "Logout" ? (
               <DrawerItem
                 key={i}
                 focused={activeIndex === parseInt(i) ? true : false}
@@ -441,7 +451,7 @@ export default function App() {
                       style={{
                         marginVertical: 0,
                         paddingStart: 16,
-                        width: '100%',
+                        width: "100%",
                         marginLeft: 0,
                         borderRadius: 0,
                         borderBottomColor: theme.colors.textLightSecondary,
@@ -491,11 +501,11 @@ export default function App() {
       return (
         <Drawer.Navigator
           drawerContent={(props) => <DrawerContent {...props} />}
-          initialRouteName='HomeScreen'
+          initialRouteName="HomeScreen"
         >
           <Drawer.Screen
             options={{ headerShown: false, unmountOnBlur: true }}
-            name='HomeScreen'
+            name="HomeScreen"
             component={HomeScreen}
             initialParams={{ userDetails: userDetails, setUserFunc: SetUser }}
           />
@@ -507,11 +517,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -524,11 +534,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -537,122 +547,122 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ActivityRolesScreen'
+                name="ActivityRolesScreen"
                 component={ActivityRolesScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ServicesScreen'
+                name="ServicesScreen"
                 component={ServicesScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='UnitOfSalesScreen'
+                name="UnitOfSalesScreen"
                 component={UnitOfSalesScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CategoryScreen'
+                name="CategoryScreen"
                 component={CategoryScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductScreen'
+                name="ProductScreen"
                 component={ProductScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DepartmentScreen'
+                name="DepartmentScreen"
                 component={DepartmentScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='LocationTypeScreen'
+                name="LocationTypeScreen"
                 component={LocationTypeScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DesignationScreen'
+                name="DesignationScreen"
                 component={DesignationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ServiceProductScreen'
+                name="ServiceProductScreen"
                 component={ServiceProductScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='EWayBillScreen'
+                name="EWayBillScreen"
                 component={EWayBillScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='WorkFloorScreen'
+                name="WorkFloorScreen"
                 component={WorkFloorScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='WorkLocationScreen'
+                name="WorkLocationScreen"
                 component={WorkLocationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DesignTypeScreen'
+                name="DesignTypeScreen"
                 component={DesignTypeScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MaterialSetupScreen'
+                name="MaterialSetupScreen"
                 component={MaterialSetupScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PostNewDesignScreen'
+                name="PostNewDesignScreen"
                 component={PostNewDesignScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ApprovedUserScreen'
+                name="ApprovedUserScreen"
                 component={ApprovedUserScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DeclinedUserScreen'
+                name="DeclinedUserScreen"
                 component={DeclinedUserScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PendingUserScreen'
+                name="PendingUserScreen"
                 component={PendingUserScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ApiMaster'
+                name="ApiMaster"
                 component={ApiMaster}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CategoryNameScreen'
+                name="CategoryNameScreen"
                 component={CategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='SubCategoryNameScreen'
+                name="SubCategoryNameScreen"
                 component={SubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ABrandConversationValue'
+                name="ABrandConversationValue"
                 component={ABrandConversationValue}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='WidthOfGpCoil'
+                name="WidthOfGpCoil"
                 component={WidthOfGpCoil}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MassOfZincCoating'
+                name="MassOfZincCoating"
                 component={MassOfZincCoating}
               />
             </Drawer.Navigator>
@@ -661,11 +671,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -674,63 +684,63 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ImageGalleryScreen'
+                name="ImageGalleryScreen"
                 component={ImageGalleryScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='YourEstimationsScreen'
+                name="YourEstimationsScreen"
                 component={YourEstimationsScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GCategoryNameScreen'
+                name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GSubCategoryNameScreen'
+                name="GSubCategoryNameScreen"
                 component={GSubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyContactsScreen'
+                name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyBankScreen'
+                name="GMyBankScreen"
                 component={GMyBankScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BudgetSetup'
+                name="BudgetSetup"
                 component={BudgetSetup}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ExpensesListGeneralUserScreen'
+                name="ExpensesListGeneralUserScreen"
                 component={ExpensesListGeneralUserScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='SourceListGeneralUserScreen'
+                name="SourceListGeneralUserScreen"
                 component={SourceListGeneralUserScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankTransactionScreen'
+                name="BankTransactionScreen"
                 component={BankTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PocketTransactionGeneralUserScreen'
+                name="PocketTransactionGeneralUserScreen"
                 component={PocketTransactionGeneralUserScreen}
               />
 
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='Demo'
+                name="Demo"
                 component={Demo}
               />
             </Drawer.Navigator>
@@ -739,11 +749,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -752,122 +762,122 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MyServicesScreen'
+                name="MyServicesScreen"
                 component={MyServicesScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDepartmentScreen'
+                name="CommonDepartmentScreen"
                 component={CommonDepartmentScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDesignationScreen'
+                name="CommonDesignationScreen"
                 component={CommonDesignationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DesignWiseScreen'
+                name="DesignWiseScreen"
                 component={DesignWiseScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='QuotationWiseScreen'
+                name="QuotationWiseScreen"
                 component={QuotationWiseScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ClientScreen'
+                name="ClientScreen"
                 component={ClientScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='EmployeeListScreen'
+                name="EmployeeListScreen"
                 component={EmployeeListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BranchListScreen'
+                name="BranchListScreen"
                 component={BranchListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='EnquiryWise'
+                name="EnquiryWise"
                 component={EnquiryWise}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='RateCardSetUp'
+                name="RateCardSetUp"
                 component={RateCardSetUp}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GCategoryNameScreen'
+                name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GSubCategoryNameScreen'
+                name="GSubCategoryNameScreen"
                 component={GSubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyContactsScreen'
+                name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyBankScreen'
+                name="GMyBankScreen"
                 component={GMyBankScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BudgetSetup'
+                name="BudgetSetup"
                 component={BudgetSetup}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddExpensesList'
+                name="AddExpensesList"
                 component={AddExpensesList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddSourceList'
+                name="AddSourceList"
                 component={AddSourceList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanySource'
+                name="VerifyCompanySource"
                 component={VerifyCompanySource}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanyExpense'
+                name="VerifyCompanyExpense"
                 component={VerifyCompanyExpense}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddBankScreen'
+                name="AddBankScreen"
                 component={AddBankScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankListScreen'
+                name="BankListScreen"
                 component={BankListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MyPersonalBankScreen'
+                name="MyPersonalBankScreen"
                 component={MyPersonalBankScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankTransactionScreen'
+                name="BankTransactionScreen"
                 component={BankTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PocketTransactionScreen'
+                name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
               />
             </Drawer.Navigator>
@@ -876,11 +886,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -889,103 +899,103 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MyServicesScreen'
+                name="MyServicesScreen"
                 component={MyServicesScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DealerPresentationScreen'
+                name="DealerPresentationScreen"
                 component={DealerPresentationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DealerBrandMasterScreen'
+                name="DealerBrandMasterScreen"
                 component={DealerBrandMasterScreen}
                 initialParams={{ activeIndex: activeIndex }}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DealerBrandSetupScreen'
+                name="DealerBrandSetupScreen"
                 component={DealerBrandSetupScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DealerBuyerCategoryScreen'
+                name="DealerBuyerCategoryScreen"
                 component={DealerBuyerCategoryScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='DealerProductScreen'
+                name="DealerProductScreen"
                 component={DealerProductScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDepartmentScreen'
+                name="CommonDepartmentScreen"
                 component={CommonDepartmentScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDesignationScreen'
+                name="CommonDesignationScreen"
                 component={CommonDesignationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ClientScreen'
+                name="ClientScreen"
                 component={ClientScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='EmployeeListScreen'
+                name="EmployeeListScreen"
                 component={EmployeeListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BranchListScreen'
+                name="BranchListScreen"
                 component={BranchListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankTransactionScreen'
+                name="BankTransactionScreen"
                 component={BankTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PocketTransactionScreen'
+                name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddSourceList'
+                name="AddSourceList"
                 component={AddSourceList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddExpensesList'
+                name="AddExpensesList"
                 component={AddExpensesList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanySource'
+                name="VerifyCompanySource"
                 component={VerifyCompanySource}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanyExpense'
+                name="VerifyCompanyExpense"
                 component={VerifyCompanyExpense}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GCategoryNameScreen'
+                name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GSubCategoryNameScreen'
+                name="GSubCategoryNameScreen"
                 component={GSubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyContactsScreen'
+                name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
             </Drawer.Navigator>
@@ -994,11 +1004,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -1007,77 +1017,77 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDepartmentScreen'
+                name="CommonDepartmentScreen"
                 component={CommonDepartmentScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='CommonDesignationScreen'
+                name="CommonDesignationScreen"
                 component={CommonDesignationScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ClientScreen'
+                name="ClientScreen"
                 component={ClientScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='EmployeeListScreen'
+                name="EmployeeListScreen"
                 component={EmployeeListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ArchitectRateCardSetup'
+                name="ArchitectRateCardSetup"
                 component={ArchitectRateCardSetup}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BranchListScreen'
+                name="BranchListScreen"
                 component={BranchListScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PocketTransactionScreen'
+                name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankTransactionScreen'
+                name="BankTransactionScreen"
                 component={BankTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddExpensesList'
+                name="AddExpensesList"
                 component={AddExpensesList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddSourceList'
+                name="AddSourceList"
                 component={AddSourceList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GCategoryNameScreen'
+                name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GSubCategoryNameScreen'
+                name="GSubCategoryNameScreen"
                 component={GSubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyContactsScreen'
+                name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanySource'
+                name="VerifyCompanySource"
                 component={VerifyCompanySource}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanyExpense'
+                name="VerifyCompanyExpense"
                 component={VerifyCompanyExpense}
               />
             </Drawer.Navigator>
@@ -1086,11 +1096,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -1099,22 +1109,22 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BrandConversionValue'
+                name="BrandConversionValue"
                 component={BrandConversionValue}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='OpeningStockList'
+                name="OpeningStockList"
                 component={OpeningStockList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='OpeningStockScrap'
+                name="OpeningStockScrap"
                 component={OpeningStockScrap}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductforProduction'
+                name="ProductforProduction"
                 component={ProductforProduction}
               />
               <Drawer.Screen
@@ -1124,65 +1134,80 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductionStatus'
+                name="JobOrderForm"
+                component={JobOrderForm}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionAchieved"
+                component={ProductionAchieved}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionStatus"
                 component={ProductionStatus}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductionOrderList'
+                name="ProductionOrderList"
                 component={ProductionOrderList}
               />
 
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GCategoryNameScreen'
+                name="GCategoryNameScreen"
                 component={GCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GSubCategoryNameScreen'
+                name="GSubCategoryNameScreen"
                 component={GSubCategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='GMyContactsScreen'
+                name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='MyPersonalBankScreen'
+                name="MyPersonalBankScreen"
                 component={MyPersonalBankScreen}
               />
 
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddExpensesList'
+                name="AddExpensesList"
                 component={AddExpensesList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='AddSourceList'
+                name="AddSourceList"
                 component={AddSourceList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanySource'
+                name="VerifyCompanySource"
                 component={VerifyCompanySource}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='VerifyCompanyExpense'
+                name="VerifyCompanyExpense"
                 component={VerifyCompanyExpense}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BankTransactionScreen'
+                name="BankTransactionScreen"
                 component={BankTransactionScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='PocketTransactionScreen'
+                name="PocketTransactionScreen"
                 component={PocketTransactionScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="EmployeeListScreen"
+                component={EmployeeListScreen}
               />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
@@ -1195,11 +1220,11 @@ export default function App() {
           return (
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
-              initialRouteName='HomeScreen'
+              initialRouteName="HomeScreen"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='HomeScreen'
+                name="HomeScreen"
                 component={HomeScreen}
                 initialParams={{
                   userDetails: userDetails,
@@ -1208,32 +1233,42 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='BrandConversionValue'
+                name="BrandConversionValue"
                 component={BrandConversionValue}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='OpeningStockList'
+                name="OpeningStockList"
                 component={OpeningStockList}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='OpeningStockScrap'
+                name="OpeningStockScrap"
                 component={OpeningStockScrap}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductforProduction'
+                name="ProductforProduction"
                 component={ProductforProduction}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductionStatus'
+                name="JobOrderForm"
+                component={JobOrderForm}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionAchieved"
+                component={ProductionAchieved}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductionStatus"
                 component={ProductionStatus}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name='ProductionOrderList'
+                name="ProductionOrderList"
                 component={ProductionOrderList}
               />
             </Drawer.Navigator>
@@ -1244,7 +1279,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener('focus', () => {});
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
 
@@ -1253,9 +1288,9 @@ export default function App() {
         return (
           <Tab.Navigator
             shifting={false}
-            initialRouteName='dashboard'
+            initialRouteName="dashboard"
             activeColor={theme.colors.primary}
-            inactiveColor='#696969'
+            inactiveColor="#696969"
             barStyle={{
               backgroundColor: theme.colors.textLight,
               height: 70,
@@ -1263,24 +1298,24 @@ export default function App() {
             }}
           >
             <Tab.Screen
-              name='Dashboard'
+              name="Dashboard"
               component={DrawerNavigator}
               options={{
                 unmountOnBlur: false,
-                tabBarLabel: 'Dashboard',
+                tabBarLabel: "Dashboard",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='view-dashboard' color={color} size={26} />
+                  <Icon name="view-dashboard" color={color} size={26} />
                 ),
               }}
             />
             <Tab.Screen
-              name='Feedbacks'
+              name="Feedbacks"
               component={FeedbackScreen}
               options={{
                 unmountOnBlur: true,
-                tabBarLabel: 'Suggestions',
+                tabBarLabel: "Suggestions",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='comment-alert' color={color} size={26} />
+                  <Icon name="comment-alert" color={color} size={26} />
                 ),
               }}
             />
@@ -1290,9 +1325,9 @@ export default function App() {
         return (
           <Tab.Navigator
             shifting={false}
-            initialRouteName='dashboard'
+            initialRouteName="dashboard"
             activeColor={theme.colors.primary}
-            inactiveColor='#696969'
+            inactiveColor="#696969"
             barStyle={{
               backgroundColor: theme.colors.textLight,
               height: 70,
@@ -1300,41 +1335,41 @@ export default function App() {
             }}
           >
             <Tab.Screen
-              name='Dashboard'
+              name="Dashboard"
               component={DrawerNavigator}
               options={{
                 unmountOnBlur: false,
-                tabBarLabel: 'Dashboard',
+                tabBarLabel: "Dashboard",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='view-dashboard' color={color} size={26} />
+                  <Icon name="view-dashboard" color={color} size={26} />
                 ),
               }}
             />
             <Tab.Screen
-              name='PocketDiary'
+              name="PocketDiary"
               component={PocketDiaryScreen}
               initialParams={{ userDetails: userDetails, setUserFunc: SetUser }}
               options={{
                 unmountOnBlur: true,
-                tabBarLabel: 'Pocket Diary',
+                tabBarLabel: "Pocket Diary",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='calculator-variant' color={color} size={26} />
+                  <Icon name="calculator-variant" color={color} size={26} />
                 ),
               }}
             />
             <Tab.Screen
-              name='Feedbacks'
+              name="Feedbacks"
               component={FeedbackScreen}
               options={{
                 unmountOnBlur: true,
-                tabBarLabel: 'Suggestions',
+                tabBarLabel: "Suggestions",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='comment-alert' color={color} size={26} />
+                  <Icon name="comment-alert" color={color} size={26} />
                 ),
               }}
             />
             <Tab.Screen
-              name='UserProfile'
+              name="UserProfile"
               component={
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
@@ -1350,9 +1385,9 @@ export default function App() {
               }
               options={{
                 unmountOnBlur: true,
-                tabBarLabel: 'User Profile',
+                tabBarLabel: "User Profile",
                 tabBarIcon: ({ color }) => (
-                  <Icon name='account' color={color} size={26} />
+                  <Icon name="account" color={color} size={26} />
                 ),
               }}
             />
@@ -1366,7 +1401,7 @@ export default function App() {
       style={[
         Styles.flex1,
         Styles.backgroundColorWhite,
-        { paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+        { paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 },
       ]}
     >
       <PaperProvider theme={theme}>
@@ -1386,24 +1421,24 @@ export default function App() {
           <NavigationContainer ref={navigationRef}>
             <Stack.Navigator
               initialRouteName={
-                Object.keys(userDetails[0]).length !== 0 ? 'HomeStack' : 'Login'
+                Object.keys(userDetails[0]).length !== 0 ? "HomeStack" : "Login"
               }
             >
               <Stack.Screen
-                name='Login'
+                name="Login"
                 component={LoginScreen}
                 options={{ headerShown: false }}
                 initialParams={{ setUserFunc: SetUser }}
               />
               <Stack.Screen
-                name='Signup'
+                name="Signup"
                 component={SignupScreen}
                 options={{
-                  headerTitle: '',
+                  headerTitle: "",
                   headerTintColor: theme.colors.primary,
                   headerBackImage: () => (
                     <Icon
-                      name='arrow-left-thin'
+                      name="arrow-left-thin"
                       color={theme.colors.primary}
                       size={32}
                     />
@@ -1412,14 +1447,14 @@ export default function App() {
                 initialParams={{ setUserFunc: SetUser }}
               />
               <Stack.Screen
-                name='ForgotPassword'
+                name="ForgotPassword"
                 component={ForgotPassword}
                 options={{
-                  headerTitle: '',
+                  headerTitle: "",
                   headerTintColor: theme.colors.primary,
                   headerBackImage: () => (
                     <Icon
-                      name='arrow-left-thin'
+                      name="arrow-left-thin"
                       color={theme.colors.primary}
                       size={32}
                     />
@@ -1427,15 +1462,15 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='HomeStack'
+                name="HomeStack"
                 component={BottomTabs}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name='JobPostingForm'
+                name="JobPostingForm"
                 component={JobPostingForm}
                 options={{
-                  headerTitle: 'Post a Job',
+                  headerTitle: "Post a Job",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1444,10 +1479,10 @@ export default function App() {
               />
 
               <Stack.Screen
-                name='LookingForAJobJobGroup'
+                name="LookingForAJobJobGroup"
                 component={SelectGroupType}
                 options={{
-                  headerTitle: '',
+                  headerTitle: "",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1455,10 +1490,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AreaOfInterest'
+                name="AreaOfInterest"
                 component={AreaOfInterest}
                 options={{
-                  headerTitle: 'Area Of Interest',
+                  headerTitle: "Area Of Interest",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1466,10 +1501,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='JobListingEmployer'
+                name="JobListingEmployer"
                 component={JobListingEmployer}
                 options={{
-                  headerTitle: 'Search Jobs',
+                  headerTitle: "Search Jobs",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1477,10 +1512,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='JobListingEmployee'
+                name="JobListingEmployee"
                 component={JobListing}
                 options={{
-                  headerTitle: 'Search Jobs',
+                  headerTitle: "Search Jobs",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1488,10 +1523,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='JobSeekerForm'
+                name="JobSeekerForm"
                 component={JobSeekerForm}
                 options={{
-                  headerTitle: 'Job Seeker Form',
+                  headerTitle: "Job Seeker Form",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1499,10 +1534,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='DesignYourDreamCategories'
+                name="DesignYourDreamCategories"
                 component={DesignYourDreamCategories}
                 options={{
-                  headerTitle: 'Design Your Dream',
+                  headerTitle: "Design Your Dream",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1510,10 +1545,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='DesignYourDreamForm'
+                name="DesignYourDreamForm"
                 component={DesignYourDreamForm}
                 options={{
-                  headerTitle: 'Property Details',
+                  headerTitle: "Property Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1521,10 +1556,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddActivityRolesScreen'
+                name="AddActivityRolesScreen"
                 component={AddActivityRolesScreen}
                 options={{
-                  headerTitle: 'Add Activity Roles',
+                  headerTitle: "Add Activity Roles",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1532,10 +1567,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddApiMaster'
+                name="AddApiMaster"
                 component={AddApiMaster}
                 options={{
-                  headerTitle: 'Add Api Master',
+                  headerTitle: "Add Api Master",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1543,10 +1578,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddServicesScreen'
+                name="AddServicesScreen"
                 component={AddServicesScreen}
                 options={{
-                  headerTitle: 'Add Services',
+                  headerTitle: "Add Services",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1554,10 +1589,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddUnitOfSalesScreen'
+                name="AddUnitOfSalesScreen"
                 component={AddUnitOfSalesScreen}
                 options={{
-                  headerTitle: 'Add Unit of Sales',
+                  headerTitle: "Add Unit of Sales",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1565,10 +1600,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddCategoryScreen'
+                name="AddCategoryScreen"
                 component={AddCategoryScreen}
                 options={{
-                  headerTitle: 'Add Category',
+                  headerTitle: "Add Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1576,10 +1611,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddProductScreen'
+                name="AddProductScreen"
                 component={AddProductScreen}
                 options={{
-                  headerTitle: 'Add Product',
+                  headerTitle: "Add Product",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1587,10 +1622,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDepartmentScreen'
+                name="AddDepartmentScreen"
                 component={AddDepartmentScreen}
                 options={{
-                  headerTitle: 'Add Department',
+                  headerTitle: "Add Department",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1598,10 +1633,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDesignationScreen'
+                name="AddDesignationScreen"
                 component={AddDesignationScreen}
                 options={{
-                  headerTitle: 'Add Designation',
+                  headerTitle: "Add Designation",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1609,10 +1644,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddServiceProductScreen'
+                name="AddServiceProductScreen"
                 component={AddServiceProductScreen}
                 options={{
-                  headerTitle: 'Add Service Product',
+                  headerTitle: "Add Service Product",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1620,10 +1655,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddEWayBillScreen'
+                name="AddEWayBillScreen"
                 component={AddEWayBillScreen}
                 options={{
-                  headerTitle: 'Add E-Way Bill',
+                  headerTitle: "Add E-Way Bill",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1631,10 +1666,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddLocationTypeScreen'
+                name="AddLocationTypeScreen"
                 component={AddLocationTypeScreen}
                 options={{
-                  headerTitle: 'Add Location Type',
+                  headerTitle: "Add Location Type",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1642,10 +1677,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddWorkFloorScreen'
+                name="AddWorkFloorScreen"
                 component={AddWorkFloorScreen}
                 options={{
-                  headerTitle: 'Add Work Floor',
+                  headerTitle: "Add Work Floor",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1653,10 +1688,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddWorkLocationScreen'
+                name="AddWorkLocationScreen"
                 component={AddWorkLocationScreen}
                 options={{
-                  headerTitle: 'Add Work Location',
+                  headerTitle: "Add Work Location",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1664,10 +1699,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDesignTypeScreen'
+                name="AddDesignTypeScreen"
                 component={AddDesignTypeScreen}
                 options={{
-                  headerTitle: 'Add Design Type',
+                  headerTitle: "Add Design Type",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1675,10 +1710,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddPostNewDesignScreen'
+                name="AddPostNewDesignScreen"
                 component={AddPostNewDesignScreen}
                 options={{
-                  headerTitle: 'Add Post New Design',
+                  headerTitle: "Add Post New Design",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1686,10 +1721,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDealerBrandMasterScreen'
+                name="AddDealerBrandMasterScreen"
                 component={AddDealerBrandMasterScreen}
                 options={{
-                  headerTitle: 'Add Brand',
+                  headerTitle: "Add Brand",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1697,10 +1732,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDealerBrandSetupScreen'
+                name="AddDealerBrandSetupScreen"
                 component={AddDealerBrandSetupScreen}
                 options={{
-                  headerTitle: 'Add Brand Setup',
+                  headerTitle: "Add Brand Setup",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1708,10 +1743,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDealerBuyerCategoryScreen'
+                name="AddDealerBuyerCategoryScreen"
                 component={AddDealerBuyerCategoryScreen}
                 options={{
-                  headerTitle: 'Add Buyer Category',
+                  headerTitle: "Add Buyer Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1719,10 +1754,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddDealerProductScreen'
+                name="AddDealerProductScreen"
                 component={AddDealerProductScreen}
                 options={{
-                  headerTitle: 'Add Product',
+                  headerTitle: "Add Product",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1730,10 +1765,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddMaterialSetupScreen'
+                name="AddMaterialSetupScreen"
                 component={AddMaterialSetupScreen}
                 options={{
-                  headerTitle: 'Add Material Setup',
+                  headerTitle: "Add Material Setup",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1741,10 +1776,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddMyServicesScreen'
+                name="AddMyServicesScreen"
                 component={AddMyServicesScreen}
                 options={{
-                  headerTitle: 'Add My Services',
+                  headerTitle: "Add My Services",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1752,10 +1787,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddCommonDepartmentScreen'
+                name="AddCommonDepartmentScreen"
                 component={AddCommonDepartmentScreen}
                 options={{
-                  headerTitle: 'Add Department',
+                  headerTitle: "Add Department",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1763,10 +1798,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddCommonDesignationScreen'
+                name="AddCommonDesignationScreen"
                 component={AddCommonDesignationScreen}
                 options={{
-                  headerTitle: 'Add Designation',
+                  headerTitle: "Add Designation",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1774,10 +1809,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ImageGalleryWorkLocationScreen'
+                name="ImageGalleryWorkLocationScreen"
                 component={ImageGalleryWorkLocationScreen}
                 options={{
-                  headerTitle: 'Image Gallery',
+                  headerTitle: "Image Gallery",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1785,10 +1820,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EstimationPreviewScreen'
+                name="EstimationPreviewScreen"
                 component={EstimationPreviewScreen}
                 options={{
-                  headerTitle: 'Design Estimation',
+                  headerTitle: "Design Estimation",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1796,10 +1831,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='GetEstimationScreen'
+                name="GetEstimationScreen"
                 component={GetEstimationScreen}
                 options={{
-                  headerTitle: 'Design Estimation',
+                  headerTitle: "Design Estimation",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1807,10 +1842,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EmployeeEditScreen'
+                name="EmployeeEditScreen"
                 component={EmployeeEditScreen}
                 options={{
-                  headerTitle: 'Employee Basic Edit',
+                  headerTitle: "Employee Basic Edit",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1818,10 +1853,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ClientEditScreen'
+                name="ClientEditScreen"
                 component={ClientEditScreen}
                 options={{
-                  headerTitle: 'Client Basic Edit',
+                  headerTitle: "Client Basic Edit",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1829,15 +1864,15 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='PocketScreenOne'
+                name="PocketScreenOne"
                 component={PocketDiaryScreenOne}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name='SearchNAdd'
+                name="SearchNAdd"
                 component={SearchNAdd}
                 options={{
-                  headerTitle: 'Search & Add Employee',
+                  headerTitle: "Search & Add Employee",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1845,10 +1880,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='UserProfile'
+                name="UserProfile"
                 component={UserProfile}
                 options={{
-                  headerTitle: 'Basic Details',
+                  headerTitle: "Basic Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1856,127 +1891,127 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='RateCardSetup'
+                name="RateCardSetup"
                 component={RateCardSetUp}
                 options={{ headerShown: false }}
               />
-              <Stack.Screen name='AddRateCard' component={AddRateCard} />
+              <Stack.Screen name="AddRateCard" component={AddRateCard} />
               <Stack.Screen
-                name='ArchitectRateCardSetup'
+                name="ArchitectRateCardSetup"
                 component={ArchitectRateCardSetup}
               />
               <Stack.Screen
-                name='MaterialCalculatorScreen'
+                name="MaterialCalculatorScreen"
                 component={MaterialCalculatorScreen}
                 options={{
-                  headerTitle: 'Material Calculator',
+                  headerTitle: "Material Calculator",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-              <Stack.Screen name='Demo' component={Demo} />
+              <Stack.Screen name="Demo" component={Demo} />
               <Stack.Screen
-                name='SearchClientScreen'
+                name="SearchClientScreen"
                 component={SearchClientScreen}
                 options={{
-                  headerTitle: 'Search Client',
+                  headerTitle: "Search Client",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddClientScreen'
+                name="AddClientScreen"
                 component={AddClientScreen}
                 options={{
-                  headerTitle: 'Add Client',
+                  headerTitle: "Add Client",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='SearchEmployee'
+                name="SearchEmployee"
                 component={SearchEmployee}
                 options={{
-                  headerTitle: 'Search Employee',
+                  headerTitle: "Search Employee",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddEmployee'
+                name="AddEmployee"
                 component={AddEmployee}
                 options={{
-                  headerTitle: 'Add Employee',
+                  headerTitle: "Add Employee",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='SendRateCard'
+                name="SendRateCard"
                 component={SendRateCard}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name='BranchEditScreen'
+                name="BranchEditScreen"
                 component={BranchEditScreen}
                 options={{
-                  headerTitle: 'Add Branch',
+                  headerTitle: "Add Branch",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddSendRateCard'
+                name="AddSendRateCard"
                 component={AddSendRateCard}
                 options={{
-                  headerTitle: 'Add Send Rate card ',
+                  headerTitle: "Add Send Rate card ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='BudgetSetup'
+                name="BudgetSetup"
                 component={BudgetSetup}
                 options={{
-                  headerTitle: 'Budget Setup ',
+                  headerTitle: "Budget Setup ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddBudgetSetup'
+                name="AddBudgetSetup"
                 component={AddBudgetSetup}
                 options={{
-                  headerTitle: ' Add Budget Setup ',
+                  headerTitle: " Add Budget Setup ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddExpenses'
+                name="AddExpenses"
                 component={AddExpenses}
                 options={{
-                  headerTitle: ' Add Expenses ',
+                  headerTitle: " Add Expenses ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddSource'
+                name="AddSource"
                 component={AddSource}
                 options={{
-                  headerTitle: ' Add Source ',
+                  headerTitle: " Add Source ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
@@ -1985,60 +2020,60 @@ export default function App() {
 
               {/* <Stack.Screen name="Inbox" component={Inbox} options={{ headerTitle: "Inbox ", headerStyle: [Styles.primaryBgColor, Styles.height64], headerTitleStyle: { color: theme.colors.textLight }, headerTintColor: theme.colors.textLight }} /> */}
               <Stack.Screen
-                name='BrandConversionValue'
+                name="BrandConversionValue"
                 component={BrandConversionValue}
                 options={{
-                  headerTitle: 'Brand Conversion Value ',
+                  headerTitle: "Brand Conversion Value ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='OpeningStockList'
+                name="OpeningStockList"
                 component={OpeningStockList}
                 options={{
-                  headerTitle: 'Opening Stock List ',
+                  headerTitle: "Opening Stock List ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddStockList'
+                name="AddStockList"
                 component={AddStockList}
                 options={{
-                  headerTitle: 'Add Stock List ',
+                  headerTitle: "Add Stock List ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='EditStockList'
+                name="EditStockList"
                 component={EditStockList}
                 options={{
-                  headerTitle: 'Edit Stock List ',
+                  headerTitle: "Edit Stock List ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='OpeningStockScrap'
+                name="OpeningStockScrap"
                 component={openingStockScrap}
                 options={{
-                  headerTitle: 'Opening Stock Scrap ',
+                  headerTitle: "Opening Stock Scrap ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddOpeningStockScrap'
+                name="AddOpeningStockScrap"
                 component={AddOpeningStockScrap}
                 options={{
-                  headerTitle: 'Add Opening Stock Scrap',
+                  headerTitle: "Add Opening Stock Scrap",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2046,10 +2081,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EditStockScrap'
+                name="EditStockScrap"
                 component={EditStockScrap}
                 options={{
-                  headerTitle: 'Edit  Stock Scrap',
+                  headerTitle: "Edit  Stock Scrap",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2057,26 +2092,47 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ApiMaster'
+                name="ApiMaster"
                 component={ApiMaster}
                 options={{
-                  headerTitle: 'Api Master',
+                  headerTitle: "Api Master",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='ProductforProduction'
+                name="ProductforProduction"
                 component={ProductforProduction}
                 options={{
-                  headerTitle: 'Product For Production ',
+                  headerTitle: "Product For Production ",
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Drawer.Screen
+                name="JobOrderForm"
+                component={JobOrderForm}
+                options={{
+                  headerTitle: "Job Order Form",
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Drawer.Screen
+                name="ProductionAchieved"
+                component={ProductionAchieved}
+                options={{
+                  headerTitle: "Production Achieved",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
+<<<<<<< HEAD
                 name='VendorOrderForm'
                 component={VendorOrderFormList}
                 options={{
@@ -2085,9 +2141,12 @@ export default function App() {
               />
               <Stack.Screen
                 name='AddProduction'
+=======
+                name="AddProduction"
+>>>>>>> bf8edf0f238b127624d71675eab95078a9949628
                 component={AddProduction}
                 options={{
-                  headerTitle: 'Add Production For Production',
+                  headerTitle: "Add Production For Production",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2095,10 +2154,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EditProductForProduction'
+                name="EditProductForProduction"
                 component={EditProductForProduction}
                 options={{
-                  headerTitle: 'Edit Production For Production',
+                  headerTitle: "Edit Production For Production",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2107,10 +2166,10 @@ export default function App() {
               />
 
               <Stack.Screen
-                name='EditProductionStatus'
+                name="EditProductionStatus"
                 component={EditProductionStatus}
                 options={{
-                  headerTitle: 'Edit  Production Status',
+                  headerTitle: "Edit  Production Status",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2118,20 +2177,20 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ProductionOrderList'
+                name="ProductionOrderList"
                 component={ProductionOrderList}
                 options={{
-                  headerTitle: 'Production Order List ',
+                  headerTitle: "Production Order List ",
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
                   headerTintColor: theme.colors.textLight,
                 }}
               />
               <Stack.Screen
-                name='AddProductOrderList'
+                name="AddProductOrderList"
                 component={AddProductOrderList}
                 options={{
-                  headerTitle: 'Add Product Order List',
+                  headerTitle: "Add Product Order List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2139,10 +2198,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EditProductOrderList'
+                name="EditProductOrderList"
                 component={EditProductOrderList}
                 options={{
-                  headerTitle: 'Edit Product Order List ',
+                  headerTitle: "Edit Product Order List ",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2150,10 +2209,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddProductionStatus'
+                name="AddProductionStatus"
                 component={AddProductionStatus}
                 options={{
-                  headerTitle: 'Add Production Status',
+                  headerTitle: "Add Production Status",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2161,10 +2220,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='CategoryNameScreen'
+                name="CategoryNameScreen"
                 component={CategoryNameScreen}
                 options={{
-                  headerTitle: 'Category',
+                  headerTitle: "Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2172,10 +2231,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddCategoryNameScreen'
+                name="AddCategoryNameScreen"
                 component={AddCategoryNameScreen}
                 options={{
-                  headerTitle: 'Add Category',
+                  headerTitle: "Add Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2183,10 +2242,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddGCategoryNameScreen'
+                name="AddGCategoryNameScreen"
                 component={AddGCategoryNameScreen}
                 options={{
-                  headerTitle: 'Add Category',
+                  headerTitle: "Add Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2194,10 +2253,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddGSubCategoryNameScreen'
+                name="AddGSubCategoryNameScreen"
                 component={AddGSubCategoryNameScreen}
                 options={{
-                  headerTitle: 'Add Sub Category',
+                  headerTitle: "Add Sub Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2205,10 +2264,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='SubCategoryNameScreen'
+                name="SubCategoryNameScreen"
                 component={SubCategoryNameScreen}
                 options={{
-                  headerTitle: 'Sub Category',
+                  headerTitle: "Sub Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2216,10 +2275,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddSubCategoryNameScreen'
+                name="AddSubCategoryNameScreen"
                 component={AddSubCategoryNameScreen}
                 options={{
-                  headerTitle: 'Add Sub Category',
+                  headerTitle: "Add Sub Category",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2227,10 +2286,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddGMyContactsScreen'
+                name="AddGMyContactsScreen"
                 component={AddGMyContactsScreen}
                 options={{
-                  headerTitle: 'Add Contacts',
+                  headerTitle: "Add Contacts",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2238,10 +2297,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='GMyBankScreen'
+                name="GMyBankScreen"
                 component={GMyBankScreen}
                 options={{
-                  headerTitle: ' My Bank',
+                  headerTitle: " My Bank",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2249,10 +2308,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='PhoneContacts'
+                name="PhoneContacts"
                 component={PhoneContacts}
                 options={{
-                  headerTitle: 'Phone Contacts',
+                  headerTitle: "Phone Contacts",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2260,10 +2319,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='PhoneContactDirectUpload'
+                name="PhoneContactDirectUpload"
                 component={PhoneContactDirectUpload}
                 options={{
-                  headerTitle: 'Phone Contacts',
+                  headerTitle: "Phone Contacts",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2271,10 +2330,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddGMyBankScreen'
+                name="AddGMyBankScreen"
                 component={AddGMyBankScreen}
                 options={{
-                  headerTitle: ' Add Bank Account',
+                  headerTitle: " Add Bank Account",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2282,10 +2341,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ABrandConversationValue'
+                name="ABrandConversationValue"
                 component={ABrandConversationValue}
                 options={{
-                  headerTitle: 'Brand Conversation Value',
+                  headerTitle: "Brand Conversation Value",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2293,10 +2352,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddBrandConversationValue'
+                name="AddBrandConversationValue"
                 component={AddBrandConversationValue}
                 options={{
-                  headerTitle: 'Add Brand Conversation Value',
+                  headerTitle: "Add Brand Conversation Value",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2304,10 +2363,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='WidthOfGpCoil'
+                name="WidthOfGpCoil"
                 component={WidthOfGpCoil}
                 options={{
-                  headerTitle: 'Width Of Gp Coil',
+                  headerTitle: "Width Of Gp Coil",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2315,10 +2374,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddWidthOfGpCoil'
+                name="AddWidthOfGpCoil"
                 component={AddWidthOfGpCoil}
                 options={{
-                  headerTitle: 'Add Width Of Gp Coil',
+                  headerTitle: "Add Width Of Gp Coil",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2326,10 +2385,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='MassOfZincCoating'
+                name="MassOfZincCoating"
                 component={MassOfZincCoating}
                 options={{
-                  headerTitle: 'Mass Of Zinc Coating',
+                  headerTitle: "Mass Of Zinc Coating",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2337,10 +2396,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddMassOfZincCoating'
+                name="AddMassOfZincCoating"
                 component={AddMassOfZincCoating}
                 options={{
-                  headerTitle: 'Add Mass Of Zinc Coating',
+                  headerTitle: "Add Mass Of Zinc Coating",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2348,10 +2407,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddBankDetails'
+                name="AddBankDetails"
                 component={AddBankDetails}
                 options={{
-                  headerTitle: 'Add Bank Details',
+                  headerTitle: "Add Bank Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2359,10 +2418,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='PayableList'
+                name="PayableList"
                 component={PayableList}
                 options={{
-                  headerTitle: 'Payable List',
+                  headerTitle: "Payable List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2370,10 +2429,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='ReceivableList'
+                name="ReceivableList"
                 component={ReceivableList}
                 options={{
-                  headerTitle: 'Receivable List',
+                  headerTitle: "Receivable List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2381,10 +2440,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='BankListScreen'
+                name="BankListScreen"
                 component={BankListScreen}
                 options={{
-                  headerTitle: 'Bank List Screen',
+                  headerTitle: "Bank List Screen",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2392,10 +2451,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='PDCDataUpdate'
+                name="PDCDataUpdate"
                 component={PDCDataUpdate}
                 options={{
-                  headerTitle: 'Update PDC Details',
+                  headerTitle: "Update PDC Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2403,10 +2462,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='AddMyPersonalBank'
+                name="AddMyPersonalBank"
                 component={AddMyPersonalBank}
                 options={{
-                  headerTitle: 'Add My Personal Bank',
+                  headerTitle: "Add My Personal Bank",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2414,10 +2473,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='BranchWiseTransactionScreen'
+                name="BranchWiseTransactionScreen"
                 component={BranchWiseTransactionScreen}
                 options={{
-                  headerTitle: 'BRANCH WISE CASH',
+                  headerTitle: "BRANCH WISE CASH",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2425,10 +2484,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='EstimationContractorStatusScreen'
+                name="EstimationContractorStatusScreen"
                 component={EstimationContractorStatusScreen}
                 options={{
-                  headerTitle: 'Estimation Contractor List',
+                  headerTitle: "Estimation Contractor List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2436,10 +2495,10 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                name='BranchWiseCashDetailScreen'
+                name="BranchWiseCashDetailScreen"
                 component={BranchWiseCashDetailScreen}
                 options={{
-                  headerTitle: 'Branch Cash Details',
+                  headerTitle: "Branch Cash Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

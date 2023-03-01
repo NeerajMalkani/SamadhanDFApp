@@ -110,8 +110,16 @@ class Provider {
     UnitCategoryFromRefNo: 'unitcategoryrefnocheck/',
     UnitNameCreate: 'unitnamecreate/',
     UnitNameUpdate: 'unitnameupdate/',
-
+    get_brandconversionvalue_list: 'get_brandconversionvalue_list/',
+    get_brandconversionvalue_update: 'get_brandconversionvalue_update/',
+    mfosprefnocheck: 'mfosprefnocheck/',
+    get_servicename_openingstockform: 'get_servicename_openingstockform/',
     ActivityRoleCategory: 'getactivityrolecategoryform/',
+    get_categoryname_openingstockform: 'get_categoryname_openingstockform/',
+    get_brandname_openingstockform: 'get_brandname_openingstockform/',
+    get_productname_openingstockform: 'get_productname_openingstockform/',
+    openingstockupdate: 'openingstockupdate/',
+    openingstockcreate: 'openingstockcreate/',
     CategoryFromRefNo: 'categoryrefnocheck/',
     CategoryNameCreate: 'categorynamecreate/',
     CategoryNameUpdate: 'categorynameupdate/',
@@ -128,9 +136,22 @@ class Provider {
     brandconversionupdate: 'brandconversionupdate/',
     gpcoilrefnocheck: 'gpcoilrefnocheck/',
     widthofgpcoilupdate: 'widthofgpcoilupdate/',
+    productforproductionupdate: 'productforproductionupdate/',
     widthofgpcoilcreate: 'widthofgpcoilcreate/',
     brandconversioncreate: 'brandconversioncreate/',
+    productforproductioncreate: 'productforproductioncreate/',
+    get_searchresult_productionachieved_report:
+      'get_searchresult_productionachieved_report/',
+    shiftproductionrefnocheck: 'shiftproductionrefnocheck/',
+    get_servicename_II_productforproductionform:
+      'get_servicename_II_productforproductionform/',
+    get_categoryname_II_productforproductionform:
+      'get_categoryname_II_productforproductionform/',
     gsmrefnocheck: 'gsmrefnocheck/',
+    get_brandname_productforproductionform:
+      'get_brandname_productforproductionform/',
+    get_productname_productforproductionform:
+      'get_productname_productforproductionform/',
     gsmnamecreate: 'gsmnamecreate/',
     gsmnameupdate: 'gsmnameupdate/',
     ServiceProductFilter: 'serviceproductfilter/',
@@ -161,6 +182,9 @@ class Provider {
     GetStateEWayBillForm: 'getstateewaybillform/',
     EWayBillCreate: 'ewaybillcreate/',
     EWayBillUpdate: 'ewaybillupdate/',
+    shiftproductionrefnocheck: 'shiftproductionrefnocheck_op/',
+    get_joborderno_productionachieved_report:
+      'get_joborderno_productionachieved_report/',
 
     /******************************Admin Service Catalogue************************************/
     WorkFloorRefNoCheck: 'workfloorrefnocheck/',
@@ -178,9 +202,12 @@ class Provider {
     DesignTypeRefNoCheck: 'designtyperefnocheck/',
     DesignTypeCreate: 'designtypecreate/',
     DesignTypeUpdate: 'designtypeupdate/',
-
+    get_categoryname_productforproductionform:
+      'get_categoryname_productforproductionform/',
     ActivityRolesMaterialSetup: 'getgroupnamematerialsetupform/',
     ServiceNameMaterialSetup: 'getservicenamematerialsetupform/',
+    get_productname_II_productforproductionform:
+      'get_productname_II_productforproductionform/',
     CategoryNameMaterialSetup: 'getcategorynamematerialsetupform/',
     ProductNameMaterialSetup: 'getproductnamematerialsetupform/',
     ProductDesignTypeMaterialSetup: 'getproductdesigntypematerialsetupform/',
@@ -190,10 +217,14 @@ class Provider {
     BrandNamelistPopupMaterialSetup: 'getbrandnamelist_materialsetupform/',
     ProductRateBrandRefNoMaterialSetup:
       'getproductrate_by_brandrefno_materialsetupform/',
+    get_servicename_productforproductionform:
+      'get_servicename_productforproductionform/',
     MaterialsSetupRefNoCheck: 'materialssetuprefnocheck/',
     MaterialsSetupCreate: 'materialsetupcreate/',
     MaterialsSetupUpdate: 'materialsetupupdate/',
     MaterialsSetupList: 'materialssetuplist/',
+    shiftproductionrefnocheck_op: 'shiftproductionrefnocheck_op/',
+    mfpprefnocheck: 'mfpprefnocheck/',
 
     DesignGalleryRefNoCheck: 'designgalleryrefnocheck/',
     NewDesignCreate: 'newdesigncreate/',
@@ -274,7 +305,10 @@ class Provider {
       'getproductrate_by_brandrefno_materialcalculatorform/',
     getbrandnamelist_materialcalculatorform:
       'getbrandnamelist_materialcalculatorform/',
-
+    get_vendorcompanyname_manufacturer_poform:
+      'get_vendorcompanyname_manufacturer_poform/',
+    get_suppliername_manufacturer_poform:
+      'get_suppliername_manufacturer_poform/',
     getservicenamedealermyserviceform: 'getservicenamedealermyserviceform/',
     dealermyservicecreate: 'dealermyservicecreate/',
     dealermyserviceupdate: 'dealermyserviceupdate/',
@@ -286,7 +320,7 @@ class Provider {
     dealerproductsetupupdate: 'dealerproductsetupupdate/',
     getbrandnamedealerproductform: 'getbrandnamedealerproductform/',
     getproductnamedealerproductform: 'getproductnamedealerproductform/',
-
+    mfporefnocheck: 'mfporefnocheck/',
     myemployeelist: 'myemployeelist/',
     aadharnoautocomplete: 'aadharnoautocomplete/',
     mobilenoautocomplete: 'mobilenoautocomplete/',
@@ -296,6 +330,8 @@ class Provider {
     sendotptoemployee: 'sendotptoemployee/',
     employeeotpverify: 'employeeotpverify/',
     getemployeebasicdata: 'getemployeebasicdata/',
+    openingstockscrapupdate: 'openingstockscrapupdate/',
+    openingstockscrapcreate: 'openingstockscrapcreate/',
 
     employeebasicdataupdate: 'employeebasicdataupdate/',
     getbranchnameemployeeworkform: 'getbranchnameemployeeworkform/',
@@ -430,13 +466,29 @@ class Provider {
     sc_estimationsendenquiry: 'sc_estimationsendenquiry/',
     myestimationlist: 'myestimationlist/',
     myestimationcontractordetails: 'myestimationcontractordetails/',
-
+    get_servicename_manufacturer_poform: 'get_servicename_manufacturer_poform/',
+    get_categoryname_manufacturer_poform:
+      'get_categoryname_manufacturer_poform/',
+    get_widthofgpcoil_manufacturer_poform:
+      'get_widthofgpcoil_manufacturer_poform/',
+    get_brandname_manufacturer_poform: 'get_brandname_manufacturer_poform/',
+    get_gsm_manufacturer_poform: 'get_gsm_manufacturer_poform/',
+    get_numberofgpcoil_manufacturer_poform:
+      'get_numberofgpcoil_manufacturer_poform/',
     getpropertytypename_designyourdream_enquiryform:
       'getpropertytypename_designyourdream_enquiryform/',
     getlength: 'getlength/',
     getlengthinches: 'getlengthinches/',
     getwidthheightfoot: 'getwidthheightfoot/',
     getwidthheightinches: 'getwidthheightinches/',
+    mfporefnocheck: 'mfporefnocheck/',
+    manufacturerpoupdate: 'manufacturerpoupdate/',
+    manufacturerpocreate: 'manufacturerpocreate/',
+    get_productname_manufacturer_poform: 'get_productname_manufacturer_poform/',
+    get_coil_avg_thickness_calculation_manufacturer_poform:
+      'get_coil_avg_thickness_calculation_manufacturer_poform/',
+    get_searchresult_joborderform_report:
+      'get_searchresult_joborderform_report/',
     getservicename_designyourdream_enquiryform:
       'getservicename_designyourdream_enquiryform/',
     getpropertycategoryname_designyourdream_enquiryform:
@@ -471,6 +523,12 @@ class Provider {
       'get_purchaseorderno_otherdata_vendororderform/',
     get_coildetails_vendororderform: 'get_coildetails_vendororderform/',
     get_slittingdetails_vendororderform: 'get_slittingdetails_vendororderform/',
+
+    get_availablebalance_cashinbank_sourceform:
+      'get_availablebalance_cashinbank_sourceform/',
+    get_availablebalance_cashinhand_expensesform:
+      'get_availablebalance_cashinhand_expensesform/',
+    summaryofmaterial_gridlist: 'summaryofmaterial_gridlist/',
   };
 
   createDFPocketDairy(resource, params) {
@@ -585,6 +643,34 @@ class Provider {
       };
     } catch (e) {
       console.log(e);
+      unload();
+    }
+  }
+
+  async getpurchaseorderlist(params, unload, error) {
+    console.log(params);
+    try {
+      const orderdata = await axios.post(
+        `${BASE_URL_Manufacturer}/mfporefnocheck/`,
+        params,
+      );
+      const vendordata = await axios.post(
+        `${BASE_URL_Manufacturer}/get_vendorcompanyname_manufacturer_poform/`,
+        params,
+      );
+      const supplierdata = await axios.post(
+        `${BASE_URL_Manufacturer}/get_suppliername_manufacturer_poform/`,
+        params,
+      );
+      unload();
+      return {
+        order: orderdata.data.data,
+        vendor: vendordata.data.data,
+        supplier: supplierdata.data.data,
+      };
+    } catch (e) {
+      console.log(e);
+      error();
       unload();
     }
   }

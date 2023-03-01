@@ -1,492 +1,835 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+import { useState, useEffect } from "react";
+import { useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, Text, TextInput } from "react-native-paper";
-import Provider from "../../../api/Provider";
-import Dropdown from "../../../components/Dropdown";
 import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { APIConverter } from "../../../utils/apiconverter";
+import Dropdown from "../../../components/Dropdown";
+import Provider from "../../../api/Provider";
+import {
+  Button,
+  Card,
+  HelperText,
+  Snackbar,
+  TextInput,
+  Checkbox,
+  Text,
+} from "react-native-paper";
 import { communication } from "../../../utils/communication";
+import { theme } from "../../../theme/apptheme";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
-const AddProductScreen = ({ route, navigation }) => {
-    //#region Variables
-    const [activityFullData, setActivityFullData] = React.useState([]);
-    const [activityData, setActivityData] = React.useState([]);
-    const [acivityName, setActivityName] = React.useState(route.params.type === "edit" ? route.params.data.activityRoleName : "");
-    const [errorAN, setANError] = React.useState(false);
-    const activityDDRef = useRef({});
-    const [servicesFullData, setServicesFullData] = React.useState([]);
-    const [servicesData, setServicesData] = React.useState([]);
-    const [serviceName, setServiceName] = React.useState(route.params.type === "edit" ? route.params.data.serviceName : "");
-    const [errorSN, setSNError] = React.useState(false);
-    const servicesDDRef = useRef({});
+let Sess_UserRefno = 0;
+let Sess_company_refno = 0;
+let Sess_branch_refno = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
+let Sess_CompanyAdmin_group_refno = 0;
 
-    const [categoriesFullData, setCategoriesFullData] = React.useState([]);
-    const [categoriesData, setCategoriesData] = React.useState([]);
-    const [categoriesName, setCategoriesName] = React.useState(route.params.type === "edit" ? route.params.data.categoryName : "");
-    const [errorCN, setCNError] = React.useState(false);
-    const categoriesDDRef = useRef({});
+function AddProduction({ route, navigation }) {
+  const [dob, setDob] = useState(new Date());
 
-    const [unitFullData, setUnitFullData] = React.useState([]);
-    const [unitData, setUnitsData] = React.useState([]);
-    const [unitName, setUnitName] = React.useState("");
-    const [errorUN, setUNError] = React.useState(false);
-    const unitDDRef = useRef({});
+  const [serviceFullData, setServiceFullData] = React.useState([]);
+  const [categoryFullData, setCategoryFullData] = React.useState([]);
+  const [productFullData, setProductFullData] = React.useState([]);
+  const [brandFullData, setBrandFullData] = React.useState([]);
 
-    const [hsnError, setHSNError] = React.useState(false);
-    const [hsn, setHSN] = React.useState("");
+  const [thicknessFullData, setThicknessFullData] = React.useState({});
 
-    const [gstError, setGSTError] = React.useState(false);
-    const [gst, setGST] = React.useState("");
+  const [data, setData] = useState({
+    service_name: "",
+    category_name: "",
+    brand_name: "",
+    product_name: "",
+    length_mtr_value:
+      route.params.type === "edit" ? route.params.data?.length_mtr_value : "",
+    thick_service_name: "",
+    thick_category_name: "",
+    thick_product_name: "",
+    width_mm_value:
+      route.params.type === "edit" ? route.params?.data?.width_mm_value : "",
+    checked:
+      route.params.type === "edit"
+        ? route.params?.data.view_status == "1"
+          ? true
+          : false
+        : false,
+  });
+  const [error, setError] = useState({
+    service_name: false,
+    category_name: false,
+    brand_name: false,
+    product_name: false,
+    length_mtr_value: false,
+    thick_service_name: false,
+    thick_category_name: false,
+    thick_product_name: false,
+    width_mm_value: false,
+  });
 
-    const [error, setError] = React.useState(false);
-    const [name, setName] = React.useState(route.params.type === "edit" ? route.params.data.productName : "");
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
-    const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-    const [snackbarText, setSnackbarText] = React.useState("");
-
-    const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-    //#endregion
-
-    //#region Functions
-
-    const FetchActvityRoles = () => {
-        Provider.createDFAdmin(Provider.API_URLS.ActivityRoleForProduct)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        if (route.params.type === "edit") {
-                            FetchServicesFromActivity(route.params.data.activityRoleName, response.data.data);
-                        }
-                        setActivityFullData(response.data.data);
-                        const activities = response.data.data.map((data) => data.activityRoleName);
-                        setActivityData(activities);
-                    }
-                }
-            })
-            .catch((e) => { });
+  const update = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        service_refno: serviceFullData.find(
+          (item) => item.service_name === data.service_name
+        ).service_refno,
+        category_refno: categoryFullData.find(
+          (item) => item.category_name === data.category_name
+        ).category_refno,
+        brand_refno: brandFullData.find(
+          (item) => item.brand_name === data.brand_name
+        ).brand_refno,
+        product_refno: productFullData.find(
+          (item) => item.product_name === data.product_name
+        ).product_refno,
+        length_mtr_value: data.length_mtr_value,
+        thick_service_refno: thicknessFullData.service.find(
+          (item) => item.thick_service_name === data.thick_service_name
+        ).thick_service_refno,
+        thick_category_refno: thicknessFullData.category.find(
+          (item) => item.thick_category_name === data.thick_category_name
+        ).thick_category_refno,
+        thick_product_refno: thicknessFullData.product.find(
+          (item) => item.product_name === data.thick_product_name
+        ).product_refno,
+        width_mm_value: data.width_mm_value,
+        view_status: data.checked ? "1" : "0",
+      },
     };
+    console.log(params);
 
-    const FetchServicesFromActivity = (selectedItem, activityDataParam) => {
-        const actID = activityDataParam
-            ? activityDataParam.find((el) => {
-                return el.activityRoleName === selectedItem;
-            }).id
-            : activityFullData.find((el) => {
-                return el.activityRoleName === selectedItem;
-            }).id;
-        let params = {
-            data: {
-                Sess_UserRefno: "2",
-                group_refno: actID,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.ServiceForProduct, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        if (route.params.type === "edit") {
-                            FetchCategoriesFromServices(route.params.data.serviceName, response.data.data, actID);
-                        }
-                        setServicesFullData(response.data.data);
-                        const services = response.data.data.map((data) => data.serviceName);
-                        setServicesData(services);
-                    }
-                }
-            })
-            .catch((e) => { });
-    };
-
-    const FetchCategoriesFromServices = (selectedItem, servicesDataParam, activityID) => {
-        let params = {
-            data: {
-                Sess_UserRefno: "2",
-                group_refno: activityID
-                    ? activityID
-                    : activityFullData.find((el) => {
-                        return el.activityRoleName === acivityName;
-                    }).id,
-                service_refno: servicesDataParam
-                    ? servicesDataParam.find((el) => {
-                        return el.serviceName === selectedItem;
-                    }).id
-                    : servicesFullData.find((el) => {
-                        return el.serviceName === selectedItem;
-                    }).id,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.CategoryForProduct, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        setCategoriesFullData(response.data.data);
-                        if (route.params.type === "edit") {
-                            FetchCategoryDataFromCategory(route.params.data.categoryName, response.data.data);
-                            FetchUnitsFromCategory(route.params.data.categoryName, response.data.data);
-                        }
-                        const categories = response.data.data.map((data) => data.categoryName);
-                        setCategoriesData(categories);
-                    }
-                }
-            })
-            .catch((e) => { });
-    };
-
-    const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
-        let params = {
-            data: {
-                Sess_UserRefno: "2",
-                category_refno: categoriesDataParam
-                    ? categoriesDataParam.find((el) => {
-                        return el.categoryName === selectedItem;
-                    }).id
-                    : categoriesFullData.find((el) => {
-                        return el.categoryName === selectedItem;
-                    }).id,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.CategoryDataForProduct, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        setHSN(response.data.data[0].hsnsacCode);
-                        setGST(response.data.data[0].gstRate);
-                    }
-                }
-            })
-            .catch((e) => { });
-    };
-
-    const FetchUnitsFromCategory = (selectedItem, categoriesDataParam) => {
-        let params = {
-            data: {
-                Sess_UserRefno: "2",
-                category_refno: categoriesDataParam
-                    ? categoriesDataParam.find((el) => {
-                        return el.categoryName === selectedItem;
-                    }).id
-                    : categoriesFullData.find((el) => {
-                        return el.categoryName === selectedItem;
-                    }).id,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.UnitNameForProduct, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        setUnitFullData(response.data.data);
-                        if (route.params.type === "edit") {
-                            FetchUnitsFromProduct();
-                        }
-                        const units = response.data.data.map((data) => data.displayUnit);
-                        setUnitsData(units);
-                    }
-                }
-            })
-            .catch((e) => { });
-    };
-
-    const FetchUnitsFromProduct = () => {
-        let params = {
-            data: {
-                Sess_UserRefno: "2",
-                product_refno: route.params.data.id,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.UnitNameSelectedForProduct, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    if (response.data.data) {
-                        response.data.data = APIConverter(response.data.data);
-                        let str = "";
-                        response.data.data.map((k, i) => {
-                            str += str === "" ? k.displayUnit : " / " + k.displayUnit;
-                        });
-                        setUnitName(str);
-                    }
-                }
-            })
-            .catch((e) => { });
-    };
-
-    useEffect(() => {
-        FetchActvityRoles();
-    }, []);
-
-    const onActivityNameSelected = (selectedItem) => {
-        setActivityName(selectedItem);
-        servicesDDRef.current.reset();
-        setServiceName("");
-        setCategoriesFullData([]);
-        setCategoriesData([]);
-        setUnitsData([]);
-        setANError(false);
-        setHSN("");
-        setGST("");
-        setUnitName("");
-        FetchServicesFromActivity(selectedItem);
-    };
-
-    const onServiceNameSelected = (selectedItem) => {
-        setServiceName(selectedItem);
-        categoriesDDRef.current.reset();
-        setCategoriesData([]);
-        setUnitsData([]);
-        setCategoriesName("");
-        setHSN("");
-        setGST("");
-        setUnitName("");
-        setSNError(false);
-        FetchCategoriesFromServices(selectedItem);
-    };
-
-    const onCategoriesNameSelected = (selectedItem) => {
-        setCategoriesName(selectedItem);
-        unitDDRef.current.reset();
-        setCNError(false);
-        setHSNError(false);
-        setGSTError(false);
-        setUnitName("");
-        if (route.params.type !== "edit") {
-            FetchCategoryDataFromCategory(selectedItem, categoriesFullData);
-            FetchUnitsFromCategory(selectedItem, categoriesFullData);
+    Provider.createDFManufacturer(
+      Provider.API_URLS.productforproductioncreate,
+      params
+    )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data && response.data.data.Created == 1) {
+          route.params.fetchData("add");
+          navigation.goBack();
+        } else if (response.data.code === 304) {
+          setSnackbarText(communication.AlreadyExists);
+          setSnackbarVisible(true);
+        } else {
+          setSnackbarText(communication.InsertError);
+          setSnackbarVisible(true);
         }
+      })
+      .catch((e) => {
+        console.log(e);
+        setSnackbarText(communication.NetworkError);
+        setSnackbarVisible(true);
+      })
+      .finally(() => setIsButtonLoading(false));
+  };
+  const ValidateData = () => {
+    let isValid = true;
+    if (data.service_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, service_name: true };
+      });
+      isValid = false;
+    }
+    if (data.category_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, category_name: true };
+      });
+      isValid = false;
+    }
+    if (data.brand_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, brand_name: true };
+      });
+      isValid = false;
+    }
+    if (data.product_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, product_name: true };
+      });
+      isValid = false;
+    }
+    if (data.length_mtr_value.length === 0) {
+      setError((prev) => {
+        return { ...prev, length_mtr_value: true };
+      });
+      isValid = false;
+    }
+    if (data.thick_service_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_service_name: true };
+      });
+      isValid = false;
+    }
+    if (data.thick_category_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_category_name: true };
+      });
+      isValid = false;
+    }
+    if (data.thick_product_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_product_name: true };
+      });
+      isValid = false;
+    }
+    if (data.width_mm_value.length === 0) {
+      setError((prev) => {
+        return { ...prev, width_mm_value: true };
+      });
+      isValid = false;
+    }
+    if (isValid) {
+      setIsButtonLoading(true);
+      update();
+    }
+  };
+
+  const FetchServiceNames = async () => {
+    const params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+      },
     };
 
-    const onUnitNameSelected = (selectedItem) => {
-        setUnitName(selectedItem);
-        setUNError(false);
-    };
-
-    const onHSNChanged = (text) => {
-        setHSN(text);
-        setHSNError(false);
-    };
-
-    const onGSTChanged = (text) => {
-        setGST(text);
-        setGSTError(false);
-    };
-
-    const onNameChanged = (text) => {
-        setName(text);
-        setError(false);
-    };
-
-    const InsertData = () => {
-        const params = {
-            data: {
-                Sess_UserRefno: "2",
-                group_refno: activityFullData.find((el) => {
-                    return el.activityRoleName === acivityName;
-                }).id,
-                service_refno: servicesFullData.find((el) => {
-                    return el.serviceName === serviceName;
-                }).id,
-                category_refno: categoriesFullData.find((el) => {
-                    return el.categoryName && el.categoryName === categoriesName;
-                }).id,
-                unitcategoryrefno_unitrefno: unitFullData.find((el) => {
-                    return el.displayUnit && el.displayUnit === unitName;
-                }).id,
-                product_name: name,
-                view_status: checked ? 1 : 0,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.ProductNameCreate, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    route.params.fetchData("add");
-                    navigation.goBack();
-                } else if (response.data.code === 304) {
-                    setSnackbarText(communication.AlreadyExists);
-                    setSnackbarVisible(true);
-                } else {
-                    setSnackbarText(communication.InsertError);
-                    setSnackbarVisible(true);
-                }
-            })
-            .catch((e) => {
-                console.log(e);
-                setSnackbarText(communication.NetworkError);
-                setSnackbarVisible(true);
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_servicename_productforproductionform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code == "200") {
+          if (response.data.data) {
+            setServiceFullData(() => {
+              return response.data.data;
             });
-    };
-
-    const UpdateData = () => {
-        const params = {
-            data: {
-                Sess_UserRefno: "2",
-                product_refno: route.params.data.id,
-                group_refno: activityFullData.find((el) => {
-                    return el.activityRoleName === acivityName;
-                }).id,
-                service_refno: servicesFullData.find((el) => {
-                    return el.serviceName === serviceName;
-                }).id,
-                category_refno: categoriesFullData.find((el) => {
-                    return el.categoryName && el.categoryName === categoriesName;
-                }).id,
-                unitcategoryrefno_unitrefno: unitFullData.find((el) => {
-                    return el.displayUnit && el.displayUnit === unitName;
-                }).id,
-                product_name: name,
-                view_status: checked ? 1 : 0,
-            },
-        };
-        Provider.createDFAdmin(Provider.API_URLS.ProductNameUpdate, params)
-            .then((response) => {
-                if (response.data && response.data.code === 200) {
-                    route.params.fetchData("update");
-                    navigation.goBack();
-                } else if (response.data.code === 304) {
-                    setSnackbarText(communication.AlreadyExists);
-                    setSnackbarVisible(true);
-                } else {
-                    setSnackbarText(communication.UpdateError);
-                    setSnackbarVisible(true);
-                }
-            })
-            .catch((e) => {
-                console.log(e);
-                setSnackbarText(communication.NetworkError);
-                setSnackbarVisible(true);
+            let filter = response.data.data.map((item) => item.service_name);
+            setData((prev) => {
+              return {
+                ...prev,
+                service_name: filter.includes(route.params.data?.service_name)
+                  ? route.params.data?.service_name
+                  : "",
+              };
             });
-    };
+          }
+        }
+      })
+      .catch((e) => console.log(e));
 
-    const ValidateData = () => {
-        let isValid = true;
-        if (name.length === 0) {
-            setError(true);
-            isValid = false;
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_servicename_II_productforproductionform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code == "200") {
+          if (response.data.data) {
+            setThicknessFullData((prev) => {
+              return {
+                ...prev,
+                service: response.data.data,
+              };
+            });
+            console.log("thick", response.data.data);
+            let filter = response.data.data.find(
+              (item) =>
+                item.thick_service_refno ===
+                route.params?.data?.thick_service_refno
+            );
+            setData((prev) => {
+              return {
+                ...prev,
+                thick_service_name: filter ? filter?.thick_service_name : "",
+              };
+            });
+          }
         }
-        const objActivities = activityFullData.find((el) => {
-            return el.activityRoleName && el.activityRoleName === acivityName;
-        });
-        if (acivityName.length === 0 || !objActivities) {
-            setANError(true);
-            isValid = false;
-        }
-        const objServices = servicesFullData.find((el) => {
-            return el.serviceName && el.serviceName === serviceName;
-        });
-        if (serviceName.length === 0 || !objServices) {
-            setSNError(true);
-            isValid = false;
-        }
-        const objCategories = categoriesFullData.find((el) => {
-            return el.categoryName && el.categoryName === categoriesName;
-        });
-        if (categoriesName.length === 0 || !objCategories) {
-            setCNError(true);
-            isValid = false;
-        }
-        if (hsn.length === 0) {
-            setHSNError(true);
-            isValid = false;
-        }
-        if (gst.length === 0) {
-            setGSTError(true);
-            isValid = false;
-        }
-        const objUnitOfSales = unitFullData.find((el) => {
-            return el.displayUnit && el.displayUnit === unitName;
-        });
-        if (unitName.length === 0 || !objUnitOfSales) {
-            setUNError(true);
-            isValid = false;
-        }
-        if (isValid) {
-            if (route.params.type === "edit") {
-                UpdateData();
-            } else {
-                InsertData();
+      })
+      .catch((e) => console.log(e));
+  };
+
+  useEffect(() => {
+    console.log("data.service_name");
+    if (data.service_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          service_refno: serviceFullData.find(
+            (item) => item.service_name === data.service_name
+          ).service_refno,
+        },
+      };
+      console.log(params);
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_categoryname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("resp2", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setCategoryFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.category_name);
+
+              setData((prev) => {
+                return {
+                  ...prev,
+                  category_name: filter.includes(
+                    route.params.data?.category_name
+                  )
+                    ? route.params.data?.category_name
+                    : "",
+                };
+              });
             }
-        }
-    };
-    
-    //#endregion
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.service_name]);
 
-    return (
-        <View style={[Styles.flex1]}>
-            <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-                <View style={[Styles.padding16]}>
-                    <Dropdown label="Select Service Name" data={activityData} onSelected={onActivityNameSelected} isError={errorAN} selectedItem={acivityName} reference={activityDDRef} />
-                    <HelperText type="error" visible={errorAN}>
-                        {communication.InvalidActivityName}
-                    </HelperText>
-                    <Dropdown label="Select Category Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
-                    <HelperText type="error" visible={errorSN}>
-                        {communication.InvalidServiceName}
-                    </HelperText>
-                    <Dropdown label="Select Brand Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
-                    <HelperText type="error" visible={errorCN}>
-                        {communication.InvalidCategoryName}
-                    </HelperText>
-                    <Dropdown label="Select Product Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
-                    <HelperText type="error" visible={errorCN}>
-                        {communication.InvalidCategoryName}
-                    </HelperText>
-                    <TextInput dense mode="flat" label="Product Length in  mmm" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-                    <HelperText type="error" visible={error}>
-                        {communication.InvalidProductName}
-                    </HelperText>
-                    <View >
-                        <View style={[ Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]}>
-                            <Text style={[Styles.marginBottom24, Styles.marginTop16, Styles.textColorWhite, Styles.marginHorizontal8]}> Product Thickness of Raw Material</Text>
-                        </View>
-                        <View style={[Styles.border2, Styles.borderBottomRadius4,Styles.height250]}>
-                            <View style={[Styles.marginTop24]}>
-                            <Dropdown  label="Select Service"data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} style={[Styles.height120]}/>
-                            <HelperText type="error" visible={errorCN}>
-                                {communication.InvalidCategoryName}
-                            </HelperText>
-                            </View>
-                            <Dropdown label="Select Category" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
-                            <HelperText type="error" visible={errorCN}>
-                                {communication.InvalidCategoryName}
-                            </HelperText>
-                            <Dropdown label="Select Product " data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
-                            <HelperText type="error" visible={errorCN}>
-                                {communication.InvalidCategoryName}
-                            </HelperText>
-                        </View>
-                    </View>
-                    <TextInput dense mode="flat" label="Raw Mterial Width in  mm" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
-                    <HelperText type="error" visible={error}>
-                        {communication.InvalidProductName}
-                    </HelperText>
-                    <View style={{ width: 160 }}>
-                        <Checkbox.Item
-                            label="Display"
-                            color={theme.colors.primary}
-                            position="leading"
-                            labelStyle={{ textAlign: "left", paddingLeft: 8 }}
-                            status={checked ? "checked" : "unchecked"}
-                            onPress={() => {
-                                setChecked(!checked);
-                            }}
-                        />
-                    </View>
-                </View>
-            </ScrollView>
-            <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
-                <Card.Content>
-                    <Button mode="contained" onPress={ValidateData}>
-                        SUBMIT
-                    </Button>
-                </Card.Content>
+  useEffect(() => {
+    if (data.thick_service_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          thick_service_refno: thicknessFullData.service.find(
+            (item) => item.thick_service_name === data.thick_service_name
+          ).thick_service_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_categoryname_II_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("thick2", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setThicknessFullData((prev) => {
+                return { ...prev, category: response.data.data };
+              });
+              let filter = response.data.data.find(
+                (item) =>
+                  item.thick_category_refno ===
+                  route.params?.data?.thick_category_refno
+              );
+              setData((prev) => {
+                return {
+                  ...prev,
+                  thick_category_name: filter
+                    ? filter?.thick_category_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.thick_service_name]);
+
+  useEffect(() => {
+    if (data.thick_category_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          Sess_CompanyAdmin_group_refno: Sess_CompanyAdmin_group_refno,
+          thick_category_refno: thicknessFullData.category.find(
+            (item) => item.thick_category_name === data.thick_category_name
+          ).thick_category_refno,
+        },
+      };
+      console.log("thick3pp", params);
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_productname_II_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("thick3", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setThicknessFullData((prev) => {
+                return { ...prev, product: response.data.data };
+              });
+              let filter = response.data.data.find(
+                (item) =>
+                  item.product_refno === route.params?.data?.thick_product_refno
+              );
+              setData((prev) => {
+                return {
+                  ...prev,
+                  thick_product_name: filter ? filter?.product_name : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.thick_category_name]);
+
+  useEffect(() => {
+    console.log(data.category_name);
+    if (data.category_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          category_refno: categoryFullData.find(
+            (item) => item.category_name === data.category_name
+          ).category_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_brandname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setBrandFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.brand_name);
+              setData((prev) => {
+                return {
+                  ...prev,
+                  brand_name: filter.includes(route.params.data?.brand_name)
+                    ? route.params.data?.brand_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.category_name]);
+
+  useEffect(() => {
+    console.log(data.brand_name);
+    if (data.brand_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          Sess_CompanyAdmin_group_refno: Sess_CompanyAdmin_group_refno,
+          brand_refno: brandFullData.find(
+            (item) => item.brand_name === data.brand_name
+          ).brand_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_productname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setProductFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.product_name);
+              setData((prev) => {
+                return {
+                  ...prev,
+                  product_name: filter.includes(route.params.data?.product_name)
+                    ? route.params.data?.product_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.brand_name]);
+
+  const resetErrors = () => {
+    setError((prev) => {
+      return {
+        ...prev,
+        service_name: false,
+        category_name: false,
+        brand_name: false,
+        product_name: false,
+        supplier_name: false,
+        vendor_name: false,
+      };
+    });
+  };
+  const GetUserID = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData !== null) {
+        Sess_UserRefno = JSON.parse(userData).UserID;
+        Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+        Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+        Sess_CompanyAdmin_UserRefno =
+          JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
+        Sess_CompanyAdmin_group_refno =
+          JSON.parse(userData).Sess_CompanyAdmin_group_refno;
+        FetchServiceNames();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
+  return (
+    <View style={[Styles.flex1]}>
+      <ScrollView
+        style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[Styles.padding16]}>
+          <View style={[Styles.paddingTop16]}>
+            <Dropdown
+              label="Service Name"
+              data={serviceFullData?.map((item) => item.service_name)}
+              onSelected={(selectedItem) => {
+                if (selectedItem !== data.service_name) {
+                  resetErrors();
+                  setCategoryFullData([]);
+                  setBrandFullData([]);
+                  setProductFullData([]);
+                  setData((prev) => {
+                    return {
+                      ...prev,
+                      category_name: "",
+                      brand_name: "",
+                      product_name: "",
+                      service_name: selectedItem,
+                    };
+                  });
+                }
+              }}
+              isError={error.service_name}
+              selectedItem={data.service_name}
+              style={[Styles.borderred]}
+            />
+          </View>
+          <HelperText type="error" visible={error.service_name}>
+            {communication.InvalidServiceName}
+          </HelperText>
+
+          <Dropdown
+            label="Category Name"
+            data={categoryFullData.map((item) => item.category_name)}
+            onSelected={(selectedItem) => {
+              if (data.category_name !== selectedItem) {
+                resetErrors();
+                setBrandFullData([]);
+                setProductFullData([]);
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    brand_name: "",
+                    product_name: "",
+                    category_name: selectedItem,
+                  };
+                });
+              }
+            }}
+            isError={error.category_name}
+            selectedItem={data.category_name}
+            style={[Styles.paddingTop16]}
+          />
+          <HelperText type="error" visible={error.category_name}>
+            {communication.InvalidCategoryName}
+          </HelperText>
+
+          <Dropdown
+            label="Brand Name"
+            data={brandFullData.map((item) => item.brand_name)}
+            onSelected={(selectedItem) => {
+              if (data.brand_name !== selectedItem) {
+                resetErrors();
+                setProductFullData([]);
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    product_name: "",
+                    brand_name: selectedItem,
+                  };
+                });
+              }
+            }}
+            isError={error.brand_name}
+            selectedItem={data.brand_name}
+            style={[Styles.paddingTop16]}
+          />
+          <HelperText type="error" visible={error.brand_name}>
+            {communication.InvalidBrandName}
+          </HelperText>
+
+          <Dropdown
+            label="Product Name"
+            data={productFullData.map((item) => item.product_name)}
+            onSelected={(selectedItem) => {
+              if (data.product_name !== selectedItem) {
+                resetErrors();
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    product_name: selectedItem,
+                  };
+                });
+              }
+            }}
+            isError={error.product_name}
+            selectedItem={data.product_name}
+            style={[Styles.paddingTop16]}
+          />
+          <HelperText type="error" visible={error.product_name}>
+            {communication.InvalidProductName}
+          </HelperText>
+
+          <TextInput
+            mode="flat"
+            label="Product length in Mtrs"
+            value={data.length_mtr_value}
+            returnKeyType="next"
+            onChangeText={(text) => {
+              setError((prev) => {
+                return {
+                  ...prev,
+                  length_mtr_value: false,
+                };
+              });
+              setData((prev) => {
+                return {
+                  ...prev,
+                  length_mtr_value: text,
+                };
+              });
+            }}
+            style={[{ backgroundColor: "white" }]}
+            error={error.length_mtr_value}
+          />
+          <HelperText type="error" visible={error.length_mtr_value}>
+            {"Enter proper value"}
+          </HelperText>
+          <View>
+            <View
+              style={[
+                Styles.borderTopRadius4,
+                { backgroundColor: theme.colors.primary },
+              ]}
+            >
+              <Text
+                style={[
+                  Styles.marginBottom24,
+                  Styles.marginTop16,
+                  Styles.textColorWhite,
+                  Styles.marginHorizontal8,
+                ]}
+              >
+                Product Thickness of Raw Material
+              </Text>
             </View>
-            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
-                {snackbarText}
-            </Snackbar>
-        </View>
-    );
-};
+            <View
+              style={[
+                Styles.border2,
+                Styles.borderBottomRadius4,
+                Styles.height250,
+              ]}
+            >
+              <View style={[Styles.marginTop24]}>
+                <Dropdown
+                  label="Select Service"
+                  data={
+                    thicknessFullData?.service
+                      ? thicknessFullData?.service?.map(
+                          (item) => item.thick_service_name
+                        )
+                      : []
+                  }
+                  onSelected={(selectedItem) => {
+                    if (data.thick_service_name !== selectedItem) {
+                      setError((prev) => {
+                        return {
+                          ...prev,
+                          thick_service_name: false,
+                          thick_category_name: false,
+                          thick_product_name: false,
+                        };
+                      });
+                      setThicknessFullData((prev) => {
+                        return { ...prev, category: [], product: [] };
+                      });
+                      setData((prev) => {
+                        return {
+                          ...prev,
+                          thick_category_name: "",
+                          thick_product_name: "",
+                          thick_service_name: selectedItem,
+                        };
+                      });
+                    }
+                  }}
+                  isError={error.thick_service_name}
+                  selectedItem={data.thick_service_name}
+                  style={[Styles.height120]}
+                />
+                <HelperText type="error" visible={error.thick_service_name}>
+                  {communication.InvalidServiceName}
+                </HelperText>
+              </View>
+              <Dropdown
+                label="Select Category"
+                data={
+                  thicknessFullData?.category
+                    ? thicknessFullData?.category?.map(
+                        (item) => item.thick_category_name
+                      )
+                    : []
+                }
+                onSelected={(selectedItem) => {
+                  if (data.thick_category_name !== selectedItem) {
+                    setError((prev) => {
+                      return {
+                        ...prev,
+                        thick_service_name: false,
+                        thick_category_name: false,
+                        thick_product_name: false,
+                      };
+                    });
+                    setThicknessFullData((prev) => {
+                      return { ...prev, product: [] };
+                    });
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        thick_product_name: "",
+                        thick_category_name: selectedItem,
+                      };
+                    });
+                  }
+                }}
+                isError={error.thick_category_name}
+                selectedItem={data.thick_category_name}
+                style={[Styles.height120]}
+              />
+              <HelperText type="error" visible={error.thick_category_name}>
+                {communication.InvalidServiceName}
+              </HelperText>
 
-export default AddProductScreen;
+              <Dropdown
+                label="Select Product"
+                data={
+                  thicknessFullData?.product
+                    ? thicknessFullData?.product?.map(
+                        (item) => item.product_name
+                      )
+                    : []
+                }
+                onSelected={(selectedItem) => {
+                  if (data.thick_product_name !== selectedItem) {
+                    setError((prev) => {
+                      return {
+                        ...prev,
+                        thick_service_name: false,
+                        thick_category_name: false,
+                        thick_product_name: false,
+                      };
+                    });
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        thick_product_name: selectedItem,
+                      };
+                    });
+                  }
+                }}
+                isError={error.thick_product_name}
+                selectedItem={data.thick_product_name}
+                style={[Styles.height120]}
+              />
+              <HelperText type="error" visible={error.thick_product_name}>
+                {communication.InvalidServiceName}
+              </HelperText>
+            </View>
+          </View>
+          <TextInput
+            mode="flat"
+            label="Raw material width in mm"
+            value={data.width_mm_value}
+            returnKeyType="next"
+            onChangeText={(text) => {
+              setError((prev) => {
+                return {
+                  ...prev,
+                  width_mm_value: false,
+                };
+              });
+              setData((prev) => {
+                return {
+                  ...prev,
+                  width_mm_value: text,
+                };
+              });
+            }}
+            style={[{ backgroundColor: "white" }]}
+            error={error.width_mm_value}
+          />
+          <HelperText type="error" visible={error.width_mm_value}>
+            {"Enter proper value"}
+          </HelperText>
+
+          <View style={{ width: 160 }}>
+            <Checkbox.Item
+              label="Display"
+              color={theme.colors.primary}
+              position="leading"
+              labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+              status={data.checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setData((prev) => {
+                  return { ...prev, checked: !prev.checked };
+                });
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.width100per,
+          Styles.marginTop32,
+          Styles.padding16,
+          { position: "absolute", bottom: 0, elevation: 3 },
+        ]}
+      >
+        <Card.Content>
+          <Button
+            mode="contained"
+            onPress={ValidateData}
+            disabled={isButtonLoading}
+          >
+            Save
+          </Button>
+        </Card.Content>
+      </View>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: theme.colors.error }}
+      >
+        {snackbarText}
+      </Snackbar>
+    </View>
+  );
+}
+
+export default AddProduction;
