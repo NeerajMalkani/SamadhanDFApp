@@ -1298,6 +1298,12 @@ export const MenuItemsProjectSupervisor = [
         index: 80,
         navigation: 'VendorOrderForm',
       },
+      {
+        title: 'Invoice Receipt List',
+        type: 'accordian',
+        index: 80,
+        navigation: 'InvoiceReceiptList',
+      },
     ],
   },
 ];

@@ -1,13 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
   View,
   LogBox,
   RefreshControl,
   ScrollView,
-} from "react-native";
-import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+} from 'react-native';
+import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
 import {
   FAB,
   List,
@@ -16,20 +16,20 @@ import {
   Title,
   Button,
   Text,
-} from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
-import { SwipeListView } from "react-native-swipe-list-view";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import Provider from "../../api/Provider";
-import Header from "../../components/Header";
-import { RenderHiddenItems } from "../../components/ListActions";
-import NoItems from "../../components/NoItems";
-import { Styles } from "../../styles/styles";
-import { theme } from "../../theme/apptheme";
-import { NullOrEmpty } from "../../utils/validations";
+} from 'react-native-paper';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Provider from '../../api/Provider';
+import Header from '../../components/Header';
+import { RenderHiddenItems } from '../../components/ListActions';
+import NoItems from '../../components/NoItems';
+import { Styles } from '../../styles/styles';
+import { theme } from '../../theme/apptheme';
+import { NullOrEmpty } from '../../utils/validations';
 
 LogBox.ignoreLogs([
-  "Non-serializable values were found in the navigation state",
+  'Non-serializable values were found in the navigation state',
 ]);
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -42,10 +42,10 @@ function JobOrderform({ navigation }) {
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [total, setTotal] = React.useState("");
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const [total, setTotal] = React.useState('');
+  const [snackbarText, setSnackbarText] = React.useState('');
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
+    theme.colors.success,
   );
 
   const [date, setDate] = React.useState({
@@ -56,15 +56,15 @@ function JobOrderform({ navigation }) {
   const refRBSheet = useRef();
 
   const FetchData = (from) => {
-    if (from === "add" || from === "update") {
+    if (from === 'add' || from === 'update') {
       setSnackbarText(
-        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+        'Item ' + (from === 'add' ? 'added' : 'updated') + ' successfully',
       );
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
     if (date.start_date > date.end_date) {
-      setSnackbarText("Enter Correct Range");
+      setSnackbarText('Enter Correct Range');
       setSnackbarColor(theme.colors.error);
       setSnackbarVisible(true);
       return;
@@ -81,7 +81,7 @@ function JobOrderform({ navigation }) {
     console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_searchresult_joborderform_report,
-      params
+      params,
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -98,7 +98,7 @@ function JobOrderform({ navigation }) {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
+          setSnackbarText('No data found');
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
         }
@@ -116,7 +116,7 @@ function JobOrderform({ navigation }) {
 
   const GetUserID = async () => {
     try {
-      const userData = await AsyncStorage.getItem("user");
+      const userData = await AsyncStorage.getItem('user');
       if (userData !== null) {
         Sess_UserRefno = JSON.parse(userData).UserID;
         Sess_company_refno = JSON.parse(userData).Sess_company_refno;
@@ -151,7 +151,7 @@ function JobOrderform({ navigation }) {
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
-              name="file-tree"
+              name='file-tree'
             />
           )}
           onPress={() => {
@@ -165,7 +165,7 @@ function JobOrderform({ navigation }) {
   };
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Job Order Form" />
+      <Header navigation={navigation} title='Job Order Form' />
       {isLoading ? (
         <View
           style={[
@@ -174,17 +174,17 @@ function JobOrderform({ navigation }) {
             Styles.flexAlignCenter,
           ]}
         >
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size='large' color={theme.colors.primary} />
         </View>
       ) : (
         <>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: 'row' }}>
             <View style={{ flex: 1, padding: 5 }}>
               <DateTimePicker
-                mode="outlined"
+                mode='outlined'
                 style={Styles.backgroundColorWhite}
-                label="Start Date"
-                type="date"
+                label='Start Date'
+                type='date'
                 value={date.start_date}
                 onChangeDate={(date) => {
                   setDate((prev) => {
@@ -196,9 +196,9 @@ function JobOrderform({ navigation }) {
             <View style={{ flex: 1, padding: 5 }}>
               <DateTimePicker
                 style={Styles.backgroundColorWhite}
-                label="End Date"
-                mode="outlined"
-                type="date"
+                label='End Date'
+                mode='outlined'
+                type='date'
                 value={date.end_date}
                 onChangeDate={(date) => {
                   setDate((prev) => {
@@ -210,14 +210,14 @@ function JobOrderform({ navigation }) {
           </View>
           <View>
             <View
-              style={{ width: "100%", padding: 5, justifyContent: "center" }}
+              style={{ width: '100%', padding: 5, justifyContent: 'center' }}
             >
               <Button
-                mode="contained"
+                mode='contained'
                 onPress={() => {
                   listSearchData[1]([]);
                   listData[1]([]);
-                  setTotal("");
+                  setTotal('');
                   FetchData();
                 }}
               >
@@ -261,68 +261,68 @@ function JobOrderform({ navigation }) {
                         }}
                         key={idx}
                       >
-                        <View style={{ flexDirection: "row" }}>
+                        <View style={{ flexDirection: 'row' }}>
                           <View style={{ flex: 1, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Job Order No"
+                              mode='outlined'
+                              label='Job Order No'
                               value={item.mf_vo_no}
                               editable={false}
-                              returnKeyType="next"
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              returnKeyType='next'
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                           <View style={{ flex: 1, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Job Order Date"
+                              mode='outlined'
+                              label='Job Order Date'
                               value={item.mf_po_date}
                               editable={false}
-                              returnKeyType="next"
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              returnKeyType='next'
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                         </View>
-                        <View style={{ flexDirection: "row" }}>
+                        <View style={{ flexDirection: 'row' }}>
                           <View style={{ flex: 1, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Vendor Name"
+                              mode='outlined'
+                              label='Vendor Name'
                               value={item.vendor_company_name}
                               editable={false}
-                              returnKeyType="next"
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              returnKeyType='next'
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                         </View>
-                        <View style={{ flexDirection: "row" }}>
+                        <View style={{ flexDirection: 'row' }}>
                           <View style={{ flex: 1.2, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Weight"
+                              mode='outlined'
+                              label='Weight'
                               value={item.total_weight}
                               editable={false}
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                           <View style={{ flex: 1, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Width"
+                              mode='outlined'
+                              label='Width'
                               value={item.gpcoil_width_value}
                               editable={false}
-                              returnKeyType="next"
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              returnKeyType='next'
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                           <View style={{ flex: 1, padding: 5 }}>
                             <TextInput
-                              mode="outlined"
-                              label="Thickness"
+                              mode='outlined'
+                              label='Thickness'
                               value={item.product_name}
                               editable={false}
-                              returnKeyType="next"
-                              style={[{ backgroundColor: "white", height: 40 }]}
+                              returnKeyType='next'
+                              style={[{ backgroundColor: 'white', height: 40 }]}
                             />
                           </View>
                         </View>
@@ -353,8 +353,8 @@ function JobOrderform({ navigation }) {
               </>
             ) : (
               <NoItems
-                icon="format-list-bulleted"
-                text="No records found. Add records by clicking on plus icon."
+                icon='format-list-bulleted'
+                text='No records found. Add records by clicking on plus icon.'
               />
             )}
           </ScrollView>
@@ -375,27 +375,27 @@ function JobOrderform({ navigation }) {
         closeOnPressMask={true}
         dragFromTopOnly={true}
         height={580}
-        animationType="fade"
+        animationType='fade'
         customStyles={{
-          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
-          draggableIcon: { backgroundColor: "#000" },
+          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
+          draggableIcon: { backgroundColor: '#000' },
         }}
       >
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{current.mf_vo_no}</Title>
           <ScrollView>
             <List.Item
-              title="Job Order Date"
+              title='Job Order Date'
               description={current.mf_po_date}
             />
-            <List.Item title="Job Order No" description={current.mf_vo_no} />
+            <List.Item title='Job Order No' description={current.mf_vo_no} />
             <List.Item
-              title="Vendor Name"
+              title='Vendor Name'
               description={current.vendor_company_name}
             />
-            <List.Item title="Weight" description={current.total_weight} />
-            <List.Item title="Width" description={current.gpcoil_width_value} />
-            <List.Item title="Thickness" description={current.product_name} />
+            <List.Item title='Weight' description={current.total_weight} />
+            <List.Item title='Width' description={current.gpcoil_width_value} />
+            <List.Item title='Thickness' description={current.product_name} />
           </ScrollView>
         </View>
       </RBSheet>

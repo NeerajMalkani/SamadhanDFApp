@@ -529,6 +529,14 @@ class Provider {
     get_availablebalance_cashinhand_expensesform:
       'get_availablebalance_cashinhand_expensesform/',
     summaryofmaterial_gridlist: 'summaryofmaterial_gridlist/',
+    get_purchaseorderno_vendororder_invoiceform:
+      'get_purchaseorderno_vendororder_invoiceform/',
+    get_purchaseorderno_otherdata_vendororder_invoiceform:
+      '/get_purchaseorderno_otherdata_vendororder_invoiceform/',
+    get_joborderno_vendororder_invoiceform:
+      'get_joborderno_vendororder_invoiceform',
+    mfvoinvoicerefnocheck: 'mfvoinvoicerefnocheck/',
+    get_orderproductioncalculation_vendororder_invoiceform:"get_orderproductioncalculation_vendororder_invoiceform/",
   };
 
   createDFPocketDairy(resource, params) {

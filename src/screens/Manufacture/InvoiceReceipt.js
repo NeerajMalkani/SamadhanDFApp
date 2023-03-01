@@ -2,25 +2,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Text,
   ActivityIndicator,
   View,
   LogBox,
   RefreshControl,
   ScrollView,
 } from 'react-native';
-import { FAB, List, Snackbar, Searchbar, Title } from 'react-native-paper';
+import { FAB, List, DataTable, Title } from 'react-native-paper';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Provider from '../../api/Provider';
-import Header from '../../components/Header';
-import { RenderHiddenItems } from '../../components/ListActions';
+
 import NoItems from '../../components/NoItems';
 import { Styles } from '../../styles/styles';
 import { theme } from '../../theme/apptheme';
-import { NullOrEmpty } from '../../utils/validations';
-import Coil from './Components/VendorCoil';
-import Slitting from './Components/VendorSlitting';
+
 let user = null;
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -30,7 +28,7 @@ function ProductforProduction({ navigation }) {
   const refRBSheet = useRef();
   const [orders, setOrders] = useState([]);
   const [selectedItem, setSelectedItem] = useState({});
-  const [otherData, setOtherData] = useState({});
+  const [otherData, setOtherData] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
   const fetchUserID = async () => {
@@ -41,16 +39,14 @@ function ProductforProduction({ navigation }) {
       fetchOrder(JSON.parse(data));
     }
   };
-  console.log(user);
 
   const fetchOrder = (user) => {
-    Provider.createDFManufacturer(Provider.API_URLS.mfvorefnocheck, {
+    Provider.createDFManufacturer(Provider.API_URLS.mfvoinvoicerefnocheck, {
       data: {
         Sess_UserRefno: user.UserID,
         Sess_company_refno: user.Sess_company_refno,
         Sess_branch_refno: user.Sess_branch_refno,
-        mf_po_refno: 'all',
-        mf_vo_refno: 'all',
+        mf_vo_invoice_refno: 'all',
       },
     })
       .then((res) => {
@@ -61,22 +57,23 @@ function ProductforProduction({ navigation }) {
       .catch((error) => console.log(error));
   };
 
-  const fetchOrderOtherData = (po) => {
+  const fetchOrderData = () => {
     Provider.createDFManufacturer(
-      Provider.API_URLS.get_purchaseorderno_otherdata_vendororderform,
+      Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
       {
         data: {
-          Sess_UserRefno: user.UserID,
-          Sess_company_refno: user.Sess_company_refno,
-          Sess_branch_refno: user.Sess_branch_refno,
-          mf_po_refno: po,
+          Sess_UserRefno: user?.UserID,
+          Sess_branch_refno: user?.Sess_branch_refno,
+          Sess_company_refno: user?.Sess_company_refno,
+          mf_po_refno: selectedItem.mf_po_refno,
+          mf_vo_refno: selectedItem.mf_vo_refno,
+          mf_vo_invoice_refno: selectedItem.mf_vo_invoice_refno,
         },
       },
-    )
-      .then((res) => {
-        setOtherData(res.data.data);
-      })
-      .catch((error) => console.log(error));
+    ).then((res) => {
+      console.log(res.data.data);
+      setOtherData(res.data.data);
+    });
   };
 
   useEffect(() => {
@@ -97,12 +94,12 @@ function ProductforProduction({ navigation }) {
         ]}
       >
         <List.Item
-          title={data.item.job_order_no}
+          title={data.item.supplier_company_name}
           titleStyle={{ fontSize: 18 }}
-          description={data.item.vendor_company_name}
-          onPress={() => {
+          description={data.item.invoice_entry_date}
+          onPress={async () => {
             setSelectedItem(data.item);
-            fetchOrderOtherData(data.item.mf_po_refno);
+            await fetchOrderData();
             refRBSheet.current.open();
           }}
           left={() => (
@@ -129,10 +126,6 @@ function ProductforProduction({ navigation }) {
   //#endregion
   return (
     <View style={[Styles.flex1, Styles.positionRelative]}>
-      <Header
-        navigation={navigation}
-        title='Manufacturer Vendor Order Form List'
-      />
       {orders.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           {/* <Searchbar
@@ -183,34 +176,69 @@ function ProductforProduction({ navigation }) {
         }}
       >
         <View style={[Styles.flex1]}>
-          <Title style={[Styles.paddingHorizontal16]}>Order Details</Title>
+          <Title style={[Styles.paddingHorizontal16]}>Invoice Details</Title>
           <ScrollView style={[Styles.flex1]}>
             <List.Item
+              title='Purchase Order No.'
+              description={selectedItem.mf_po_no}
+            />
+            <List.Item
               title='Vendor Order No.'
-              description={selectedItem.job_order_no}
+              description={selectedItem.mf_vo_no}
             />
             <List.Item
-              title='Vendor name & address'
-              description={otherData[0]?.vendor_address?.user_company_name}
+              title='Invoice No.'
+              description={selectedItem.invoice_no}
             />
             <List.Item
-              title='Number of GP Coil'
-              description={selectedItem.no_gpcoil}
+              title='Invoice Entry Date'
+              description={selectedItem.invoice_entry_date}
             />
             <List.Item
-              title='Thickness of Raw Material'
-              description={selectedItem.product_name}
+              title='Supplier Name'
+              description={selectedItem.supplier_company_name}
             />
-            <Coil
-              user={user}
-              mf_po_no={selectedItem?.mf_po_refno}
-              width={selectedItem?.gpcoil_width_value}
+            <List.Item
+              title='Brand Name'
+              description={selectedItem.brand_name}
             />
-            <Slitting user={user} mf_po_no={selectedItem?.mf_po_refno} />
+            <List.Item
+              title='Brand Conversion Value'
+              description={selectedItem.mf_brand_conversionvalue}
+            />
+            <List.Item
+              title='Basic Amount'
+              description={selectedItem.basic_amount}
+            />
+            <List.Item
+              title='Transportation Charges'
+              description={selectedItem.transport_charges}
+            />
+
+            <Text
+              style={[
+                Styles.fontSize20,
+                Styles.fontBold,
+                Styles.paddingHorizontal16,
+              ]}
+            >
+              Order Production Calculation
+            </Text>
+            {otherData?.map((obj, index) => {
+              return (
+                <List.Item
+                  key={index}
+                  descriptionNumberOfLines={3}
+                  title={`${obj.productname} ${obj.brand_name}`}
+                  description={`Weight Per Piece - ${obj.weightper_piece_txt}\nTotal No of Products - ${obj.total_no_products_txt}\nNo of Coils received - ${obj.coils_received}`}
+                />
+              );
+            })}
           </ScrollView>
         </View>
       </RBSheet>
       <FAB
+        onPress={() => navigation.navigate('InvoiceReceiptForm')}
         style={[
           Styles.margin16,
           Styles.primaryBgColor,
