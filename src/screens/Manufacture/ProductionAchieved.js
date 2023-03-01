@@ -7,12 +7,12 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
-import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+import Dropdown from "../../components/Dropdown";
 import {
   FAB,
   List,
   Snackbar,
-  Searchbar,
+  TextInput,
   Title,
   Button,
   Text,
@@ -63,8 +63,8 @@ function ProductionAchieved({ navigation }) {
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
-    if (date.start_date > date.end_date) {
-      setSnackbarText("Enter Correct Range");
+    if (dropDown == "") {
+      setSnackbarText("Select Job Order No");
       setSnackbarColor(theme.colors.error);
       setSnackbarVisible(true);
       return;
@@ -74,18 +74,19 @@ function ProductionAchieved({ navigation }) {
         Sess_UserRefno: Sess_UserRefno,
         Sess_company_refno: Sess_company_refno,
         Sess_branch_refno: Sess_branch_refno,
-        from_date: date.start_date,
-        to_date: date.end_date,
+        mf_vo_refno: dropDownFullData.find((item) => item.mf_vo_no == dropDown)
+          .mf_vo_refno,
       },
     };
     console.log(params);
     Provider.createDFManufacturer(
-      Provider.API_URLS.get_searchresult_joborderform_report,
+      Provider.API_URLS.get_searchresult_productionachieved_report,
       params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log(response.data.data["0"]);
             const data = [];
             Object.entries(response.data.data)?.map(([key, value]) => {
               if (!isNaN(key)) {
@@ -94,7 +95,7 @@ function ProductionAchieved({ navigation }) {
             });
             listData[1](data);
             listSearchData[1](data);
-            setTotal(response.data.data.total_weight_Total);
+            setTotal(response.data.data.scrap_wastage_Total);
           }
         } else {
           listData[1]([]);
@@ -113,7 +114,43 @@ function ProductionAchieved({ navigation }) {
         setRefreshing(false);
       });
   };
+  const [dropDownFullData, setDropDownFullData] = React.useState([]);
+  const [dropDown, setDropDown] = React.useState("");
 
+  const fetch = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+      },
+    };
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_joborderno_productionachieved_report,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log(response.data.data);
+            setDropDownFullData(response.data.data);
+          }
+        } else {
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+        setIsLoading(false);
+        setRefreshing(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
   const GetUserID = async () => {
     try {
       const userData = await AsyncStorage.getItem("user");
@@ -121,6 +158,7 @@ function ProductionAchieved({ navigation }) {
         Sess_UserRefno = JSON.parse(userData).UserID;
         Sess_company_refno = JSON.parse(userData).Sess_company_refno;
         Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+        fetch();
       }
     } catch (e) {
       console.log(e);
@@ -165,7 +203,7 @@ function ProductionAchieved({ navigation }) {
   };
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Job Order Form" />
+      <Header navigation={navigation} title="Production Achieved" />
       {isLoading ? (
         <View
           style={[
@@ -179,35 +217,20 @@ function ProductionAchieved({ navigation }) {
       ) : (
         <>
           <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1, padding: 5 }}>
-              <DateTimePicker
-                mode="outlined"
-                style={Styles.backgroundColorWhite}
-                label="Start Date"
-                type="date"
-                value={date.start_date}
-                onChangeDate={(date) => {
-                  setDate((prev) => {
-                    return { ...prev, start_date: date };
-                  });
+            <View style={[Styles.paddingTop16, { flex: 1.8, padding: 10 }]}>
+              <Dropdown
+                label="Job Order No"
+                data={dropDownFullData.map((item) => item.mf_vo_no)}
+                onSelected={(selectedItem) => {
+                  if (selectedItem !== dropDown) {
+                    setDropDown(selectedItem);
+                  }
                 }}
+                selectedItem={dropDown}
+                style={[Styles.borderred, { backgroundColor: "white" }]}
               />
             </View>
-            <View style={{ flex: 1, padding: 5 }}>
-              <DateTimePicker
-                style={Styles.backgroundColorWhite}
-                label="End Date"
-                mode="outlined"
-                type="date"
-                value={date.end_date}
-                onChangeDate={(date) => {
-                  setDate((prev) => {
-                    return { ...prev, end_date: date };
-                  });
-                }}
-              />
-            </View>
-            <View style={{ flex: 0.5, padding: 5, justifyContent: "center" }}>
+            <View style={{ flex: 1, padding: 5, justifyContent: "center" }}>
               <Button
                 mode="contained"
                 onPress={() => {
@@ -217,29 +240,148 @@ function ProductionAchieved({ navigation }) {
                   FetchData();
                 }}
               >
-                <Icon
-                  style={{ marginVertical: 12, marginRight: 12 }}
-                  size={30}
-                  name="send"
-                />
+                Search
               </Button>
             </View>
           </View>
+          <ScrollView
+            style={[
+              Styles.flex1,
+              Styles.flexColumn,
+              Styles.backgroundColor,
+              { padding: 8 },
+            ]}
+          >
+            {listData[0].length > 0 ? (
+              <>
+                <View
+                  style={[
+                    Styles.flex1,
+                    Styles.flexColumn,
+                    Styles.backgroundColor,
+                    { padding: 8 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      { marginLeft: 2, marginBottom: 5 },
+                      Styles.fontSize18,
+                    ]}
+                  >{`Total Scrap: ${total}`}</Text>
+                  {listData[0].map((item, idx) => {
+                    return (
+                      <View
+                        style={{
+                          borderRadius: 15,
+                          borderWidth: 1,
+                          borderColor: theme.colors.primary,
+                          padding: 10,
+                          marginBottom: 8,
+                        }}
+                        key={idx}
+                      >
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Product >> Brand Name"
+                              value={`${item.productname} >> ${item.brand_name}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Weight per piece"
+                              value={`${item.weightper_piece}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Total Products"
+                              value={`${item.total_no_products}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Scrap"
+                              value={`${item.scrap_wastage}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Achieved"
+                              value={`${item.total_achieved_products_txt}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                        {item?.date_of_complete !== "" &&
+                          item.date_of_complete && (
+                            <View style={{ flexDirection: "row" }}>
+                              <View style={{ flex: 1, padding: 5 }}>
+                                <TextInput
+                                  mode="outlined"
+                                  label="Start Date"
+                                  value={`${item.date_of_start}`}
+                                  editable={false}
+                                  returnKeyType="next"
+                                  style={[
+                                    { backgroundColor: "white", height: 40 },
+                                  ]}
+                                />
+                              </View>
+                              <View style={{ flex: 1, padding: 5 }}>
+                                <TextInput
+                                  mode="outlined"
+                                  label="Completion Date"
+                                  value={`${item.date_of_complete}`}
+                                  editable={false}
+                                  returnKeyType="next"
+                                  style={[
+                                    { backgroundColor: "white", height: 40 },
+                                  ]}
+                                />
+                              </View>
+                            </View>
+                          )}
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Number of coils(Recieved)"
+                              value={`${item.coils_received}`}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                      </View>
+                    );
+                  })}
 
-          {listData[0].length > 0 ? (
-            <>
-              <View
-                style={[
-                  Styles.flex1,
-                  Styles.flexColumn,
-                  Styles.backgroundColor,
-                ]}
-              >
-                <Text
-                  style={[{ marginLeft: 2 }, Styles.fontSize18]}
-                >{`Total Weight: ${total}`}</Text>
-
-                <SwipeListView
+                  {/* <SwipeListView
                   previewDuration={1000}
                   previewOpenValue={-72}
                   previewRowKey="1"
@@ -257,15 +399,16 @@ function ProductionAchieved({ navigation }) {
                   disableRightSwipe={true}
                   rightOpenValue={-72}
                   renderItem={(data) => RenderItems(data)}
-                />
-              </View>
-            </>
-          ) : (
-            <NoItems
-              icon="format-list-bulleted"
-              text="No records found. Add records by clicking on plus icon."
-            />
-          )}
+                /> */}
+                </View>
+              </>
+            ) : (
+              <NoItems
+                icon="format-list-bulleted"
+                text="No records found. Add records by clicking on plus icon."
+              />
+            )}
+          </ScrollView>
         </>
       )}
 

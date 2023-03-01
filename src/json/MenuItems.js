@@ -1286,6 +1286,12 @@ export const MenuItemsProjectSupervisor = [
         index: 80,
         navigation: "ProductionAchieved",
       },
+      {
+        title: "Production Status",
+        type: "accordian",
+        index: 80,
+        navigation: "ProductionStatus",
+      },
     ],
   },
 ];

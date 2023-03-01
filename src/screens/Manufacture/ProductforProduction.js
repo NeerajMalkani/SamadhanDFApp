@@ -175,7 +175,10 @@ function ProductforProduction({ navigation }) {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddProduction", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddProduction", {
+      type: "add",
+      fetchData: FetchData,
+    });
   };
 
   const EditCallback = (data, rowMap) => {

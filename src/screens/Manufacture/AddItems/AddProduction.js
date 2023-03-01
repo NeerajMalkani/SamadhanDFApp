@@ -1,23 +1,24 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { useState, useEffect } from "react";
-import Provider from "../../../api/Provider";
 import { useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { Styles } from "../../../styles/styles";
 import Dropdown from "../../../components/Dropdown";
-import Coil from "../Components/Coil";
+import Provider from "../../../api/Provider";
 import {
   Button,
   Card,
   HelperText,
   Snackbar,
   TextInput,
-  Text,
   Checkbox,
+  Text,
 } from "react-native-paper";
 import { communication } from "../../../utils/communication";
 import { theme } from "../../../theme/apptheme";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -26,399 +27,51 @@ let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_CompanyAdmin_group_refno = 0;
 
 function AddProduction({ route, navigation }) {
-  const [error, setError] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [servicesData, setServicesData] = React.useState([]);
-  const [errorSN, setSNError] = React.useState(false);
-  const [serviceName, setServiceName] = React.useState("");
-  const [hsnError, setHSNError] = React.useState(false);
-  const [hsn, setHSN] = React.useState("");
-  const [gstError, setGSTError] = React.useState(false);
-  const [gst, setGST] = React.useState("");
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const [dob, setDob] = useState(new Date());
 
   const [serviceFullData, setServiceFullData] = React.useState([]);
   const [categoryFullData, setCategoryFullData] = React.useState([]);
   const [productFullData, setProductFullData] = React.useState([]);
-  const [widthFullData, setWidthFullData] = React.useState([]);
   const [brandFullData, setBrandFullData] = React.useState([]);
-  const [zincFullData, setZincFullData] = React.useState([]);
-  const [coilnumFullData, setCoilnumFullData] = React.useState([]);
 
-  const ref_input2 = useRef();
-  const ref_input3 = useRef();
-  const [dob, setDob] = useState(new Date());
+  const [thicknessFullData, setThicknessFullData] = React.useState({});
 
   const [data, setData] = useState({
     service_name: "",
     category_name: "",
     brand_name: "",
     product_name: "",
-    gpcoil_width: "",
-    mass_of_zinc_coating: "",
-    no_gpcoil: "",
-    coil_details: [],
-    total_weight: "",
-    total_length: "",
-    vendor_name:
-      route.params.type == "edit"
-        ? route.params.data?.vendor?.find(
-            (item) =>
-              item.client_user_refno === route.params.data.vendor_user_refno
-          )?.client_name
-        : "",
-    supplier_name:
-      route.params.type == "edit"
-        ? route.params.data?.supplier?.find(
-            (item) =>
-              item.client_user_refno === route.params.data.supplier_user_refno
-          )?.client_name
-        : "",
-    rate: route.params.type === "edit" ? route.params.data.rate : "",
-    amount: route.params.type === "edit" ? route.params.data.amount : "",
+    length_mtr_value:
+      route.params.type === "edit" ? route.params.data?.length_mtr_value : "",
+    thick_service_name: "",
+    thick_category_name: "",
+    thick_product_name: "",
+    width_mm_value:
+      route.params.type === "edit" ? route.params?.data?.width_mm_value : "",
     checked:
       route.params.type === "edit"
-        ? route.params.data.view_status == "1"
+        ? route.params?.data.view_status == "1"
           ? true
           : false
-        : true,
+        : false,
   });
-
-  const [errors, setErrors] = useState({
+  const [error, setError] = useState({
     service_name: false,
     category_name: false,
     brand_name: false,
     product_name: false,
-    gpcoil_width: false,
-    mass_of_zinc_coating: false,
-    no_gpcoil: false,
-    supplier_name: false,
-    vendor_name: false,
-    coil_details: [],
-    rate: false,
+    length_mtr_value: false,
+    thick_service_name: false,
+    thick_category_name: false,
+    thick_product_name: false,
+    width_mm_value: false,
   });
 
-  useEffect(() => {
-    if (data.coil_details.length > 0) {
-      let total_weight = 0;
-      let total_length = 0;
-      data.coil_details.map((item) => {
-        total_weight =
-          total_weight + (item.weight === "" ? 0 : parseFloat(item.weight));
-        total_length =
-          total_length + (item.length === "" ? 0 : parseFloat(item.length));
-      });
-      setData((prev) => {
-        return {
-          ...prev,
-          total_length: String(total_length),
-          total_weight: String(total_weight),
-        };
-      });
-    }
-  }, [data.coil_details]);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
-  useEffect(() => {
-    if (data.total_weight.length > 0 && data.rate.length > 0) {
-      setData((prev) => {
-        return {
-          ...prev,
-          amount:
-            parseFloat(data.total_weight) * parseFloat(data.rate)
-              ? String(parseFloat(data.total_weight) * parseFloat(data.rate))
-              : "0",
-        };
-      });
-    }
-  }, [data.rate, data.total_weight]);
-
-  const resetErrors = () => {
-    setErrors((prev) => {
-      return {
-        ...prev,
-        service_name: false,
-        category_name: false,
-        brand_name: false,
-        product_name: false,
-        supplier_name: false,
-        vendor_name: false,
-      };
-    });
-  };
-  // console.log(route.params.data);
-  const FetchServiceNames = () => {
-    const params = {
-      data: {
-        Sess_UserRefno: Sess_UserRefno,
-        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-        Sess_company_refno: Sess_company_refno,
-        Sess_branch_refno: Sess_branch_refno,
-        mf_po_refno: "all",
-      },
-    };
-
-    Provider.createDFManufacturer(
-      Provider.API_URLS.get_servicename_manufacturer_poform,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.code == "200") {
-          if (response.data.data) {
-            setServiceFullData(() => {
-              return response.data.data;
-            });
-            let filter = response.data.data.map((item) => item.service_name);
-            setData((prev) => {
-              return {
-                ...prev,
-                service_name: filter.includes(route.params.data?.service_name)
-                  ? route.params.data?.service_name
-                  : filter[0],
-              };
-            });
-          }
-        }
-      })
-      .catch((e) => console.log(e));
-    Provider.createDFManufacturer(
-      Provider.API_URLS.get_widthofgpcoil_manufacturer_poform,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.code == "200") {
-          if (response.data.data) {
-            console.log(response.data.data);
-            setWidthFullData(() => {
-              return response.data.data;
-            });
-            let filter = response.data.data.map((item) => item.gpcoil_width);
-            setData((prev) => {
-              return {
-                ...prev,
-                gpcoil_width: filter.includes(route.params.data?.gpcoil_width)
-                  ? route.params.data?.gpcoil_width
-                  : filter[0],
-              };
-            });
-          }
-        }
-      })
-      .catch((e) => console.log(e));
-
-    Provider.createDFManufacturer(
-      Provider.API_URLS.get_gsm_manufacturer_poform,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.code == "200") {
-          if (response.data.data) {
-            console.log(response.data.data);
-            setZincFullData(() => {
-              return response.data.data;
-            });
-            let filter = response.data.data.find(
-              (item) => item.gsm_refno === route.params?.data?.gsm_refno
-            );
-            setData((prev) => {
-              return {
-                ...prev,
-                mass_of_zinc_coating: filter
-                  ? filter.gsm_name
-                  : response.data.data[0].gsm_name,
-              };
-            });
-          }
-        }
-      })
-      .catch((e) => console.log(e));
-
-    Provider.createDFManufacturer(
-      Provider.API_URLS.get_numberofgpcoil_manufacturer_poform,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.code == "200") {
-          if (response.data.data) {
-            console.log(response.data.data);
-            setCoilnumFullData(() => {
-              return response.data.data;
-            });
-            if (route.params.type == "edit") {
-              setData((prev) => {
-                return {
-                  ...prev,
-                  no_gpcoil: parseInt(route.params.data.no_gpcoil),
-                };
-              });
-            }
-          }
-        }
-      })
-      .catch((e) => console.log(e));
-    if (route.params.type == "edit") {
-      Provider.createDFManufacturer(Provider.API_URLS.mfporefnocheck, params)
-        .then((response) => {
-          if (response.data?.data) {
-            let temp = response.data.data.find(
-              (item) =>
-                item.brand_name === route.params.data.brand_name &&
-                item.category_name === route.params.data.category_name &&
-                item.total_length === route.params.data.total_length &&
-                item.total_weight === route.params.data.total_weight &&
-                item.amount === route.params.data.amount &&
-                item.mf_po_refno === route.params.data.mf_po_refno &&
-                item.no_gpcoil === route.params.data.no_gpcoil
-            );
-            console.log(response.data.data[0]);
-            console.log("gpcoilrefno", route.params.data);
-            setData((prev) => {
-              return {
-                ...prev,
-                coil_details: temp.coilsdetails_data,
-              };
-            });
-            setErrors((prev) => {
-              return {
-                ...prev,
-                coil_details: Array(parseInt(route.params.data.no_gpcoil)).fill(
-                  {
-                    weight: false,
-                    length: false,
-                  }
-                ),
-              };
-            });
-          }
-        })
-        .catch((e) => console.log(e));
-    }
-  };
-
-  useEffect(() => {
-    console.log(data.service_name);
-    if (data.service_name !== "") {
-      let params = {
-        data: {
-          Sess_UserRefno: Sess_UserRefno,
-          service_refno: serviceFullData.find(
-            (item) => item.service_name === data.service_name
-          ).service_refno,
-        },
-      };
-      Provider.createDFManufacturer(
-        Provider.API_URLS.get_categoryname_manufacturer_poform,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.code == "200") {
-            if (response.data.data) {
-              setCategoryFullData(response.data.data);
-              let filter = response.data.data.map((item) => item.category_name);
-
-              setData((prev) => {
-                return {
-                  ...prev,
-                  category_name: filter.includes(
-                    route.params.data?.category_name
-                  )
-                    ? route.params.data?.category_name
-                    : filter[0],
-                };
-              });
-            }
-          }
-        })
-        .catch((e) => console.log(e));
-    }
-  }, [data.service_name]);
-
-  useEffect(() => {
-    console.log(data.category_name);
-    if (data.category_name !== "") {
-      let params = {
-        data: {
-          Sess_UserRefno: Sess_UserRefno,
-          Sess_CompanyAdmin_group_refno: Sess_CompanyAdmin_group_refno,
-          Sess_company_refno: Sess_company_refno,
-          category_refno: categoryFullData.find(
-            (item) => item.category_name === data.category_name
-          ).category_refno,
-        },
-      };
-      Provider.createDFManufacturer(
-        Provider.API_URLS.get_productname_manufacturer_poform,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.code == "200") {
-            if (response.data.data) {
-              setProductFullData(response.data.data);
-              let filter = response.data.data.map((item) => item.product_name);
-              setData((prev) => {
-                return {
-                  ...prev,
-                  product_name: filter.includes(route.params.data?.product_name)
-                    ? route.params.data?.product_name
-                    : filter[0],
-                };
-              });
-            }
-          }
-        })
-        .catch((e) => console.log(e));
-
-      Provider.createDFManufacturer(
-        Provider.API_URLS.get_brandname_manufacturer_poform,
-        params
-      )
-        .then((response) => {
-          console.log("res", response.data);
-          if (response.data && response.data.code == "200") {
-            if (response.data.data) {
-              setBrandFullData(response.data.data);
-              let filter = response.data.data.map((item) => item.brand_name);
-              setData((prev) => {
-                return {
-                  ...prev,
-                  brand_name: filter.includes(route.params.data?.brand_name)
-                    ? route.params.data?.brand_name
-                    : filter[0],
-                };
-              });
-            }
-          }
-        })
-        .catch((e) => console.log(e));
-    }
-  }, [data.category_name]);
-
-  const GetUserID = async () => {
-    try {
-      const userData = await AsyncStorage.getItem("user");
-      if (userData !== null) {
-        Sess_UserRefno = JSON.parse(userData).UserID;
-        Sess_company_refno = JSON.parse(userData).Sess_company_refno;
-        Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
-        Sess_CompanyAdmin_UserRefno =
-          JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
-        Sess_CompanyAdmin_group_refno =
-          JSON.parse(userData).Sess_CompanyAdmin_group_refno;
-        FetchServiceNames();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    GetUserID();
-  }, []);
-  const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const update = () => {
-    console.log(widthFullData);
-    setIsButtonLoading(false);
-
     let params = {
       data: {
         Sess_UserRefno: Sess_UserRefno,
@@ -427,45 +80,33 @@ function AddProduction({ route, navigation }) {
         service_refno: serviceFullData.find(
           (item) => item.service_name === data.service_name
         ).service_refno,
-        supplier_user_refno: route.params.data.supplier.find(
-          (item) => item.client_name === data.supplier_name
-        ).client_user_refno,
-        vendor_user_refno: route.params.data.vendor.find(
-          (item) => item.client_name === data.vendor_name
-        ).client_user_refno,
         category_refno: categoryFullData.find(
           (item) => item.category_name === data.category_name
         ).category_refno,
-        product_refno: productFullData.find(
-          (item) => item.product_name === data.product_name
-        ).product_refno,
-        gpcoil_refno: widthFullData.find(
-          (item) => item.gpcoil_width === data.gpcoil_width
-        ).gpcoil_refno,
         brand_refno: brandFullData.find(
           (item) => item.brand_name === data.brand_name
         ).brand_refno,
-        gsm_refno: zincFullData.find(
-          (item) => item.gsm_name === data.mass_of_zinc_coating
-        ).gsm_refno,
-        no_gpcoil: data.no_gpcoil,
-        total_weight: data.total_weight,
-        total_length: data.total_length,
-        rate: data.rate,
-        amount: data.amount,
-        weight: {},
-        length: {},
-        avg_thickness: {},
-        view_status: data.current ? "1" : "0",
+        product_refno: productFullData.find(
+          (item) => item.product_name === data.product_name
+        ).product_refno,
+        length_mtr_value: data.length_mtr_value,
+        thick_service_refno: thicknessFullData.service.find(
+          (item) => item.thick_service_name === data.thick_service_name
+        ).thick_service_refno,
+        thick_category_refno: thicknessFullData.category.find(
+          (item) => item.thick_category_name === data.thick_category_name
+        ).thick_category_refno,
+        thick_product_refno: thicknessFullData.product.find(
+          (item) => item.product_name === data.thick_product_name
+        ).product_refno,
+        width_mm_value: data.width_mm_value,
+        view_status: data.checked ? "1" : "0",
       },
     };
-    data.coil_details.map((item, i) => {
-      params.data.weight[i] = item.weight;
-      params.data.length[i] = item.length;
-      params.data.avg_thickness[i] = item.avg_thickness;
-    });
+    console.log(params);
+
     Provider.createDFManufacturer(
-      Provider.API_URLS.manufacturerpocreate,
+      Provider.API_URLS.productforproductioncreate,
       params
     )
       .then((response) => {
@@ -491,93 +132,56 @@ function AddProduction({ route, navigation }) {
   const ValidateData = () => {
     let isValid = true;
     if (data.service_name.length === 0) {
-      setErrors((prev) => {
+      setError((prev) => {
         return { ...prev, service_name: true };
       });
       isValid = false;
     }
     if (data.category_name.length === 0) {
-      setErrors((prev) => {
+      setError((prev) => {
         return { ...prev, category_name: true };
       });
       isValid = false;
     }
-    if (data.product_name.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, product_name: true };
-      });
-      isValid = false;
-    }
     if (data.brand_name.length === 0) {
-      setErrors((prev) => {
+      setError((prev) => {
         return { ...prev, brand_name: true };
       });
       isValid = false;
     }
-    if (data.gpcoil_width.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, gpcoil_width: true };
+    if (data.product_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, product_name: true };
       });
       isValid = false;
     }
-    if (data.mass_of_zinc_coating.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, mass_of_zinc_coating: true };
+    if (data.length_mtr_value.length === 0) {
+      setError((prev) => {
+        return { ...prev, length_mtr_value: true };
       });
       isValid = false;
     }
-    if (data.no_gpcoil.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, no_gpcoil: true };
+    if (data.thick_service_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_service_name: true };
       });
       isValid = false;
     }
-    data.coil_details.map((item, idx) => {
-      if (item.length.length === 0) {
-        setErrors((prev) => {
-          return {
-            ...prev,
-            coil_details: data.coil_details.map((item, i) => {
-              return idx === i
-                ? { ...prev.coil_details[i], length: true }
-                : item;
-            }),
-          };
-        });
-        isValid = false;
-      }
-      if (item.weight.length === 0) {
-        setErrors((prev) => {
-          return {
-            ...prev,
-            coil_details: data.coil_details.map((item, i) => {
-              return idx === i
-                ? { ...prev.coil_details[i], weight: true }
-                : item;
-            }),
-          };
-        });
-        isValid = false;
-      }
-    });
-    if (data.total_length == 0 || data.total_weight == 0) {
-      isValid = false;
-    }
-    if (data.rate.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, rate: true };
+    if (data.thick_category_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_category_name: true };
       });
       isValid = false;
     }
-    if (data.vendor_name.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, vendor_name: true };
+    if (data.thick_product_name.length === 0) {
+      setError((prev) => {
+        return { ...prev, thick_product_name: true };
       });
       isValid = false;
     }
-    if (data.supplier_name.length === 0) {
-      setErrors((prev) => {
-        return { ...prev, supplier_name: true };
+    if (data.width_mm_value.length === 0) {
+      setError((prev) => {
+        return { ...prev, width_mm_value: true };
       });
       isValid = false;
     }
@@ -587,6 +191,299 @@ function AddProduction({ route, navigation }) {
     }
   };
 
+  const FetchServiceNames = async () => {
+    const params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+      },
+    };
+
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_servicename_productforproductionform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code == "200") {
+          if (response.data.data) {
+            setServiceFullData(() => {
+              return response.data.data;
+            });
+            let filter = response.data.data.map((item) => item.service_name);
+            setData((prev) => {
+              return {
+                ...prev,
+                service_name: filter.includes(route.params.data?.service_name)
+                  ? route.params.data?.service_name
+                  : "",
+              };
+            });
+          }
+        }
+      })
+      .catch((e) => console.log(e));
+
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_servicename_II_productforproductionform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code == "200") {
+          if (response.data.data) {
+            setThicknessFullData((prev) => {
+              return {
+                ...prev,
+                service: response.data.data,
+              };
+            });
+            console.log("thick", response.data.data);
+            let filter = response.data.data.find(
+              (item) =>
+                item.thick_service_refno ===
+                route.params?.data?.thick_service_refno
+            );
+            setData((prev) => {
+              return {
+                ...prev,
+                thick_service_name: filter ? filter?.thick_service_name : "",
+              };
+            });
+          }
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  useEffect(() => {
+    console.log("data.service_name");
+    if (data.service_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          service_refno: serviceFullData.find(
+            (item) => item.service_name === data.service_name
+          ).service_refno,
+        },
+      };
+      console.log(params);
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_categoryname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("resp2", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setCategoryFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.category_name);
+
+              setData((prev) => {
+                return {
+                  ...prev,
+                  category_name: filter.includes(
+                    route.params.data?.category_name
+                  )
+                    ? route.params.data?.category_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.service_name]);
+
+  useEffect(() => {
+    if (data.thick_service_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          thick_service_refno: thicknessFullData.service.find(
+            (item) => item.thick_service_name === data.thick_service_name
+          ).thick_service_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_categoryname_II_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("thick2", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setThicknessFullData((prev) => {
+                return { ...prev, category: response.data.data };
+              });
+              let filter = response.data.data.find(
+                (item) =>
+                  item.thick_category_refno ===
+                  route.params?.data?.thick_category_refno
+              );
+              setData((prev) => {
+                return {
+                  ...prev,
+                  thick_category_name: filter
+                    ? filter?.thick_category_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.thick_service_name]);
+
+  useEffect(() => {
+    if (data.thick_category_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          Sess_CompanyAdmin_group_refno: Sess_CompanyAdmin_group_refno,
+          thick_category_refno: thicknessFullData.category.find(
+            (item) => item.thick_category_name === data.thick_category_name
+          ).thick_category_refno,
+        },
+      };
+      console.log("thick3pp", params);
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_productname_II_productforproductionform,
+        params
+      )
+        .then((response) => {
+          console.log("thick3", response.data);
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setThicknessFullData((prev) => {
+                return { ...prev, product: response.data.data };
+              });
+              let filter = response.data.data.find(
+                (item) =>
+                  item.product_refno === route.params?.data?.thick_product_refno
+              );
+              setData((prev) => {
+                return {
+                  ...prev,
+                  thick_product_name: filter ? filter?.product_name : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.thick_category_name]);
+
+  useEffect(() => {
+    console.log(data.category_name);
+    if (data.category_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          category_refno: categoryFullData.find(
+            (item) => item.category_name === data.category_name
+          ).category_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_brandname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setBrandFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.brand_name);
+              setData((prev) => {
+                return {
+                  ...prev,
+                  brand_name: filter.includes(route.params.data?.brand_name)
+                    ? route.params.data?.brand_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.category_name]);
+
+  useEffect(() => {
+    console.log(data.brand_name);
+    if (data.brand_name !== "") {
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          Sess_CompanyAdmin_group_refno: Sess_CompanyAdmin_group_refno,
+          brand_refno: brandFullData.find(
+            (item) => item.brand_name === data.brand_name
+          ).brand_refno,
+        },
+      };
+      Provider.createDFManufacturer(
+        Provider.API_URLS.get_productname_productforproductionform,
+        params
+      )
+        .then((response) => {
+          if (response.data && response.data.code == "200") {
+            if (response.data.data) {
+              setProductFullData(response.data.data);
+              let filter = response.data.data.map((item) => item.product_name);
+              setData((prev) => {
+                return {
+                  ...prev,
+                  product_name: filter.includes(route.params.data?.product_name)
+                    ? route.params.data?.product_name
+                    : "",
+                };
+              });
+            }
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [data.brand_name]);
+
+  const resetErrors = () => {
+    setError((prev) => {
+      return {
+        ...prev,
+        service_name: false,
+        category_name: false,
+        brand_name: false,
+        product_name: false,
+        supplier_name: false,
+        vendor_name: false,
+      };
+    });
+  };
+  const GetUserID = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData !== null) {
+        Sess_UserRefno = JSON.parse(userData).UserID;
+        Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+        Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+        Sess_CompanyAdmin_UserRefno =
+          JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
+        Sess_CompanyAdmin_group_refno =
+          JSON.parse(userData).Sess_CompanyAdmin_group_refno;
+        FetchServiceNames();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    GetUserID();
+  }, []);
   return (
     <View style={[Styles.flex1]}>
       <ScrollView
@@ -602,58 +499,83 @@ function AddProduction({ route, navigation }) {
                 if (selectedItem !== data.service_name) {
                   resetErrors();
                   setCategoryFullData([]);
-                  setProductFullData([]);
                   setBrandFullData([]);
+                  setProductFullData([]);
                   setData((prev) => {
                     return {
                       ...prev,
                       category_name: "",
-                      product_name: "",
                       brand_name: "",
+                      product_name: "",
                       service_name: selectedItem,
                     };
                   });
                 }
               }}
-              isError={errors.service_name}
+              isError={error.service_name}
               selectedItem={data.service_name}
               style={[Styles.borderred]}
             />
           </View>
-          <HelperText type="error" visible={errors.service_name}>
+          <HelperText type="error" visible={error.service_name}>
             {communication.InvalidServiceName}
           </HelperText>
+
           <Dropdown
             label="Category Name"
             data={categoryFullData.map((item) => item.category_name)}
             onSelected={(selectedItem) => {
-              if (selectedItem !== data.category_name) {
+              if (data.category_name !== selectedItem) {
                 resetErrors();
-                setProductFullData([]);
                 setBrandFullData([]);
+                setProductFullData([]);
                 setData((prev) => {
                   return {
                     ...prev,
-                    product_name: "",
                     brand_name: "",
+                    product_name: "",
                     category_name: selectedItem,
                   };
                 });
               }
             }}
-            isError={errors.category_name}
+            isError={error.category_name}
             selectedItem={data.category_name}
             style={[Styles.paddingTop16]}
           />
-          <HelperText type="error" visible={errors.category_name}>
+          <HelperText type="error" visible={error.category_name}>
             {communication.InvalidCategoryName}
+          </HelperText>
+
+          <Dropdown
+            label="Brand Name"
+            data={brandFullData.map((item) => item.brand_name)}
+            onSelected={(selectedItem) => {
+              if (data.brand_name !== selectedItem) {
+                resetErrors();
+                setProductFullData([]);
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    product_name: "",
+                    brand_name: selectedItem,
+                  };
+                });
+              }
+            }}
+            isError={error.brand_name}
+            selectedItem={data.brand_name}
+            style={[Styles.paddingTop16]}
+          />
+          <HelperText type="error" visible={error.brand_name}>
+            {communication.InvalidBrandName}
           </HelperText>
 
           <Dropdown
             label="Product Name"
             data={productFullData.map((item) => item.product_name)}
             onSelected={(selectedItem) => {
-              if (selectedItem !== data.product_name) {
+              if (data.product_name !== selectedItem) {
                 resetErrors();
                 setData((prev) => {
                   return {
@@ -663,120 +585,38 @@ function AddProduction({ route, navigation }) {
                 });
               }
             }}
-            isError={errors.product_name}
+            isError={error.product_name}
             selectedItem={data.product_name}
             style={[Styles.paddingTop16]}
           />
-
-          <HelperText type="error" visible={errors.product_name}>
+          <HelperText type="error" visible={error.product_name}>
             {communication.InvalidProductName}
           </HelperText>
 
-          <Dropdown
-            label="Width of Coil"
-            data={widthFullData.map((item) => item.gpcoil_width)}
-            onSelected={(selectedItem) => {
-              if (selectedItem !== data.gpcoil_width) {
-                setErrors((prev) => {
-                  return { ...prev, gpcoil_width: false };
-                });
-                setData((prev) => {
-                  return {
-                    ...prev,
-                    gpcoil_width: selectedItem,
-                  };
-                });
-              }
+          <TextInput
+            mode="flat"
+            label="Product length in Mtrs"
+            value={data.length_mtr_value}
+            returnKeyType="next"
+            onChangeText={(text) => {
+              setError((prev) => {
+                return {
+                  ...prev,
+                  length_mtr_value: false,
+                };
+              });
+              setData((prev) => {
+                return {
+                  ...prev,
+                  length_mtr_value: text,
+                };
+              });
             }}
-            isError={errors.gpcoil_width}
-            selectedItem={data.gpcoil_width}
-            style={[Styles.paddingTop16]}
+            style={[{ backgroundColor: "white" }]}
+            error={error.length_mtr_value}
           />
-
-          <HelperText type="error" visible={errors.gpcoil_width}>
-            {"Enter valid amount"}
-          </HelperText>
-
-          <Dropdown
-            label="Brand Name"
-            data={brandFullData.map((item) => item.brand_name)}
-            onSelected={(selectedItem) => {
-              if (selectedItem !== data.brand_name) {
-                resetErrors();
-                setData((prev) => {
-                  return {
-                    ...prev,
-                    brand_name: selectedItem,
-                  };
-                });
-              }
-            }}
-            isError={errors.brand_name}
-            selectedItem={data.brand_name}
-            style={[Styles.paddingTop16]}
-          />
-          <HelperText type="error" visible={errors.gpcoil_width}>
-            {communication.InvalidBrandName}
-          </HelperText>
-
-          <Dropdown
-            label="Mass of Zinc Coating"
-            data={zincFullData?.map((item) => item.gsm_name)}
-            onSelected={(selectedItem) => {
-              if (selectedItem !== data.mass_of_zinc_coating) {
-                setErrors((prev) => {
-                  return { ...prev, mass_of_zinc_coating: false };
-                });
-                setData((prev) => {
-                  return {
-                    ...prev,
-                    mass_of_zinc_coating: selectedItem,
-                  };
-                });
-              }
-            }}
-            isError={errors.mass_of_zinc_coating}
-            selectedItem={data.mass_of_zinc_coating}
-            style={[Styles.paddingTop16]}
-          />
-          <HelperText type="error" visible={errors.mass_of_zinc_coating}>
-            {communication.InvalidServiceName}
-          </HelperText>
-
-          <Dropdown
-            label="Number of GP coil"
-            data={coilnumFullData?.map((item) => item.no_gpcoil)}
-            onSelected={(selectedItem) => {
-              if (selectedItem !== data.no_gpcoil) {
-                setErrors((prev) => {
-                  return {
-                    ...prev,
-                    no_gpcoil: false,
-                    coil_details: Array(parseInt(selectedItem)).fill({
-                      weight: false,
-                      length: false,
-                    }),
-                  };
-                });
-                setData((prev) => {
-                  return {
-                    ...prev,
-                    no_gpcoil: selectedItem,
-                    coil_details: Array(parseInt(selectedItem)).fill({
-                      weight: "",
-                      length: "",
-                      avg_thickness: "",
-                    }),
-                  };
-                });
-              }
-            }}
-            isError={errors.no_gpcoil}
-            selectedItem={data.no_gpcoil}
-            style={[Styles.paddingTop16]}
-          />
-          <HelperText type="error" visible={errors.no_gpcoil}>
-            {communication.InvalidServiceName}
+          <HelperText type="error" visible={error.length_mtr_value}>
+            {"Enter proper value"}
           </HelperText>
           <View>
             <View
@@ -793,117 +633,156 @@ function AddProduction({ route, navigation }) {
                   Styles.marginHorizontal8,
                 ]}
               >
-                Coil Details
+                Product Thickness of Raw Material
               </Text>
             </View>
-            {data.coil_details !== [] &&
-              data.coil_details !== undefined &&
-              data.coil_details.map((_, idx) => (
-                <View key={idx}>
-                  <Coil
-                    dataparams={{
-                      Sess_UserRefno: Sess_UserRefno,
-                      Sess_company_refno: Sess_company_refno,
-                      brand_refno: brandFullData,
-                      gpcoil_width_value: data.gpcoil_width,
-                    }}
-                    id={idx}
-                    data={data}
-                    setData={setData}
-                    errors={errors}
-                    setErrors={setErrors}
-                  />
-                </View>
-              ))}
+            <View
+              style={[
+                Styles.border2,
+                Styles.borderBottomRadius4,
+                Styles.height250,
+              ]}
+            >
+              <View style={[Styles.marginTop24]}>
+                <Dropdown
+                  label="Select Service"
+                  data={
+                    thicknessFullData?.service
+                      ? thicknessFullData?.service?.map(
+                          (item) => item.thick_service_name
+                        )
+                      : []
+                  }
+                  onSelected={(selectedItem) => {
+                    if (data.thick_service_name !== selectedItem) {
+                      setError((prev) => {
+                        return {
+                          ...prev,
+                          thick_service_name: false,
+                          thick_category_name: false,
+                          thick_product_name: false,
+                        };
+                      });
+                      setThicknessFullData((prev) => {
+                        return { ...prev, category: [], product: [] };
+                      });
+                      setData((prev) => {
+                        return {
+                          ...prev,
+                          thick_category_name: "",
+                          thick_product_name: "",
+                          thick_service_name: selectedItem,
+                        };
+                      });
+                    }
+                  }}
+                  isError={error.thick_service_name}
+                  selectedItem={data.thick_service_name}
+                  style={[Styles.height120]}
+                />
+                <HelperText type="error" visible={error.thick_service_name}>
+                  {communication.InvalidServiceName}
+                </HelperText>
+              </View>
+              <Dropdown
+                label="Select Category"
+                data={
+                  thicknessFullData?.category
+                    ? thicknessFullData?.category?.map(
+                        (item) => item.thick_category_name
+                      )
+                    : []
+                }
+                onSelected={(selectedItem) => {
+                  if (data.thick_category_name !== selectedItem) {
+                    setError((prev) => {
+                      return {
+                        ...prev,
+                        thick_service_name: false,
+                        thick_category_name: false,
+                        thick_product_name: false,
+                      };
+                    });
+                    setThicknessFullData((prev) => {
+                      return { ...prev, product: [] };
+                    });
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        thick_product_name: "",
+                        thick_category_name: selectedItem,
+                      };
+                    });
+                  }
+                }}
+                isError={error.thick_category_name}
+                selectedItem={data.thick_category_name}
+                style={[Styles.height120]}
+              />
+              <HelperText type="error" visible={error.thick_category_name}>
+                {communication.InvalidServiceName}
+              </HelperText>
+
+              <Dropdown
+                label="Select Product"
+                data={
+                  thicknessFullData?.product
+                    ? thicknessFullData?.product?.map(
+                        (item) => item.product_name
+                      )
+                    : []
+                }
+                onSelected={(selectedItem) => {
+                  if (data.thick_product_name !== selectedItem) {
+                    setError((prev) => {
+                      return {
+                        ...prev,
+                        thick_service_name: false,
+                        thick_category_name: false,
+                        thick_product_name: false,
+                      };
+                    });
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        thick_product_name: selectedItem,
+                      };
+                    });
+                  }
+                }}
+                isError={error.thick_product_name}
+                selectedItem={data.thick_product_name}
+                style={[Styles.height120]}
+              />
+              <HelperText type="error" visible={error.thick_product_name}>
+                {communication.InvalidServiceName}
+              </HelperText>
+            </View>
           </View>
           <TextInput
             mode="flat"
-            label="Total Weight"
-            value={data.total_weight}
-            editable={false}
+            label="Raw material width in mm"
+            value={data.width_mm_value}
             returnKeyType="next"
-            onSubmitEditing={() => ref_input2.current.focus()}
-            style={[{ backgroundColor: "white" }]}
-          />
-          <TextInput
-            mode="flat"
-            label="Total Length"
-            value={data.total_length}
-            editable={false}
-            returnKeyType="next"
-            onSubmitEditing={() => ref_input2.current.focus()}
-            style={[{ backgroundColor: "white" }]}
-          />
-
-          <TextInput
-            mode="flat"
-            label="Rate per Unit"
-            value={data.rate}
-            keyboardType={"numeric"}
             onChangeText={(text) => {
-              setErrors((prev) => {
-                return { ...prev, rate: false };
+              setError((prev) => {
+                return {
+                  ...prev,
+                  width_mm_value: false,
+                };
               });
               setData((prev) => {
                 return {
                   ...prev,
-                  rate: text,
+                  width_mm_value: text,
                 };
               });
             }}
-            style={{ backgroundColor: "white" }}
-            error={errors.rate}
-          />
-          <HelperText type="error" visible={errors.rate}>
-            {communication.InvalidHSNSAC}
-          </HelperText>
-
-          <TextInput
-            mode="flat"
-            label="Amount"
-            value={data.amount}
-            editable={false}
-            returnKeyType="next"
-            onSubmitEditing={() => ref_input2.current.focus()}
             style={[{ backgroundColor: "white" }]}
+            error={error.width_mm_value}
           />
-
-          <Dropdown
-            label="Supplier Name"
-            data={route.params.data.supplier.map((item) => item.client_name)}
-            onSelected={(selectedItem) => {
-              setErrors((prev) => {
-                return { ...prev, supplier_name: false };
-              });
-              setData((prev) => {
-                return { ...prev, supplier_name: selectedItem };
-              });
-            }}
-            isError={error.supplier_name}
-            selectedItem={data.supplier_name}
-            style={[Styles.paddingTop16]}
-          />
-          <HelperText type="error" visible={errors.supplier_name}>
-            {communication.InvalidServiceName}
-          </HelperText>
-
-          <Dropdown
-            label="Vendor Name"
-            data={route.params.data.vendor.map((item) => item.client_name)}
-            onSelected={(selectedItem) => {
-              setErrors((prev) => {
-                return { ...prev, vendor_name: false };
-              });
-              setData((prev) => {
-                return { ...prev, vendor_name: selectedItem };
-              });
-            }}
-            isError={error.vendor_name}
-            selectedItem={data.vendor_name}
-            style={[Styles.paddingTop16]}
-          />
-          <HelperText type="error" visible={errors.vendor_name}>
-            {communication.InvalidServiceName}
+          <HelperText type="error" visible={error.width_mm_value}>
+            {"Enter proper value"}
           </HelperText>
 
           <View style={{ width: 160 }}>
@@ -915,10 +794,7 @@ function AddProduction({ route, navigation }) {
               status={data.checked ? "checked" : "unchecked"}
               onPress={() => {
                 setData((prev) => {
-                  return {
-                    ...prev,
-                    checked: !prev.checked,
-                  };
+                  return { ...prev, checked: !prev.checked };
                 });
               }}
             />
@@ -937,8 +813,8 @@ function AddProduction({ route, navigation }) {
         <Card.Content>
           <Button
             mode="contained"
-            disabled={isbuttonLoading}
             onPress={ValidateData}
+            disabled={isButtonLoading}
           >
             Save
           </Button>

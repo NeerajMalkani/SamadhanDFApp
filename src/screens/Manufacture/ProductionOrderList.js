@@ -183,7 +183,7 @@ function ProductionOrderList({ navigation }) {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddProduction", {
+    navigation.navigate("AddProductOrderList", {
       type: "add",
       fetchData: FetchData,
       data: {

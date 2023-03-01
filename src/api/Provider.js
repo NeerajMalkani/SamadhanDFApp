@@ -140,6 +140,9 @@ class Provider {
     widthofgpcoilcreate: "widthofgpcoilcreate/",
     brandconversioncreate: "brandconversioncreate/",
     productforproductioncreate: "productforproductioncreate/",
+    get_searchresult_productionachieved_report:
+      "get_searchresult_productionachieved_report/",
+    shiftproductionrefnocheck: "shiftproductionrefnocheck/",
     get_servicename_II_productforproductionform:
       "get_servicename_II_productforproductionform/",
     get_categoryname_II_productforproductionform:
@@ -180,6 +183,8 @@ class Provider {
     EWayBillCreate: "ewaybillcreate/",
     EWayBillUpdate: "ewaybillupdate/",
     shiftproductionrefnocheck: "shiftproductionrefnocheck_op/",
+    get_joborderno_productionachieved_report:
+      "get_joborderno_productionachieved_report/",
 
     /******************************Admin Service Catalogue************************************/
     WorkFloorRefNoCheck: "workfloorrefnocheck/",

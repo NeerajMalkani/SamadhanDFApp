@@ -12,7 +12,7 @@ import {
   FAB,
   List,
   Snackbar,
-  Searchbar,
+  TextInput,
   Title,
   Button,
   Text,
@@ -207,7 +207,11 @@ function JobOrderform({ navigation }) {
                 }}
               />
             </View>
-            <View style={{ flex: 0.5, padding: 5, justifyContent: "center" }}>
+          </View>
+          <View>
+            <View
+              style={{ width: "100%", padding: 5, justifyContent: "center" }}
+            >
               <Button
                 mode="contained"
                 onPress={() => {
@@ -217,29 +221,116 @@ function JobOrderform({ navigation }) {
                   FetchData();
                 }}
               >
-                <Icon
-                  style={{ marginVertical: 12, marginRight: 12 }}
-                  size={30}
-                  name="send"
-                />
+                Search
               </Button>
             </View>
           </View>
+          <ScrollView
+            style={[
+              Styles.flex1,
+              Styles.flexColumn,
+              Styles.backgroundColor,
+              { padding: 8 },
+            ]}
+          >
+            {listData[0].length > 0 ? (
+              <>
+                <View
+                  style={[
+                    Styles.flex1,
+                    Styles.flexColumn,
+                    Styles.backgroundColor,
+                    { padding: 8 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      { marginLeft: 2, marginBottom: 5 },
+                      Styles.fontSize18,
+                    ]}
+                  >{`Total Weight: ${total}`}</Text>
+                  {listData[0].map((item, idx) => {
+                    return (
+                      <View
+                        style={{
+                          borderRadius: 15,
+                          borderWidth: 1,
+                          borderColor: theme.colors.primary,
+                          padding: 10,
+                          marginBottom: 8,
+                        }}
+                        key={idx}
+                      >
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Job Order No"
+                              value={item.mf_vo_no}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Job Order Date"
+                              value={item.mf_po_date}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Vendor Name"
+                              value={item.vendor_company_name}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <View style={{ flex: 1.2, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Weight"
+                              value={item.total_weight}
+                              editable={false}
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Width"
+                              value={item.gpcoil_width_value}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                          <View style={{ flex: 1, padding: 5 }}>
+                            <TextInput
+                              mode="outlined"
+                              label="Thickness"
+                              value={item.product_name}
+                              editable={false}
+                              returnKeyType="next"
+                              style={[{ backgroundColor: "white", height: 40 }]}
+                            />
+                          </View>
+                        </View>
+                      </View>
+                    );
+                  })}
 
-          {listData[0].length > 0 ? (
-            <>
-              <View
-                style={[
-                  Styles.flex1,
-                  Styles.flexColumn,
-                  Styles.backgroundColor,
-                ]}
-              >
-                <Text
-                  style={[{ marginLeft: 2 }, Styles.fontSize18]}
-                >{`Total Weight: ${total}`}</Text>
-
-                <SwipeListView
+                  {/* <SwipeListView
                   previewDuration={1000}
                   previewOpenValue={-72}
                   previewRowKey="1"
@@ -257,15 +348,16 @@ function JobOrderform({ navigation }) {
                   disableRightSwipe={true}
                   rightOpenValue={-72}
                   renderItem={(data) => RenderItems(data)}
-                />
-              </View>
-            </>
-          ) : (
-            <NoItems
-              icon="format-list-bulleted"
-              text="No records found. Add records by clicking on plus icon."
-            />
-          )}
+                /> */}
+                </View>
+              </>
+            ) : (
+              <NoItems
+                icon="format-list-bulleted"
+                text="No records found. Add records by clicking on plus icon."
+              />
+            )}
+          </ScrollView>
         </>
       )}
 
