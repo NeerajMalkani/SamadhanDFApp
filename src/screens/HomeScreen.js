@@ -1569,7 +1569,7 @@ const HomeScreen = ({ route, navigation }) => {
                     >
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("ABrandConversationValue");
+                          navigation.navigate("BrandConversionValue");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1592,7 +1592,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("WidthOfGpCoil");
+                          navigation.navigate("OpeningStockList");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1610,12 +1610,12 @@ const HomeScreen = ({ route, navigation }) => {
                           color={theme.colors.productionIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
-                          Width of GP Coil
+                          Opending Stock
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("MassOfZincCoating");
+                          navigation.navigate("OpeningStockScrap");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1633,7 +1633,7 @@ const HomeScreen = ({ route, navigation }) => {
                           color={theme.colors.productionIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
-                          Mass of zinc coting
+                        Opending Stock Scrap
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -1648,9 +1648,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1670,9 +1670,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1700,9 +1700,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1722,9 +1722,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1756,7 +1756,7 @@ const HomeScreen = ({ route, navigation }) => {
                     >
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
+                          navigation.navigate("ProductforProduction");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1778,7 +1778,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
+                          navigation.navigate("ProductionOrderList");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1807,9 +1807,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1829,9 +1829,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1863,9 +1863,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1885,9 +1885,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1920,7 +1920,7 @@ const HomeScreen = ({ route, navigation }) => {
                     >
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
+                          navigation.navigate("ProductionAchieved");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1942,7 +1942,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
+                          navigation.navigate("JobOrderForm");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1971,9 +1971,9 @@ const HomeScreen = ({ route, navigation }) => {
                       ]}
                     >
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("MaterialSetupScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1993,9 +1993,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("PostNewDesignScreen");
-                        }}
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
