@@ -1237,4 +1237,55 @@ export const MenuItemsProjectSupervisor = [
     roleID: 7,
     items: null,
   },
+  {
+    title: "Manufacturer",
+    icon: "calculator-variant",
+    type: "accordian",
+    index: 6,
+    roleID: 7,
+    items: [
+      {
+        title: "Brand Coversion Value",
+        type: "accordian",
+        index: 80,
+        navigation: "BrandConversionValue",
+      },
+      {
+        title: "Opening Stock",
+        type: "accordian",
+        index: 80,
+        navigation: "OpeningStockList",
+      },
+      {
+        title: "Opening Stock Scrap",
+        type: "accordian",
+        index: 80,
+        navigation: "OpeningStockScrap",
+      },
+      {
+        title: "Product for Production",
+        type: "accordian",
+        index: 80,
+        navigation: "ProductforProduction",
+      },
+      {
+        title: "Purchase order List",
+        type: "accordian",
+        index: 80,
+        navigation: "ProductionOrderList",
+      },
+      {
+        title: "Job Order Form",
+        type: "accordian",
+        index: 80,
+        navigation: "JobOrderForm",
+      },
+      {
+        title: "Production Achieved",
+        type: "accordian",
+        index: 80,
+        navigation: "ProductionAchieved",
+      },
+    ],
+  },
 ];
