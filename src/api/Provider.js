@@ -510,9 +510,9 @@ class Provider {
     employee_job_search: "employee_job_search/",
     employer_job_search: "employer_job_search/",
     employee_profile_fullview: "employee_profile_fullview/",
-    get_availablebalance_cashinbank_sourceform:
-      "get_availablebalance_cashinbank_sourceform/",
-    employee_profile_fullview: "employee_profile_fullview/",
+    get_availablebalance_cashinbank_sourceform: "get_availablebalance_cashinbank_sourceform/",
+    get_availablebalance_cashinhand_expensesform: "get_availablebalance_cashinhand_expensesform/",
+    summaryofmaterial_gridlist: "summaryofmaterial_gridlist/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -544,14 +544,15 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
-        : ""
+
+          name: 'appimage1212.jpg',
+          type: filePath.type + '/*',
+          uri:
+            Platform.OS === 'android'
+              ? filePath.uri
+              : filePath.uri.replace('file://', ''),
+        }
+        : '',
     );
     return datas;
   }

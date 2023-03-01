@@ -81,6 +81,7 @@ const JobSeekerForm = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
+    console.log('submit');
     let error = false;
     if (state.designation_refno === '') {
       error = true;
@@ -155,6 +156,7 @@ const JobSeekerForm = ({ route, navigation }) => {
         formdata,
       )
         .then((response) => {
+          console.log('asdfasdfasdfasdfasdf', response.data);
           if (response.data.data) {
             setSnackbar(true);
             setSnackbarText('Applied Successfully');
@@ -209,7 +211,7 @@ const JobSeekerForm = ({ route, navigation }) => {
               setCurrentState(obj);
               fetchDistricts(
                 res.data.data[0].state_refno[
-                  res.data.data[0].state_refno.length - 1
+                res.data.data[0].state_refno.length - 1
                 ],
               );
             }

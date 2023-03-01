@@ -45,7 +45,10 @@ export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
   userID = 0,
   groupRefNo = 0,
-  designID = 0;
+  designID = 0,
+  companyID = 0,
+  branchID = 0;
+
 var _user_count = null;
 
 LogBox.ignoreLogs([
@@ -83,6 +86,12 @@ const HomeScreen = ({ route, navigation }) => {
   const [userRoleData, setUserRoleData] = React.useState([]);
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
+
+  const [availableRawMaterialKg, setAvailableRawMaterialKg] = React.useState("");
+  const [availableRawMaterialNo, setAvailableRawMaterialNo] = React.useState("");
+  const [productionDoneKg, setProductionDoneKg] = React.useState("");
+  const [productionDoneNo, setProductionDoneNo] = React.useState("");
+  const [scrapWastage, setScrapWastage] = React.useState("");
 
   //#endregion
 
@@ -261,6 +270,8 @@ const HomeScreen = ({ route, navigation }) => {
       userID = userDataParsed.UserID;
       groupRefNo = userDataParsed.Sess_group_refno;
       designID = userDataParsed.Sess_designation_refno;
+      companyID = userDataParsed.Sess_company_refno;
+      branchID = userDataParsed.Sess_branch_refno;
       let roleName = "";
       switch (roleID) {
         case "1":
@@ -295,6 +306,9 @@ const HomeScreen = ({ route, navigation }) => {
       GetUserCount(userID, groupRefNo);
       if (roleID == 3) {
         FillUserRoles();
+      }
+      else if (roleID == 7) {
+        FetchManufactoringData();
       }
     }
   };
@@ -401,7 +415,7 @@ const HomeScreen = ({ route, navigation }) => {
             Sess_RegionalOffice_Branch_Refno:
               response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
-            Sess_empe_refno:response.data.data.Sess_empe_refno,
+            Sess_empe_refno: response.data.data.Sess_empe_refno,
           };
 
           StoreUserData(user);
@@ -458,6 +472,42 @@ const HomeScreen = ({ route, navigation }) => {
         setIsButtonLoading(false);
       });
   };
+
+  const FetchManufactoringData = () => {
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString()
+      },
+    };
+    Provider.createDFManufacturer(
+      Provider.API_URLS.summaryofmaterial_gridlist,
+      params
+    )
+      .then((response) => {
+        //console.log('manufactoring data', response.data.data);
+
+        if (response.data && response.data.code === 200) {
+          setAvailableRawMaterialKg(response.data.data.Available_Raw_Materials_Kg_Total);
+          setAvailableRawMaterialNo(response.data.data.Available_Raw_Materials_Nos_Total);
+          setProductionDoneKg(response.data.data.OpeningStock_Production_Done_Kg_Total);
+          setProductionDoneNo(response.data.data.OpeningStock_Production_Done_Nos_Total);
+          setScrapWastage(response.data.data.Production_Done_Kg_Total);
+
+        } else {
+          setSnackbarText(communication.NoData);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
   //#endregion
 
   return (
@@ -1396,264 +1446,120 @@ const HomeScreen = ({ route, navigation }) => {
                 </View>
               </View>
             </View>
-          ) : (
+          ) : userRoleID === "7" ? (
             <View>
-              {/* Estimation Start */}
               <View
                 style={[
-                  Styles.flexRow,
+                  Styles.paddingTop16,
                   Styles.paddingHorizontal16,
-                  Styles.flexWrap,
+                  Styles.paddingBottom24,
+
                 ]}
               >
-                {imageGalleryData.map((k, i) => {
-                  return (
-                    <View
-                      key={i}
-                      style={[
-                        Styles.width50per,
-                        Styles.padding4,
-                        Styles.paddingTop0,
-                      ]}
-                    >
-                      <CreateSCCards
-                        key={i}
-                        image={k.design_image_url}
-                        title={k.service_name}
-                        id={k.service_refno}
-                        subttitle={k.designtype_name}
-                        data={k}
-                        cardClick={SingleCardClick}
+
+                <View style={[
+                  Styles.padding16,
+                  Styles.borderRadius8, { backgroundColor: "#277BC0", elevation: 4 }
+                ]}>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                    <View style={[Styles.borderRadius64, { width: 48, height: 48, elevation: 10 }]}>
+                      <Image
+                        source={require("../../assets/raw-material.png")}
+                        style={Styles.flex1, { width: 48, height: 48 }}
+                        resizeMode="cover"
                       />
                     </View>
-                  );
-                })}
-              </View>
-              {/* Estimation End */}
-              <View style={[Styles.padding16]}>
-                <Text
-                  style={[
-                    Styles.fontSize18,
-                    { color: "green", width: "100%" },
-                    Styles.paddingBottom12,
-                  ]}
-                >
-                  SLIDING GALLERY
-                </Text>
-                <Divider />
-              </View>
 
-              <View
-                style={[
-                  Styles.margin16,
-                  Styles.marginTop0,
-                  Styles.border1,
-                  Styles.borderRadius8,
-                  Styles.OverFlow,
-                  { height: 180 },
-                ]}
-              >
-                <ImageSlider
-                  data={catalogueImages}
-                  timer={10000}
-                  activeIndicatorStyle={{
-                    backgroundColor: theme.colors.primary,
-                  }}
-                  autoPlay={true}
-                  onClick={() => setCatalogueImagesZoomVisible(true)}
-                  style={Styles.borderRadius16}
-                />
-              </View>
-
-              <View
-                style={[
-                  Styles.margin4,
-                  Styles.height96,
-                  Styles.border1,
-                  { position: "relative" },
-                ]}
-              >
-                <Image
-                  source={{
-                    uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg",
-                  }}
-                  style={{ width: "100%", height: "100%" }}
-                />
-                <Caption
-                  style={[
-                    {
-                      position: "absolute",
-                      bottom: 4,
-                      right: 4,
-                      color: theme.colors.textLight,
-                    },
-                  ]}
-                >
-                  Sponsered Ads
-                </Caption>
-              </View>
-
-              {userRoleID === "3" ? (
-                <View style={[Styles.padding16]}>
-                  <View
-                    style={[
-                      Styles.bordergray,
-                      Styles.bordergray,
-                      Styles.borderRadius8,
-                      Styles.paddingBottom8,
-                    ]}
-                  >
-                    <Title style={[Styles.padding16, Styles.paddingBottom0]}>
-                      Switch Role
-                    </Title>
-                    <View style={[Styles.paddingHorizontal16]}>
-                      <Dropdown
-                        label="SELECT"
-                        data={switchRoleNames}
-                        onSelected={onRoleSelected}
-                        isError={errorRole}
-                        selectedItem={roleName}
-                      />
-                      <Button
-                        mode="contained"
-                        style={[Styles.marginTop12]}
-                        loading={isButtonLoading}
-                        disabled={isButtonLoading}
-                        onPress={ValidateSwitchRole}
-                      >
-                        Switch
-                      </Button>
+                    <Text style={[Styles.HomeTitle, Styles.marginStart8, Styles.whiteColor]}>AVAILABLE RAW MATERIALS</Text>
+                  </View>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginTop8, Styles.flexSpaceBetween]}>
+                    <View style={[Styles.flexColumn]}>
+                      <Text style={[Styles.HomeTitle, Styles.fontSize20, Styles.whiteColor]}>Kg:</Text>
+                      <Text style={[Styles.fontSize14, Styles.fontBold, Styles.whiteColor]}>{availableRawMaterialKg}</Text>
                     </View>
-                    <Portal>
-                      <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-                        <Dialog.Title>Confirmation</Dialog.Title>
-                        <Dialog.Content>
-                          <Paragraph>
-                            Do you really want to switch your role to {roleName}
-                            ? If OK, then your active role will get
-                            automatically changed
-                          </Paragraph>
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                          <Button onPress={UpdateUserRole}>Ok</Button>
-                          <Button onPress={hideDialog}>Cancel</Button>
-                        </Dialog.Actions>
-                      </Dialog>
-                    </Portal>
+                    <View style={[Styles.flexColumn]}>
+                      <Text style={[Styles.HomeTitle, Styles.fontSize20, Styles.whiteColor]}>No:</Text>
+                      <Text style={[Styles.fontSize14, Styles.fontBold, Styles.whiteColor]}>{availableRawMaterialNo}</Text>
+                    </View>
+
                   </View>
                 </View>
-              ) : null}
 
+                <View style={[
+                  Styles.padding16,
+                  Styles.borderRadius8, Styles.marginTop8, { backgroundColor: "#5F8D4E", elevation: 4 }
+                ]}>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                    <View style={[Styles.borderRadius64, { width: 48, height: 48, elevation: 10 }]}>
+                      <Image
+                        source={require("../../assets/production-done.png")}
+                        style={Styles.flex1, { width: 48, height: 48 }}
+                        resizeMode="cover"
+                      />
+                    </View>
+
+                    <Text style={[Styles.HomeTitle, Styles.marginStart8, Styles.whiteColor]}>PRODUCTION DONE</Text>
+                  </View>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginTop8, Styles.flexSpaceBetween]}>
+                    <View style={[Styles.flexColumn]}>
+                      <Text style={[Styles.HomeTitle, Styles.fontSize20, Styles.whiteColor]}>Kg:</Text>
+                      <Text style={[Styles.fontSize14, Styles.fontBold, Styles.whiteColor]}>{productionDoneKg}</Text>
+                    </View>
+                    <View style={[Styles.flexColumn]}>
+                      <Text style={[Styles.HomeTitle, Styles.fontSize20, Styles.whiteColor]}>No:</Text>
+                      <Text style={[Styles.fontSize14, Styles.fontBold, Styles.whiteColor]}>{productionDoneNo}</Text>
+                    </View>
+
+                  </View>
+                </View>
+                <View style={[
+                  Styles.padding16,
+                  Styles.borderRadius8, Styles.marginTop8, { backgroundColor: "#B3005E", elevation: 4 }
+                ]}>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                    <View style={[Styles.borderRadius64, { width: 48, height: 48, elevation: 10 }]}>
+                      <Image
+                        source={require("../../assets/scrap-waste.png")}
+                        style={Styles.flex1, { width: 48, height: 48 }}
+                        resizeMode="cover"
+                      />
+                    </View>
+
+                    <Text style={[Styles.HomeTitle, Styles.marginStart8, Styles.whiteColor]}>SCRAP WASTAGE</Text>
+                  </View>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginTop8, Styles.flexSpaceBetween]}>
+                    <View style={[Styles.flexColumn]}>
+                      <Text style={[Styles.HomeTitle, Styles.fontSize20, Styles.whiteColor]}>Kg:</Text>
+                      <Text style={[Styles.fontSize14, Styles.fontBold, Styles.whiteColor]}>{scrapWastage}</Text>
+                    </View>
+
+                  </View>
+                </View>
+
+              </View>
               <View
                 style={[
                   Styles.width100per,
-                  Styles.padding16,
-                  Styles.positionRelative,
+                  Styles.boxTopElevation,
+                  Styles.borderTopRadius24,
+                  Styles.paddingTop12,
+                  Styles.paddingBottom16,
                 ]}
               >
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("DesignYourDreamCategories")
-                  }
-                >
+                <View style={[Styles.paddingHorizontal16]}>
                   <View
                     style={[
-                      Styles.flex1,
-                      Styles.width100per,
-                      Styles.height250,
-                      Styles.borderRadius8,
-                      Styles.OverFlow,
+                      Styles.horizontalArrowLineBG,
+                      Styles.flexAlignSelfCenter,
+                      Styles.borderRadius16,
+                      Styles.marginBottom16,
+                      { width: "20%", height: 6 },
                     ]}
-                  >
-                    <FadeCarousel
-                      elements={slidesTwo}
-                      containerStyle={[
-                        Styles.flex1,
-                        Styles.flexAlignCenter,
-                        Styles.flexJustifyCenter,
-                      ]}
-                      fadeDuration={2000}
-                      stillDuration={2000}
-                      start={true}
-                    />
-                    <View
-                      style={[
-                        Styles.width100per,
-                        Styles.height40,
-                        {
-                          backgroundColor: "rgba(0,0,0,0.4)",
-                          position: "absolute",
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          Styles.marginTop8,
-                          Styles.marginStart16,
-                          Styles.fontSize18,
-                          Styles.textColorWhite,
-                          Styles.fontBold,
-                        ]}
-                      >
-                        Design your Dream
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-
-                {/* Material Calculator */}
-                <TouchableOpacity
-                  onPress={() => {
-                    if (roleID == 2) {
-                      navigation.navigate("MaterialSetupScreen", {
-                        type: "add",
-                      });
-                    } else {
-                      navigation.navigate("MaterialCalculatorScreen", {
-                        type: "add",
-                      });
-                    }
-                  }}
-                  style={[
-                    Styles.width100per,
-                    Styles.height150,
-                    Styles.flexRow,
-                    Styles.marginTop16,
-                    Styles.borderRadius8,
-                    { elevation: 4 },
-                  ]}
-                >
-                  <ImageBackground
-                    source={require("../../assets/material-calculator-with-element-bg.jpg")}
-                    resizeMode="cover"
-                    style={[{ flex: 1, justifyContent: "center" }]}
-                    imageStyle={{ borderRadius: 8 }}
-                  >
-                    <Text
-                      style={[
-                        Styles.positionAbsolute,
-                        Styles.marginTop8,
-                        Styles.marginStart16,
-                        Styles.fontSize18,
-                        Styles.textColorWhite,
-                        Styles.fontBold,
-                        { top: 8 },
-                      ]}
-                    >
-                      Material Calculator
+                  ></View>
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>
+                      Production Unit Master
                     </Text>
-                  </ImageBackground>
-                </TouchableOpacity>
-                {/* Material Calculator */}
-                <View style={[Styles.paddingTop16]}>
-                  <View
-                    style={[
-                      Styles.bordergray,
-                      Styles.padding16,
-                      Styles.borderRadius8,
-                    ]}
-                  >
-                    <Text style={[Styles.HomeTitle]}>Enquiry & Estimation</Text>
                     <View
                       style={[
                         Styles.marginTop16,
@@ -1663,7 +1569,7 @@ const HomeScreen = ({ route, navigation }) => {
                     >
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("ImageGalleryScreen");
+                          navigation.navigate("ABrandConversationValue");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1672,7 +1578,7 @@ const HomeScreen = ({ route, navigation }) => {
                           Styles.flexJustifyCenter,
                           Styles.flexAlignCenter,
                           Styles.paddingHorizontal12,
-                          { width: 140, height: 72 },
+                          { width: 100, height: 108 },
                         ]}
                       >
                         <Icon
@@ -1681,12 +1587,12 @@ const HomeScreen = ({ route, navigation }) => {
                           color={theme.colors.productionIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
-                          Image Gallery
+                          Brand Conversion Value
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("YourEstimationsScreen");
+                          navigation.navigate("WidthOfGpCoil");
                         }}
                         style={[
                           Styles.borderRadius8,
@@ -1695,7 +1601,7 @@ const HomeScreen = ({ route, navigation }) => {
                           Styles.flexJustifyCenter,
                           Styles.flexAlignCenter,
                           Styles.paddingHorizontal12,
-                          { width: 140, height: 72, marginLeft: 16 },
+                          { width: 100, height: 108 },
                         ]}
                       >
                         <Icon
@@ -1704,111 +1610,743 @@ const HomeScreen = ({ route, navigation }) => {
                           color={theme.colors.productionIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
-                          Your Estimations
+                          Width of GP Coil
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MassOfZincCoating");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 100, height: 108 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.productionIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Mass of zinc coting
                         </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
-                </View>
-                {(userRoleID === "4" || userRoleID === "5") && (
-                  <>
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Employee Management</Text>
                     <View
                       style={[
                         Styles.marginTop16,
-                        Styles.borderRadius8,
-                        Styles.homeBox,
-                        { height: 140 },
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
                       ]}
                     >
-                      <ImageBackground
-                        source={require("../../assets/user-access.jpg")}
-                        resizeMode="cover"
-                        style={[{ flex: 1, justifyContent: "center" }]}
-                        imageStyle={{ borderRadius: 8 }}
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Employee List
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Employee Request
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Mark Availability
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Attendance
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Production</Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Product For Production
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Purchase Order List
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Production Status
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Summary Of Materials
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Vendor Order Form</Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Vendor Order Form List
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Invoice Receipt List
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                  </View>
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Reports</Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Production Achieved
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Job Order Form
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("MaterialSetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Invoice Receipt
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("PostNewDesignScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="home-city"
+                          size={22}
+                          color={theme.colors.serviceCatelogueIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Available Stock
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                </View>
+              </View>
+            </View>
+          ) :
+            (
+              <View>
+                {/* Estimation Start */}
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.paddingHorizontal16,
+                    Styles.flexWrap,
+                  ]}
+                >
+                  {imageGalleryData.map((k, i) => {
+                    return (
+                      <View
+                        key={i}
+                        style={[
+                          Styles.width50per,
+                          Styles.padding4,
+                          Styles.paddingTop0,
+                        ]}
+                      >
+                        <CreateSCCards
+                          key={i}
+                          image={k.design_image_url}
+                          title={k.service_name}
+                          id={k.service_refno}
+                          subttitle={k.designtype_name}
+                          data={k}
+                          cardClick={SingleCardClick}
+                        />
+                      </View>
+                    );
+                  })}
+                </View>
+                {/* Estimation End */}
+                <View style={[Styles.padding16]}>
+                  <Text
+                    style={[
+                      Styles.fontSize18,
+                      { color: "green", width: "100%" },
+                      Styles.paddingBottom12,
+                    ]}
+                  >
+                    SLIDING GALLERY
+                  </Text>
+                  <Divider />
+                </View>
+
+                <View
+                  style={[
+                    Styles.margin16,
+                    Styles.marginTop0,
+                    Styles.border1,
+                    Styles.borderRadius8,
+                    Styles.OverFlow,
+                    { height: 180 },
+                  ]}
+                >
+                  <ImageSlider
+                    data={catalogueImages}
+                    timer={10000}
+                    activeIndicatorStyle={{
+                      backgroundColor: theme.colors.primary,
+                    }}
+                    autoPlay={true}
+                    onClick={() => setCatalogueImagesZoomVisible(true)}
+                    style={Styles.borderRadius16}
+                  />
+                </View>
+
+                <View
+                  style={[
+                    Styles.margin4,
+                    Styles.height96,
+                    Styles.border1,
+                    { position: "relative" },
+                  ]}
+                >
+                  <Image
+                    source={{
+                      uri: "https://www.wordstream.com/wp-content/uploads/2021/07/banner-ads-examples-ncino.jpg",
+                    }}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                  <Caption
+                    style={[
+                      {
+                        position: "absolute",
+                        bottom: 4,
+                        right: 4,
+                        color: theme.colors.textLight,
+                      },
+                    ]}
+                  >
+                    Sponsered Ads
+                  </Caption>
+                </View>
+
+                {userRoleID === "3" ? (
+                  <View style={[Styles.padding16]}>
+                    <View
+                      style={[
+                        Styles.bordergray,
+                        Styles.bordergray,
+                        Styles.borderRadius8,
+                        Styles.paddingBottom8,
+                      ]}
+                    >
+                      <Title style={[Styles.padding16, Styles.paddingBottom0]}>
+                        Switch Role
+                      </Title>
+                      <View style={[Styles.paddingHorizontal16]}>
+                        <Dropdown
+                          label="SELECT"
+                          data={switchRoleNames}
+                          onSelected={onRoleSelected}
+                          isError={errorRole}
+                          selectedItem={roleName}
+                        />
+                        <Button
+                          mode="contained"
+                          style={[Styles.marginTop12]}
+                          loading={isButtonLoading}
+                          disabled={isButtonLoading}
+                          onPress={ValidateSwitchRole}
+                        >
+                          Switch
+                        </Button>
+                      </View>
+                      <Portal>
+                        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                          <Dialog.Title>Confirmation</Dialog.Title>
+                          <Dialog.Content>
+                            <Paragraph>
+                              Do you really want to switch your role to {roleName}
+                              ? If OK, then your active role will get
+                              automatically changed
+                            </Paragraph>
+                          </Dialog.Content>
+                          <Dialog.Actions>
+                            <Button onPress={UpdateUserRole}>Ok</Button>
+                            <Button onPress={hideDialog}>Cancel</Button>
+                          </Dialog.Actions>
+                        </Dialog>
+                      </Portal>
+                    </View>
+                  </View>
+                ) : null}
+
+                <View
+                  style={[
+                    Styles.width100per,
+                    Styles.padding16,
+                    Styles.positionRelative,
+                  ]}
+                >
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("DesignYourDreamCategories")
+                    }
+                  >
+                    <View
+                      style={[
+                        Styles.flex1,
+                        Styles.width100per,
+                        Styles.height250,
+                        Styles.borderRadius8,
+                        Styles.OverFlow,
+                      ]}
+                    >
+                      <FadeCarousel
+                        elements={slidesTwo}
+                        containerStyle={[
+                          Styles.flex1,
+                          Styles.flexAlignCenter,
+                          Styles.flexJustifyCenter,
+                        ]}
+                        fadeDuration={2000}
+                        stillDuration={2000}
+                        start={true}
+                      />
+                      <View
+                        style={[
+                          Styles.width100per,
+                          Styles.height40,
+                          {
+                            backgroundColor: "rgba(0,0,0,0.4)",
+                            position: "absolute",
+                          },
+                        ]}
                       >
                         <Text
                           style={[
-                            Styles.positionAbsolute,
                             Styles.marginTop8,
                             Styles.marginStart16,
                             Styles.fontSize18,
                             Styles.textColorWhite,
                             Styles.fontBold,
-                            { top: 8 },
                           ]}
                         >
-                          Control User Access
+                          Design your Dream
                         </Text>
-                      </ImageBackground>
+                      </View>
                     </View>
-                  </>
-                )}
-                {/* Pocket Diary */}
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("PocketDiary", { type: "add" });
-                  }}
-                  style={[
-                    Styles.width100per,
-                    Styles.height150,
-                    Styles.flexRow,
-                    Styles.marginTop16,
-                    Styles.borderRadius8,
-                    { elevation: 4 },
-                  ]}
-                >
-                  <ImageBackground
-                    source={require("../../assets/pocket-diary-bg.png")}
-                    resizeMode="cover"
-                    style={[{ flex: 1, justifyContent: "center" }]}
-                    imageStyle={{ borderRadius: 8 }}
-                  >
-                    <Text
-                      style={[
-                        Styles.positionAbsolute,
-                        Styles.marginTop8,
-                        Styles.marginStart16,
-                        Styles.fontSize18,
-                        Styles.textColorWhite,
-                        Styles.fontBold,
-                        { top: 8 },
-                      ]}
-                    >
-                      Pocket Diary
-                    </Text>
-                  </ImageBackground>
-                </TouchableOpacity>
-                {/* Pocket Diary */}
+                  </TouchableOpacity>
 
-                {/* Looking For Jobs */}
-                {(designID == "0" || designID == "1" || designID == "2") && (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("LookingForAJobJobGroup");
-                        // navigation.navigate("JobListingEmployee");
-                      }}
+                  {/* Material Calculator */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (roleID == 2) {
+                        navigation.navigate("MaterialSetupScreen", {
+                          type: "add",
+                        });
+                      } else {
+                        navigation.navigate("MaterialCalculatorScreen", {
+                          type: "add",
+                        });
+                      }
+                    }}
+                    style={[
+                      Styles.width100per,
+                      Styles.height150,
+                      Styles.flexRow,
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      { elevation: 4 },
+                    ]}
+                  >
+                    <ImageBackground
+                      source={require("../../assets/material-calculator-with-element-bg.jpg")}
+                      resizeMode="cover"
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                      imageStyle={{ borderRadius: 8 }}
+                    >
+                      <Text
+                        style={[
+                          Styles.positionAbsolute,
+                          Styles.marginTop8,
+                          Styles.marginStart16,
+                          Styles.fontSize18,
+                          Styles.textColorWhite,
+                          Styles.fontBold,
+                          { top: 8 },
+                        ]}
+                      >
+                        Material Calculator
+                      </Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                  {/* Material Calculator */}
+                  <View style={[Styles.paddingTop16]}>
+                    <View
                       style={[
-                        Styles.padding0,
-                        Styles.width100per,
-                        Styles.height200,
-                        Styles.flexRow,
-                        Styles.marginTop16,
+                        Styles.bordergray,
+                        Styles.padding16,
                         Styles.borderRadius8,
                       ]}
                     >
+                      <Text style={[Styles.HomeTitle]}>Enquiry & Estimation</Text>
                       <View
                         style={[
-                          Styles.width100per,
-                          Styles.height150,
+                          Styles.marginTop16,
                           Styles.flexRow,
+                          Styles.flexSpaceBetween,
+                        ]}
+                      >
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate("ImageGalleryScreen");
+                          }}
+                          style={[
+                            Styles.borderRadius8,
+                            Styles.homeBox,
+                            Styles.flexColumn,
+                            Styles.flexJustifyCenter,
+                            Styles.flexAlignCenter,
+                            Styles.paddingHorizontal12,
+                            { width: 140, height: 72 },
+                          ]}
+                        >
+                          <Icon
+                            name="archive-arrow-down"
+                            size={22}
+                            color={theme.colors.productionIcons}
+                          />
+                          <Text style={[Styles.buttonIconLabel]}>
+                            Image Gallery
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate("YourEstimationsScreen");
+                          }}
+                          style={[
+                            Styles.borderRadius8,
+                            Styles.homeBox,
+                            Styles.flexColumn,
+                            Styles.flexJustifyCenter,
+                            Styles.flexAlignCenter,
+                            Styles.paddingHorizontal12,
+                            { width: 140, height: 72, marginLeft: 16 },
+                          ]}
+                        >
+                          <Icon
+                            name="archive-arrow-down"
+                            size={22}
+                            color={theme.colors.productionIcons}
+                          />
+                          <Text style={[Styles.buttonIconLabel]}>
+                            Your Estimations
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                  {(userRoleID === "4" || userRoleID === "5") && (
+                    <>
+                      <View
+                        style={[
                           Styles.marginTop16,
                           Styles.borderRadius8,
-                          { elevation: 4 },
+                          Styles.homeBox,
+                          { height: 140 },
                         ]}
                       >
                         <ImageBackground
-                          source={require("../../assets/jobs-bg.jpg")}
+                          source={require("../../assets/user-access.jpg")}
                           resizeMode="cover"
                           style={[{ flex: 1, justifyContent: "center" }]}
                           imageStyle={{ borderRadius: 8 }}
@@ -1824,49 +2362,136 @@ const HomeScreen = ({ route, navigation }) => {
                               { top: 8 },
                             ]}
                           >
-                            Looking For Jobs ?
+                            Control User Access
                           </Text>
                         </ImageBackground>
                       </View>
-                    </TouchableOpacity>
-                  </>
-                )}
-                {/* Looking For Jobs */}
-
-                {userRoleID !== "2" && (
-                  <>
-                    <View
-                      style={[
-                        Styles.marginTop16,
-                        Styles.borderRadius8,
-                        Styles.homeBox,
-                        { height: 140 },
-                      ]}
+                    </>
+                  )}
+                  {/* Pocket Diary */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("PocketDiary", { type: "add" });
+                    }}
+                    style={[
+                      Styles.width100per,
+                      Styles.height150,
+                      Styles.flexRow,
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      { elevation: 4 },
+                    ]}
+                  >
+                    <ImageBackground
+                      source={require("../../assets/pocket-diary-bg.png")}
+                      resizeMode="cover"
+                      style={[{ flex: 1, justifyContent: "center" }]}
+                      imageStyle={{ borderRadius: 8 }}
                     >
-                      <ImageBackground
-                        source={require("../../assets/referral-wallet-1.jpg")}
-                        resizeMode="cover"
-                        style={[{ flex: 1, justifyContent: "center" }]}
-                        imageStyle={{ borderRadius: 8 }}
+                      <Text
+                        style={[
+                          Styles.positionAbsolute,
+                          Styles.marginTop8,
+                          Styles.marginStart16,
+                          Styles.fontSize18,
+                          Styles.textColorWhite,
+                          Styles.fontBold,
+                          { top: 8 },
+                        ]}
                       >
-                        <Text
+                        Pocket Diary
+                      </Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                  {/* Pocket Diary */}
+
+                  {/* Looking For Jobs */}
+                  {(designID == "0" || designID == "1" || designID == "2") && (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("LookingForAJobJobGroup");
+                          // navigation.navigate("JobListingEmployee");
+                        }}
+                        style={[
+                          Styles.padding0,
+                          Styles.width100per,
+                          Styles.height200,
+                          Styles.flexRow,
+                          Styles.marginTop16,
+                          Styles.borderRadius8,
+                        ]}
+                      >
+                        <View
                           style={[
-                            Styles.positionAbsolute,
-                            Styles.marginTop8,
-                            Styles.marginStart16,
-                            Styles.fontSize18,
-                            Styles.textColorWhite,
-                            Styles.fontBold,
-                            { top: 8 },
+                            Styles.width100per,
+                            Styles.height150,
+                            Styles.flexRow,
+                            Styles.marginTop16,
+                            Styles.borderRadius8,
+                            { elevation: 4 },
                           ]}
                         >
-                          Refer and Earn
-                        </Text>
-                      </ImageBackground>
-                    </View>
-                  </>
-                )}
-                {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
+                          <ImageBackground
+                            source={require("../../assets/jobs-bg.jpg")}
+                            resizeMode="cover"
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                            imageStyle={{ borderRadius: 8 }}
+                          >
+                            <Text
+                              style={[
+                                Styles.positionAbsolute,
+                                Styles.marginTop8,
+                                Styles.marginStart16,
+                                Styles.fontSize18,
+                                Styles.textColorWhite,
+                                Styles.fontBold,
+                                { top: 8 },
+                              ]}
+                            >
+                              Looking For Jobs ?
+                            </Text>
+                          </ImageBackground>
+                        </View>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                  {/* Looking For Jobs */}
+
+                  {userRoleID !== "2" && (
+                    <>
+                      <View
+                        style={[
+                          Styles.marginTop16,
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          { height: 140 },
+                        ]}
+                      >
+                        <ImageBackground
+                          source={require("../../assets/referral-wallet-1.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
+                        >
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
+                          >
+                            Refer and Earn
+                          </Text>
+                        </ImageBackground>
+                      </View>
+                    </>
+                  )}
+                  {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
                   <View style={Styles.width50per}>
                     <Card
                       onPress={() => {
@@ -1923,9 +2548,9 @@ const HomeScreen = ({ route, navigation }) => {
                     </Card>
                   </View>
                 </View> */}
+                </View>
               </View>
-            </View>
-          )}
+            )}
         </ScrollView>
       )}
       <Snackbar
@@ -1949,7 +2574,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Button
             mode="contained"
             style={{ position: "absolute", bottom: 16, zIndex: 20, right: 16 }}
-            onPress={() => {}}
+            onPress={() => { }}
           >
             View
           </Button>
