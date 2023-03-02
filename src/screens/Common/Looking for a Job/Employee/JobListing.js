@@ -75,7 +75,6 @@ const Jobs = ({ data }) => {
   );
 };
 const JobListing = ({ route, navigation }) => {
-  const [expanded, setExpanded] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('info');
   const [snackbarText, setSnackbarText] = useState('');
