@@ -81,7 +81,6 @@ const JobSeekerForm = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
-    console.log('submit');
     let error = false;
     if (state.designation_refno === '') {
       error = true;
@@ -132,7 +131,9 @@ const JobSeekerForm = ({ route, navigation }) => {
           state_refno: state.state_refno.map(
             (obj) => states.find((item) => item.state_name === obj).state_refno,
           ),
-          district_refno: state.district_refno.map((obj) => obj._id),
+          ...(typeof state.district_refno[0] === 'object'
+            ? { district_refno: state.district_refno.map((obj) => obj._id) }
+            : { district_refno: undefined }),
           Sess_UserRefno: userID,
           employergroup_refno: route.params.employergroup.employergroup_refno,
           ...(Number(empe_refno) === 1 ? { Sess_empe_refno: empe_refno } : {}),
@@ -156,7 +157,8 @@ const JobSeekerForm = ({ route, navigation }) => {
         formdata,
       )
         .then((response) => {
-          console.log('asdfasdfasdfasdfasdf', response.data);
+          console.log(formdata);
+          console.log(response.data);
           if (response.data.data) {
             setSnackbar(true);
             setSnackbarText('Applied Successfully');
@@ -201,65 +203,46 @@ const JobSeekerForm = ({ route, navigation }) => {
     })
       .then((res) => {
         let cities = [];
-
-        Object.keys(res.data.data[0].preferred_job_location).map(
-          (obj, index) => {
-            if (
-              index ===
-              Object.keys(res.data.data[0].preferred_job_location).length - 1
-            ) {
-              setCurrentState(obj);
-              fetchDistricts(
-                res.data.data[0].state_refno[
-                res.data.data[0].state_refno.length - 1
-                ],
-              );
-            }
-            if (
-              res.data.data[0].preferred_job_location[obj].split(',').length > 0
-            ) {
-              const districts =
-                res.data.data[0].preferred_job_location[obj].split(',');
-              const selectedstate = states.find(
-                (item) => item.state_name === obj,
-              );
-              if (selectedstate) {
-                Provider.createDFCommon(
-                  Provider.API_URLS.GetDistrictDetailsByStateRefno,
-                  {
-                    data: {
-                      Sess_UserRefno: userID,
-                      state_refno: selectedstate.state_refno,
-                    },
-                  },
-                ).then((resp) => {
-                  districts.map((name) => {
-                    const city = resp.data.data.find(
-                      (item) => item.district_name === name,
-                    );
-
-                    if (city)
-                      cities.push({
-                        _id: city.district_refno,
-                        value: city.district_name,
-                      });
-                  });
-                });
+        try {
+          Object.keys(res.data.data[0].preferred_job_location).map(
+            (obj, index) => {
+              if (
+                index ===
+                Object.keys(res.data.data[0].preferred_job_location).length - 1
+              ) {
+                setCurrentState(obj);
+                fetchDistricts(
+                  res.data.data[0].state_refno[
+                    res.data.data[0].state_refno.length - 1
+                  ],
+                );
               }
-            }
-          },
-        );
-        console.log(res.data.data[0]);
-        setState({
-          designation_refno: res.data.data[0].designation_name,
-          state_refno: Object.keys(res.data.data[0].preferred_job_location),
-          experience_year: res.data.data[0].experience_year,
-          experience_month: res.data.data[0].experience_month,
-          expected_salary: res.data.data[0].expected_salary,
-          district_refno: cities,
-        }),
-          setResume({ uri: res.data.data[0].employee_resume_url });
+              if (
+                res.data.data[0].preferred_job_location[obj].split(',').length >
+                0
+              ) {
+                const districts =
+                  res.data.data[0].preferred_job_location[obj].split(',');
+                cities.push(...districts);
+              }
+            },
+          );
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setState((state) => ({
+            ...state,
+            designation_refno: res.data.data[0].designation_name,
+            state_refno: Object.keys(res.data.data[0].preferred_job_location),
+            experience_year: res.data.data[0].experience_year,
+            experience_month: res.data.data[0].experience_month,
+            expected_salary: res.data.data[0].expected_salary,
+            district_refno: cities,
+          })),
+            setResume({ uri: res.data.data[0].employee_resume_url });
+        }
       })
+
       .catch((error) => {
         console.log(error);
       });
@@ -342,7 +325,9 @@ const JobSeekerForm = ({ route, navigation }) => {
               errors.district_refno ? theme.colors.error : 'black'
             }
             errorStyle={{ color: theme.colors.error }}
-            value={state.district_refno?.map((item) => item.value).join(',')}
+            value={state.district_refno
+              ?.map((item) => (item.value ? item.value : item))
+              .join(',')}
             arrayList={districts?.map((obj) => {
               return { _id: obj.district_refno, value: obj.district_name };
             })}
