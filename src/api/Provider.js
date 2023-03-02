@@ -124,6 +124,8 @@ class Provider {
     CategoryNameCreate: 'categorynamecreate/',
     CategoryNameUpdate: 'categorynameupdate/',
     mfbrandvaluerefnocheck: 'mfbrandvaluerefnocheck/',
+    shiftproductionrefnocheck_prodS: 'shiftproductionrefnocheck/',
+    summaryofmaterial_gridlist: 'summaryofmaterial_gridlist/',
     ProductFromRefNo: 'productrefnocheck/',
     ActivityRoleForProduct: 'getactivityroleproductform/',
     ServiceForProduct: 'getservicenameproductform/',
@@ -152,6 +154,17 @@ class Provider {
       'get_brandname_productforproductionform/',
     get_productname_productforproductionform:
       'get_productname_productforproductionform/',
+    get_productname_shiftproductionform: 'get_productname_shiftproductionform/',
+    get_expectedproductdata_shiftproductionform:
+      'get_expectedproductdata_shiftproductionform/',
+    get_shiftdata_shiftproductionform: 'get_shiftdata_shiftproductionform/',
+    get_noofcoilused_shiftproductionform:
+      'get_noofcoilused_shiftproductionform/',
+    get_supervisor_shiftproductionform: 'get_supervisor_shiftproductionform/',
+    get_mastry_shiftproductionform: 'get_mastry_shiftproductionform/',
+    get_helper_shiftproductionform: 'get_helper_shiftproductionform/',
+    shiftproductionformupdate: 'shiftproductionformupdate/',
+    shiftproductionformcreate: 'shiftproductionformcreate/',
     gsmnamecreate: 'gsmnamecreate/',
     gsmnameupdate: 'gsmnameupdate/',
     ServiceProductFilter: 'serviceproductfilter/',
@@ -534,10 +547,18 @@ class Provider {
     get_purchaseorderno_otherdata_vendororder_invoiceform:
       '/get_purchaseorderno_otherdata_vendororder_invoiceform/',
     get_joborderno_vendororder_invoiceform:
-      'get_joborderno_vendororder_invoiceform/',
+      'get_joborderno_vendororder_invoiceform',
     mfvoinvoicerefnocheck: 'mfvoinvoicerefnocheck/',
     get_orderproductioncalculation_vendororder_invoiceform:
       'get_orderproductioncalculation_vendororder_invoiceform/',
+    employee_job_search: 'employee_job_search/',
+    employer_job_search: 'employer_job_search/',
+    employee_profile_fullview: 'employee_profile_fullview/',
+    get_availablebalance_cashinbank_sourceform:
+      'get_availablebalance_cashinbank_sourceform/',
+    get_availablebalance_cashinhand_expensesform:
+      'get_availablebalance_cashinhand_expensesform/',
+    summaryofmaterial_gridlist: 'summaryofmaterial_gridlist/',
   };
 
   createDFPocketDairy(resource, params) {
