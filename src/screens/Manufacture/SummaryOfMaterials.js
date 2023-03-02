@@ -15,6 +15,7 @@ import {
   Searchbar,
   Title,
   TextInput,
+  Button,
 } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -27,16 +28,16 @@ import { Styles } from "../../styles/styles";
 import { theme } from "../../theme/apptheme";
 import { NullOrEmpty } from "../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Table, TableWrapper, Row } from "react-native-table-component";
+import { Table, TableWrapper, Row, Col } from "react-native-table-component";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 16, paddingTop: 10, backgroundColor: "#fff" },
   header: { height: 50, backgroundColor: theme.colors.primary },
-  subheader: { height: 30, backgroundColor: "#e1f5e6" },
+  subheader: { height: 30, backgroundColor: "white" },
   text: { textAlign: "center", fontWeight: "100" },
   headertext: { textAlign: "center", fontWeight: "800", color: "white" },
   dataWrapper: { marginTop: -1 },
@@ -169,7 +170,29 @@ function SummaryOfMaterials({ navigation }) {
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : true ? (
-        <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexColumn,
+            Styles.backgroundColor,
+            { height: 600 },
+          ]}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              padding: 10,
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              width={"100%"}
+              mode="contained"
+              onPress={() => refRBSheet.current.open()}
+            >
+              Check Total Available Materials
+            </Button>
+          </View>
           <View style={styles.container}>
             <ScrollView horizontal={true}>
               <View>
@@ -191,113 +214,323 @@ function SummaryOfMaterials({ navigation }) {
                     style={styles.header}
                     textStyle={styles.headertext}
                   />
-                  <Row
-                    data={[
-                      "",
-                      "",
-                      "",
-                      "",
-                      "",
-                      "Kg",
-                      "No",
-                      "Kg",
-                      "No",
-                      "Kg",
-                      "No",
-                      "",
-                      "",
-                    ]}
-                    widthArr={[
-                      40, 180, 80, 80, 80, 100, 100, 100, 100, 100, 100, 80, 80,
-                    ]}
-                    style={styles.subheader}
-                    textStyle={{ fontWeight: "500", textAlign: "center" }}
-                  />
+                  <TableWrapper style={{ flexDirection: "row" }}>
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={40}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={180}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={80}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={80}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={80}
+                    />
+                    <Col
+                      data={["Kg"]}
+                      height={30}
+                      textStyle={{
+                        textAlign: "center",
+                        fontWeight: "700",
+                      }}
+                      width={100}
+                      style={{
+                        borderTopWidth: 2,
+                        borderLeftWidth: 2,
+                        borderColor: "#ff9933",
+                      }}
+                    />
+                    <Col
+                      data={["No"]}
+                      height={30}
+                      textStyle={{
+                        textAlign: "center",
+                        fontWeight: "700",
+                      }}
+                      width={100}
+                      style={{
+                        borderTopWidth: 2,
+                        borderRightWidth: 2,
+                        borderColor: "#ff9933",
+                      }}
+                    />
+                    <Col
+                      data={["Kg"]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={100}
+                    />
+                    <Col
+                      data={["No"]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={100}
+                    />
+                    <Col
+                      data={["Kg"]}
+                      height={30}
+                      textStyle={{
+                        textAlign: "center",
+                        fontWeight: "700",
+                      }}
+                      width={100}
+                      style={{
+                        borderTopWidth: 2,
+                        borderLeftWidth: 2,
+                        borderColor: "#138808",
+                      }}
+                    />
+                    <Col
+                      data={["No"]}
+                      height={30}
+                      textStyle={{
+                        textAlign: "center",
+                        fontWeight: "700",
+                      }}
+                      width={100}
+                      style={{
+                        borderTopWidth: 2,
+                        borderRightWidth: 2,
+                        borderColor: "#138808",
+                      }}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={80}
+                    />
+                    <Col
+                      data={[""]}
+                      height={30}
+                      textStyle={styles.text}
+                      width={80}
+                    />
+                  </TableWrapper>
                 </Table>
                 <ScrollView style={styles.dataWrapper}>
                   <Table
                     borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                   >
-                    {tableData.map((rowData, index) => (
-                      <Row
-                        key={index}
-                        data={rowData}
-                        widthArr={[
-                          40, 180, 80, 80, 80, 100, 100, 100, 100, 100, 100, 80,
-                          80,
-                        ]}
-                        style={styles.row}
+                    <TableWrapper style={{ flexDirection: "row" }}>
+                      <Col
+                        data={tableData?.map((item) => item[0])}
+                        height={50}
                         textStyle={styles.text}
+                        width={40}
                       />
-                    ))}
-                    <Row
-                      data={[
-                        "Total",
-                        listData[0].Available_Raw_Materials_Kg_Total,
-                        listData[0].Available_Raw_Materials_Nos_Total,
-                        listData[0].Production_Done_Kg_Total,
-                        listData[0].Production_Done_Nos_Total,
-                        listData[0].OpeningStock_Production_Done_Kg_Total,
-                        listData[0].OpeningStock_Production_Done_Nos_Total,
-                        listData[0].Scrap_Total,
-                        "",
-                      ]}
-                      widthArr={[460, 100, 100, 100, 100, 100, 100, 80, 80]}
-                      style={styles.row}
-                      textStyle={styles.text}
-                    />
+                      <Col
+                        data={tableData?.map((item) => item[1])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={180}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[2])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[3])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[4])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[5])}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "100",
+                        }}
+                        width={100}
+                        style={{ borderLeftWidth: 2, borderColor: "#ff9933" }}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[6])}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "100",
+                        }}
+                        width={100}
+                        style={{ borderRightWidth: 2, borderColor: "#ff9933" }}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[7])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={100}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[8])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={100}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[9])}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "100",
+                        }}
+                        width={100}
+                        style={{ borderLeftWidth: 2, borderColor: "#138808" }}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[10])}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "100",
+                        }}
+                        width={100}
+                        style={{ borderRightWidth: 2, borderColor: "#138808" }}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[11])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                      <Col
+                        data={tableData?.map((item) => item[12])}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                    </TableWrapper>
+                    <TableWrapper style={{ flexDirection: "row" }}>
+                      <Col
+                        data={["Total"]}
+                        height={50}
+                        textStyle={styles.text}
+                        width={460}
+                      />
+                      <Col
+                        data={[listData[0].Available_Raw_Materials_Kg_Total]}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "700",
+                          color: "white",
+                        }}
+                        width={100}
+                        style={{
+                          borderBottomWidth: 2,
+                          borderLeftWidth: 2,
+                          borderColor: "#ff9933",
+                          backgroundColor: "#ff9933",
+                        }}
+                      />
+                      <Col
+                        data={[listData[0].Available_Raw_Materials_Nos_Total]}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "700",
+                          color: "white",
+                        }}
+                        width={100}
+                        style={{
+                          borderBottomWidth: 2,
+                          borderRightWidth: 2,
+                          borderColor: "#ff9933",
+                          backgroundColor: "#ff9933",
+                        }}
+                      />
+                      <Col
+                        data={[listData[0].Production_Done_Kg_Total]}
+                        height={50}
+                        textStyle={styles.text}
+                        width={100}
+                      />
+                      <Col
+                        data={[listData[0].Production_Done_Nos_Total]}
+                        height={50}
+                        textStyle={styles.text}
+                        width={100}
+                      />
+                      <Col
+                        data={[
+                          listData[0].OpeningStock_Production_Done_Kg_Total,
+                        ]}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "700",
+                          color: "white",
+                        }}
+                        width={100}
+                        style={{
+                          borderBottomWidth: 2,
+                          borderLeftWidth: 2,
+                          borderColor: "#138808",
+                          backgroundColor: "#138808",
+                        }}
+                      />
+                      <Col
+                        data={[
+                          listData[0].OpeningStock_Production_Done_Nos_Total,
+                        ]}
+                        height={50}
+                        textStyle={{
+                          textAlign: "center",
+                          fontWeight: "700",
+                          color: "white",
+                        }}
+                        width={100}
+                        style={{
+                          borderBottomWidth: 2,
+                          borderRightWidth: 2,
+                          borderColor: "#138808",
+                          backgroundColor: "#138808",
+                        }}
+                      />
+                      <Col
+                        data={[listData[0].Scrap_Total]}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                      <Col
+                        data={[""]}
+                        height={50}
+                        textStyle={styles.text}
+                        width={80}
+                      />
+                    </TableWrapper>
                   </Table>
                 </ScrollView>
               </View>
             </ScrollView>
-          </View>
-          <View style={{ marginTop: 20, padding: 10 }}>
-            <View>
-              <View
-                style={[
-                  Styles.borderTopRadius4,
-                  { backgroundColor: theme.colors.primary, marginBottom: 5 },
-                ]}
-              >
-                <Text
-                  style={[
-                    Styles.marginBottom24,
-                    Styles.marginTop16,
-                    Styles.textColorWhite,
-                    Styles.marginHorizontal8,
-                  ]}
-                >
-                  Slitting Invoice Scrap Total
-                </Text>
-              </View>
-            </View>
-            <TextInput
-              mode="outlined"
-              dense
-              label="Slitting Invoice Scrap Total"
-              value={listData[0].slitting_invoice_scrap_total}
-              editable={false}
-              selectTextOnFocus={false}
-              style={{ marginBottom: 10 }}
-            />
-            <TextInput
-              mode="outlined"
-              dense
-              label="Total Scrap"
-              value={listData[0].net_scrab_wastage}
-              editable={false}
-              selectTextOnFocus={false}
-              style={{ marginBottom: 10 }}
-            />
-            <TextInput
-              mode="outlined"
-              dense
-              label="Total Materials Available"
-              value={listData[0].total_materials_available}
-              editable={false}
-              selectTextOnFocus={false}
-              style={{ marginBottom: 10 }}
-            />
           </View>
         </View>
       ) : (
@@ -315,6 +548,67 @@ function SummaryOfMaterials({ navigation }) {
       >
         {snackbarText}
       </Snackbar>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={420}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
+        <View style={{ marginTop: 20, padding: 10 }}>
+          <View>
+            <View
+              style={[
+                Styles.borderTopRadius4,
+                { backgroundColor: theme.colors.primary, marginBottom: 5 },
+              ]}
+            >
+              <Text
+                style={[
+                  Styles.marginBottom24,
+                  Styles.marginTop16,
+                  Styles.textColorWhite,
+                  Styles.marginHorizontal8,
+                ]}
+              >
+                Slitting Invoice Scrap Total
+              </Text>
+            </View>
+          </View>
+          <TextInput
+            mode="outlined"
+            dense
+            label="Slitting Invoice Scrap Total"
+            value={listData[0].slitting_invoice_scrap_total}
+            editable={false}
+            selectTextOnFocus={false}
+            style={{ marginBottom: 10 }}
+          />
+          <TextInput
+            mode="outlined"
+            dense
+            label="Total Scrap"
+            value={listData[0].net_scrab_wastage}
+            editable={false}
+            selectTextOnFocus={false}
+            style={{ marginBottom: 10 }}
+          />
+          <TextInput
+            mode="outlined"
+            dense
+            label="Total Materials Available"
+            value={listData[0].total_materials_available}
+            editable={false}
+            selectTextOnFocus={false}
+            style={{ marginBottom: 10 }}
+          />
+        </View>
+      </RBSheet>
     </View>
   );
 }
