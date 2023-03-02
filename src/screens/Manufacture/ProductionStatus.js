@@ -47,7 +47,7 @@ function ProductionStatus({ navigation }) {
   const [productName, setproductName] = React.useState("");
   const [totalProducts, setTotalProducts] = React.useState("");
   const [weightPerPiece, setWeightPerPiece] = React.useState("");
-
+  const [current, setCurrent] = React.useState({});
   const refRBSheet = useRef();
   //#endregion
 
@@ -68,17 +68,14 @@ function ProductionStatus({ navigation }) {
         shiftproduction_refno: "all",
       },
     };
+    console.log(params);
     Provider.createDFManufacturer(
-      Provider.API_URLS.shiftproductionrefnocheck,
+      Provider.API_URLS.shiftproductionrefnocheck_prodS,
       params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            const lisData = [...response.data.data];
-            lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
-            });
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
@@ -148,21 +145,19 @@ function ProductionStatus({ navigation }) {
         ]}
       >
         <List.Item
-          title={data.item.serviceName}
+          title={data.item.mf_vo_no}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name: ${
-            NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName
-          }\nProduct Name: ${
-            NullOrEmpty(data.item.productName) ? "" : data.item.productName
+          description={`Product Name: ${
+            NullOrEmpty(data.item.productname) ? "" : data.item.productname
+          }\nProduction Date: ${
+            NullOrEmpty(data.item.production_date)
+              ? ""
+              : data.item.production_date
           } `}
           onPress={() => {
             refRBSheet.current.open();
-            setAddedDate(data.item.addedDate);
-            setServiceName(data.item.serviceName);
-            setCategoryName(data.item.categoryName);
-            setProductName(data.item.productName);
-            setTotalProducts(data.item.totalProducts);
-            setWeightPerPiece(data.item.weightPerPiece);
+            console.log(data.item);
+            setCurrent(data.item);
           }}
           left={() => (
             <Icon
@@ -198,14 +193,7 @@ function ProductionStatus({ navigation }) {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        serviceName: data.item.serviceName,
-        unitName: data.item.unitName,
-        categoryName: data.item.categoryName,
-        hsnsacCode: data.item.hsnsacCode,
-        gstRate: data.item.gstRate.toFixed(2),
-        display: data.item.display,
+        ...data.item,
       },
     });
   };
@@ -282,7 +270,7 @@ function ProductionStatus({ navigation }) {
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
-        height={420}
+        height={650}
         animationType="fade"
         customStyles={{
           wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
@@ -290,17 +278,35 @@ function ProductionStatus({ navigation }) {
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{current.mf_vo_no}</Title>
           <ScrollView>
-            <List.Item title="Added Date" description={addedDate} />
-            <List.Item title="Service Name" description={serviceName} />
-            <List.Item title="Category Name" description={categoryName} />
+            <List.Item title="Job Order No" description={current.mf_vo_no} />
             <List.Item
-              title="Product Name >> Brand"
-              description={productName}
+              title="Production Date"
+              description={current.production_date}
             />
-            <List.Item title="Total Products" description={totalProducts} />
-            <List.Item title="Weight Per Piece " description={weightPerPiece} />
+            <List.Item title="Shift" description={current.shift_name} />
+            <List.Item
+              title="Superviser Name"
+              description={current.supervisor_name}
+            />
+            <List.Item
+              title="Mastry Name >> Helper Name"
+              description={`${current.mastry_name} >> ${current.helper_name}`}
+            />
+            <List.Item title="Product Name" description={current.productname} />
+            <List.Item
+              title="Total Products Achieved (No/Kg)"
+              description={`${current.total_achieved_products} / ${current.total_achieved_products_kg}`}
+            />
+            <List.Item
+              title="No of Coil Used"
+              description={current.no_of_coil_used}
+            />
+            <List.Item
+              title="Scrap Wastage"
+              description={current.scrap_wastage}
+            />
           </ScrollView>
         </View>
       </RBSheet>
