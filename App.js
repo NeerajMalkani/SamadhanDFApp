@@ -195,6 +195,7 @@ import JobPostingForm from "./src/screens/Common/Looking for a Job/Employer/JobP
 import VendorOrderFormList from "./src/screens/Manufacture/VendorOrderFormList";
 import InvoiceReceipt from "./src/screens/Manufacture/AddItems/InvoiceReceipt";
 import InvoiceReceiptList from "./src/screens/Manufacture/InvoiceReceipt";
+import EditInvoiceReceipt from "./src/screens/Manufacture/AddItems/EditInvoiceReceipt";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -1127,18 +1128,7 @@ export default function App() {
                 component={VendorOrderFormList}
                 options={{ headerShown: false, unmountOnBlur: true }}
               />
-              <Drawer.Screen
-                name="InvoiceReceiptForm"
-                component={InvoiceReceipt}
-                options={{
-                  headerTitle: "Add Invoice Receipt",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
+
               <Drawer.Screen
                 name="InvoiceReceiptList"
                 component={InvoiceReceiptList}
@@ -2183,7 +2173,28 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
-
+              <Stack.Screen
+                name="InvoiceReceiptForm"
+                component={InvoiceReceipt}
+                options={{
+                  headerTitle: "Add Invoice Receipt",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="EditInvoiceReceipt"
+                component={EditInvoiceReceipt}
+                options={{
+                  headerTitle: "Edit Invoice Receipt",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
               <Stack.Screen
                 name="EditProductionStatus"
                 component={EditProductionStatus}

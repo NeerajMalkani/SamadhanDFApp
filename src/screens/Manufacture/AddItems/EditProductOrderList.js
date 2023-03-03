@@ -405,7 +405,6 @@ function EditProductOrderList({ route, navigation }) {
   const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const update = () => {
     console.log(widthFullData);
-    setIsButtonLoading(false);
 
     let params = {
       data: {
