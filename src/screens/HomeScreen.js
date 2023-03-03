@@ -1663,7 +1663,7 @@ const HomeScreen = ({ route, navigation }) => {
                         <Icon
                           name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.masterIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Employee List
@@ -1683,9 +1683,9 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.masterIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Employee Request
@@ -1715,7 +1715,7 @@ const HomeScreen = ({ route, navigation }) => {
                         <Icon
                           name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.masterIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Mark Availability
@@ -1735,9 +1735,9 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.masterIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Attendance
@@ -1770,7 +1770,7 @@ const HomeScreen = ({ route, navigation }) => {
                         <Icon
                           name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.pocketDiaryIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Product For Production
@@ -1790,9 +1790,9 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.pocketDiaryIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Purchase Order List
@@ -1822,16 +1822,16 @@ const HomeScreen = ({ route, navigation }) => {
                         <Icon
                           name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.pocketDiaryIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Production Status
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        // onPress={() => {
-                        //   navigation.navigate("PostNewDesignScreen");
-                        // }}
+                        onPress={() => {
+                          navigation.navigate("SummaryOfMaterials");
+                        }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1842,9 +1842,9 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.pocketDiaryIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Summary Of Materials
@@ -1878,7 +1878,7 @@ const HomeScreen = ({ route, navigation }) => {
                         <Icon
                           name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.containerBgGreen}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Vendor Order Form List
@@ -1898,9 +1898,9 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
-                          color={theme.colors.serviceCatelogueIcons}
+                          color={theme.colors.containerBgGreen}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
                           Invoice Receipt List
@@ -1954,7 +1954,7 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
                           color={theme.colors.serviceCatelogueIcons}
                         />
@@ -2006,7 +2006,7 @@ const HomeScreen = ({ route, navigation }) => {
                         ]}
                       >
                         <Icon
-                          name="home-city"
+                          name="archive-arrow-down"
                           size={22}
                           color={theme.colors.serviceCatelogueIcons}
                         />

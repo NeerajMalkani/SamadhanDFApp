@@ -195,10 +195,6 @@ const JobListing = ({ route, navigation }) => {
               selectedItem={filters.designation_refno}
               onSelected={(text) => onChange(text, 'designation_refno')}
             />
-
-            <Button mode='contained' onPress={() => search()}>
-              Search
-            </Button>
             <List.Accordion title='More Filters'>
               <Dropdown
                 label='State'
@@ -220,6 +216,9 @@ const JobListing = ({ route, navigation }) => {
                 }}
               />
             </List.Accordion>
+            <Button mode='contained' onPress={() => search()}>
+              Search
+            </Button>
             <HelperText>
               *Filling One Field is Mandatory to view Jobs
             </HelperText>
