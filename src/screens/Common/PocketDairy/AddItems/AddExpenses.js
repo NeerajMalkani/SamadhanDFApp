@@ -856,6 +856,7 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchAvailableCashBalance = (editID) => {
+    console.log('start');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -871,15 +872,15 @@ const AddExpenses = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
-            //setBankBalance(response.data.data[0].cashinbank.toString());
-            // let amt = amount == "" ? 0 : parseFloat(amount);
-            // let cashAmt = response.data.data[0].cashinbank == "" ? 0 : parseFloat(response.data.data[0].cashinbank);
-            // if (amt > cashAmt) {
-            //   settAmount("");
-            //   setSnackbarText("Your entered amount is greater than for available balance.");
-            //   setSnackbarColor(theme.colors.error);
-            //   setSnackbarVisible(true);
-            // }
+            setBankBalance(response.data.data[0].cashinhand.toString());
+            let amt = amount == "" ? 0 : parseFloat(amount);
+            let cashAmt = response.data.data[0].cashinhand == "" ? 0 : parseFloat(response.data.data[0].cashinhand);
+            if (amt > cashAmt) {
+              settAmount("");
+              setSnackbarText("Your entered amount is greater than for available balance.");
+              setSnackbarColor(theme.colors.error);
+              setSnackbarVisible(true);
+            }
 
           }
         }
