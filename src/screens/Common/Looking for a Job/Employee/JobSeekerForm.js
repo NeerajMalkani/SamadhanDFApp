@@ -124,7 +124,7 @@ const JobSeekerForm = ({ route, navigation }) => {
       const params = {
         data: {
           ...state,
-          action_type: Number(empe_refno) === 1 ? 'update' : 'insert',
+          action_type: Number(empe_refno) !== 0 ? 'update' : 'insert',
           designation_refno: designations.find(
             (item) => item.designation_name === state.designation_refno,
           ).designation_refno,
@@ -136,7 +136,7 @@ const JobSeekerForm = ({ route, navigation }) => {
             : { district_refno: undefined }),
           Sess_UserRefno: userID,
           employergroup_refno: route.params.employergroup.employergroup_refno,
-          ...(Number(empe_refno) === 1 ? { Sess_empe_refno: empe_refno } : {}),
+          ...(Number(empe_refno) !== 0 ? { Sess_empe_refno: empe_refno } : {}),
         },
         employee_resume: {
           name: resume.name,
