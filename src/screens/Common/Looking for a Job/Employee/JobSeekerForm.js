@@ -202,44 +202,47 @@ const JobSeekerForm = ({ route, navigation }) => {
       data: { Sess_UserRefno: userID, empe_refno },
     })
       .then((res) => {
+        console.log(res.data);
         let cities = [];
         try {
-          Object.keys(res.data.data[0].preferred_job_location).map(
-            (obj, index) => {
-              if (
-                index ===
-                Object.keys(res.data.data[0].preferred_job_location).length - 1
-              ) {
-                setCurrentState(obj);
-                fetchDistricts(
-                  res.data.data[0].state_refno[
-                    res.data.data[0].state_refno.length - 1
-                  ],
-                );
-              }
-              if (
-                res.data.data[0].preferred_job_location[obj].split(',').length >
-                0
-              ) {
-                const districts =
-                  res.data.data[0].preferred_job_location[obj].split(',');
-                cities.push(...districts);
-              }
-            },
-          );
+          if (res.data.data && res.data.data[0]) {
+            Object.keys(res.data.data[0].preferred_job_location).map(
+              (obj, index) => {
+                if (
+                  index ===
+                  Object.keys(res.data.data[0].preferred_job_location).length -
+                    1
+                ) {
+                  setCurrentState(obj);
+                  fetchDistricts(
+                    res.data.data[0].state_refno[
+                      res.data.data[0].state_refno.length - 1
+                    ],
+                  );
+                }
+                if (
+                  res.data.data[0].preferred_job_location[obj].split(',')
+                    .length > 0
+                ) {
+                  const districts =
+                    res.data.data[0].preferred_job_location[obj].split(',');
+                  cities.push(...districts);
+                }
+              },
+            );
+            setState((state) => ({
+              ...state,
+              designation_refno: res.data.data[0].designation_name,
+              state_refno: Object.keys(res.data.data[0].preferred_job_location),
+              experience_year: res.data.data[0].experience_year,
+              experience_month: res.data.data[0].experience_month,
+              expected_salary: res.data.data[0].expected_salary,
+              district_refno: cities,
+            })),
+              setResume({ uri: res.data.data[0].employee_resume_url });
+          }
         } catch (error) {
           console.log(error);
-        } finally {
-          setState((state) => ({
-            ...state,
-            designation_refno: res.data.data[0].designation_name,
-            state_refno: Object.keys(res.data.data[0].preferred_job_location),
-            experience_year: res.data.data[0].experience_year,
-            experience_month: res.data.data[0].experience_month,
-            expected_salary: res.data.data[0].expected_salary,
-            district_refno: cities,
-          })),
-            setResume({ uri: res.data.data[0].employee_resume_url });
         }
       })
 

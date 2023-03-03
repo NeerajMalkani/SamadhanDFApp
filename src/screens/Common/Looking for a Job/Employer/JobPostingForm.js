@@ -128,6 +128,9 @@ const JobPostingForm = ({ navigation }) => {
           Sess_company_refno: user.Sess_company_refno,
           Sess_branch_refno: user.Sess_branch_refno,
           Sess_group_refno: user.Sess_group_refno,
+          designation_refno: designations.find(
+            (item) => item.designation_name === state.designation_refno,
+          ).designation_refno,
         },
       };
 
