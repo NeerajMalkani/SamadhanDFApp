@@ -547,7 +547,7 @@ class Provider {
     get_purchaseorderno_otherdata_vendororder_invoiceform:
       '/get_purchaseorderno_otherdata_vendororder_invoiceform/',
     get_joborderno_vendororder_invoiceform:
-      'get_joborderno_vendororder_invoiceform',
+      'get_joborderno_vendororder_invoiceform/',
     mfvoinvoicerefnocheck: 'mfvoinvoicerefnocheck/',
     get_orderproductioncalculation_vendororder_invoiceform:
       'get_orderproductioncalculation_vendororder_invoiceform/',

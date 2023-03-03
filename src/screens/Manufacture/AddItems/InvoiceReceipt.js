@@ -56,6 +56,14 @@ const InvoiceReceipt = ({ route, navigation }) => {
     ).then((res) => {
       setState((state) => ({ ...state, ...res.data.data[0] }));
     });
+    console.log({
+      data: {
+        Sess_UserRefno: user.UserID,
+        Sess_company_refno: user.Sess_company_refno,
+        Sess_branch_refno: user.Sess_branch_refno,
+        mf_po_refno,
+      },
+    });
     Provider.createDFManufacturer(
       Provider.API_URLS.get_joborderno_vendororder_invoiceform,
       {
@@ -68,7 +76,10 @@ const InvoiceReceipt = ({ route, navigation }) => {
       },
     )
       .then((res) => {
-        setJobOrderNo(res.data.data);
+        console.log(res.data);
+        if (res.data.data) {
+          setJobOrderNo(res.data.data);
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -143,7 +154,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           }}
         />
         <Dropdown
-          data={joborderno.map((obj) => obj.joborderno)}
+          data={joborderno?.map((obj) => obj.joborderno)}
           label='Job Order No'
           selectedItem={state.mf_vo_refno}
           onSelected={(text) => {
