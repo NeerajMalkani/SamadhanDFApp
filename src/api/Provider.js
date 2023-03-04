@@ -520,16 +520,12 @@ class Provider {
     pckdashboard_cashinbranch_bank_gridlist:
       "pckdashboard_cashinbranch_bank_gridlist/",
     pckdashboard_cashinbranch_bank: "pckdashboard_cashinbranch_bank/",
-
-    getjobgroupname_employeeform: "getjobgroupname_employeeform/",
-    getemployergroupname_employeeform: "getemployergroupname_employeeform/",
-    getdesignationname_employeeform: "getdesignationname_employeeform/",
-    employee_job_apply: "employee_job_apply/",
-    employer_post_newjob: "employer_post_newjob/",
-
-    employee_job_search: "employee_job_search/",
-    employer_job_search: "employer_job_search/",
-    employee_profile_fullview: "employee_profile_fullview/",
+    getjobgroupname_employeeform: 'getjobgroupname_employeeform/',
+    getemployergroupname_employeeform: 'getemployergroupname_employeeform/',
+    getdesignationname_employeeform: 'getdesignationname_employeeform/',
+    employee_job_apply: 'employee_job_apply/',
+    employer_post_newjob: 'employer_post_newjob/',
+    employee_profile_fullview: 'employee_profile_fullview/',
     get_availablebalance_cashinbank_sourceform:
       "get_availablebalance_cashinbank_sourceform/",
     employee_profile_fullview: "employee_profile_fullview/",

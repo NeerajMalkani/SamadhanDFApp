@@ -144,23 +144,26 @@ const JobListing = ({ route, navigation }) => {
       return;
     }
     const params = {
-      designation_refno: designations.find(
-        (item) => item.designation_name === filters.designation_refno,
-      ).designation_refno,
-      state_refno:
-        filters.state_refno === '0'
-          ? '0'
-          : states.find((item) => item.state_name === filters.state_refno)
+      data: {
+        designation_refno: designations.find(
+          (item) => item.designation_name === filters.designation_refno,
+        ).designation_refno,
+        state_refno:
+          filters.state_refno === '0'
+            ? '0'
+            : states.find((item) => item.state_name === filters.state_refno)
               .state_refno,
-      district_refno:
-        filters.district_refno === '0'
-          ? '0'
-          : districts.find(
+        district_refno:
+          filters.district_refno === '0'
+            ? '0'
+            : districts.find(
               (item) => item.district_name === filters.district_refno,
             ).district_refno,
-      Sess_UserRefno: userID,
+        Sess_UserRefno: userID,
+      }
     };
     console.log('here');
+    console.log('Params:', params);
     Provider.createDFCommon(Provider.API_URLS.employee_job_search, {
       data: params,
     })

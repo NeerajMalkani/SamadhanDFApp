@@ -133,7 +133,7 @@ const JobPostingForm = ({ navigation }) => {
           ).designation_refno,
         },
       };
-
+      console.log(params);
       Provider.createDFCommon(Provider.API_URLS.employer_post_newjob, params)
         .then((res) => {
           if (res.data.data) {
