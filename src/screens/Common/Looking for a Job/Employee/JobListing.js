@@ -2,13 +2,14 @@ import { Text, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Styles } from '../../../../styles/styles';
-import { Button, HelperText, List, Chip, Snackbar } from 'react-native-paper';
+import { HelperText, List, Chip, Snackbar } from 'react-native-paper';
 import Provider from '../../../../api/Provider';
 import Dropdown from '../../../../components/Dropdown';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { theme } from '../../../../theme/apptheme';
+import DFButton from "../../../../components/Button";
 
 let userID = null;
 const Jobs = ({ data }) => {
@@ -84,6 +85,7 @@ const JobListing = ({ route, navigation }) => {
     state_refno: '0',
     district_refno: '0',
   });
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [designations, setDesignations] = useState([]);
   const [states, setStates] = useState([]);
@@ -133,6 +135,7 @@ const JobListing = ({ route, navigation }) => {
       .catch((error) => console.log(error));
   };
   const search = () => {
+    setIsButtonLoading(true);
     if (
       filters.designation_refno === '0' &&
       filters.district_refno === '0' &&
@@ -167,6 +170,7 @@ const JobListing = ({ route, navigation }) => {
     console.log('Params:', params);
     Provider.createDFCommon(Provider.API_URLS.employee_job_search, params)
       .then((res) => {
+        setIsButtonLoading(false);
         console.log(res.data);
         if (res.data.data) {
           setJobs(res.data.data);
@@ -178,6 +182,7 @@ const JobListing = ({ route, navigation }) => {
       })
       .catch((error) => {
         console.log(error);
+        setIsButtonLoading(false);
       });
   };
   useEffect(() => {
@@ -218,9 +223,10 @@ const JobListing = ({ route, navigation }) => {
                 }}
               />
             </List.Accordion>
-            <Button mode='contained' onPress={() => search()}>
+            {/* <Button mode='contained' onPress={() => search()}>
               Search
-            </Button>
+            </Button> */}
+             <DFButton mode="contained" onPress={() => search()} title="Search" loader={isButtonLoading} />
             <HelperText>
               *Filling One Field is Mandatory to view Jobs
             </HelperText>

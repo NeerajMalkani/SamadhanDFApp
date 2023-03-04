@@ -1,13 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
+import DFButton from "../../../../components/Button";
 
 let userID = 0;
 const AddMyServicesScreen = ({ route, navigation }) => {
@@ -22,6 +23,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
 
   //#region Functions
@@ -75,6 +77,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.dealermyservicecreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -88,6 +91,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -104,6 +108,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.dealermyserviceupdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -117,6 +122,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -132,6 +138,7 @@ const AddMyServicesScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateMyServicesName();
       } else {
@@ -164,9 +171,10 @@ const AddMyServicesScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateMyServicesName}>
+          {/* <Button mode="contained" onPress={ValidateMyServicesName}>
             SAVE
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateMyServicesName} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

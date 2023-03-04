@@ -1588,6 +1588,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             >
               Update
             </Button>
+             {/* <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} /> */}
           </Card.Content>
         </View>
         <Snackbar

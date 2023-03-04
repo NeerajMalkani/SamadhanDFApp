@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
+import { FAB, List, Snackbar, Searchbar, Title, Card, Portal, Dialog, Paragraph } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -11,6 +11,7 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DFButton from "../../../components/Button";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
@@ -280,7 +281,8 @@ const PendingUserScreen = ({ navigation }) => {
             <Paragraph>Confirm to Approve ? </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={approveUserStatus}>Ok</Button>
+            {/* <Button onPress={approveUserStatus}>Ok</Button> */}
+            <DFButton mode="contained" onPress={approveUserStatus} title="Ok" loader={isButtonLoading} />
             <Button onPress={hideDialog}>Cancel</Button>
           </Dialog.Actions>
         </Dialog>
@@ -302,6 +304,7 @@ const PendingUserScreen = ({ navigation }) => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={declineUserStatus}>Ok</Button>
+            <DFButton mode="contained" onPress={declineUserStatus} title="Ok" loader={isButtonLoading} />
             <Button onPress={hideDisableDialog}>Cancel</Button>
           </Dialog.Actions>
         </Dialog>

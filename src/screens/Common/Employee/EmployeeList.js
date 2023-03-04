@@ -16,7 +16,6 @@ import {
   Dialog,
   Portal,
   Paragraph,
-  Button,
   Text,
   TextInput,
   Card,
@@ -39,6 +38,7 @@ import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 import SearchNAdd from "./AddItems/SearchNAdd";
+import DFButton from "../../../../components/Button";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -75,7 +75,7 @@ const EmployeeListScreen = ({ navigation }) => {
   const [profileStatus, setProfileStatus] = React.useState("");
   const [loginStatus, setLoginStatus] = React.useState("");
   const [verifyStatus, setVerifyStatus] = React.useState("");
-
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const refRBSheet = useRef();
 
   //#endregion
@@ -154,6 +154,7 @@ const EmployeeListScreen = ({ navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.employeeotpverify, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           FetchData();
           hideDialog();
@@ -169,6 +170,7 @@ const EmployeeListScreen = ({ navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -318,6 +320,7 @@ const EmployeeListScreen = ({ navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       SubmitVerify();
     }
   };
@@ -510,9 +513,10 @@ const EmployeeListScreen = ({ navigation }) => {
               </HelperText>
             </View>
             <Card.Content style={[Styles.marginTop16]}>
-              <Button mode="contained" onPress={OnOTPSend}>
+              {/* <Button mode="contained" onPress={OnOTPSend}>
                 Submit & Verify
-              </Button>
+              </Button> */}
+              <DFButton mode="contained" onPress={OnOTPSend} title="Submit & Verify" loader={isButtonLoading} />
             </Card.Content>
           </Dialog.Content>
         </Dialog>

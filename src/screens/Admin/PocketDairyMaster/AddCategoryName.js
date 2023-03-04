@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput, Subheading } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, TextInput, Subheading } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { APIConverter } from "../../../utils/apiconverter";
 import { communication } from "../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DFButton from "../../../components/Button";  
 
 let userID = 0, groupID = 0;
 const AddCategoryNameScreen = ({ route, navigation }) => {
@@ -48,7 +49,7 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   useEffect(() => {
     GetUserID();
@@ -157,7 +158,6 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
       });
   };
 
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
 
   //#region Functions
@@ -380,9 +380,10 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
+          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
             SAVE
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateActivityName} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

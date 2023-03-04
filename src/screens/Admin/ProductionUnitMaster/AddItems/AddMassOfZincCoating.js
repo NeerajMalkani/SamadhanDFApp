@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScrollView, View } from "react-native";
 import {
-  Button,
   Card,
   Checkbox,
   HelperText,
@@ -16,6 +15,7 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
+import DFButton from "../../../../components/Button";
 
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -219,14 +219,15 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
         ]}
       >
         <Card.Content>
-          <Button
+          {/* <Button
             mode="contained"
             loading={isButtonLoading}
             disabled={isButtonLoading}
             onPress={ValidateData}
           >
             Submit
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateData} title="Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar

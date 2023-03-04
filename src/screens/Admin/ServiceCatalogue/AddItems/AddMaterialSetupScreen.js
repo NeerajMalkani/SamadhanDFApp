@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View, Dimensions } from "react-native";
-import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
+import {Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -9,6 +9,7 @@ import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
+import DFButton from "../../../../components/Button";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   //#region Variables
@@ -61,6 +62,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
 
   let amountEdit = 0;
   if (route.params.type === "edit" && route.params.data.productList !== null) {
@@ -415,6 +418,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
 
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -428,6 +432,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -490,6 +495,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.MaterialsSetupUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -500,6 +506,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -554,6 +561,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
     });
 
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateData();
       } else {
@@ -773,9 +781,10 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
-          <Button mode="contained" onPress={ValidateData}>
+          {/* <Button mode="contained" onPress={ValidateData}>
             Submit
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateData} title="   Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

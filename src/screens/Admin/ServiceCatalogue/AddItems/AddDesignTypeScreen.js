@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import FormData from "form-data";
 import { Image, Platform, ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -11,6 +11,7 @@ import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../../utils/paths";
 import { APIConverter } from "../../../../utils/apiconverter";
+import DFButton from "../../../../components/Button";
 
 const AddDesignTypeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -408,9 +409,11 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
+          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
+
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

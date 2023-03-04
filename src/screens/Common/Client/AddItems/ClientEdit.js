@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
 import {
-    ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text
+    ActivityIndicator, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text
 } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import uuid from "react-native-uuid";
@@ -19,6 +19,7 @@ import { creds } from "../../../../utils/credentials";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 import { color } from "react-native-reanimated";
+import DFButton from "../../../../components/Button";
 
 let st_ID = 0, ct_ID = 0;
 
@@ -308,6 +309,7 @@ const ClientEditScreen = ({ route, navigation }) => {
         };
         Provider.create("contractorquotationestimation/updateclient", params)
             .then((response) => {
+                setIsButtonLoading(false);
                 if (response.data && response.data.code === 200) {
                     setSnackbarColor(theme.colors.success);
                     setSnackbarText("Data updated successfully");
@@ -322,6 +324,7 @@ const ClientEditScreen = ({ route, navigation }) => {
             })
             .catch((e) => {
                 console.log(e);
+                setIsButtonLoading(false);
                 setSnackbarColor(theme.colors.error);
                 setSnackbarText(communication.NetworkError);
                 setSnackbarVisible(true);
@@ -357,6 +360,7 @@ const ClientEditScreen = ({ route, navigation }) => {
         }
 
         if (isValid) {
+            setIsButtonLoading(true);
             UpdateData();
         }
     };
@@ -461,9 +465,11 @@ const ClientEditScreen = ({ route, navigation }) => {
                 )}
                 <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
                     <Card.Content>
-                        <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+                        {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
                             Update
-                        </Button>
+                        </Button> */}
+                        <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
+
                     </Card.Content>
                 </View>
                 <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>

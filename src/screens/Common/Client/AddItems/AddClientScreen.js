@@ -1,13 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
 import { View, ScrollView } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Subheading, TextInput } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, Subheading, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import { APIConverter } from "../../../../utils/apiconverter";
+import DFButton from "../../../../components/Button"; 
 
 let userID = 0;
 const AddClientScreen = ({ route, navigation }) => {
@@ -434,9 +435,10 @@ const AddClientScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
+          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

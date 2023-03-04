@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  Button,
   Card,
   Checkbox,
   HelperText,
@@ -16,6 +15,7 @@ import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
+import DFButton from "../../../../components/Button";
 
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -253,6 +253,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
       )
         .then((response) => {
           console.log(response.data);
+          setIsButtonLoading(false);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -265,6 +266,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
           }
         })
         .catch((e) => {
+          setIsButtonLoading(false);
           setSnackbarText(communication.NetworkError);
           setSnackbarVisible(true);
         })
@@ -293,6 +295,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
       )
         .then((response) => {
           console.log(response.data);
+          setIsButtonLoading(false);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -305,6 +308,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
           }
         })
         .catch((e) => {
+          setIsButtonLoading(false);
           setSnackbarText(communication.NetworkError);
           setSnackbarVisible(true);
         })
@@ -415,14 +419,15 @@ const AddBrandConversationValue = ({ route, navigation }) => {
         ]}
       >
         <Card.Content>
-          <Button
+          {/* <Button
             mode="contained"
             loading={isButtonLoading}
             disabled={isButtonLoading}
             onPress={ValidateData}
           >
             Submit
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar

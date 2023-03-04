@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import FormData from "form-data";
 import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
-import { ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
+import { ActivityIndicator,Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -14,6 +14,7 @@ import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { APIConverter } from "../../../utils/apiconverter";
+import DFButton from "../../../components/Button";
 
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
@@ -385,6 +386,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     );
     Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
@@ -397,6 +399,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -407,6 +410,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     const isValid = true;
 
     if (isValid) {
+      setIsButtonLoading(true);
       InsertData();
     }
   };
@@ -557,9 +561,10 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               Update
-            </Button>
+            </Button> */}
+             <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
           </Card.Content>
         </View>
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
