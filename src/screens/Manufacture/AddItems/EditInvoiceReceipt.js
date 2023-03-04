@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 });
 
 const EditInvoiceReceipt = ({ route, navigation }) => {
-  console.log(route.params.data);
+  console.log("data", route.params.data);
   const [state, setState] = useState({
     mf_po_refno: "",
     mf_vo_refno: "",
@@ -90,7 +90,9 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         },
       }
     ).then((res) => {
-      setState((state) => ({ ...state, ...res.data.data[0] }));
+      if (res.data.data) {
+        setState((state) => ({ ...state, ...res.data.data[0] }));
+      }
     });
 
     Provider.createDFManufacturer(
@@ -143,7 +145,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         Sess_branch_refno: user.Sess_branch_refno,
         mf_po_refno: purchaseno.find(
           (item) => item.purchaseorderno === state.mf_po_refno
-        ).mf_po_refno,
+        )?.mf_po_refno,
         mf_vo_refno: joborderno.find(
           (item) => item.joborderno === state.mf_vo_refno
         ).mf_vo_refno,
@@ -230,7 +232,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         Sess_branch_refno: user.Sess_branch_refno,
         mf_po_refno: purchaseno.find(
           (item) => item.purchaseorderno === state.mf_po_refno
-        ).mf_po_refno,
+        )?.mf_po_refno,
         mf_vo_refno: mf_vo_refno.mf_vo_refno,
         mf_vo_invoice_refno: route.params.data.mf_vo_invoice_refno,
       },
@@ -252,7 +254,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     if (state.mf_po_refno.length > 0 && purchaseno.length > 0) {
       fetchOtherData(
         purchaseno.find((item) => item.purchaseorderno === state.mf_po_refno)
-          .mf_po_refno
+          ?.mf_po_refno
       );
     }
   }, [state.mf_po_refno, purchaseno]);

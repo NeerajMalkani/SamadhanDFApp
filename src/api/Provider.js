@@ -318,6 +318,8 @@ class Provider {
       "getviewmaterials_materialcalculatorform/",
     getproductrate_by_brandrefno_materialcalculatorform:
       "getproductrate_by_brandrefno_materialcalculatorform/",
+    vendororderformupdate: "vendororderformupdate/",
+    vendororderformcreate: "vendororderformcreate/",
     getbrandnamelist_materialcalculatorform:
       "getbrandnamelist_materialcalculatorform/",
     get_vendorcompanyname_manufacturer_poform:
@@ -347,7 +349,12 @@ class Provider {
     getemployeebasicdata: "getemployeebasicdata/",
     openingstockscrapupdate: "openingstockscrapupdate/",
     openingstockscrapcreate: "openingstockscrapcreate/",
-
+    get_purchaseorderno_vendororder_invoiceform:
+      "get_purchaseorderno_vendororder_invoiceform/",
+    get_purchaseorderno_otherdata_vendororder_invoiceform:
+      "get_purchaseorderno_otherdata_vendororder_invoiceform/",
+    get_purchaseorderno_otherdata_vendororderform:
+      "get_purchaseorderno_otherdata_vendororderform/",
     employeebasicdataupdate: "employeebasicdataupdate/",
     getbranchnameemployeeworkform: "getbranchnameemployeeworkform/",
     getdepartmentnameemployeeworkform: "getdepartmentnameemployeeworkform/",
@@ -540,10 +547,7 @@ class Provider {
     get_availablebalance_cashinhand_expensesform:
       "get_availablebalance_cashinhand_expensesform/",
     summaryofmaterial_gridlist: "summaryofmaterial_gridlist/",
-    get_purchaseorderno_vendororder_invoiceform:
-      "get_purchaseorderno_vendororder_invoiceform/",
-    get_purchaseorderno_otherdata_vendororder_invoiceform:
-      "/get_purchaseorderno_otherdata_vendororder_invoiceform/",
+    get_purchaseorderno_vendororderform: "get_purchaseorderno_vendororderform/",
     get_joborderno_vendororder_invoiceform:
       "get_joborderno_vendororder_invoiceform/",
     mfvoinvoicerefnocheck: "mfvoinvoicerefnocheck/",

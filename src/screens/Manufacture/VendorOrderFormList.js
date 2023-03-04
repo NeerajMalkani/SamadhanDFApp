@@ -1,29 +1,29 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useIsFocused } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
   LogBox,
   RefreshControl,
   ScrollView,
-} from 'react-native';
-import { FAB, List, Snackbar, Searchbar, Title } from 'react-native-paper';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Provider from '../../api/Provider';
-import Header from '../../components/Header';
-import { RenderHiddenItems } from '../../components/ListActions';
-import NoItems from '../../components/NoItems';
-import { Styles } from '../../styles/styles';
-import { theme } from '../../theme/apptheme';
-import { NullOrEmpty } from '../../utils/validations';
-import Coil from './Components/VendorCoil';
-import Slitting from './Components/VendorSlitting';
+} from "react-native";
+import { FAB, List, Searchbar, Title, Snackbar } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { SwipeListView } from "react-native-swipe-list-view";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Provider from "../../api/Provider";
+import Header from "../../components/Header";
+import { RenderHiddenItems } from "../../components/ListActions";
+import NoItems from "../../components/NoItems";
+import { Styles } from "../../styles/styles";
+import { theme } from "../../theme/apptheme";
+import { NullOrEmpty } from "../../utils/validations";
+import Coil from "./Components/VendorCoil";
+import Slitting from "./Components/VendorSlitting";
 let user = null;
 LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
+  "Non-serializable values were found in the navigation state",
 ]);
 function ProductforProduction({ navigation }) {
   const isFocused = useIsFocused();
@@ -31,26 +31,56 @@ function ProductforProduction({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [selectedItem, setSelectedItem] = useState({});
   const [otherData, setOtherData] = useState({});
-
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
+
   const fetchUserID = async () => {
-    const data = await AsyncStorage.getItem('user');
+    const data = await AsyncStorage.getItem("user");
 
     if (data) {
       user = JSON.parse(data);
       fetchOrder(JSON.parse(data));
     }
   };
-  console.log(user);
+  const EditCallback = (data, rowMap) => {
+    rowMap[data.item.key].closeRow();
 
-  const fetchOrder = (user) => {
+    navigation.navigate("EditVendorOrderForm", {
+      type: "edit",
+      fetchData: (from) => fetchOrder(user, from),
+      data: {
+        ...data.item,
+      },
+    });
+  };
+
+  const AddCallback = () => {
+    navigation.navigate("AddVendorOrderForm", {
+      type: "add",
+      fetchData: (from) => fetchOrder(user, from),
+    });
+  };
+
+  const fetchOrder = (user, from) => {
+    if (from === "add" || from === "update") {
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
+      setSnackbarColor(theme.colors.success);
+      setSnackbarVisible(true);
+    }
+
     Provider.createDFManufacturer(Provider.API_URLS.mfvorefnocheck, {
       data: {
         Sess_UserRefno: user.UserID,
         Sess_company_refno: user.Sess_company_refno,
         Sess_branch_refno: user.Sess_branch_refno,
-        mf_po_refno: 'all',
-        mf_vo_refno: 'all',
+        mf_po_refno: "all",
+        mf_vo_refno: "all",
       },
     })
       .then((res) => {
@@ -71,7 +101,7 @@ function ProductforProduction({ navigation }) {
           Sess_branch_refno: user.Sess_branch_refno,
           mf_po_refno: po,
         },
-      },
+      }
     )
       .then((res) => {
         setOtherData(res.data.data);
@@ -110,7 +140,7 @@ function ProductforProduction({ navigation }) {
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
-              name='file-tree'
+              name="file-tree"
             />
           )}
           right={() => (
@@ -118,7 +148,7 @@ function ProductforProduction({ navigation }) {
               style={{ marginVertical: 12, marginRight: 12 }}
               size={30}
               color={theme.colors.textSecondary}
-              name='eye'
+              name="eye"
             />
           )}
         />
@@ -131,7 +161,7 @@ function ProductforProduction({ navigation }) {
     <View style={[Styles.flex1, Styles.positionRelative]}>
       <Header
         navigation={navigation}
-        title='Manufacturer Vendor Order Form List'
+        title="Manufacturer Vendor Order Form List"
       />
       {orders.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
@@ -144,7 +174,7 @@ function ProductforProduction({ navigation }) {
           <SwipeListView
             previewDuration={1000}
             previewOpenValue={-72}
-            previewRowKey='1'
+            previewRowKey="1"
             previewOpenDelay={1000}
             refreshControl={
               <RefreshControl
@@ -159,46 +189,54 @@ function ProductforProduction({ navigation }) {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            // renderHiddenItem={(data, rowMap) =>
-            //   RenderHiddenItems(data, rowMap, [EditCallback])
-            // }
+            renderHiddenItem={(data, rowMap) =>
+              RenderHiddenItems(data, rowMap, [EditCallback])
+            }
           />
         </View>
       ) : (
         <NoItems
-          icon='format-list-bulleted'
-          text='No records found. Add records by clicking on plus icon.'
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
         />
       )}
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
+        {snackbarText}
+      </Snackbar>
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
         height={420}
-        animationType='fade'
+        animationType="fade"
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          draggableIcon: { backgroundColor: '#000' },
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
         }}
       >
         <View style={[Styles.flex1]}>
           <Title style={[Styles.paddingHorizontal16]}>Order Details</Title>
           <ScrollView style={[Styles.flex1]}>
             <List.Item
-              title='Vendor Order No.'
+              title="Vendor Order No."
               description={selectedItem.job_order_no}
             />
             <List.Item
-              title='Vendor name & address'
+              title="Vendor name & address"
               description={otherData[0]?.vendor_address?.user_company_name}
             />
             <List.Item
-              title='Number of GP Coil'
+              title="Number of GP Coil"
               description={selectedItem.no_gpcoil}
             />
             <List.Item
-              title='Thickness of Raw Material'
+              title="Thickness of Raw Material"
               description={selectedItem.product_name}
             />
             <Coil
@@ -214,10 +252,10 @@ function ProductforProduction({ navigation }) {
         style={[
           Styles.margin16,
           Styles.primaryBgColor,
-          { position: 'absolute', right: 16, bottom: 16 },
+          { position: "absolute", right: 16, bottom: 16 },
         ]}
-        icon='plus'
-        // onPress={AddCallback}
+        icon="plus"
+        onPress={AddCallback}
       />
     </View>
   );

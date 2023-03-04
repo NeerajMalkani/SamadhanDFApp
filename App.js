@@ -196,6 +196,8 @@ import VendorOrderFormList from "./src/screens/Manufacture/VendorOrderFormList";
 import InvoiceReceipt from "./src/screens/Manufacture/AddItems/InvoiceReceipt";
 import InvoiceReceiptList from "./src/screens/Manufacture/InvoiceReceipt";
 import EditInvoiceReceipt from "./src/screens/Manufacture/AddItems/EditInvoiceReceipt";
+import EditVendorOrderForm from "./src/screens/Manufacture/AddItems/EditVendorOrderForm";
+import AddVendorOrderForm from "./src/screens/Manufacture/AddItems/AddVendorOrderForm";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -2178,6 +2180,28 @@ export default function App() {
                 component={InvoiceReceipt}
                 options={{
                   headerTitle: "Add Invoice Receipt",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="EditVendorOrderForm"
+                component={EditVendorOrderForm}
+                options={{
+                  headerTitle: "Edit Vendor Order Form",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="AddVendorOrderForm"
+                component={AddVendorOrderForm}
+                options={{
+                  headerTitle: "Add Vendor Order Form",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
