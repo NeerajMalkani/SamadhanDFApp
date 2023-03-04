@@ -200,7 +200,7 @@ function ProductionStatus({ navigation }) {
   //#endregion
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Product Status" />
+      <Header navigation={navigation} title="Production Status" />
       {isLoading ? (
         <View
           style={[

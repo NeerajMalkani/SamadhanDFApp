@@ -138,13 +138,18 @@ function ProductforProduction({ navigation }) {
         ]}
       >
         <List.Item
-          title={data.item.service_name}
+          title={data.item.product_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name: ${
+          description={`Service Name: ${
+            NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
+          }\nCategory Name: ${
             NullOrEmpty(data.item.category_name) ? "" : data.item.category_name
-          }\nProduct Name: ${
-            NullOrEmpty(data.item.product_name) ? "" : data.item.product_name
           } `}
+          // description={`Category Name: ${
+          //   NullOrEmpty(data.item.category_name) ? "" : data.item.category_name
+          // }\nProduct Name: ${
+          //   NullOrEmpty(data.item.product_name) ? "" : data.item.product_name
+          // } `}
           onPress={() => {
             refRBSheet.current.open();
             console.log(data.item);
@@ -273,14 +278,14 @@ function ProductforProduction({ navigation }) {
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{serviceName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{`${productName} >> ${current.brand_name}`}</Title>
           <ScrollView>
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
-            <List.Item
+            {/* <List.Item
               title="Product Name >> Brand"
               description={`${productName} >> ${current.brand_name}`}
-            />
+            /> */}
             <List.Item
               title="Product length in Mtr"
               description={current.length_mtr_value}

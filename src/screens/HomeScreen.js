@@ -1799,6 +1799,12 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                     </View>
+
+                   
+                  </View>
+
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Vendor Order Form</Text>
                     <View
                       style={[
                         Styles.marginTop16,
@@ -1810,6 +1816,63 @@ const HomeScreen = ({ route, navigation }) => {
                         // onPress={() => {
                         //   navigation.navigate("MaterialSetupScreen");
                         // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.containerBgGreen}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Vendor Order Form List
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("InvoiceReceiptList");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.containerBgGreen}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Invoice Receipt List
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                  </View>
+
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Production Status</Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("ProductionStatus");
+                        }}
                         style={[
                           Styles.borderRadius8,
                           Styles.homeBox,
@@ -1851,64 +1914,9 @@ const HomeScreen = ({ route, navigation }) => {
                         </Text>
                       </TouchableOpacity>
                     </View>
-                  </View>
-
-                  <View style={[Styles.paddingTop16]}>
-                    <Text style={[Styles.HomeTitle]}>Vendor Order Form</Text>
-                    <View
-                      style={[
-                        Styles.marginTop16,
-                        Styles.flexRow,
-                        Styles.flexSpaceBetween,
-                      ]}
-                    >
-                      <TouchableOpacity
-                        // onPress={() => {
-                        //   navigation.navigate("MaterialSetupScreen");
-                        // }}
-                        style={[
-                          Styles.borderRadius8,
-                          Styles.homeBox,
-                          Styles.flexColumn,
-                          Styles.flexJustifyCenter,
-                          Styles.flexAlignCenter,
-                          { width: 156, height: 72 },
-                        ]}
-                      >
-                        <Icon
-                          name="archive-arrow-down"
-                          size={22}
-                          color={theme.colors.containerBgGreen}
-                        />
-                        <Text style={[Styles.buttonIconLabel]}>
-                          Vendor Order Form List
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        // onPress={() => {
-                        //   navigation.navigate("PostNewDesignScreen");
-                        // }}
-                        style={[
-                          Styles.borderRadius8,
-                          Styles.homeBox,
-                          Styles.flexColumn,
-                          Styles.flexJustifyCenter,
-                          Styles.flexAlignCenter,
-                          { width: 156, height: 72 },
-                        ]}
-                      >
-                        <Icon
-                          name="archive-arrow-down"
-                          size={22}
-                          color={theme.colors.containerBgGreen}
-                        />
-                        <Text style={[Styles.buttonIconLabel]}>
-                          Invoice Receipt List
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
 
                   </View>
+
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>Reports</Text>
                     <View
