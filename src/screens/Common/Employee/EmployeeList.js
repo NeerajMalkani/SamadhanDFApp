@@ -38,7 +38,7 @@ import { NullOrEmpty } from "../../../utils/validations";
 import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
 import SearchNAdd from "./AddItems/SearchNAdd";
-import DFButton from "../../../../components/Button";
+import DFButton from "../../../components/Button";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -516,7 +516,12 @@ const EmployeeListScreen = ({ navigation }) => {
               {/* <Button mode="contained" onPress={OnOTPSend}>
                 Submit & Verify
               </Button> */}
-              <DFButton mode="contained" onPress={OnOTPSend} title="Submit & Verify" loader={isButtonLoading} />
+              <DFButton
+                mode="contained"
+                onPress={OnOTPSend}
+                title="Submit & Verify"
+                loader={isButtonLoading}
+              />
             </Card.Content>
           </Dialog.Content>
         </Dialog>
