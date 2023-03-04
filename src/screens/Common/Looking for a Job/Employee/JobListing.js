@@ -80,7 +80,7 @@ const JobListing = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = useState('');
   const isFocused = useIsFocused();
   const [filters, setFilters] = useState({
-    designation_refno: '',
+    designation_refno: '0',
     state_refno: '0',
     district_refno: '0',
   });
@@ -134,7 +134,7 @@ const JobListing = ({ route, navigation }) => {
   };
   const search = () => {
     if (
-      filters.designation_refno === '' &&
+      filters.designation_refno === '0' &&
       filters.district_refno === '0' &&
       filters.state_refno === '0'
     ) {
@@ -144,9 +144,12 @@ const JobListing = ({ route, navigation }) => {
       return;
     }
     const params = {
-      designation_refno: designations.find(
-        (item) => item.designation_name === filters.designation_refno,
-      ).designation_refno,
+      designation_refno:
+        filters.designation_refno === '0'
+          ? '0'
+          : designations.find(
+              (item) => item.designation_name === filters.designation_refno,
+            ).designation_refno,
       state_refno:
         filters.state_refno === '0'
           ? '0'
