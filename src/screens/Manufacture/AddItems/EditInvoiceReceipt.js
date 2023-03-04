@@ -22,14 +22,21 @@ const styles = StyleSheet.create({
   row: { height: 50, backgroundColor: "white" },
 });
 
-const InvoiceReceipt = ({ route, navigation }) => {
+const EditInvoiceReceipt = ({ route, navigation }) => {
+  console.log(route.params.data);
   const [state, setState] = useState({
     mf_po_refno: "",
     mf_vo_refno: "",
-    invoice_no: "",
-    invoice_entry_date: new Date().toLocaleDateString().substring(0, 11),
-    invoice_date: new Date(),
-    transport_charges: "",
+    invoice_no: route.params.data.invoice_no,
+    invoice_entry_date: route.params.data.invoice_entry_date,
+    invoice_date: new Date(
+      route.params.data.invoice_date.substring(6, 11) +
+        "/" +
+        route.params.data.invoice_date.substring(3, 5) +
+        "/" +
+        route.params.data.invoice_date.substring(0, 2)
+    ),
+    transport_charges: route.params.data.transport_charges,
   });
   const onChange = (text, name) => {
     setState((state) => ({ ...state, [name]: text }));
@@ -64,6 +71,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
     ).then((res) => {
       if (res.data.data) {
         setPurchaseNo(res.data.data);
+        setState((prev) => {
+          return { ...prev, mf_po_refno: route.params.data.mf_po_no };
+        });
       }
     });
   };
@@ -80,7 +90,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
         },
       }
     ).then((res) => {
-      console.log("other", res.data.data[0]);
       setState((state) => ({ ...state, ...res.data.data[0] }));
     });
 
@@ -96,9 +105,17 @@ const InvoiceReceipt = ({ route, navigation }) => {
       }
     )
       .then((res) => {
-        console.log(res.data.data);
         if (res.data.code == "200" && res.data.data) {
           setJobOrderNo(res.data.data);
+          let temp = res.data.data.find(
+            (item) => item.mf_vo_refno == route.params.data.mf_vo_refno
+          );
+          setState((prev) => {
+            return {
+              ...prev,
+              mf_vo_refno: temp ? temp.joborderno : "",
+            };
+          });
         }
       })
       .catch((error) => console.log(error));
@@ -139,6 +156,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
         weightper_piece: {},
         total_no_products: {},
         coils_received: {},
+        mf_vo_invoice_refno: route.params.data.mf_vo_invoice_refno,
       },
     };
     production.map((item, i) => {
@@ -148,21 +166,19 @@ const InvoiceReceipt = ({ route, navigation }) => {
       params.data.total_no_products[i] = item.total_no_products;
       params.data.coils_received[i] = item.coils_received;
     });
-
     Provider.createDFManufacturer(
-      Provider.API_URLS.vendororder_invoiceformcreate,
+      Provider.API_URLS.vendororder_invoiceformupdate,
       params
     )
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.data.Created == 1) {
-          route.params.fetchData("add");
+          route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
         } else {
-          setSnackbarText(communication.InsertError);
+          setSnackbarText(communication.UpdateError);
           setSnackbarVisible(true);
         }
       })
@@ -207,7 +223,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
     }
   };
   const fetchProduction = (mf_vo_refno) => {
-    console.log(mf_vo_refno);
     let params = {
       data: {
         Sess_UserRefno: user.UserID,
@@ -217,22 +232,38 @@ const InvoiceReceipt = ({ route, navigation }) => {
           (item) => item.purchaseorderno === state.mf_po_refno
         ).mf_po_refno,
         mf_vo_refno: mf_vo_refno.mf_vo_refno,
-        mf_vo_invoice_refno: "0",
+        mf_vo_invoice_refno: route.params.data.mf_vo_invoice_refno,
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
       params
     )
       .then((res) => {
         if (res.data.code == "200" && res.data.data) {
+          console.log(res.data.data);
           setProduction(res.data.data);
         }
       })
       .catch((error) => console.log(error));
   };
 
+  useEffect(() => {
+    if (state.mf_po_refno.length > 0 && purchaseno.length > 0) {
+      fetchOtherData(
+        purchaseno.find((item) => item.purchaseorderno === state.mf_po_refno)
+          .mf_po_refno
+      );
+    }
+  }, [state.mf_po_refno, purchaseno]);
+
+  useEffect(() => {
+    if (state.mf_vo_refno.length > 0) {
+      fetchProduction(
+        joborderno.find((item) => item.joborderno === state.mf_vo_refno)
+      );
+    }
+  }, [state.mf_vo_refno]);
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView
@@ -249,10 +280,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
           onSelected={(text) => {
             if (text !== state.mf_po_refno) {
               onChange(text, "mf_po_refno");
-              fetchOtherData(
-                purchaseno.find((item) => item.purchaseorderno === text)
-                  .mf_po_refno
-              );
               setState((state) => ({ ...state, mf_vo_refno: "" }));
               setJobOrderNo([]);
               setProduction([]);
@@ -276,9 +303,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
             if (text !== state.mf_vo_refno) {
               onChange(text, "mf_vo_refno");
               setProduction([]);
-              fetchProduction(
-                joborderno.find((item) => item.joborderno === text)
-              );
               setErrors((prev) => {
                 return {
                   ...prev,
@@ -369,74 +393,77 @@ const InvoiceReceipt = ({ route, navigation }) => {
                   <Table
                     borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                   >
-                    {production.map((item, index) => (
-                      <TableWrapper
-                        style={{ flexDirection: "row" }}
-                        key={index}
-                      >
-                        <Col
-                          data={[`${item.productname}\n>> ${item.brand_name}`]}
-                          height={80}
-                          textStyle={styles.text}
-                          width={85}
-                        />
-                        <Col
-                          data={[item.weightper_piece_txt]}
-                          height={80}
-                          textStyle={styles.text}
-                          width={58}
-                        />
-                        <Col
-                          data={[item.total_no_products_txt]}
-                          height={80}
-                          textStyle={styles.text}
-                          width={58}
-                        />
-                        <Col
-                          data={[
-                            <View style={{ padding: 10 }}>
-                              <Dropdown
-                                data={[
-                                  ...Array.from(
-                                    {
-                                      length:
-                                        parseInt(item.coils_received_nos) + 1,
-                                    },
-                                    (_, i) => String(i + 1)
-                                  ),
-                                ]}
-                                label=""
-                                selectedItem={item.coils_received}
-                                onSelected={(selectedItem) =>
-                                  setProduction((prev) =>
-                                    prev.map((current, idx) => {
-                                      if (idx !== index) {
-                                        return current;
-                                      } else {
-                                        return {
-                                          ...current,
-                                          coils_received: selectedItem,
-                                        };
-                                      }
-                                    })
-                                  )
-                                }
-                              />
-                            </View>,
-                          ]}
-                          height={80}
-                          textStyle={styles.text}
-                          width={90}
-                        />
-                      </TableWrapper>
-                    ))}
+                    {production.map((item, index) => {
+                      return (
+                        <TableWrapper
+                          style={{ flexDirection: "row" }}
+                          key={index}
+                        >
+                          <Col
+                            data={[
+                              `${item.productname}\n>> ${item.brand_name}`,
+                            ]}
+                            height={80}
+                            textStyle={styles.text}
+                            width={85}
+                          />
+                          <Col
+                            data={[item.weightper_piece_txt]}
+                            height={80}
+                            textStyle={styles.text}
+                            width={58}
+                          />
+                          <Col
+                            data={[item.total_no_products_txt]}
+                            height={80}
+                            textStyle={styles.text}
+                            width={58}
+                          />
+                          <Col
+                            data={[
+                              <View style={{ padding: 10 }}>
+                                <Dropdown
+                                  data={[
+                                    ...Array.from(
+                                      {
+                                        length:
+                                          parseInt(item.coils_received_nos) + 1,
+                                      },
+                                      (_, i) => String(i + 1)
+                                    ),
+                                  ]}
+                                  label=""
+                                  selectedItem={item.coils_received}
+                                  onSelected={(selectedItem) =>
+                                    setProduction((prev) =>
+                                      prev.map((current, idx) => {
+                                        if (idx !== index) {
+                                          return current;
+                                        } else {
+                                          return {
+                                            ...current,
+                                            coils_received: selectedItem,
+                                          };
+                                        }
+                                      })
+                                    )
+                                  }
+                                />
+                              </View>,
+                            ]}
+                            height={80}
+                            textStyle={styles.text}
+                            width={90}
+                          />
+                        </TableWrapper>
+                      );
+                    })}
                   </Table>
                 </ScrollView>
               </View>
             </ScrollView>
           </View>
         )}
-        {console.log(production[0])}
         {production.length > 0 && (
           <View style={{ padding: 5 }}>
             <View style={{ flexDirection: "row" }}>
@@ -496,4 +523,4 @@ const InvoiceReceipt = ({ route, navigation }) => {
   );
 };
 
-export default InvoiceReceipt;
+export default EditInvoiceReceipt;

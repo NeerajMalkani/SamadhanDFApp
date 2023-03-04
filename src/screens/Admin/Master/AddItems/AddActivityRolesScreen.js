@@ -7,6 +7,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import DFButton from "../../../../components/Button";  
 
+
 const AddActivityRolesScreen = ({ route, navigation }) => {
   //#region Variables
   const [activityNameError, setActivityNameError] = React.useState(false);

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View } from "react-native";
-import { Button, Card, Checkbox, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
 import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
+import DFButton from "../../../../components/Button";
 
 const AddServiceProductScreen = ({ route, navigation }) => {
   //#region Variables
@@ -116,7 +117,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchServicesFromActivity = (actID) => {
@@ -126,7 +127,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         group_refno: actID,
       },
     };
- 
+
     Provider.createDFAdmin(Provider.API_URLS.ServiceNameServiceProduct, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -141,7 +142,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
@@ -151,11 +152,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         service_refno: servicesDataParam
           ? servicesDataParam.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id
+            return el.serviceName === selectedItem;
+          }).id
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryNameServiceProduct, params)
@@ -173,7 +174,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
@@ -182,11 +183,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryDataServiceProduct, params)
@@ -199,7 +200,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
@@ -209,11 +210,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductServiceProduct, params)
@@ -231,7 +232,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitsFromProductID = (selectedItem, productDataParam) => {
@@ -240,11 +241,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         product_refno: productDataParam
           ? productDataParam.find((el) => {
-              return el.productName === selectedItem;
-            }).id
+            return el.productName === selectedItem;
+          }).id
           : productsFullData.find((el) => {
-              return el.productName === selectedItem;
-            }).id,
+            return el.productName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.UnitNameSelectedForProduct, params)
@@ -258,7 +259,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchAlternativeUnitOfSalesFromUnit = (unitID) => {
@@ -278,7 +279,7 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -553,9 +554,10 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
+          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
-          </Button>
+          </Button> */}
+          <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

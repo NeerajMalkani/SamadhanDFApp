@@ -164,6 +164,7 @@ const JobListing = ({ route, navigation }) => {
       Sess_UserRefno: userID,
     };
     console.log('here');
+    console.log('Params:', params);
     Provider.createDFCommon(Provider.API_URLS.employee_job_search, {
       data: params,
     })

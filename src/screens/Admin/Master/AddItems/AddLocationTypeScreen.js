@@ -5,9 +5,10 @@ import { theme } from "../../../../theme/apptheme";
 import Provider from "../../../../api/Provider";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Button, Card, Checkbox, Chip, HelperText, List, Snackbar, Text, TextInput } from "react-native-paper";
+import { Card, Checkbox, Chip, HelperText, List, Snackbar, Text, TextInput } from "react-native-paper";
 import { communication } from "../../../../utils/communication";
 import { APIConverter } from "../../../../utils/apiconverter";
+import DFButton from "../../../../components/Button";
 
 const AddLocationTypeScreen = ({ route, navigation }) => {
   //#region Variables
@@ -339,9 +340,12 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateLocationType}>
+          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateLocationType}>
             SAVE
-          </Button>
+          </Button> */}
+          
+          <DFButton mode="contained" onPress={ValidateLocationType} title="SAVE" loader={isButtonLoading} />
+
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
