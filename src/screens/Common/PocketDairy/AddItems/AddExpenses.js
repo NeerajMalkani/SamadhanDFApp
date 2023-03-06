@@ -122,6 +122,8 @@ const AddExpenses = ({ route, navigation }) => {
   const [expenses, setExpenses] = React.useState([]);
   const [errorEX, setEXError] = React.useState(false);
 
+
+
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
   const [amountInvalidBalance, setAmountInvalidBalance] = React.useState(
@@ -266,8 +268,36 @@ const AddExpenses = ({ route, navigation }) => {
   const [personalBankAccNo, setPersonalBankAccNo] = React.useState("");
   const [bankRefNo, setBankRefNo] = React.useState("");
 
+  const [cashBalance, setCashBalance] = useState(0);
+  const [cashBalanceStatus, setCashBalanceStatus] = React.useState(false);
+
   const [bankBalance, setBankBalance] = useState(0);
   const [bankBalanceStatus, setBankBalanceStatus] = React.useState(false);
+
+  const [branchFullData, setBranchFullData] = React.useState([]);
+  const [branchData, setBranchData] = React.useState([]);
+  const [branch, setBranch] = React.useState([]);
+  const [errorBR, setErrorBR] = React.useState(false);
+
+  const [designationFullData, setDesignationFullData] = React.useState([]);
+  const [designationData, setDesignationData] = React.useState([]);
+  const [designation, setDesignation] = React.useState([]);
+  const [errorDesg, setErrorDesg] = React.useState(false);
+
+  const [employeeFullData, setEmployeeFullData] = React.useState([]);
+  const [employeeData, setEmployeeData] = React.useState([]);
+  const [employee, setEmployee] = React.useState([]);
+  const [errorEmp, setErrorEmp] = React.useState(false);
+
+  const [usageFullData, setUsageFullData] = React.useState([]);
+  const [usageData, setUsageData] = React.useState([]);
+  const [usage, setUsage] = React.useState([]);
+  const [errorUsage, setErrorUsage] = React.useState(false);
+
+  const [branchListStatus, setBranchListstatus] = React.useState(false);
+  const [designationListStatus, setDesignationListstatus] = React.useState(false);
+  const [employeeListStatus, setEmployeeListstatus] = React.useState(false);
+  const [usageListStatus, setUsageListstatus] = React.useState(false);
 
   //#endregion
 
@@ -449,7 +479,7 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (data.pck_mybank_refno != "" && data.pck_mybank_refno != "0") {
       setBankStatus(true);
-      FetchBankList(data.pck_mybank_refno);
+      FetchBankList(data.pck_mybank_refno, data.pck_mode_refno);
     }
 
     if (
@@ -596,6 +626,16 @@ const AddExpenses = ({ route, navigation }) => {
                 })[0].pckModeName
               );
             }
+
+            if (editID == 1) {
+              setCashBalanceStatus(true);
+              FetchAvailableCashBalance();
+            }
+            else {
+              setCashBalanceStatus(false);
+              setCashBalance(0);
+            }
+
           }
         }
       })
@@ -819,7 +859,7 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchBankList = (editID) => {
+  const FetchBankList = (editID, mode) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -849,13 +889,23 @@ const AddExpenses = ({ route, navigation }) => {
                 })[0].bankName
               );
             }
+
+            if (mode == 2 || mode == 3 || mode == 4) {
+              setBankBalanceStatus(true);
+              FetchBankCurrentBalance(editID);
+            }
+            else {
+              setBankBalanceStatus(false);
+              setBankBalance(0);
+            }
+
           }
         }
       })
       .catch((e) => { });
   };
 
-  const FetchAvailableCashBalance = (editID) => {
+  const FetchAvailableCashBalance = () => {
     console.log('start');
     let params = {
       data: {
@@ -872,7 +922,7 @@ const AddExpenses = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
-            setBankBalance(response.data.data[0].cashinhand.toString());
+            setCashBalance(response.data.data[0].cashinhand.toString());
             let amt = amount == "" ? 0 : parseFloat(amount);
             let cashAmt = response.data.data[0].cashinhand == "" ? 0 : parseFloat(response.data.data[0].cashinhand);
             if (amt > cashAmt) {
@@ -880,6 +930,42 @@ const AddExpenses = ({ route, navigation }) => {
               setSnackbarText("Your entered amount is greater than for available balance.");
               setSnackbarColor(theme.colors.error);
               setSnackbarVisible(true);
+            }
+
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchBankCurrentBalance = (bankID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID.toString(),
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        pck_entrytype_refno: _pktEntryTypeID,
+        pck_mybank_refno: bankID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_expensesform, params)
+      .then((response) => {
+
+        console.log('bank balance', response.data);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setBankBalance(response.data.data[0].cashinbank.toString());
+
+            let amt = amount == "" ? 0 : parseFloat(amount);
+            let bankAmt = response.data.data[0].cashinbank == "" ? 0 : parseFloat(response.data.data[0].cashinbank);
+
+            if (amt > bankAmt) {
+              settAmount("");
+              setSnackbarText("Your entered amount is greater than for available balance.");
+              setSnackbarColor(theme.colors.error);
+              setSnackbarVisible(true);
+
             }
 
           }
@@ -1077,6 +1163,152 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
+
+  const FetchBranchList = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getbranchlist_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            let listData = [];
+            response.data.data.map((data) => {
+              listData.push({
+                exp_branch_refno: data.exp_branch_refno,
+                location_name: data.location_name,
+                locationtype_name: data.locationtype_name,
+                displayName: data.location_name + " >> " + data.locationtype_name
+              });
+            });
+
+            setBranchFullData(listData);
+
+            const branch = listData.map((data) => data.displayName);
+
+            setBranchData(branch);
+
+            if (editID != null) {
+              setBranch(
+                response.data.data.filter((el) => {
+                  return el.exp_branch_refno === editID;
+                })[0].displayName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchDesignationList = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getdesignationlist_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            setDesignationFullData(response.data.data);
+
+            const designation = response.data.data.map((data) => data.designation_name);
+
+            setDesignationData(designation);
+
+            if (editID != null) {
+              setDesignation(
+                response.data.data.filter((el) => {
+                  return el.designation_refno === editID;
+                })[0].designation_name
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchEmployeeList = (editID, designationID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        exp_designation_refno: designationID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getemployeelist_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            let listData = [];
+            response.data.data.map((data) => {
+              listData.push({
+                myemployee_refno: data.myemployee_refno,
+                employee_name: data.employee_name,
+                employee_code: data.employee_code,
+                displayName: data.employee_name + " / " + data.employee_code
+              });
+            });
+
+            setEmployeeFullData(listData);
+
+            const employee = listData.map((data) => data.displayName);
+
+            setEmployeeData(employee);
+
+            if (editID != null) {
+              setEmployee(
+                response.data.data.filter((el) => {
+                  return el.myemployee_refno === editID;
+                })[0].displayName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchUsageList = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString()
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getdesignationlist_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            setDesignationFullData(response.data.data);
+
+            const designation = response.data.data.map((data) => data.designation_name);
+
+            setDesignationData(designation);
+
+            if (editID != null) {
+              setDesignation(
+                response.data.data.filter((el) => {
+                  return el.designation_refno === editID;
+                })[0].designation_name
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+
   const ShowContactList = () => {
     setIsContactLoading(true);
     (async () => {
@@ -1272,12 +1504,12 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (a[0].pckModeID == 1) {
-      setBankBalanceStatus(true);
+      setCashBalanceStatus(true);
       FetchAvailableCashBalance();
     }
     else {
-      setBankBalanceStatus(false);
-      setBankBalance(0);
+      setCashBalanceStatus(false);
+      setCashBalance(0);
     }
   };
 
@@ -1607,11 +1839,32 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const onAmount = (text) => {
-    if (parseFloat(text) > parseFloat(balanceAmount.replace(/,/g, ""))) {
-      settAmount("");
-      setAmountError(true);
-      setAmountInvalidBalance("Amount can not be more then balance amount");
-    } else {
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    if (mode.length > 0 && mode[0].pckModeID == 1 && cashBalanceStatus) {
+      if (parseFloat(text) > parseFloat(cashBalance.replace(/,/g, ""))) {
+        settAmount("");
+        setAmountError(true);
+        setAmountInvalidBalance("Amount can not be more then balance amount");
+      } else {
+        settAmount(text);
+        setAmountError(false);
+      }
+    }
+    else if (mode.length > 0 && (mode[0].pckModeID == 2 || mode[0].pckModeID == 3 || mode[0].pckModeID == 4) && bankBalanceStatus) {
+      if (parseFloat(text) > parseFloat(bankBalance.replace(/,/g, ""))) {
+        settAmount("");
+        setAmountError(true);
+        setAmountInvalidBalance("Amount can not be more then balance amount");
+      } else {
+        settAmount(text);
+        setAmountError(false);
+      }
+    }
+    else {
       settAmount(text);
       setAmountError(false);
     }
@@ -1640,6 +1893,27 @@ const AddExpenses = ({ route, navigation }) => {
   const onMyBankChanged = (text) => {
     setMyBank(text);
     setMBError(false);
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    console.log('mode', mode);
+
+    if (mode[0].pckModeID == 2 || mode[0].pckModeID == 3 || mode[0].pckModeID == 4) {
+      setBankBalanceStatus(true);
+
+      let bankID = myBankFullData.filter((el) => {
+        return el.bankName === text;
+      })[0].bank_refno;
+
+      FetchBankCurrentBalance(bankID);
+    }
+    else {
+      setBankBalanceStatus(false);
+      setBankBalance(0);
+    }
+
   };
 
   const onClientListChanged = (text) => {
@@ -2227,12 +2501,12 @@ const AddExpenses = ({ route, navigation }) => {
           <HelperText type="error" visible={errorPM}>
             Please select valid payment mode
           </HelperText>
-          {bankBalanceStatus && (
+          {cashBalanceStatus && (
             <>
               <TextInput
                 mode="outlined"
                 label="Available Balance"
-                value={bankBalance}
+                value={cashBalance}
                 returnKeyType="next"
                 outlineColor={theme.colors.primary}
                 keyboardType="number-pad"
@@ -2301,6 +2575,82 @@ const AddExpenses = ({ route, navigation }) => {
           <HelperText type="error" visible={errorEX}>
             Please select valid Expenses / Payment
           </HelperText>
+
+          {branchListStatus && (
+            <>
+              <Dropdown
+                label="Branch List"
+                data={branchData}
+                onSelected={onBranchListChanged}
+                isError={errorBR}
+                selectedItem={branch}
+              />
+              <HelperText type="error" visible={errorBR}>
+                Please select a branch
+              </HelperText>
+            </>
+          )}
+
+          {designationListStatus && (
+            <>
+              <Dropdown
+                label="Designation List"
+                data={designationData}
+                onSelected={onDesignationListChanged}
+                isError={errorDesg}
+                selectedItem={designation}
+              />
+              <HelperText type="error" visible={errorDesg}>
+                Please select a designation
+              </HelperText>
+            </>
+          )}
+
+          {employeeListStatus && (
+            <>
+              <Dropdown
+                label="Employee List"
+                data={employeeData}
+                onSelected={onEmployeeListChanged}
+                isError={errorEmp}
+                selectedItem={employee}
+              />
+              <HelperText type="error" visible={errorEmp}>
+                Please select an employee
+              </HelperText>
+            </>
+          )}
+
+          {usageListStatus && (
+            <>
+              <Dropdown
+                label="Select Particular"
+                data={usageData}
+                onSelected={onPerticularListChanged}
+                isError={errorUsage}
+                selectedItem={usage}
+              />
+              <HelperText type="error" visible={errorUsage}>
+                Please select a perticular
+              </HelperText>
+            </>
+          )}
+
+
+          {projectListStatus && (
+            <>
+              <Dropdown
+                label="Project List"
+                data={projectListData}
+                onSelected={onProjectListChanged}
+                isError={errorPL}
+                selectedItem={projectList}
+              />
+              <HelperText type="error" visible={errorPL}>
+                Please select a project
+              </HelperText>
+            </>
+          )}
 
           {clientListStatus && (
             <>
@@ -2540,6 +2890,22 @@ const AddExpenses = ({ route, navigation }) => {
                   Add Bank Account
                 </Button>
               </View>
+            </>
+          )}
+
+          {bankBalanceStatus && (
+            <>
+              <TextInput
+                mode="outlined"
+                label="Available Balance"
+                value={bankBalance}
+                returnKeyType="next"
+                outlineColor={theme.colors.primary}
+                keyboardType="number-pad"
+                onSubmitEditing={() => ref_input2.current.focus()}
+                disabled={true}
+                style={[Styles.marginTop8, { backgroundColor: "white" }]}
+              />
             </>
           )}
 

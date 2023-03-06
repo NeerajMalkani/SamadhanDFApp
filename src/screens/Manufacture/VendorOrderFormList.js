@@ -85,6 +85,7 @@ function ProductforProduction({ navigation }) {
     })
       .then((res) => {
         if (res.data.data) {
+          console.log('orders:', res.data.data);
           setOrders(res.data.data);
         }
       })
@@ -161,7 +162,7 @@ function ProductforProduction({ navigation }) {
     <View style={[Styles.flex1, Styles.positionRelative]}>
       <Header
         navigation={navigation}
-        title="Manufacturer Vendor Order Form List"
+        title="Vendor Order Form List"
       />
       {orders.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>

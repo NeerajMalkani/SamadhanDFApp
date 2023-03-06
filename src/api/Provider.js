@@ -562,6 +562,10 @@ class Provider {
     get_availablebalance_cashinhand_expensesform:
       "get_availablebalance_cashinhand_expensesform/",
     summaryofmaterial_gridlist: "summaryofmaterial_gridlist/",
+    get_availablebalance_cashinbank_expensesform: "get_availablebalance_cashinbank_expensesform/",
+    getbranchlist_pckaddexpensesform: "getbranchlist_pckaddexpensesform/",
+    getdesignationlist_pckaddexpensesform: "getdesignationlist_pckaddexpensesform/",
+    getemployeelist_pckaddexpensesform:"getemployeelist_pckaddexpensesform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -593,13 +597,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;

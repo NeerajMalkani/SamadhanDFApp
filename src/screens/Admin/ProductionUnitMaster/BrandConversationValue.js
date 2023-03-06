@@ -66,10 +66,8 @@ const ABrandConversationValue = ({ navigation }) => {
       params
     )
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
