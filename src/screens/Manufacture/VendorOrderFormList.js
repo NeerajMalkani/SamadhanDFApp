@@ -85,7 +85,16 @@ function ProductforProduction({ navigation }) {
     })
       .then((res) => {
         if (res.data.data) {
-          console.log('orders:', res.data.data);
+          console.log("orders:", res.data.data);
+          console.log("ordersparams:", {
+            data: {
+              Sess_UserRefno: user.UserID,
+              Sess_company_refno: user.Sess_company_refno,
+              Sess_branch_refno: user.Sess_branch_refno,
+              mf_po_refno: "all",
+              mf_vo_refno: "all",
+            },
+          });
           setOrders(res.data.data);
         }
       })
@@ -156,14 +165,12 @@ function ProductforProduction({ navigation }) {
       </View>
     );
   };
+  console.log(selectedItem);
 
   //#endregion
   return (
     <View style={[Styles.flex1, Styles.positionRelative]}>
-      <Header
-        navigation={navigation}
-        title="Vendor Order Form List"
-      />
+      <Header navigation={navigation} title="Vendor Order Form List" />
       {orders.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           {/* <Searchbar
@@ -214,7 +221,7 @@ function ProductforProduction({ navigation }) {
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
-        height={420}
+        height={580}
         animationType="fade"
         customStyles={{
           wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
@@ -229,6 +236,10 @@ function ProductforProduction({ navigation }) {
               description={selectedItem.job_order_no}
             />
             <List.Item
+              title="Purchase Order No."
+              description={selectedItem.mf_po_no}
+            />
+            <List.Item
               title="Vendor name & address"
               description={otherData[0]?.vendor_address?.user_company_name}
             />
@@ -240,12 +251,28 @@ function ProductforProduction({ navigation }) {
               title="Thickness of Raw Material"
               description={selectedItem.product_name}
             />
+            <List.Item
+              title="Total weight"
+              description={selectedItem.total_weight}
+            />
+            <List.Item
+              title="Slitting scrap (mm)"
+              description={selectedItem.mf_vo_scrab_wastage}
+            />
+            <List.Item
+              title="Slitting scrap (kg)"
+              description={selectedItem.mf_vo_scrab_wastage_kg}
+            />
             <Coil
               user={user}
               mf_po_no={selectedItem?.mf_po_refno}
               width={selectedItem?.gpcoil_width_value}
             />
-            <Slitting user={user} mf_po_no={selectedItem?.mf_po_refno} />
+            <Slitting
+              user={user}
+              mf_po_no={selectedItem?.mf_po_refno}
+              mf_vo_refno={selectedItem?.mf_vo_refno}
+            />
           </ScrollView>
         </View>
       </RBSheet>
