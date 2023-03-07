@@ -525,14 +525,16 @@ const AddExpenses = ({ route, navigation }) => {
       FetchProjectList(data.myclient_refno, data.cont_project_refno);
     }
 
-    if (
-      (data.dynamic_expenses_refno != null &&
-        data.dynamic_expenses_refno != "0") ||
+    if ((data.dynamic_expenses_refno != null && data.dynamic_expenses_refno != "0") ||
       route.params.type ===
       projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
     ) {
       setProjectExpenseStatus(true);
       FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
+    }
+    else if ((data.dynamic_expenses_refno != null && data.dynamic_expenses_refno != "0") && (data.exp_branch_refno != "" && data.exp_branch_refno != "0")) {
+      setUsageListstatus(true);
+      FetchUsageList(data.dynamic_expenses_refno, data.pck_category_refno);
     }
 
     setCommonDisplayStatus(true);
@@ -549,6 +551,23 @@ const AddExpenses = ({ route, navigation }) => {
       setFilePath(data.attach_receipt_url);
       setDesignImage(data.attach_receipt_url);
     }
+
+    if (data.exp_branch_refno != "" && data.exp_branch_refno != "0") {
+      setBranchListstatus(true);
+      console.log('on edit 1:', data.exp_branch_refno);
+      FetchBranchList(data.exp_branch_refno);
+    }
+
+    if (data.exp_designation_refno != "" && data.exp_designation_refno != "0") {
+      setDesignationListstatus(true);
+      FetchDesignationList(data.exp_designation_refno);
+    }
+
+    if (data.myemployee_refno != "" && data.myemployee_refno != "0") {
+      setEmployeeListstatus(true);
+      FetchEmployeeList(data.myemployee_refno, data.exp_designation_refno);
+    }
+
   };
 
   const FetchEntryType = () => {
@@ -1190,10 +1209,10 @@ const AddExpenses = ({ route, navigation }) => {
             const branch = listData.map((data) => data.displayName);
 
             setBranchData(branch);
-
+            console.log('on edit', editID);
             if (editID != null) {
               setBranch(
-                response.data.data.filter((el) => {
+                listData.filter((el) => {
                   return el.exp_branch_refno === editID;
                 })[0].displayName
               );
@@ -1266,7 +1285,7 @@ const AddExpenses = ({ route, navigation }) => {
 
             if (editID != null) {
               setEmployee(
-                response.data.data.filter((el) => {
+                listData.filter((el) => {
                   return el.myemployee_refno === editID;
                 })[0].displayName
               );
@@ -1277,29 +1296,31 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  const FetchUsageList = (editID) => {
+  const FetchUsageList = (editID, categoryID) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno: companyID.toString()
+        Sess_group_refno: groupID,
+        pck_category_refno: categoryID,
       },
     };
-    Provider.createDFPocketDairy(Provider.API_URLS.getdesignationlist_pckaddexpensesform, params)
+    Provider.createDFPocketDairy(Provider.API_URLS.getsubcategoryname_pckaddexpensesform, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
-            setDesignationFullData(response.data.data);
-
-            const designation = response.data.data.map((data) => data.designation_name);
-
-            setDesignationData(designation);
+            response.data.data = APIConverter(response.data.data, "pkt_subcat");
+            setUsageFullData(response.data.data);
+            const subCategory = response.data.data.map(
+              (data) => data.subCategoryName
+            );
+            setUsageData(subCategory);
 
             if (editID != null) {
-              setDesignation(
+              setUsage(
                 response.data.data.filter((el) => {
-                  return el.designation_refno === editID;
-                })[0].designation_name
+                  return el.subcategoryID === editID;
+                })[0].subCategoryName
               );
             }
           }
@@ -1307,7 +1328,6 @@ const AddExpenses = ({ route, navigation }) => {
       })
       .catch((e) => { });
   };
-
 
   const ShowContactList = () => {
     setIsContactLoading(true);
@@ -1632,6 +1652,79 @@ const AddExpenses = ({ route, navigation }) => {
     // }
   };
 
+  const onBranchListChanged = (text) => {
+    setBranch(text);
+    setErrorBR(false);
+
+    setDesignationListstatus(true);
+    FetchDesignationList();
+  };
+
+  const onDesignationListChanged = (text) => {
+    setDesignation(text);
+    setErrorDesg(false);
+
+    let d = designationFullData.filter((el) => {
+      return el.designation_name === text;
+    });
+
+    console.log('desination:', d);
+    setEmployeeListstatus(true);
+    FetchEmployeeList(null, d[0].designation_refno);
+  };
+
+  const onEmployeeListChanged = (text) => {
+    setEmployee(text);
+    setErrorEmp(false);
+
+    let category = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    setUsageListstatus(true);
+    FetchUsageList(null, category[0].pckCategoryID);
+
+    ////////////
+
+    setCommonDisplayStatus(true);
+    setButtonStatus(false);
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let a = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    if (
+      a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
+    ) {
+      FetchProjectExpense(a[0].pckCategoryID);
+    }
+
+    if (
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO ||
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO
+    ) {
+      FetchBankList();
+      setBankStatus(true);
+      setUtrNoStatus(true);
+    } else if (
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO
+    ) {
+      setDepositTypeStatus(true);
+      FetchDepositType();
+    }
+
+  };
+
+  const onPerticularListChanged = (text) => {
+    setUsage(text);
+    setErrorUsage(false);
+  };
+
+
   const onExpensesChanged = (text) => {
     setExpenses(text);
     setEXError(false);
@@ -1646,7 +1739,13 @@ const AddExpenses = ({ route, navigation }) => {
       setSubCatStatus(false);
       setClientListstatus(true);
       FetchClientList();
-    } else if (a[0].pckCategoryID == 4) {
+    } else if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Branch_REFNO) {
+      setBranchListstatus(true);
+      setSubCatStatus(false);
+      FetchBranchList();
+
+    }
+    else if (a[0].pckCategoryID == 4) {
       setSubCatStatus(false);
       setContactTypeStatus(true);
       FetchContactType();
@@ -1690,10 +1789,6 @@ const AddExpenses = ({ route, navigation }) => {
     let mode = payModeFullData.filter((el) => {
       return el.pckModeName === payMode;
     });
-
-    // let category = expensesFullData.filter((el) => {
-    //   return el.categoryName === expenses;
-    // });
 
     let subcat = subCategoryNameFullData.filter((el) => {
       return el.subCategoryName === text;
@@ -2049,6 +2144,11 @@ const AddExpenses = ({ route, navigation }) => {
         return el.subCategoryName === projectExpense;
       })[0].subcategoryID;
     }
+    else if (usageListStatus) {
+      params.dynamic_expenses_refno = usageFullData.filter((el) => {
+        return el.subCategoryName === usage;
+      })[0].subcategoryID;
+    }
 
     if (
       route.params.type ===
@@ -2072,6 +2172,24 @@ const AddExpenses = ({ route, navigation }) => {
     if (newMobileNumberStatus) {
       params.contact_phoneno =
         mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+    }
+
+    if (branchListStatus) {
+      params.exp_branch_refno = branchFullData.filter((el) => {
+        return el.displayName === branch;
+      })[0].exp_branch_refno;
+    }
+
+    if (designationListStatus) {
+      params.exp_designation_refno = designationFullData.filter((el) => {
+        return el.designation_name === designation;
+      })[0].designation_refno;
+    }
+
+    if (employeeListStatus) {
+      params.myemployee_refno = employeeFullData.filter((el) => {
+        return el.displayName === employee;
+      })[0].myemployee_refno;
     }
 
     datas.append("data", JSON.stringify(params));
@@ -2207,12 +2325,6 @@ const AddExpenses = ({ route, navigation }) => {
       params.recurring_status = recurringDateFlat;
     }
 
-    if (projectExpenseStatus) {
-      params.dynamic_expenses_refno = projectExpenseFullData.filter((el) => {
-        return el.subCategoryName === projectExpense;
-      })[0].subcategoryID;
-    }
-
     if (clientListStatus) {
       params.myclient_refno = clientListFullData.filter((el) => {
         return el.companyName === clientList;
@@ -2232,6 +2344,11 @@ const AddExpenses = ({ route, navigation }) => {
         return el.subCategoryName === projectExpense;
       })[0].subcategoryID;
     }
+    else if (usageListStatus) {
+      params.dynamic_expenses_refno = usageFullData.filter((el) => {
+        return el.subCategoryName === usage;
+      })[0].subcategoryID;
+    }
 
     if (route.params.type === "verify") {
       params.pck_master_trans_refno = pckTransID;
@@ -2247,6 +2364,24 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (newContactNameStatus) {
       params.contact_name = contactName.trim() == "" ? "" : contactName.trim();
+    }
+
+    if (branchListStatus) {
+      params.exp_branch_refno = branchFullData.filter((el) => {
+        return el.displayName === branch;
+      })[0].exp_branch_refno;
+    }
+
+    if (designationListStatus) {
+      params.exp_designation_refno = designationFullData.filter((el) => {
+        return el.designation_name === designation;
+      })[0].designation_refno;
+    }
+
+    if (employeeListStatus) {
+      params.myemployee_refno = employeeFullData.filter((el) => {
+        return el.displayName === employee;
+      })[0].myemployee_refno;
     }
 
     if (newMobileNumberStatus) {

@@ -7,6 +7,8 @@ import {
   Image,
   ImageBackground,
   LogBox,
+  Alert,
+  Share,
 } from "react-native";
 import {
   ActivityIndicator,
@@ -96,6 +98,26 @@ const HomeScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'React Native | A framework for building native apps using React',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
 
   const slidesTwo = [
     <Image
@@ -1633,7 +1655,7 @@ const HomeScreen = ({ route, navigation }) => {
                           color={theme.colors.productionIcons}
                         />
                         <Text style={[Styles.buttonIconLabel]}>
-                        Opending Stock Scrap
+                          Opending Stock Scrap
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -1800,7 +1822,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </TouchableOpacity>
                     </View>
 
-                   
+
                   </View>
 
                   <View style={[Styles.paddingTop16]}>
@@ -2496,6 +2518,28 @@ const HomeScreen = ({ route, navigation }) => {
                             Refer and Earn
                           </Text>
                         </ImageBackground>
+                      </View>
+                      <View
+                        style={[
+                          Styles.marginTop16,
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          { height: 140 },
+                        ]}
+                      >
+                        <TouchableOpacity
+                        onPress={onShare}
+                        style={[
+                          Styles.padding0,
+                          Styles.width100per,
+                          Styles.height200,
+                          Styles.flexRow,
+                          Styles.marginTop16,
+                          Styles.borderRadius8,
+                        ]}
+                      >
+
+                      </TouchableOpacity>
                       </View>
                     </>
                   )}

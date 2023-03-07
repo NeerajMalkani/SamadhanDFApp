@@ -318,6 +318,9 @@ const AddExpensesList = ({ navigation }) => {
         dynamic_expenses_refno: data.item.dynamic_expenses_refno,
         pck_contacttype_refno: data.item.pck_contacttype_refno,
         pck_sub_category_notes: data.item.pck_sub_category_notes,
+        exp_branch_refno: data.item.exp_branch_refno,
+        exp_designation_refno: data.item.exp_designation_refno,
+        myemployee_refno: data.item.myemployee_refno,
       },
     });
   };

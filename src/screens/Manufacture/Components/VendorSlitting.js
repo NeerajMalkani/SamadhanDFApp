@@ -35,15 +35,15 @@ function Slitting({ user, mf_po_no, mf_vo_refno }) {
     }
   }, [data.slitting_data]);
   useEffect(() => {
-    console.log({
-      data: {
-        Sess_UserRefno: user.UserID,
-        Sess_company_refno: user.Sess_company_refno,
-        Sess_branch_refno: user.Sess_branch_refno,
-        mf_po_refno: mf_po_no,
-        mf_vo_refno: mf_vo_refno,
-      },
-    });
+    // console.log({
+    //   data: {
+    //     Sess_UserRefno: user.UserID,
+    //     Sess_company_refno: user.Sess_company_refno,
+    //     Sess_branch_refno: user.Sess_branch_refno,
+    //     mf_po_refno: mf_po_no,
+    //     mf_vo_refno: mf_vo_refno,
+    //   },
+    // });
     let params = {
       data: {
         Sess_UserRefno: user.UserID,
@@ -61,7 +61,9 @@ function Slitting({ user, mf_po_no, mf_vo_refno }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            // console.log("slittingdata", response.data.data);
+
+            response.data.data = response.data.data.filter((item) => item.total > 0);
+            //console.log("slittingdata", response.data.data);
             setData((prev) => {
               return {
                 ...prev,

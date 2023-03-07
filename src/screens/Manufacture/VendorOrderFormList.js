@@ -8,7 +8,7 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
-import { FAB, List, Searchbar, Title, Snackbar } from "react-native-paper";
+import { FAB, List, Searchbar, Title, Snackbar, DataTable } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -85,16 +85,16 @@ function ProductforProduction({ navigation }) {
     })
       .then((res) => {
         if (res.data.data) {
-          console.log("orders:", res.data.data);
-          console.log("ordersparams:", {
-            data: {
-              Sess_UserRefno: user.UserID,
-              Sess_company_refno: user.Sess_company_refno,
-              Sess_branch_refno: user.Sess_branch_refno,
-              mf_po_refno: "all",
-              mf_vo_refno: "all",
-            },
-          });
+          //console.log("orders:", res.data.data);
+          // console.log("ordersparams:", {
+          //   data: {
+          //     Sess_UserRefno: user.UserID,
+          //     Sess_company_refno: user.Sess_company_refno,
+          //     Sess_branch_refno: user.Sess_branch_refno,
+          //     mf_po_refno: "all",
+          //     mf_vo_refno: "all",
+          //   },
+          // });
           setOrders(res.data.data);
         }
       })
@@ -165,7 +165,7 @@ function ProductforProduction({ navigation }) {
       </View>
     );
   };
-  console.log(selectedItem);
+  //console.log(selectedItem);
 
   //#endregion
   return (
@@ -251,18 +251,7 @@ function ProductforProduction({ navigation }) {
               title="Thickness of Raw Material"
               description={selectedItem.product_name}
             />
-            <List.Item
-              title="Total weight"
-              description={selectedItem.total_weight}
-            />
-            <List.Item
-              title="Slitting scrap (mm)"
-              description={selectedItem.mf_vo_scrab_wastage}
-            />
-            <List.Item
-              title="Slitting scrap (kg)"
-              description={selectedItem.mf_vo_scrab_wastage_kg}
-            />
+            
             <Coil
               user={user}
               mf_po_no={selectedItem?.mf_po_refno}
@@ -273,6 +262,56 @@ function ProductforProduction({ navigation }) {
               mf_po_no={selectedItem?.mf_po_refno}
               mf_vo_refno={selectedItem?.mf_vo_refno}
             />
+
+            <DataTable
+              style={[
+                Styles.backgroundSecondaryColor,
+                Styles.borderRadius4,
+                Styles.flexJustifyCenter,
+                Styles.bordergray,
+                Styles.fontBold,
+                Styles.padding16,
+              ]}
+            >
+              <DataTable.Row style={[Styles.backgroundColor]}>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  Slitting scrap (mm):
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  {selectedItem.mf_vo_scrab_wastage}
+                </DataTable.Cell>
+              </DataTable.Row>
+
+              <DataTable.Row style={[Styles.backgroundColor]}>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  Slitting scrap (kg):
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  {selectedItem.mf_vo_scrab_wastage_kg}
+                </DataTable.Cell>
+              </DataTable.Row>
+              <DataTable.Row style={[Styles.backgroundColor]}>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  Total Weight:
+                </DataTable.Cell>
+                <DataTable.Cell
+                  style={[{ flex: 1, justifyContent: "center" }]}
+                >
+                  {selectedItem.total_weight}
+                </DataTable.Cell>
+              </DataTable.Row>
+
+            </DataTable>
           </ScrollView>
         </View>
       </RBSheet>
