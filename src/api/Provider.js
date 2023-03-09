@@ -534,21 +534,14 @@ class Provider {
     getdesignationname_employeeform: "getdesignationname_employeeform/",
     employee_job_apply: "employee_job_apply/",
     employer_post_newjob: "employer_post_newjob/",
-    employee_profile_fullview: "employee_profile_fullview/",
-    get_availablebalance_cashinbank_sourceform:
-      "get_availablebalance_cashinbank_sourceform/",
-    employee_profile_fullview: "employee_profile_fullview/",
+    
+    
     mfvorefnocheck: "mfvorefnocheck/",
     get_purchaseorderno_otherdata_vendororderform:
       "get_purchaseorderno_otherdata_vendororderform/",
     get_coildetails_vendororderform: "get_coildetails_vendororderform/",
     get_slittingdetails_vendororderform: "get_slittingdetails_vendororderform/",
 
-    get_availablebalance_cashinbank_sourceform:
-      "get_availablebalance_cashinbank_sourceform/",
-    get_availablebalance_cashinhand_expensesform:
-      "get_availablebalance_cashinhand_expensesform/",
-    summaryofmaterial_gridlist: "summaryofmaterial_gridlist/",
     get_purchaseorderno_vendororderform: "get_purchaseorderno_vendororderform/",
     get_joborderno_vendororder_invoiceform:
       "get_joborderno_vendororder_invoiceform/",
@@ -562,7 +555,6 @@ class Provider {
       "get_availablebalance_cashinbank_sourceform/",
     get_availablebalance_cashinhand_expensesform:
       "get_availablebalance_cashinhand_expensesform/",
-    summaryofmaterial_gridlist: "summaryofmaterial_gridlist/",
     get_availablebalance_cashinbank_expensesform: "get_availablebalance_cashinbank_expensesform/",
     getbranchlist_pckaddexpensesform: "getbranchlist_pckaddexpensesform/",
     getdesignationlist_pckaddexpensesform: "getdesignationlist_pckaddexpensesform/",
