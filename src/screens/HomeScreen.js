@@ -99,25 +99,25 @@ const HomeScreen = ({ route, navigation }) => {
 
   //#region Functions
 
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message:
-          'React Native | A framework for building native apps using React',
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      Alert.alert(error.message);
-    }
-  };
+  // const onShare = async () => {
+  //   try {
+  //     const result = await Share.share({
+  //       message:
+  //         'React Native | A framework for building native apps using React',
+  //     });
+  //     if (result.action === Share.sharedAction) {
+  //       if (result.activityType) {
+  //         // shared with activity type of result.activityType
+  //       } else {
+  //         // shared
+  //       }
+  //     } else if (result.action === Share.dismissedAction) {
+  //       // dismissed
+  //     }
+  //   } catch (error: any) {
+  //     Alert.alert(error.message);
+  //   }
+  // };
 
   const slidesTwo = [
     <Image
@@ -170,9 +170,9 @@ const HomeScreen = ({ route, navigation }) => {
           }
         } else {
           setImageGalleryData([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setIsSnackbarVisible(true);
+          // setSnackbarText("No data found");
+          // setSnackbarColor(theme.colors.error);
+          // setIsSnackbarVisible(true);
         }
         setIsLoading(false);
       })
@@ -219,8 +219,8 @@ const HomeScreen = ({ route, navigation }) => {
             setCatalogueImagesZoom(sliderImageZoomData);
           }
         } else {
-          setSnackbarText("No data found");
-          setIsSnackbarVisible(true);
+          // setSnackbarText("No data found");
+          // setIsSnackbarVisible(true);
         }
         setIsLoading(false);
       })
@@ -2084,42 +2084,51 @@ const HomeScreen = ({ route, navigation }) => {
                     );
                   })}
                 </View>
-                {/* Estimation End */}
-                <View style={[Styles.padding16]}>
-                  <Text
-                    style={[
-                      Styles.fontSize18,
-                      { color: "green", width: "100%" },
-                      Styles.paddingBottom12,
-                    ]}
-                  >
-                    SLIDING GALLERY
-                  </Text>
-                  <Divider />
-                </View>
 
-                <View
-                  style={[
-                    Styles.margin16,
-                    Styles.marginTop0,
-                    Styles.border1,
-                    Styles.borderRadius8,
-                    Styles.OverFlow,
-                    { height: 180 },
-                  ]}
-                >
-                  <ImageSlider
-                    data={catalogueImages}
-                    timer={10000}
-                    activeIndicatorStyle={{
-                      backgroundColor: theme.colors.primary,
-                    }}
-                    autoPlay={true}
-                    onClick={() => setCatalogueImagesZoomVisible(true)}
-                    style={Styles.borderRadius16}
-                  />
-                </View>
+                {catalogueImages != null && catalogueImages.length > 0 &&
+                  <>
+                    {/* Estimation End */}
+                    <View style={[Styles.padding16]}>
+                      <Text
+                        style={[
+                          Styles.fontSize18,
+                          { color: "green", width: "100%" },
+                          Styles.paddingBottom12,
+                        ]}
+                      >
+                        SLIDING GALLERY
+                      </Text>
+                      <Divider />
+                    </View>
+                    {/* ImageSlider */}
 
+                    <View
+                      style={[
+                        Styles.margin16,
+                        Styles.marginTop0,
+                        Styles.border1,
+                        Styles.borderRadius8,
+                        Styles.OverFlow,
+                        { height: 180 },
+                      ]}
+                    >
+                      <ImageSlider
+                        data={catalogueImages}
+                        timer={10000}
+                        activeIndicatorStyle={{
+                          backgroundColor: theme.colors.primary,
+                        }}
+                        autoPlay={true}
+                        onClick={() => setCatalogueImagesZoomVisible(true)}
+                        style={Styles.borderRadius16}
+                      />
+                    </View>
+                  </>
+                }
+
+                {/* ImageSlider */}
+
+                {/* Sponsered Ad */}
                 <View
                   style={[
                     Styles.margin4,
@@ -2147,6 +2156,7 @@ const HomeScreen = ({ route, navigation }) => {
                     Sponsered Ads
                   </Caption>
                 </View>
+                {/* Sponsered Ad */}
 
                 {userRoleID === "3" ? (
                   <View style={[Styles.padding16]}>
@@ -2519,7 +2529,7 @@ const HomeScreen = ({ route, navigation }) => {
                           </Text>
                         </ImageBackground>
                       </View>
-                      <View
+                      {/* <View
                         style={[
                           Styles.marginTop16,
                           Styles.borderRadius8,
@@ -2540,7 +2550,7 @@ const HomeScreen = ({ route, navigation }) => {
                       >
 
                       </TouchableOpacity>
-                      </View>
+                      </View> */}
                     </>
                   )}
                   {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>

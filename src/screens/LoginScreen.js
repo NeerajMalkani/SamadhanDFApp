@@ -48,10 +48,9 @@ const LoginScreen = ({ route, navigation }) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.dispatch(StackActions.replace("HomeStack"));
-    } catch (error) {}
+    } catch (error) { }
   };
   const CheckLogin = () => {
-    console.log('start');
     setIsButtonLoading(true);
     let params = {
       data: {
@@ -61,7 +60,6 @@ const LoginScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.LoginCheck, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           GetUserDetails(response.data.data.user_refno);
         } else {
@@ -107,7 +105,7 @@ const LoginScreen = ({ route, navigation }) => {
             Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
             Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
-            Sess_empe_refno:response.data.data.Sess_empe_refno,
+            Sess_empe_refno: response.data.data.Sess_empe_refno,
           };
 
           StoreUserData(user, navigation);

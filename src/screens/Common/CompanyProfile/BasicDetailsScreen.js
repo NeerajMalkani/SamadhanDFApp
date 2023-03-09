@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import FormData from "form-data";
 import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
-import { ActivityIndicator,Card, HelperText, Snackbar, Subheading, Switch, TextInput } from "react-native-paper";
+import { ActivityIndicator,Card, HelperText, Snackbar, Subheading, Switch, TextInput,Button } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
