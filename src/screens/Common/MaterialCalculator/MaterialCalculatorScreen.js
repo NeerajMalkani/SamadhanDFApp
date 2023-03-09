@@ -86,6 +86,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = React.useState(false);
+  const [specification, setSpecification] = React.useState("");
 
   // const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
   // const [multiBrand, setMultiBrand] = React.useState("");
@@ -317,7 +318,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            
             response.data.data = APIConverter(response.data.data);
+            console.log(response.data.data);
+            setSpecification(response.data.data[0].designtype_specification);
             setDesignImage(response.data.data[0].designImage);
           }
         }
@@ -987,8 +991,8 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorDT}>
             {communication.InvalidDesignTypeName}
           </HelperText>
-
-          <View style={[Styles.flexRow, Styles.flexAlignEnd]}>
+          <TextInput mode="flat" label="Specification" value={specification} disabled={true} editable={false} />
+          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
             <TouchableOpacity
               style={[Styles.height100per, Styles.width100per]}
               onPress={() => {
