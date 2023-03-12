@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ScrollView, View, Dimensions } from "react-native";
-import {Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, Button } from "react-native-paper";
+import { ScrollView, View, Dimensions, TouchableOpacity, Image } from "react-native";
+import { Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, Button } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
@@ -10,6 +10,7 @@ import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 import AddMaterialSetupProducts from "./AddMaterialSetupProducts";
 import DFButton from "../../../../components/Button";
+import { AWSImagePath } from "../../../../utils/paths";
 
 const AddMaterialSetupScreen = ({ route, navigation }) => {
   //#region Variables
@@ -63,7 +64,8 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-
+  const [specification, setSpecification] = React.useState("");
+  const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
 
   let amountEdit = 0;
   if (route.params.type === "edit" && route.params.data.productList !== null) {
@@ -105,7 +107,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchServicesFromActivity = (actID) => {
@@ -129,7 +131,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
@@ -139,11 +141,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         service_refno: servicesDataParam
           ? servicesDataParam.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id
+            return el.serviceName === selectedItem;
+          }).id
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryNameMaterialSetup, params)
@@ -160,7 +162,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
@@ -170,11 +172,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameMaterialSetup, params)
@@ -191,7 +193,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignTypeFromProduct = (selectedItem, productDataParams) => {
@@ -200,11 +202,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         product_refno: productDataParams
           ? productDataParams.find((el) => {
-              return el.productName === selectedItem;
-            }).id
+            return el.productName === selectedItem;
+          }).id
           : productsFullData.find((el) => {
-              return el.productName === selectedItem;
-            }).id,
+            return el.productName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductDesignTypeMaterialSetup, params)
@@ -215,10 +217,17 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             setDesignTypeFullData(response.data.data);
             const designTypes = response.data.data.map((data) => data.designTypeName);
             setDesignTypeData(designTypes);
+            if (route.params.type === "edit") {
+              let id = response.data.data.find((el) => {
+                return el.designTypeName === route.params.data.designTypeName;
+              }).id;
+
+              FetchDesignImage(id);
+            }
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBrandsFromProductIds = () => {
@@ -241,7 +250,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const GetProductRateFromMaterialSetup = (index) => {
@@ -291,6 +300,29 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       });
   };
 
+  const FetchDesignImage = (designID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: "2",
+        Sess_group_refno: "2",
+        designtype_refno: designID,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.getdesigntypeimagematerialcalculatorform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            
+            response.data.data = APIConverter(response.data.data);
+            console.log(response.data.data);
+            setSpecification(response.data.data[0].designtype_specification);
+            setDesignImage(response.data.data[0].designImage);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
   useEffect(() => {
     FetchActvityRoles();
     if (route.params.type === "edit" && arrProductData[0].length > 0) {
@@ -333,6 +365,13 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
   const onDesignTypeSelected = (selectedItem) => {
     setDesignType(selectedItem);
     setDTError(false);
+
+    let id = designTypeFullData.find((el) => {
+      return el.designTypeName === selectedItem;
+    }).id;
+
+    FetchDesignImage(id);
+
   };
 
   const onLengthFeetSelected = (selectedItem) => {
@@ -632,6 +671,11 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorDT}>
             {communication.InvalidDesignTypeName}
           </HelperText>
+          <TextInput mode="flat" multiline={true} disabled={true} label="Specification" value={specification} returnKeyType="done"
+            style={{ backgroundColor: "white" }} />
+          <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
+          <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
+          </View>
           <View style={{ width: 160 }}>
             <Checkbox.Item label="Display" position="leading" style={{ paddingHorizontal: 2 }} labelStyle={{ textAlign: "left", paddingLeft: 8 }} color={theme.colors.primary} status={checked ? "checked" : "unchecked"} onPress={() => setChecked(!checked)} />
           </View>
@@ -784,7 +828,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           {/* <Button mode="contained" onPress={ValidateData}>
             Submit
           </Button> */}
-           <DFButton mode="contained" onPress={ValidateData} title="   Submit" loader={isButtonLoading} />
+          <DFButton mode="contained" onPress={ValidateData} title="   Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

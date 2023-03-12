@@ -30,6 +30,7 @@ const DesignTypeScreen = ({ navigation }) => {
   const [categoryName, setCategoryName] = React.useState("");
   const [productName, setProductName] = React.useState("");
   const [designImage, setDesignImage] = React.useState("");
+  const [specification, setSpecification] = React.useState("");
 
   const refRBSheet = useRef();
   //#endregion
@@ -111,6 +112,7 @@ const DesignTypeScreen = ({ navigation }) => {
             setCategoryName(data.item.categoryName);
             setProductName(data.item.productName);
             setDesignImage(data.item.designImage);
+            setSpecification(data.item.designtype_specification);
           }}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
         />
@@ -135,6 +137,7 @@ const DesignTypeScreen = ({ navigation }) => {
         productName: data.item.productName,
         display: data.item.display,
         designImage: data.item.designImage,
+        specification: data.item.designtype_specification,
       },
     });
   };
@@ -178,7 +181,7 @@ const DesignTypeScreen = ({ navigation }) => {
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
           <ScrollView>
@@ -186,6 +189,7 @@ const DesignTypeScreen = ({ navigation }) => {
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="Product Name" description={productName} />
             <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <List.Item title="Specification" description={specification} />
           </ScrollView>
         </View>
       </RBSheet>

@@ -99,25 +99,25 @@ const HomeScreen = ({ route, navigation }) => {
 
   //#region Functions
 
-  // const onShare = async () => {
-  //   try {
-  //     const result = await Share.share({
-  //       message:
-  //         'React Native | A framework for building native apps using React',
-  //     });
-  //     if (result.action === Share.sharedAction) {
-  //       if (result.activityType) {
-  //         // shared with activity type of result.activityType
-  //       } else {
-  //         // shared
-  //       }
-  //     } else if (result.action === Share.dismissedAction) {
-  //       // dismissed
-  //     }
-  //   } catch (error: any) {
-  //     Alert.alert(error.message);
-  //   }
-  // };
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'https://samadhanerp.com/login/',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (e) {
+      Alert.alert(e.message);
+    }
+  };
 
   const slidesTwo = [
     <Image
@@ -2529,28 +2529,57 @@ const HomeScreen = ({ route, navigation }) => {
                           </Text>
                         </ImageBackground>
                       </View>
-                      {/* <View
+                      <View
                         style={[
                           Styles.marginTop16,
                           Styles.borderRadius8,
                           Styles.homeBox,
-                          { height: 140 },
                         ]}
                       >
                         <TouchableOpacity
-                        onPress={onShare}
+                       onPress={onShare}
                         style={[
                           Styles.padding0,
                           Styles.width100per,
-                          Styles.height200,
+                          Styles.height150,
                           Styles.flexRow,
-                          Styles.marginTop16,
                           Styles.borderRadius8,
                         ]}
                       >
-
+                        <View
+                          style={[
+                            Styles.width100per,
+                            Styles.height150,
+                            Styles.flexRow,
+                            Styles.borderRadius8,
+                            { elevation: 4 },
+                          ]}
+                        >
+                          <ImageBackground
+                            source={require("../../assets/QR-code-bg.jpg")}
+                            resizeMode="cover"
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                            imageStyle={{ borderRadius: 8 }}
+                          >
+                            <Text
+                              style={[
+                                Styles.positionAbsolute,
+                                Styles.marginTop8,
+                                Styles.marginStart16,
+                                Styles.fontSize18,
+                                Styles.textColorWhite,
+                                Styles.fontBold,
+                                { top: 8 },
+                              ]}
+                            >
+                              Scan QR OR Click Here To Share
+                            </Text>
+                          </ImageBackground>
+                        </View>
                       </TouchableOpacity>
-                      </View> */}
+
+                        
+                      </View>
                     </>
                   )}
                   {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>

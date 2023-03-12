@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import FormData from "form-data";
 import { Image, Platform, ScrollView, View } from "react-native";
-import { Card, Checkbox, HelperText, Snackbar, TextInput,Button } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, TextInput, Button } from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -50,6 +50,9 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
 
   const [isImageReplaced, setIsImageReplaced] = React.useState(false);
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
+  const [specification, setSpecification] = React.useState(route.params.type === "edit" ? route.params.data.specification : "");
+  const [errorSpec, setErrorSpec] = React.useState(false);
   //#endregion
 
   //#region Functions
@@ -78,7 +81,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchServicesFromActivity = (actID) => {
@@ -102,7 +105,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCategoriesFromServices = (selectedItem, servicesDataParam, actID) => {
@@ -112,11 +115,11 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         service_refno: servicesDataParam
           ? servicesDataParam.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id
+            return el.serviceName === selectedItem;
+          }).id
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryNameDesignType, params)
@@ -133,7 +136,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (selectedItem, categoriesDataParam, actID) => {
@@ -143,11 +146,11 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
         group_refno: actID ? actID : activityID,
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.ProductNameDesignType, params)
@@ -161,7 +164,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -196,6 +199,11 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
   const onNameChanged = (text) => {
     setName(text);
     setError(false);
+  };
+
+  const onSpecificationChanged = (text) => {
+    setSpecification(text);
+    setErrorSpec(false);
   };
 
   const chooseFile = async () => {
@@ -233,6 +241,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
       }).id,
+      designtype_specification: specification.trim(),
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));
@@ -279,6 +288,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       product_refno: productsFullData.find((el) => {
         return el.productName === productsName;
       }).id,
+      designtype_specification: specification.trim(),
       view_status: checked ? 1 : 0,
     };
     datas.append("data", JSON.stringify(params));
@@ -286,10 +296,10 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       "designtype_image",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
         : null
     );
     Provider.createDFAdminWithHeader(Provider.API_URLS.DesignTypeUpdate, datas)
@@ -350,6 +360,10 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
       setDIError(true);
       isValid = false;
     }
+    if (specification.trim() == "") {
+      setErrorSpec(true);
+      isValid = false;
+    }
 
     if (isValid) {
       setIsButtonLoading(true);
@@ -383,6 +397,13 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={error}>
             {communication.InvalidDesignTypeName}
           </HelperText>
+
+          <TextInput mode="flat" multiline={true} label="Specification" value={specification} returnKeyType="done"
+            onChangeText={onSpecificationChanged} style={{ backgroundColor: "white" }} error={errorSpec} />
+          <HelperText type="error" visible={errorSpec}>
+            Please enter specification
+          </HelperText>
+
           <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
             <Image source={{ uri: image }} style={[Styles.width104, Styles.height96, Styles.border1]} />
             <Button mode="text" onPress={chooseFile}>
@@ -412,7 +433,7 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
             SAVE
           </Button> */}
-           <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
+          <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} />
 
         </Card.Content>
       </View>
