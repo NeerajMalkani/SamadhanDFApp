@@ -430,9 +430,9 @@ const AddSource = ({ route, navigation }) => {
 
     setChecked(data.view_status == "1" ? true : false);
 
-    // setImage(data.attach_receipt_url);
-    // setFilePath(data.attach_receipt_url);
-    // setDesignImage(data.attach_receipt_url);
+    setImage(data.attach_receipt_url);
+    setFilePath(data.attach_receipt_url);
+    //setDesignImage(data.attach_receipt_url);
   };
 
   const FetchEntryType = () => {
@@ -1440,12 +1440,13 @@ const AddSource = ({ route, navigation }) => {
       quality: 1,
     });
     if (!result.cancelled) {
+
       setDIError(false);
       const arrExt = result.uri.split(".");
       const unique_id = uuid.v4();
-      setDesignImage(
-        AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
-      );
+      // setDesignImage(
+      //   AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
+      // );
       setImage(result.uri);
       setFilePath(result);
       if (route.params.type === "edit" || route.params.type === "verify") {
@@ -1601,14 +1602,11 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    console.log(datas);
     Provider.createDFPocketDairyWithHeader(
       Provider.API_URLS.pckaddsourcecreate,
       datas
     )
       .then((response) => {
-        console.log('output=============');
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1763,16 +1761,12 @@ const AddSource = ({ route, navigation }) => {
         }
         : ""
     );
-    console.log(params);
-    console.log('params up================');
-    console.log(type);
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddsourceupdate
         : Provider.API_URLS.pck_companysource_verify_action,
       datas)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -2443,10 +2437,10 @@ const AddSource = ({ route, navigation }) => {
                   Styles.marginTop16,
                 ]}
               >
-                {/* <Image
+                <Image
                   source={{ uri: image }}
                   style={[Styles.width104, Styles.height96, Styles.border1]}
-                /> */}
+                />
                 <Button mode="text" onPress={chooseFile}>
                   {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
                 </Button>

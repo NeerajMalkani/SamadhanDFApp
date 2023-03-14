@@ -115,7 +115,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProductsFromCategory = (brandID) => {
@@ -137,7 +137,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUnitsFromProduct = (brandID) => {
@@ -162,7 +162,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -252,10 +252,10 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       "product_image",
       filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupcreate, datas)
@@ -279,6 +279,7 @@ const AddDealerProductScreen = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
+    console.log('update start');
     const datas = new FormData();
     const params = {
       Sess_UserRefno: dealerID,
@@ -302,16 +303,17 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       "product_image",
       filePath != null && filePath != undefined && filePath.type != undefined && filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFCommonWithHeader(Provider.API_URLS.dealerproductsetupupdate, datas)
       .then((response) => {
+        console.log('Update Response:', response.data);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
+          route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
@@ -328,69 +330,70 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       });
   };
 
-  const uploadFile = () => {
-    if (route.params.type === "edit" && !isImageReplaced) {
-      UpdateData();
-    } else {
-      if (filePath != null && filePath.uri) {
-        if (Object.keys(filePath).length == 0) {
-          setSnackbarText(communication.NoImageSelectedError);
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-          return;
-        }
-        RNS3.put(
-          {
-            uri: filePath.uri,
-            name: productImage.split(AWSImagePath)[1],
-            type: "image/*",
-          },
-          {
-            keyPrefix: "",
-            bucket: creds.awsBucket,
-            region: creds.awsRegion,
-            accessKey: creds.awsAccessKey,
-            secretKey: creds.awsSecretKey,
-            successActionStatus: 201,
-          }
-        )
-          .progress((progress) => {
-            setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
-          })
-          .then((response) => {
-            setIsButtonLoading(false);
-            if (response.status !== 201) {
-              setSnackbarVisible(true);
-              setSnackbarColor(theme.colors.error);
-              setSnackbarText(communication.FailedUploadError);
-            } else {
-              if (route.params.type === "edit") {
-                UpdateData();
-              } else {
-                InsertData();
-              }
-            }
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setIsButtonLoading(false);
-            setSnackbarVisible(true);
-            setSnackbarColor(theme.colors.error);
-            setSnackbarText(communication.FailedUploadError);
-          });
-      } else {
-        if (route.params.type === "edit") {
-          UpdateData();
-        } else {
-          InsertData();
-        }
-        // setSnackbarText(communication.NoImageSelectedError);
-        // setSnackbarColor(theme.colors.error);
-        // setSnackbarVisible(true);
-      }
-    }
-  };
+  // const uploadFile = () => {
+  //   console.log('File Upload Start');
+  //   if (route.params.type === "edit" && !isImageReplaced) {
+  //     UpdateData();
+  //   } else {
+  //     if (filePath != null && filePath.uri) {
+  //       if (Object.keys(filePath).length == 0) {
+  //         setSnackbarText(communication.NoImageSelectedError);
+  //         setSnackbarColor(theme.colors.error);
+  //         setSnackbarVisible(true);
+  //         return;
+  //       }
+  //       RNS3.put(
+  //         {
+  //           uri: filePath.uri,
+  //           name: productImage.split(AWSImagePath)[1],
+  //           type: "image/*",
+  //         },
+  //         {
+  //           keyPrefix: "",
+  //           bucket: creds.awsBucket,
+  //           region: creds.awsRegion,
+  //           accessKey: creds.awsAccessKey,
+  //           secretKey: creds.awsSecretKey,
+  //           successActionStatus: 201,
+  //         }
+  //       )
+  //         .progress((progress) => {
+  //           setIsButtonLoading(true);
+  //           setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+  //         })
+  //         .then((response) => {
+  //           setIsButtonLoading(false);
+  //           if (response.status !== 201) {
+  //             setSnackbarVisible(true);
+  //             setSnackbarColor(theme.colors.error);
+  //             setSnackbarText(communication.FailedUploadError);
+  //           } else {
+  //             if (route.params.type === "edit") {
+  //               UpdateData();
+  //             } else {
+  //               InsertData();
+  //             }
+  //           }
+  //         })
+  //         .catch((ex) => {
+  //           console.log(ex);
+  //           setIsButtonLoading(false);
+  //           setSnackbarVisible(true);
+  //           setSnackbarColor(theme.colors.error);
+  //           setSnackbarText(communication.FailedUploadError);
+  //         });
+  //     } else {
+  //       if (route.params.type === "edit") {
+  //         UpdateData();
+  //       } else {
+  //         InsertData();
+  //       }
+  //       // setSnackbarText(communication.NoImageSelectedError);
+  //       // setSnackbarColor(theme.colors.error);
+  //       // setSnackbarVisible(true);
+  //     }
+  //   }
+  // };
 
   const ValidateDealerProduct = () => {
     let isValid = true;
@@ -429,7 +432,11 @@ const AddDealerProductScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      uploadFile();
+      if (route.params.type === "edit") {
+        UpdateData();
+      } else {
+        InsertData();
+      }
     }
   };
   //#endregion

@@ -103,7 +103,9 @@ const HomeScreen = ({ route, navigation }) => {
     try {
       const result = await Share.share({
         message:
-          'https://samadhanerp.com/login/',
+          'https://samadhanerp.com/apk/diamond-samadhan-testkit.apk',
+        title: "Diamond Samadhan Test Kit",
+
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -1465,8 +1467,60 @@ const HomeScreen = ({ route, navigation }) => {
                       </Text>
                     </ImageBackground>
                   </View>
+                  {/* QR Code Start */}
+                  <View
+                    style={[
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      Styles.homeBox,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={onShare}
+                      style={[
+                        Styles.padding0,
+                        Styles.width100per,
+                        Styles.height150,
+                        Styles.flexRow,
+                        Styles.borderRadius8,
+                      ]}
+                    >
+                      <View
+                        style={[
+                          Styles.width100per,
+                          Styles.height150,
+                          Styles.flexRow,
+                          Styles.borderRadius8,
+                          { elevation: 4 },
+                        ]}
+                      >
+                        <ImageBackground
+                          source={require("../../assets/QR-code-bg-2.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
+                        >
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
+                          >
+                            Scan QR OR Click Here To Share
+                          </Text>
+                        </ImageBackground>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  {/* QR Code End */}
                 </View>
               </View>
+
             </View>
           ) : userRoleID === "7" ? (
             <View>
@@ -2046,7 +2100,57 @@ const HomeScreen = ({ route, navigation }) => {
                       </TouchableOpacity>
                     </View>
                   </View>
-
+                  {/* QR Code Start */}
+                  <View
+                    style={[
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      Styles.homeBox,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={onShare}
+                      style={[
+                        Styles.padding0,
+                        Styles.width100per,
+                        Styles.height150,
+                        Styles.flexRow,
+                        Styles.borderRadius8,
+                      ]}
+                    >
+                      <View
+                        style={[
+                          Styles.width100per,
+                          Styles.height150,
+                          Styles.flexRow,
+                          Styles.borderRadius8,
+                          { elevation: 4 },
+                        ]}
+                      >
+                        <ImageBackground
+                          source={require("../../assets/QR-code-bg-2.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
+                        >
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
+                          >
+                            Scan QR OR Click Here To Share
+                          </Text>
+                        </ImageBackground>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  {/* QR Code End */}
                 </View>
               </View>
             </View>
@@ -2529,59 +2633,62 @@ const HomeScreen = ({ route, navigation }) => {
                           </Text>
                         </ImageBackground>
                       </View>
+
+                    </>
+                  )}
+
+                  {/* QR Code Start */}
+                  <View
+                    style={[
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      Styles.homeBox,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={onShare}
+                      style={[
+                        Styles.padding0,
+                        Styles.width100per,
+                        Styles.height150,
+                        Styles.flexRow,
+                        Styles.borderRadius8,
+                      ]}
+                    >
                       <View
                         style={[
-                          Styles.marginTop16,
-                          Styles.borderRadius8,
-                          Styles.homeBox,
-                        ]}
-                      >
-                        <TouchableOpacity
-                       onPress={onShare}
-                        style={[
-                          Styles.padding0,
                           Styles.width100per,
                           Styles.height150,
                           Styles.flexRow,
                           Styles.borderRadius8,
+                          { elevation: 4 },
                         ]}
                       >
-                        <View
-                          style={[
-                            Styles.width100per,
-                            Styles.height150,
-                            Styles.flexRow,
-                            Styles.borderRadius8,
-                            { elevation: 4 },
-                          ]}
+                        <ImageBackground
+                          source={require("../../assets/QR-code-bg-2.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
                         >
-                          <ImageBackground
-                            source={require("../../assets/QR-code-bg.jpg")}
-                            resizeMode="cover"
-                            style={[{ flex: 1, justifyContent: "center" }]}
-                            imageStyle={{ borderRadius: 8 }}
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
                           >
-                            <Text
-                              style={[
-                                Styles.positionAbsolute,
-                                Styles.marginTop8,
-                                Styles.marginStart16,
-                                Styles.fontSize18,
-                                Styles.textColorWhite,
-                                Styles.fontBold,
-                                { top: 8 },
-                              ]}
-                            >
-                              Scan QR OR Click Here To Share
-                            </Text>
-                          </ImageBackground>
-                        </View>
-                      </TouchableOpacity>
-
-                        
+                            Scan QR OR Click Here To Share
+                          </Text>
+                        </ImageBackground>
                       </View>
-                    </>
-                  )}
+                    </TouchableOpacity>
+                  </View>
+                  {/* QR Code End */}
+
                   {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
                   <View style={Styles.width50per}>
                     <Card
