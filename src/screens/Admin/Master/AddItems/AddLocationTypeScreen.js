@@ -28,7 +28,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = useState(route.params.type === "edit" ? route.params.data.display : true);
 
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const refActivityRBSheet = useRef();
   const refServicesRBSheet = useRef();

@@ -7,6 +7,7 @@ import { theme } from "../../../../theme/apptheme";
 import { communication } from "../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
+import DFButton from "../../../../components/Button";
 let ContractorID = 0;
 
 const AddContractorDepartmentScreen = ({ route, navigation }) => {
@@ -22,6 +23,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   //#endregion
 
   //#region Functions
@@ -81,6 +83,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.DepartmentCreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -94,6 +97,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -112,6 +116,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.DepartmentUpdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -125,6 +130,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });
@@ -137,6 +143,7 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit") {
         UpdateDepartment();
       } else {
@@ -171,9 +178,10 @@ const AddContractorDepartmentScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateDepartmentName}>
+          {/* <Button mode="contained" onPress={ValidateDepartmentName}>
             SAVE
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={ValidateDepartmentName} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

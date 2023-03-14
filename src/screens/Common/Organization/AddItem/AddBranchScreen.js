@@ -15,6 +15,7 @@ import { communication } from "../../../../utils/communication";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
 import { APIConverter } from "../../../../utils/apiconverter";
+import DFButton from "../../../../components/Button";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0, companyID = 0, groupID = 0;
 
@@ -137,7 +138,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
       if (route.params.type === "edit") {
         FetchAssignBranchAdmin(route.params.data.branchAdminID);
-        if(route.params.data.branchTypeID == 3) {
+        if (route.params.data.branchTypeID == 3) {
           FetchRegionalOffice(route.params.data.branchTypeID);
           setShowRO(true);
         }
@@ -357,7 +358,7 @@ const BranchEditScreen = ({ route, navigation }) => {
             setAssignBranchAdminData(ba);
 
             if (route.params.type === "edit" && route.params.data.branchAdminID > 0) {
-              
+
               setAssignBranchAdminID(route.params.data.branchAdminID);
               let e = response.data.data.filter((el) => {
                 return el.id === route.params.data.branchAdminID;
@@ -532,7 +533,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.AddBranch, params)
       .then((response) => {
-
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -544,6 +545,7 @@ const BranchEditScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -594,6 +596,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.EditBranch, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -605,6 +608,7 @@ const BranchEditScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -648,7 +652,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         isValid = false;
       }
       if (isValid) {
-
+        setIsButtonLoading(true);
         if (route.params.type === "edit") {
           UpdateData();
         }
@@ -759,11 +763,16 @@ const BranchEditScreen = ({ route, navigation }) => {
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               {
                 route.params.type === "edit" ? "Update" : "Submit"
               }
-            </Button>
+            </Button> */}
+            <DFButton mode="contained" onPress={ValidateData} title="SAVE" loader={isButtonLoading} >
+              {
+                route.params.type === "edit" ? "Update" : "Submit"
+              }
+            </DFButton>
           </Card.Content>
         </View>
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>

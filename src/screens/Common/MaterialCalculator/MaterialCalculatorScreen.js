@@ -19,6 +19,7 @@ import ImageViewer from "react-native-image-zoom-viewer";
 //import { FlatList } from "react-native-gesture-handler";
 //import MultiSelectDropDown from "react-native-paper-dropdown";
 import DropDownPicker from 'react-native-dropdown-picker';
+import DFButton from "../../../components/Button";
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
   const scrollRef = useRef();
@@ -74,7 +75,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [total, setTotal] = React.useState(0);
 
   let userID = 0,
@@ -506,7 +507,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getviewmaterials_materialcalculatorform, params)
       .then((response) => {
-
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -541,6 +542,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         }
       })
       .catch((e) => { });
+      setIsButtonLoading(false);
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -1021,9 +1023,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
           <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
-          <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
+          {/* <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />
 
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
@@ -1128,9 +1131,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexAlignCenter]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
-          {/* <Button mode="contained" onPress={ValidateData}>
+          <Button mode="contained" onPress={ValidateData}>
             Submit
-          </Button> */}
+          </Button>
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>

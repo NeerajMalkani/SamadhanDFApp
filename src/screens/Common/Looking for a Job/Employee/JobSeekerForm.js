@@ -10,6 +10,8 @@ import Provider from '../../../../api/Provider';
 import { theme } from '../../../../theme/apptheme';
 import { useIsFocused } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
+import DFButton from "../../../../components/Button";
+
 let userID = null;
 let empe_refno = null;
 LogBox.ignoreLogs([
@@ -19,6 +21,7 @@ LogBox.ignoreLogs([
 ]);
 
 const JobSeekerForm = ({ route, navigation }) => {
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('info');
   const [snackbarText, setSnackbarText] = useState('');
@@ -81,6 +84,7 @@ const JobSeekerForm = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
+    setIsButtonLoading(true);
     let error = false;
     if (state.designation_refno === '') {
       error = true;
@@ -157,6 +161,7 @@ const JobSeekerForm = ({ route, navigation }) => {
         formdata,
       )
         .then((response) => {
+          setIsButtonLoading(false);
           console.log(formdata);
           console.log(response.data);
           if (response.data.data) {
@@ -168,6 +173,7 @@ const JobSeekerForm = ({ route, navigation }) => {
         })
         .catch((e) => {
           console.log(e);
+          setIsButtonLoading(false);
           setSnackbar(true);
           setSnackbarText('Something Went Wrong');
           setSnackbarType(theme.colors.error);
@@ -414,9 +420,10 @@ const JobSeekerForm = ({ route, navigation }) => {
             {resume ? <Text>{resume.name}</Text> : null}
             <HelperText type='error' visible={errors.resume}></HelperText>
           </View>
-          <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
+          {/* <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
             Submit
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={onSubmit} title="Submit" loader={isButtonLoading} />
         </View>
       </ScrollView>
       <Snackbar

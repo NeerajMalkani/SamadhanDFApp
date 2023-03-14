@@ -35,7 +35,7 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   // Entry Type changes
   // const [entryTypeName, setEntryTypeName] = useState([

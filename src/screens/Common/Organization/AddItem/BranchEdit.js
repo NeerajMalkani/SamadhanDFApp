@@ -17,6 +17,7 @@ import { AWSImagePath } from "../../../../utils/paths";
 import { NullOrEmpty } from "../../../../utils/validations";
 import { BloodGroup } from "../../../../utils/validations";
 import { styles } from "react-native-image-slider-banner/src/style";
+import DFButton from "../../../../components/Button";
 const windowWidth = Dimensions.get("window").width;
 let userID = 0;
 
@@ -201,11 +202,11 @@ const BranchEditScreen = ({ route, navigation }) => {
     let params = {
       ID: stateData
         ? stateData.find((el) => {
-            return el.stateName === stateName;
-          }).id
+          return el.stateName === stateName;
+        }).id
         : statesFullData.find((el) => {
-            return el.stateName === stateName;
-          }).id,
+          return el.stateName === stateName;
+        }).id,
     };
     Provider.getAll(`master/getcitiesbyid?${new URLSearchParams(params)}`)
       .then((response) => {
@@ -217,7 +218,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchStates = () => {
@@ -234,7 +235,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBranch = () => {
@@ -254,7 +255,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepartments = () => {
@@ -275,7 +276,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignations = () => {
@@ -296,7 +297,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReportingEmployee = () => {
@@ -316,7 +317,7 @@ const BranchEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   //#endregion
@@ -425,6 +426,7 @@ const BranchEditScreen = ({ route, navigation }) => {
     };
     Provider.create("master/insertuserprofile", params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
@@ -437,6 +439,7 @@ const BranchEditScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarColor(theme.colors.error);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -445,11 +448,12 @@ const BranchEditScreen = ({ route, navigation }) => {
 
   const ValidateData = () => {
     const isValid = true;
-
     if (isValid) {
+      setIsButtonLoading(true);
       if (filePath !== null) {
         uploadFile();
       } else {
+      
         InsertData();
       }
     }
@@ -574,9 +578,10 @@ const BranchEditScreen = ({ route, navigation }) => {
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               Submit
-            </Button>
+            </Button> */}
+            <DFButton mode="contained" onPress={ValidateData} title="Submit" loader={isButtonLoading} />
           </Card.Content>
         </View>
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>

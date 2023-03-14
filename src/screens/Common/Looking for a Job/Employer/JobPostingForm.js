@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Provider from '../../../../api/Provider';
 import { theme } from '../../../../theme/apptheme';
 import { useIsFocused } from '@react-navigation/native';
+import DFButton from "../../../../components/Button";
 
 let userID = null;
 let user = null;
@@ -73,6 +74,7 @@ const JobPostingForm = ({ navigation }) => {
   };
 
   const onSubmit = () => {
+    setIsButtonLoading(true);
     let error = false;
     if (state.designation_refno === '') {
       error = true;
@@ -136,6 +138,7 @@ const JobPostingForm = ({ navigation }) => {
       console.log(params);
       Provider.createDFCommon(Provider.API_URLS.employer_post_newjob, params)
         .then((res) => {
+          setIsButtonLoading(false);
           if (res.data.data) {
             setSnackbar(true);
             setSnackbarType(theme.colors.greenBorder);
@@ -147,6 +150,7 @@ const JobPostingForm = ({ navigation }) => {
         })
         .catch((error) => {
           console.log(error);
+          setIsButtonLoading(false);
           setSnackbar(true);
           setSnackbarType(theme.colors.error);
           setSnackbarText('something went wrong');
@@ -350,9 +354,10 @@ const JobPostingForm = ({ navigation }) => {
           >
             Please enter notes
           </HelperText>
-          <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
+          {/* <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
             Submit
-          </Button>
+          </Button> */}
+           <DFButton mode="contained" onPress={onSubmit} title="Submit" loader={isButtonLoading} />
         </View>
       </ScrollView>
       <Snackbar

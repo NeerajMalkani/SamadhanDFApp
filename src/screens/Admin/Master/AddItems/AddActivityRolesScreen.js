@@ -17,7 +17,7 @@ const AddActivityRolesScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
 
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions

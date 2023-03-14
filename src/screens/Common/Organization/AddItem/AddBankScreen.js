@@ -23,6 +23,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../../components/NoItems";
 import { APIConverter, RemoveUnwantedParameters } from "../../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+import DFButton from "../../../../components/Button";
 
 let userID = 0,
     companyID = 0;
@@ -230,6 +231,7 @@ const AddBankScreen = ({ route, navigation }) => {
             isValid = false;
         }
         if (isValid) {
+            setIsButtonLoading(true);
             if (route.params.type === "edit") {
                 UpdateData();
             } else {
@@ -264,6 +266,7 @@ const AddBankScreen = ({ route, navigation }) => {
         };
         Provider.createDFCommon(Provider.API_URLS.branchbankcreate, params)
             .then((response) => {
+                setIsButtonLoading(false);
                 if (response.data && response.data.code === 200) {
                     route.params.fetchData("add");
                     navigation.goBack();
@@ -277,6 +280,7 @@ const AddBankScreen = ({ route, navigation }) => {
             })
             .catch((e) => {
                 // console.log(e);
+                setIsButtonLoading(false);
                 setSnackbarText(communication.NetworkError);
                 setSnackbarVisible(true);
             });
@@ -309,6 +313,7 @@ const AddBankScreen = ({ route, navigation }) => {
         };
         Provider.createDFCommon(Provider.API_URLS.branchbankupdate, params)
             .then((response) => {
+                setIsButtonLoading(false);
                 if (response.data && response.data.code === 200) {
                     route.params.fetchData("update");
                     navigation.goBack();
@@ -322,7 +327,8 @@ const AddBankScreen = ({ route, navigation }) => {
             })
             .catch((e) => {
                 console.log(e);
-                setSnackbarText(communication.NetworkError);
+                setIsButtonLoading(false);
+                setSnackbarText(communication.etworkError);
                 setSnackbarVisible(true);
             });
     };
@@ -403,9 +409,11 @@ const AddBankScreen = ({ route, navigation }) => {
                         }}
                     />
                 </View>
-                <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSubmitButton}>
+                {/* <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSubmitButton}>
                     Submit
-                </Button>
+                </Button> */}
+                 <DFButton mode="contained" onPress={ValidateSubmitButton} title="Submit" loader={isButtonLoading} />
+
             </View>
         </ScrollView>
 
