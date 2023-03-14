@@ -85,7 +85,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const [disableButton, setDisableButton] = React.useState(false);
   const [specification, setSpecification] = React.useState("");
 
@@ -319,7 +318,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
+
             response.data.data = APIConverter(response.data.data);
             console.log(response.data.data);
             setSpecification(response.data.data[0].designtype_specification);
@@ -541,8 +540,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           setSnackbarVisible(true);
         }
       })
-      .catch((e) => { });
-      setIsButtonLoading(false);
+      .catch((e) => {
+        setIsButtonLoading(false);
+
+      });
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -1022,19 +1023,19 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
             <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
+          <TextInput mode="flat" label="Total (Sq.Ft.)" style={[Styles.marginBottom16]} onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
           {/* <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
             View Materials
           </Button> */}
-           <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />
+          <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />
 
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
           </HelperText>
           <View>
-            <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected} 
-            selectedItem={brandName}
-             />
+            <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected}
+              selectedItem={brandName}
+            />
 
             {/* <MultiSelectDropDown
               label={"Select Product Brand"}
@@ -1131,9 +1132,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexAlignCenter]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
-          <Button mode="contained" onPress={ValidateData}>
+          {/* <Button mode="contained" onPress={ValidateData}>
             Submit
-          </Button>
+          </Button> */}
         </Card.Content>
       </View>
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
