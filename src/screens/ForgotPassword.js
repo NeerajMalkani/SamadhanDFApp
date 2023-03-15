@@ -1,6 +1,12 @@
 import React from "react";
 import { ScrollView, View, Keyboard } from "react-native";
-import { Button, Headline, HelperText, Snackbar, TextInput } from "react-native-paper";
+import {
+  Button,
+  Headline,
+  HelperText,
+  Snackbar,
+  TextInput,
+} from "react-native-paper";
 import Provider from "../api/Provider";
 import { Styles } from "../styles/styles";
 import { theme } from "../theme/apptheme";
@@ -14,7 +20,8 @@ const ForgotPassword = ({ navigation }) => {
 
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
-  const [isMobileNumberInvalid, setIsMobileNumberInvalid] = React.useState(false);
+  const [isMobileNumberInvalid, setIsMobileNumberInvalid] =
+    React.useState(false);
   const [mobileNumber, setMobileNumber] = React.useState("");
 
   const [isOTPInvalid, setIsOTPInvalid] = React.useState(false);
@@ -28,9 +35,10 @@ const ForgotPassword = ({ navigation }) => {
   const [isPasswordInvalid, setIsPasswordInvalid] = React.useState(false);
   const [password, setPassword] = React.useState("");
 
-  const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = React.useState(false);
+  const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] =
+    React.useState(false);
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  //#endregion 
+  //#endregion
 
   //#region Events
   const onMobileNumberChanged = (text) => {
@@ -84,15 +92,15 @@ const ForgotPassword = ({ navigation }) => {
       setIsConfirmPasswordInvalid(false);
     }
   };
-  //#endregion 
+  //#endregion
 
   //#region API calling
   const GETOTP = () => {
     setIsButtonLoading(true);
     const params = {
       data: {
-        Mobileno: mobileNumber
-      }
+        Mobileno: mobileNumber,
+      },
     };
     Provider.create(Provider.API_URLS.ForgotMobileNoCheck, params)
       .then((response) => {
@@ -106,7 +114,6 @@ const ForgotPassword = ({ navigation }) => {
           setIsOTPInvalid(false);
           setOTPButtonDisabled(true);
           setIsSnackbarVisible(false);
-
         } else {
           setSnackbarText(communication.InvalidMobileNotExists);
           setIsSnackbarVisible(true);
@@ -124,8 +131,8 @@ const ForgotPassword = ({ navigation }) => {
     const params = {
       data: {
         Mobileno: mobileNumber,
-        otpno: parseInt(otp1 + otp2 + otp3 + otp4)
-      }
+        otpno: parseInt(otp1 + otp2 + otp3 + otp4),
+      },
     };
     Provider.create(Provider.API_URLS.ForgotPasswordCheck, params)
       .then((response) => {
@@ -150,8 +157,8 @@ const ForgotPassword = ({ navigation }) => {
         user_refno: userid,
         Mobileno: mobileNumber,
         auth: password,
-        confirm_password: password
-      }
+        confirm_password: password,
+      },
     };
     Provider.create(Provider.API_URLS.AlterPasswordCheck, params)
       .then((response) => {
@@ -176,7 +183,12 @@ const ForgotPassword = ({ navigation }) => {
       isValid = false;
       setIsMobileNumberInvalid(true);
     }
-    if (otp1.length === 0 && otp2.length === 0 && otp3.length === 0 && otp4.length === 0) {
+    if (
+      otp1.length === 0 &&
+      otp2.length === 0 &&
+      otp3.length === 0 &&
+      otp4.length === 0
+    ) {
       isValid = false;
       setIsOTPInvalid(true);
     }
@@ -198,43 +210,136 @@ const ForgotPassword = ({ navigation }) => {
       }
     }
   };
-  //#endregion 
+  //#endregion
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, Styles.paddingTop0]}>
-          <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Forgot Password</Headline>
-          <TextInput mode="flat" dense label="Mobile number" autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
+          <Headline
+            style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}
+          >
+            Forgot Password
+          </Headline>
+          <TextInput
+            mode="flat"
+            dense
+            label="Mobile number"
+            autoComplete="tel"
+            keyboardType="phone-pad"
+            value={mobileNumber}
+            style={[Styles.marginTop8]}
+            onChangeText={onMobileNumberChanged}
+            error={isMobileNumberInvalid}
+          />
           <HelperText type="error" visible={isMobileNumberInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.paddingTop8]}>
-            <TextInput mode="outlined" dense disabled value={otp1} onChangeText={onOTP1Changed} style={[Styles.width48, Styles.height48, Styles.textCenter]} />
-            <TextInput mode="outlined" dense disabled value={otp2} onChangeText={onOTP2Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
-            <TextInput mode="outlined" dense disabled value={otp3} onChangeText={onOTP3Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
-            <TextInput mode="outlined" dense disabled value={otp4} onChangeText={onOTP4Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
-            <Button mode="text" uppercase={false} disabled={otpButtonDisabled} style={[Styles.flexAlignEnd, Styles.flexGrow]} onPress={() => GETOTP()}>
+          <View
+            style={[Styles.flexRow, Styles.flexAlignCenter, Styles.paddingTop8]}
+          >
+            <TextInput
+              mode="outlined"
+              dense
+              disabled
+              value={otp1}
+              onChangeText={onOTP1Changed}
+              style={[Styles.width48, Styles.height48, Styles.textCenter]}
+            />
+            <TextInput
+              mode="outlined"
+              dense
+              disabled
+              value={otp2}
+              onChangeText={onOTP2Changed}
+              style={[
+                Styles.width48,
+                Styles.height48,
+                Styles.textCenter,
+                Styles.marginStart8,
+              ]}
+            />
+            <TextInput
+              mode="outlined"
+              dense
+              disabled
+              value={otp3}
+              onChangeText={onOTP3Changed}
+              style={[
+                Styles.width48,
+                Styles.height48,
+                Styles.textCenter,
+                Styles.marginStart8,
+              ]}
+            />
+            <TextInput
+              mode="outlined"
+              dense
+              disabled
+              value={otp4}
+              onChangeText={onOTP4Changed}
+              style={[
+                Styles.width48,
+                Styles.height48,
+                Styles.textCenter,
+                Styles.marginStart8,
+              ]}
+            />
+            <Button
+              mode="text"
+              uppercase={false}
+              disabled={otpButtonDisabled}
+              style={[Styles.flexAlignEnd, Styles.flexGrow]}
+              onPress={() => GETOTP()}
+            >
               Get OTP
             </Button>
           </View>
-          <HelperText type="error" visible={isOTPInvalid}
+          <HelperText type="error" visible={isOTPInvalid}>
             {communication.InvalidOTP}
           </HelperText>
-          <TextInput mode="flat" dense secureTextEntry={true} label="New Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
+          <TextInput
+            mode="flat"
+            dense
+            secureTextEntry={true}
+            label="New Password"
+            value={password}
+            style={[Styles.marginTop8]}
+            onChangeText={onPasswordChanged}
+            error={isPasswordInvalid}
+          />
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
           </HelperText>
-          <TextInput mode="flat" dense secureTextEntry={true} label="Confirm Password" value={confirmPassword} style={[Styles.marginTop8]} onChangeText={onConfirmPasswordChanged} error={isConfirmPasswordInvalid} />
+          <TextInput
+            mode="flat"
+            dense
+            secureTextEntry={true}
+            label="Confirm Password"
+            value={confirmPassword}
+            style={[Styles.marginTop8]}
+            onChangeText={onConfirmPasswordChanged}
+            error={isConfirmPasswordInvalid}
+          />
           <HelperText type="error" visible={isConfirmPasswordInvalid}>
             {communication.InvalidConfirmPassowrd}
           </HelperText>
-          <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateForgotPassword()}>
+          <Button
+            mode="contained"
+            style={[Styles.marginTop24]}
+            loading={isButtonLoading}
+            disabled={isButtonLoading}
+            onPress={() => ValidateForgotPassword()}
+          >
             Submit
           </Button>
         </View>
       </ScrollView>
-      <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={() => setIsSnackbarVisible(false)}
+        style={{ backgroundColor: theme.colors.error }}
+      >
         {snackbarText}
       </Snackbar>
     </View>
