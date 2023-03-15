@@ -12,6 +12,8 @@ import { NullOrEmpty } from "../../../../utils/validations";
 import { RenderHiddenItemGeneric } from "../../../../components/ListActions";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../../components/NoItems";
+
+import DFButton from "../../../../components/Button";
 let userID = 0;
 const SearchClientScreen = ({ route, navigation }) => {
   const [mobileNo, setMobileNo] = useState("");
@@ -29,6 +31,7 @@ const SearchClientScreen = ({ route, navigation }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -59,6 +62,8 @@ const SearchClientScreen = ({ route, navigation }) => {
   };
 
   const OnSearchEmployee = () => {
+    setIsButtonLoading(true);
+
     let isValid = true;
     if (NullOrEmpty(companyName) && NullOrEmpty(mobileNo.trim())) {
       setCompanyNameInvalid(true);
@@ -86,9 +91,9 @@ const SearchClientScreen = ({ route, navigation }) => {
         company_name_s: companyName,
       },
     };
-
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -104,6 +109,7 @@ const SearchClientScreen = ({ route, navigation }) => {
         setIsLoading(false);
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         listData[1]([]);
         setIsLoading(false);
       });
@@ -161,9 +167,10 @@ const SearchClientScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={mobileNoInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>
-          <Button mode="contained" onPress={OnSearchEmployee} style={[Styles.marginTop24]}>
+          {/* <Button mode="contained" onPress={OnSearchEmployee} style={[Styles.marginTop24]}>
             SEARCH CLIENT
-          </Button>
+          </Button> */}
+          <DFButton mode="contained" onPress={OnSearchEmployee} title="SEARCH CLIENT" loader={isButtonLoading} />
           <View>
             <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginTop24]}>
               <Text style={[Styles.fontSize20, Styles.fontBold, Styles.marginBottom4, Styles.primaryColor]}>Client Search Result</Text>

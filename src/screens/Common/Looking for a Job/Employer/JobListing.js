@@ -71,7 +71,7 @@ const JobListing = ({ route, navigation }) => {
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('info');
   const [snackbarText, setSnackbarText] = useState('');
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const isFocused = useIsFocused();
   const [filters, setFilters] = useState({
     designation_refno: '0',

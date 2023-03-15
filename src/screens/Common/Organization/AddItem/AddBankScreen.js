@@ -81,7 +81,7 @@ const AddBankScreen = ({ route, navigation }) => {
     const [cardTypeInvalid, setCardTypeInvalid] = useState(false);
 
 
-    const [isButtonLoading, setIsButtonLoading] = useState(false);
+    const [isButtonLoading, setIsButtonLoading] =React.useState(false);
     const [snackbarVisible, setSnackbarVisible] = React.useState(false);
     const [snackbarText, setSnackbarText] = React.useState("");
     //#endregion

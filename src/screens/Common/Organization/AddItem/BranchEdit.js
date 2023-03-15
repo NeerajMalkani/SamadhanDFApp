@@ -102,6 +102,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   //#endregion
 
   //#region Functions

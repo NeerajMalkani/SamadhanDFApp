@@ -28,6 +28,7 @@ const JobPostingForm = ({ navigation }) => {
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState('info');
   const [snackbarText, setSnackbarText] = useState('');
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const isFocused = useIsFocused();
   const [resume, setResume] = useState(null);
   const [currentState, setCurrentState] = useState('');

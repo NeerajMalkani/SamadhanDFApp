@@ -35,6 +35,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoItems from "../../../../components/NoItems";
 import Autocomplete from "./Autocomplete";
+import DFButton from "../../../../components/Button";
 
 let userID = 0;
 let companyID = 0;
@@ -177,6 +178,7 @@ const SearchEmployee = ({ route, navigation }) => {
   };
 
   const OnSearchEmployee = () => {
+    setIsButtonLoading(true);
     let isValid = false;
     if (!NullOrEmpty(aadharNo.trim()) || !NullOrEmpty(mobileNo.trim())) {
       isValid = true;
@@ -207,6 +209,7 @@ const SearchEmployee = ({ route, navigation }) => {
     setIsButtonLoading(true);
     Provider.createDFCommon(Provider.API_URLS.employeesearch, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (
           response.data &&
           response.data.code === 200 &&
@@ -231,6 +234,7 @@ const SearchEmployee = ({ route, navigation }) => {
         setRefreshing(false);
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         setIsLoading(false);
         setSnackbarText(e.message);
         setSnackbarColor(theme.colors.error);
@@ -430,14 +434,15 @@ const SearchEmployee = ({ route, navigation }) => {
             </Text>
           </TouchableOpacity> */}
           <Card.Content>
-            <Button
+            {/* <Button
               mode="contained"
               onPress={OnSearchEmployee}
               loading={isButtonLoading}
               disabled={isButtonLoading}
             >
               SEARCH EMPLOYEE
-            </Button>
+            </Button> */}
+             <DFButton mode="contained" onPress={OnSearchEmployee} title="SEARCH EMPLOYEE" loader={isButtonLoading} />
           </Card.Content>
         </View>
         <View style={[Styles.padding16]}>

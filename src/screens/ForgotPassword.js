@@ -218,7 +218,7 @@ const ForgotPassword = ({ navigation }) => {
               Get OTP
             </Button>
           </View>
-          <HelperText type="error" visible={isOTPInvalid}>
+          <HelperText type="error" visible={isOTPInvalid}
             {communication.InvalidOTP}
           </HelperText>
           <TextInput mode="flat" dense secureTextEntry={true} label="New Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />

@@ -35,6 +35,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       },
     })
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -48,6 +49,7 @@ const AddServicesScreen = ({ route, navigation }) => {
       })
       .catch((e) => {
         console.log(e);
+        setIsButtonLoading(false);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
       });

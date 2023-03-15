@@ -35,6 +35,8 @@ import { styles } from "react-native-image-slider-banner/src/style";
 import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
 import { color } from "react-native-reanimated";
 import { PaperSelect } from "react-native-paper-select";
+import DFButton from "../../../../components/Button";
+
 
 export const selectValidator = (value) => {
   if (!value || value.length <= 0) {
@@ -376,8 +378,8 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             NullOrEmpty(employee_data.pincode)
               ? ""
               : employee_data.pincode !== 0
-              ? employee_data.pincode.toString()
-              : ""
+                ? employee_data.pincode.toString()
+                : ""
           );
 
           if (!NullOrEmpty(employee_data.state_refno)) {
@@ -398,10 +400,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setDob(
               new Date(
                 employee_data.dob.substring(6, 11) +
-                  "/" +
-                  employee_data.dob.substring(3, 5) +
-                  "/" +
-                  employee_data.dob.substring(0, 2)
+                "/" +
+                employee_data.dob.substring(3, 5) +
+                "/" +
+                employee_data.dob.substring(0, 2)
               )
             );
           }
@@ -410,10 +412,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setDoj(
               new Date(
                 employee_data.doj.substring(6, 11) +
-                  "/" +
-                  employee_data.doj.substring(3, 5) +
-                  "/" +
-                  employee_data.doj.substring(0, 2)
+                "/" +
+                employee_data.doj.substring(3, 5) +
+                "/" +
+                employee_data.doj.substring(0, 2)
               )
             );
           }
@@ -422,10 +424,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setCardValidity(
               new Date(
                 employee_data.idcard_valid_date.substring(6, 11) +
-                  "/" +
-                  employee_data.idcard_valid_date.substring(3, 5) +
-                  "/" +
-                  employee_data.idcard_valid_date.substring(0, 2)
+                "/" +
+                employee_data.idcard_valid_date.substring(3, 5) +
+                "/" +
+                employee_data.idcard_valid_date.substring(0, 2)
               )
             );
           }
@@ -434,10 +436,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setLwd(
               new Date(
                 work_data.dol.substring(6, 11) +
-                  "/" +
-                  work_data.dol.substring(3, 5) +
-                  "/" +
-                  work_data.dol.substring(0, 2)
+                "/" +
+                work_data.dol.substring(3, 5) +
+                "/" +
+                work_data.dol.substring(0, 2)
               )
             );
           }
@@ -606,7 +608,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           setCityID(0);
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchStates = () => {
@@ -633,7 +635,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const BloodGroupDropdown = () => {
@@ -676,7 +678,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepartments = () => {
@@ -709,7 +711,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignations = () => {
@@ -743,7 +745,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReportingEmployee = (sample) => {
@@ -784,7 +786,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   //#endregion
@@ -972,8 +974,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           .progress((progress) => {
             setIsButtonLoading(true);
             setSnackbarText(
-              `Uploading: ${progress.loaded / progress.total} (${
-                progress.percent
+              `Uploading: ${progress.loaded / progress.total} (${progress.percent
               }%)`
             );
           })
@@ -1014,11 +1015,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           address: address,
           state_refno: stateName
             ? statesFullData.find((el) => el.state_name === stateName)
-                .state_refno
+              .state_refno
             : "0",
           district_refno: cityName
             ? cityFullData.find((el) => el.district_name === cityName)
-                .district_refno
+              .district_refno
             : "0",
           pincode: pincode ? pincode : "0",
           bloodgroup_refno: bloodGroup
@@ -1102,6 +1103,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       uploadFile();
     } else {
       setSnackbarVisible(true);
@@ -1580,14 +1582,15 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           ]}
         >
           <Card.Content>
-            <Button
+            {/* <Button
               mode="contained"
               onPress={ValidateData}
               loading={isButtonLoading}
               disabled={isButtonLoading}
             >
               Update
-            </Button>
+            </Button> */}
+            <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
           </Card.Content>
         </View>
         <Snackbar
