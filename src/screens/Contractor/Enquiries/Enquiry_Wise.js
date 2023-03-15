@@ -13,9 +13,10 @@ import DesignApprovedTab from "./Enquiry_tab";
 import DesignRejectedTab from "./Enquiry_tab";
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0;
+let Sess_UserRefno = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
 const EnquiryWise = ({ navigation }) => {
-   //#region Variables
+  //#region Variables
   const [index, setIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [imageGalleryData, setDesignGalleryData] = React.useState([]);
@@ -27,14 +28,18 @@ const EnquiryWise = ({ navigation }) => {
   const rejectedSearchData = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
- //#endregion 
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
+  //#endregion
 
- //#region Functions
+  //#region Functions
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      userID = JSON.parse(userData).UserID;
+      Sess_UserRefno = JSON.parse(userData).UserID;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       FetchData();
     }
   };
@@ -69,7 +74,11 @@ const EnquiryWise = ({ navigation }) => {
     let params = {
       UserID: userID,
     };
-    Provider.getAll(`contractorquotationestimation/getcontractorallestimation?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `contractorquotationestimation/getcontractorallestimation?${new URLSearchParams(
+        params
+      )}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -99,7 +108,7 @@ const EnquiryWise = ({ navigation }) => {
 
   useEffect(() => {
     GetUserID();
-    FetchDesignGalleryData();
+    // FetchDesignGalleryData();
   }, []);
 
   const renderScene = ({ route }) => {
@@ -107,50 +116,105 @@ const EnquiryWise = ({ navigation }) => {
       case "designGallery":
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-            <DesignGalleryTab navigation={navigation} designGalleryData={imageGalleryData} fetchData={FetchData} />
+            <DesignGalleryTab
+              navigation={navigation}
+              designGalleryData={imageGalleryData}
+              fetchData={FetchData}
+            />
           </ScrollView>
         );
       case "pending":
         return (
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignPendingTab navigation={navigation} listData={pendingData} listSearchData={pendingSearchData} fetchData={FetchData} />
+          <ScrollView
+            style={[Styles.flex1, Styles.backgroundColor]}
+            contentContainerStyle={[Styles.height100per]}
+          >
+            <DesignPendingTab
+              navigation={navigation}
+              listData={pendingData}
+              listSearchData={pendingSearchData}
+              fetchData={FetchData}
+            />
           </ScrollView>
         );
       case "approved":
         return (
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignApprovedTab navigation={navigation} listData={approvedData} listSearchData={approvedSearchData} fetchData={FetchData} />
+          <ScrollView
+            style={[Styles.flex1, Styles.backgroundColor]}
+            contentContainerStyle={[Styles.height100per]}
+          >
+            <DesignApprovedTab
+              navigation={navigation}
+              listData={approvedData}
+              listSearchData={approvedSearchData}
+              fetchData={FetchData}
+            />
           </ScrollView>
         );
       case "rejected":
         return (
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor]} contentContainerStyle={[Styles.height100per]}>
-            <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} />
+          <ScrollView
+            style={[Styles.flex1, Styles.backgroundColor]}
+            contentContainerStyle={[Styles.height100per]}
+          >
+            <DesignRejectedTab
+              navigation={navigation}
+              listData={rejectedData}
+              listSearchData={rejectedSearchData}
+              fetchData={FetchData}
+            />
           </ScrollView>
         );
     }
   };
 
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 3 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
+  const renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.textLight }}
+      inactiveColor={theme.colors.textSecondary}
+      activeColor={theme.colors.primary}
+      scrollEnabled={true}
+      tabStyle={{ width: windowWidth / 3 }}
+      labelStyle={[Styles.fontSize13, Styles.fontBold]}
+    />
+  );
   const [routes] = React.useState([
     { key: "designGallery", title: "New" },
     { key: "pending", title: "Accepted" },
     { key: "approved", title: "Rejected" },
     /* { key: "rejected", title: "Rejected" }, */
   ]);
- //#endregion 
- 
+  //#endregion
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <Header navigation={navigation} title="App User Enquiry Wise" />
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : (
-        <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+        <TabView
+          renderTabBar={renderTabBar}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+        />
       )}
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
     </View>

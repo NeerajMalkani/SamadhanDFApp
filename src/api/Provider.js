@@ -298,11 +298,14 @@ class Provider {
     MyDesignationRefnoCheck: "mydesignationrefnocheck/",
     DesignationCreate: "designationcreate/",
     DesignationUpdate: "designationupdate/",
-
+    estimation_accept_workallotupdate: "estimation_accept_workallotupdate/",
     DealerCompanyBasicDetailsUpdate: "dealercompanybasicdetailsupdate/",
     GetStateDetails: "getstatedetails/",
     GetDistrictDetailsByStateRefno: "getdistrictdetails_by_state_refno/",
-
+    deliveryaddress_update: "deliveryaddress_update/",
+    newdeliveryaddress_add: "newdeliveryaddress_add/",
+    client_mydesign_estimation_pendinglist:
+      "client_mydesign_estimation_pendinglist/",
     getservicenamematerialcalculatorform:
       "getservicenamematerialcalculatorform/",
     getcategorynamematerialcalculatorform:
@@ -362,6 +365,7 @@ class Provider {
     getdesignationnameemployeeworkform: "getdesignationnameemployeeworkform/",
     getreportingtoemployeeworkform: "getreportingtoemployeeworkform/",
     getemptypenameemployeeworkform: "getemptypenameemployeeworkform/",
+    deliveryaddress_list: "deliveryaddress_list/",
     getemployeeworkdata: "getemployeeworkdata/",
     employeeworkdataupdate: "employeeworkdataupdate/",
     getwagestypenameemployeeworkform: "getwagestypenameemployeeworkform/",
@@ -534,8 +538,7 @@ class Provider {
     getdesignationname_employeeform: "getdesignationname_employeeform/",
     employee_job_apply: "employee_job_apply/",
     employer_post_newjob: "employer_post_newjob/",
-    
-    
+
     mfvorefnocheck: "mfvorefnocheck/",
     get_purchaseorderno_otherdata_vendororderform:
       "get_purchaseorderno_otherdata_vendororderform/",
@@ -555,10 +558,12 @@ class Provider {
       "get_availablebalance_cashinbank_sourceform/",
     get_availablebalance_cashinhand_expensesform:
       "get_availablebalance_cashinhand_expensesform/",
-    get_availablebalance_cashinbank_expensesform: "get_availablebalance_cashinbank_expensesform/",
+    get_availablebalance_cashinbank_expensesform:
+      "get_availablebalance_cashinbank_expensesform/",
     getbranchlist_pckaddexpensesform: "getbranchlist_pckaddexpensesform/",
-    getdesignationlist_pckaddexpensesform: "getdesignationlist_pckaddexpensesform/",
-    getemployeelist_pckaddexpensesform:"getemployeelist_pckaddexpensesform/",
+    getdesignationlist_pckaddexpensesform:
+      "getdesignationlist_pckaddexpensesform/",
+    getemployeelist_pckaddexpensesform: "getemployeelist_pckaddexpensesform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -590,13 +595,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     return datas;
@@ -625,11 +630,6 @@ class Provider {
         `${BASE_URL}/employeepaydataupdate/`,
         { data: pay }
       );
-      console.log("workparam", work);
-      console.log(workData.data);
-      console.log({
-        data: work,
-      });
       return {
         sucess:
           empbasicdata.data.status === "Success" &&
@@ -641,10 +641,47 @@ class Provider {
       unload();
     }
   }
+
   async getEmployeebasicDetails(params, unload) {
     console.log(params);
     try {
       const empdata = await axios.post(
+        `${BASE_URL}/getemployeepaydata//`,
+        params
+      );
+      const empbasicdata = await axios.post(
+        `${BASE_URL}/getemployeebasicdata/`,
+        params
+      );
+      const workdata = await axios.post(
+        `${BASE_URL}/getemployeeworkdata/`,
+        params
+      );
+      const payDetails = await axios.post(
+        `${BASE_URL}/getemployeepaydata/`,
+        params
+      );
+      const reportingDetails = await axios.post(
+        `${BASE_URL}/getreportingtoemployeeworkform/`,
+        params
+      );
+      return {
+        empbasicdata: empbasicdata.data.data,
+        workdata: workdata.data.data,
+        payDetails: payDetails.data.data,
+        reportingDetails: reportingDetails.data.data,
+        empdata: empdata.data.data,
+      };
+    } catch (e) {
+      console.log(e);
+      unload();
+    }
+  }
+
+  async getEnquiriesList(params, unload) {
+    console.log(params);
+    try {
+      const newEnq = await axios.post(
         `${BASE_URL}/getemployeepaydata//`,
         params
       );

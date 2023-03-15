@@ -184,8 +184,10 @@ import PocketTransactionGeneralUserScreen from "./src/screens/Common/PocketDairy
 import BranchWiseTransactionScreen from "./src/screens/Common/PocketDairy/BranchWiseTransactions";
 import PhoneContactDirectUpload from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContactDirectUpload";
 import EstimationContractorStatusScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationContractorStatus";
+import AddressList from "./src/screens/GeneralUser/EstimateAndEnquiries/WorkAllotment/AddressList";
+import UpdateExistingAddress from "./src/screens/GeneralUser/EstimateAndEnquiries/WorkAllotment/UpdateExistingAddress";
 import BranchWiseCashDetailScreen from "./src/screens/Common/PocketDairy/BranchWiseCashDetails";
-
+import AddNewAddress from "./src/screens/GeneralUser/EstimateAndEnquiries/WorkAllotment/AddNewAddress";
 import SelectGroupType from "./src/screens/Common/Looking for a Job/SelectGroupType";
 import AreaOfInterest from "./src/screens/Common/Looking for a Job/Employee/AreaOfInterest";
 import JobSeekerForm from "./src/screens/Common/Looking for a Job/Employee/JobSeekerForm";
@@ -2543,6 +2545,39 @@ export default function App() {
                 component={EstimationContractorStatusScreen}
                 options={{
                   headerTitle: "Estimation Contractor List",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="AddressList"
+                component={AddressList}
+                options={{
+                  headerTitle: "Work Allotment & Delivery Address Details",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="UpdateExistingAddress"
+                component={UpdateExistingAddress}
+                options={{
+                  headerTitle: "Update Address",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="AddNewAddress"
+                component={AddNewAddress}
+                options={{
+                  headerTitle: "Add Address",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
