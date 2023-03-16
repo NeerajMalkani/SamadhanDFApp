@@ -538,7 +538,20 @@ class Provider {
     getdesignationname_employeeform: "getdesignationname_employeeform/",
     employee_job_apply: "employee_job_apply/",
     employer_post_newjob: "employer_post_newjob/",
-
+    appuser_new_enquiry_acceptstatus_update:
+      "appuser_new_enquiry_acceptstatus_update/",
+    appuser_accepted_enquiry_finallytakeproject_update:
+      "appuser_accepted_enquiry_finallytakeproject_update/",
+    appuser_accepted_enquiry_cancelandrequotation_update:
+      "appuser_accepted_enquiry_cancelandrequotation_update/",
+    appuser_accepted_enquiry_remove_update:
+      "appuser_accepted_enquiry_remove_update/",
+    appuser_rejected_enquiry_remove_update:
+      "appuser_rejected_enquiry_remove_update/",
+    appuser_rejected_enquiry_cancelandrequotation_update:
+      "appuser_rejected_enquiry_cancelandrequotation_update/",
+    appuser_accepted_enquiry_cancel_update:
+      "appuser_accepted_enquiry_cancel_update/",
     mfvorefnocheck: "mfvorefnocheck/",
     get_purchaseorderno_otherdata_vendororderform:
       "get_purchaseorderno_otherdata_vendororderform/",
@@ -679,38 +692,28 @@ class Provider {
   }
 
   async getEnquiriesList(params, unload) {
-    console.log(params);
     try {
       const newEnq = await axios.post(
-        `${BASE_URL}/getemployeepaydata//`,
+        `${BASE_URL_Contractor}/appuser_new_enquiry_list/`,
         params
       );
-      const empbasicdata = await axios.post(
-        `${BASE_URL}/getemployeebasicdata/`,
+      const acceptedEnq = await axios.post(
+        `${BASE_URL_Contractor}/appuser_accepted_enquiry_list/`,
         params
       );
-      const workdata = await axios.post(
-        `${BASE_URL}/getemployeeworkdata/`,
+      const rejectedEnq = await axios.post(
+        `${BASE_URL_Contractor}/appuser_rejected_enquiry_list/`,
         params
       );
-      const payDetails = await axios.post(
-        `${BASE_URL}/getemployeepaydata/`,
-        params
-      );
-      const reportingDetails = await axios.post(
-        `${BASE_URL}/getreportingtoemployeeworkform/`,
-        params
-      );
+      console.log(params);
       return {
-        empbasicdata: empbasicdata.data.data,
-        workdata: workdata.data.data,
-        payDetails: payDetails.data.data,
-        reportingDetails: reportingDetails.data.data,
-        empdata: empdata.data.data,
+        newEnq: newEnq.data.data,
+        acceptedEnq: acceptedEnq.data.data,
+        rejectedEnq: rejectedEnq.data.data,
       };
     } catch (e) {
       console.log(e);
-      unload();
+      return;
     }
   }
 

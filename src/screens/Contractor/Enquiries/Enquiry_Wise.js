@@ -43,97 +43,66 @@ const EnquiryWise = ({ navigation }) => {
       FetchData();
     }
   };
-
-  const FetchDesignGalleryData = () => {
-    Provider.getAll("generaluserenquiryestimations/getimagegallery")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            setDesignGalleryData(response.data.data);
-          }
-        } else {
-          setDesignGalleryData([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-        }
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      });
+  const unload = (msg) => {
+    setIsLoading(false);
+    setSnackbarText(msg);
+    setSnackbarColor(theme.colors.error);
+    setSnackbarVisible(true);
   };
-
-  const FetchData = (toPending) => {
-    if (toPending) {
-      setIndex(1);
-    }
+  const FetchData = async (toPending, text) => {
     let params = {
-      UserID: userID,
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
     };
-    Provider.getAll(
-      `contractorquotationestimation/getcontractorallestimation?${new URLSearchParams(
-        params
-      )}`
-    )
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            const pendData = response.data.data.filter((el) => {
-              return el.approvalStatus === 0;
-            });
-            pendingData[1](pendData);
-            pendingSearchData[1](pendData);
-            const apprData = response.data.data.filter((el) => {
-              return el.approvalStatus === 1;
-            });
-            approvedData[1](apprData);
-            approvedSearchData[1](apprData);
-            const rejData = response.data.data.filter((el) => {
-              return el.approvalStatus === 2;
-            });
-            rejectedData[1](rejData);
-            rejectedSearchData[1](rejData);
-          }
-        }
+    try {
+      const data = await Provider.getEnquiriesList(params, () =>
+        setIsLoading(false)
+      );
+      if (data.newEnq) {
+        pendingData[1](data.newEnq);
+        pendingSearchData[1](data.newEnq);
+        approvedData[1](data.acceptedEnq);
+        approvedSearchData[1](data.acceptedEnq);
+        rejectedData[1](data.rejectedEnq);
+        rejectedSearchData[1](data.rejectedEnq);
         setIsLoading(false);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-      });
+      }
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
+      setSnackbarText(e.message);
+      setSnackbarColor(theme.colors.error);
+      setSnackbarVisible(true);
+    } finally {
+      if (toPending !== undefined) {
+        setIndex(toPending);
+        setSnackbarText(text);
+        setSnackbarColor(theme.colors.success);
+        setSnackbarVisible(true);
+      }
+    }
   };
-
   useEffect(() => {
     GetUserID();
-    // FetchDesignGalleryData();
   }, []);
 
   const renderScene = ({ route }) => {
     switch (route.key) {
-      case "designGallery":
-        return (
-          <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
-            <DesignGalleryTab
-              navigation={navigation}
-              designGalleryData={imageGalleryData}
-              fetchData={FetchData}
-            />
-          </ScrollView>
-        );
-      case "pending":
+      case "new":
         return (
           <ScrollView
             style={[Styles.flex1, Styles.backgroundColor]}
             contentContainerStyle={[Styles.height100per]}
           >
             <DesignPendingTab
-              navigation={navigation}
-              listData={pendingData}
-              listSearchData={pendingSearchData}
-              fetchData={FetchData}
+              set={setIsLoading}
+              unload={unload}
+              listData2={pendingData[0]}
+              listSearchData2={pendingSearchData[0]}
+              fetch={FetchData}
+              type={"new"}
             />
           </ScrollView>
         );
@@ -144,10 +113,12 @@ const EnquiryWise = ({ navigation }) => {
             contentContainerStyle={[Styles.height100per]}
           >
             <DesignApprovedTab
-              navigation={navigation}
-              listData={approvedData}
-              listSearchData={approvedSearchData}
-              fetchData={FetchData}
+              set={setIsLoading}
+              unload={unload}
+              listData2={approvedData[0]}
+              listSearchData2={approvedSearchData[0]}
+              fetch={FetchData}
+              type="approved"
             />
           </ScrollView>
         );
@@ -158,10 +129,12 @@ const EnquiryWise = ({ navigation }) => {
             contentContainerStyle={[Styles.height100per]}
           >
             <DesignRejectedTab
-              navigation={navigation}
-              listData={rejectedData}
-              listSearchData={rejectedSearchData}
-              fetchData={FetchData}
+              set={setIsLoading}
+              unload={unload}
+              listData2={rejectedData[0]}
+              listSearchData2={rejectedSearchData[0]}
+              fetch={FetchData}
+              type="rejected"
             />
           </ScrollView>
         );
@@ -181,9 +154,9 @@ const EnquiryWise = ({ navigation }) => {
     />
   );
   const [routes] = React.useState([
-    { key: "designGallery", title: "New" },
-    { key: "pending", title: "Accepted" },
-    { key: "approved", title: "Rejected" },
+    { key: "new", title: "New" },
+    { key: "approved", title: "Accepted" },
+    { key: "rejected", title: "Rejected" },
     /* { key: "rejected", title: "Rejected" }, */
   ]);
   //#endregion
