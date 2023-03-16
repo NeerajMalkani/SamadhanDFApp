@@ -1313,3 +1313,40 @@ export const MenuItemsProjectSupervisor = [
     ],
   },
 ];
+
+export const MenuItemsClient = [
+  {
+    title: "My Client Role Activity",
+    icon: "timetable",
+    type: "accordian",
+    index: 1,
+    roleID: 8,
+    items: [
+      {
+        title: "My Quotation",
+        type: "accordian",
+        index: 10,
+        navigation: "YourEstimationsScreen",
+      },
+      {
+        title: "My Design Estimation",
+        type: "accordian",
+        index: 11,
+        navigation: "YourEstimationsScreen",
+      },
+      {
+        title: "My Budgets",
+        type: "accordian",
+        index: 11,
+        navigation: "YourEstimationsScreen",
+      },
+      {
+        title: "My On-Going Projects",
+        type: "accordian",
+        index: 11,
+        navigation: "YourEstimationsScreen",
+      },
+    ],
+  }
+];
+

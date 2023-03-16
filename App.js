@@ -28,6 +28,7 @@ import {
   MenuItemsArchitect,
   MenuItemsManufacture,
   MenuItemsProjectSupervisor,
+  MenuItemsClient,
 } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
@@ -229,13 +230,16 @@ export default function App() {
           menuItems = [...MenuItemsArchitect];
           break;
         case 7:
-          menuItems = [...MenuItemsProjectSupervisor];
+          menuItems = [...MenuItemsManufacture];
           break;
         case 8:
-          menuItems = [...MenuItemsManufacture];
+          menuItems = [...MenuItemsClient];
           break;
         case 9:
           menuItems = [...MenuItemsArchitect];
+          break;
+        case 10:
+          menuItems = [...MenuItemsProjectSupervisor];
           break;
       }
       userDetails[1](ud);
@@ -414,20 +418,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -1302,7 +1306,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
       return unsubscribe;
     }, [navigation]);
 
@@ -1397,14 +1401,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfileScreen
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 6
+                          ? UserProfile
+                          : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,

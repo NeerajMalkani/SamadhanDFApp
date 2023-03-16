@@ -458,7 +458,7 @@ const AddProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="flat" label="GST Rate" value={gst} keyboardType={"number-pad"} onChangeText={onGSTChanged} error={gstError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>

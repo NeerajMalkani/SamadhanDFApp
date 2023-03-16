@@ -1,6 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity, SafeAreaView, FlatList, StyleSheet } from "react-native";
-import { Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Title, MD3Colors } from "react-native-paper";
+import {
+  Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity,
+  SafeAreaView, FlatList, StyleSheet
+} from "react-native";
+import {
+  Button, Card, Checkbox, DataTable, Headline, HelperText, IconButton, Snackbar, Subheading,
+  Text, TextInput, Title, MD3Colors, Chip, List
+} from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -82,11 +88,16 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     groupID = 0;
   const windowHeight = Dimensions.get("window").height;
   const refRBSheet = useRef();
+  const refBrandRBSheet = useRef();
   const [designImage, setDesignImage] = React.useState(AWSImagePath + "placeholder-image.png");
   const [isZoomShow, setIsZoomShow] = React.useState(false);
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [disableButton, setDisableButton] = React.useState(false);
   const [specification, setSpecification] = React.useState("");
+  const [showBrandCategory, setShowBrandCategory] = React.useState(false);
+  const [brandCategoryData, setBrandCategoryData] = React.useState([]);
+  const [brandCategoryFullData, setBrandCategoryFullData] = React.useState([]);
+  const [categoryWiseBrandData, setCategoryWiseBrandData] = React.useState([]);
 
   // const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
   // const [multiBrand, setMultiBrand] = React.useState("");
@@ -261,6 +272,13 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     GetUserID();
   }, []);
 
+  const SetCategoryBrand = (category) => {
+    console.log('Clicked Category Name:', category);
+    //brandCategoryFullData.filter();
+    //let brandData = brandCategoryFullData.filter((item) => item.categoryNameDisplay == categoryName);
+
+  };
+
   const FetchServicesFromActivity = () => {
     let params = {
       data: {
@@ -320,7 +338,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           if (response.data.data) {
 
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data.data);
             setSpecification(response.data.data[0].designtype_specification);
             setDesignImage(response.data.data[0].designImage);
           }
@@ -388,6 +405,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         product_refno: productsFullData.find((el) => {
           return el.productName === productsName;
         }).id,
+        outputformat: "1",
       },
     };
     Provider.createDFCommon(Provider.API_URLS.getbrandnamelist_materialcalculatorform, params)
@@ -395,14 +413,75 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
+
+            const objectArray = Object.entries(response.data.data[0]);
+
+            if (objectArray.length > 0) {
+
+              let brandCategory = [];
+              objectArray.map(([key, value]) => {
+
+                brandCategory.push({
+                  brandData: [
+                    JSON.stringify(value)
+                  ],
+                  categoryName: key,
+                  categoryNameDisplay: key.split("#")[1],
+                });
+              });
+
+              const onlyCatName = brandCategory.map((el) => el.categoryNameDisplay);
+              setShowBrandCategory(true);
+              setBrandCategoryData(onlyCatName);
+              setBrandCategoryFullData(brandCategory);
+            }
+            else {
+              setShowBrandCategory(false);
+            }
+
+            //console.log('BrandCategory:', brandCategory);
+
+            response.data.data = APIConverter(JSON.stringify(response.data.data));
             setBrandsFullData(response.data.data);
+
             const key = "brandID";
             const formattedResult = [];
+            const categoryData = [], categoryWiseBrandData = [];
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
-
+            //console.log('Unique Brands Data:', uniqueBrands);
 
             uniqueBrands.map((item) => {
+              // if (categoryData.length == 0) {
+              //   categoryData.push({
+              //     categoryName: item.categoryName,
+              //     id: item.id,
+              //   });
+              // }
+              // else {
+              //   //console.log('more then 0');
+              //   //console.log('categoryData', categoryData);
+              //   //console.log('item', item.id);
+              //   // console.log(categoryData.find((el) => {
+              //   //   return el.id == item.id;
+              //   // }));
+
+              //   // console.log(categoryData.find((el) => {
+              //   //   return el.id == item.id;
+              //   // }).id);
+              //   //console.log('dddddddddd:', d);
+
+              //   let d = categoryData.find((el) => {
+              //     return el.id == item.id;
+              //   })
+
+              //   if (d == undefined) {
+              //     categoryData.push({
+              //       categoryName: item.categoryName,
+              //       id: item.id,
+              //     });
+              //   }
+              // }
+
               formattedResult.push({
                 brandID: item.brandID,
                 brandName: item.brandName,
@@ -412,6 +491,41 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               });
             });
 
+            //console.log('Category Data:', categoryData);
+
+            // if (categoryData.length > 0) {
+            //   categoryData.map((i, index) => {
+
+            //     let brandData = uniqueBrands.filter((item) => item.id == i.id);
+            //     //console.log('brandData:', brandData);
+            //     if (brandData != undefined && brandData != null) {
+
+            //       categoryWiseBrandData.push({
+            //         id: i.id,
+            //         categoryName: i.categoryName,
+            //         brands: []
+            //       });
+
+            //       //categoryWiseBrandData[index].brands.push(...brandData);
+            //       //categoryWiseBrandData[0].brands.push(brandData);
+            //       //parentArray[0].children = parentArray[0].children.concat(childArray);
+
+            //       // brandData.map((j, ind) => {
+            //       //   console.log('jjjjjjjjjj:', j);
+            //       //   console.log(categoryWiseBrandData[index]["brandData"]);
+            //       //   categoryWiseBrandData[index]["brandData"].push({
+            //       //     brandID: j.brandID,
+            //       //     brandName: j.brandName
+            //       //   });
+
+            //       // });
+
+            //     }
+
+            //   });
+            // }
+            // console.log('************************************');
+            // console.log('categoryWiseBrandData:', categoryWiseBrandData);
 
             setUniqueBrandsData(formattedResult);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
@@ -423,7 +537,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 value: k,
               });
             });
-
 
             setBrandList(brndLst);
             setBrandsData(formattedData);
@@ -1037,6 +1150,30 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               selectedItem={brandName}
             />
 
+            {showBrandCategory &&
+              <>
+                <View style={[Styles.flexRow, Styles.flexWrap, Styles.flexJustifyCenter, Styles.marginTop16]}>
+                  {brandCategoryData.map((category, index) => (
+
+                    <Button
+                      key={index}
+                      style={[Styles.marginHorizontal4, Styles.marginBottom8]}
+                      mode={"outlined"}
+                      categoryName={category}
+                      //onPress={SetCategoryBrand}
+                      onPress={() => {
+                        console.log('called button');
+                        refBrandRBSheet.current.open();
+                        SetCategoryBrand(category);
+                      }}
+                    >
+                      {category}
+                    </Button>
+                  ))}
+                </View>
+              </>
+            }
+
             {/* <MultiSelectDropDown
               label={"Select Product Brand"}
               mode={"outlined"}
@@ -1163,6 +1300,43 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               Done
             </Button>
           </View>
+        </View>
+      </RBSheet>
+      <RBSheet ref={refBrandRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={400} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View style={[Styles.flex1, Styles.marginBottom16]}>
+          <ScrollView style={[Styles.marginBottom48]}>
+            <List.Section>
+              {/* {services.map((item, i) => {
+                return (
+                  <List.Item
+                    key={i}
+                    title={item.name}
+                    onPress={() => {
+                      onServiceChanged(item.id);
+                    }}
+                    style={[Styles.borderBottom1, Styles.height48, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
+                    right={(props) => <List.Icon {...props} icon="check" color={theme.colors.success} style={{ opacity: item.isChecked ? 1 : 0 }} />}
+                  >
+                    <Text>{item.name}</Text>
+                  </List.Item>
+                );
+              })} */}
+              <List.Item title="Brand Name 1" />
+              <List.Item title="Brand Name 2" />
+              <List.Item title="Brand Name 3" />
+              <List.Item title="Brand Name 4" />
+              <List.Item title="Brand Name 5" />
+            </List.Section>
+          </ScrollView>
+          <Button
+            mode="contained"
+            style={[Styles.width104, Styles.flexAlignSelfCenter, { position: "absolute", bottom: 0 }]}
+            onPress={() => {
+              refBrandRBSheet.current.close();
+            }}
+          >
+            DONE
+          </Button>
         </View>
       </RBSheet>
       <Modal visible={isZoomShow} onRequestClose={() => setIsZoomShow(false)} transparent={true}>

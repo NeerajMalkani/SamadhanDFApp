@@ -1,3 +1,4 @@
+import React from "react";
 import { FlatList, LogBox, ScrollView, View } from "react-native";
 import { Styles } from "../../../../styles/styles";
 import { useEffect, useRef, useState } from "react";
