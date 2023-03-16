@@ -12,6 +12,7 @@ const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
 const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
 const BASE_URL_Manufacturer = `${BASE_}/apimanufacturer/spawu7S4urax/tYjD`;
+const BASE_URL_CLIENT = `${BASE_}/apiclient/spawu7S4urax/tYjD`;
 
 class Provider {
   //#region Old API's
@@ -577,12 +578,16 @@ class Provider {
     getdesignationlist_pckaddexpensesform:
       "getdesignationlist_pckaddexpensesform/",
     getemployeelist_pckaddexpensesform: "getemployeelist_pckaddexpensesform/",
+    client_mydesign_estimation_approve: "client_mydesign_estimation_approve/",
+    client_mydesign_estimation_reject: "client_mydesign_estimation_reject/",
   };
 
   createDFPocketDairy(resource, params) {
     return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params);
   }
-
+  createDFClient(resource, params) {
+    return axios.post(`${BASE_URL_CLIENT}/${resource}`, params);
+  }
   createDFPocketDairyWithHeader(resource, params) {
     if (params) {
       return axios.post(`${BASE_URL_PocketDiary}/${resource}`, params, {
@@ -707,9 +712,35 @@ class Provider {
       );
       console.log(params);
       return {
-        newEnq: newEnq.data.data,
-        acceptedEnq: acceptedEnq.data.data,
-        rejectedEnq: rejectedEnq.data.data,
+        newEnq: newEnq.data.data ? newEnq.data.data : [],
+        acceptedEnq: acceptedEnq.data.data ? acceptedEnq.data.data : [],
+        rejectedEnq: rejectedEnq.data.data ? rejectedEnq.data.data : [],
+      };
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
+
+  async getmyestimation(params, unload) {
+    try {
+      const newEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_mydesign_estimation_pendinglist/`,
+        params
+      );
+      const acceptedEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_mydesign_estimation_approvedlist//`,
+        params
+      );
+      const rejectedEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_mydesign_estimation_rejectedlist/`,
+        params
+      );
+
+      return {
+        newEnq: newEnq.data.data ? newEnq.data.data : [],
+        acceptedEnq: acceptedEnq.data.data ? acceptedEnq.data.data : [],
+        rejectedEnq: rejectedEnq.data.data ? rejectedEnq.data.data : [],
       };
     } catch (e) {
       console.log(e);

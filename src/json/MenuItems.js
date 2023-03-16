@@ -1332,7 +1332,7 @@ export const MenuItemsClient = [
         title: "My Design Estimation",
         type: "accordian",
         index: 11,
-        navigation: "YourEstimationsScreen",
+        navigation: "DesignWise",
       },
       {
         title: "My Budgets",
@@ -1347,6 +1347,5 @@ export const MenuItemsClient = [
         navigation: "YourEstimationsScreen",
       },
     ],
-  }
+  },
 ];
-

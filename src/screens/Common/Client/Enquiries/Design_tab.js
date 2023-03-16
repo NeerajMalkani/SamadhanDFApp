@@ -25,14 +25,13 @@ import {
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
-import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
-import NoItems from "../../../components/NoItems";
-import { theme } from "../../../theme/apptheme";
+import Provider from "../../../../api/Provider";
+import NoItems from "../../../../components/NoItems";
+import { theme } from "../../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Styles } from "../../../styles/styles";
-import { NullOrEmpty } from "../../../utils/validations";
+import { Styles } from "../../../../styles/styles";
+import { NullOrEmpty } from "../../../../utils/validations";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -42,7 +41,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const Enquiry_tab = ({
+const Design_tab = ({
   set,
   listData2,
   listSearchData2,
@@ -59,9 +58,6 @@ const Enquiry_tab = ({
   const [refreshing, setRefreshing] = React.useState(false);
   const [current, setCurrent] = React.useState({});
   const refRBSheet = useRef();
-  //#endregion
-
-  //#region Functions
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -116,7 +112,7 @@ const Enquiry_tab = ({
           Styles.paddingStart16,
           Styles.flexJustifyCenter,
           {
-            height: 230,
+            height: 200,
             borderWidth: 1.3,
             marginBottom: 10,
             borderRadius: 8,
@@ -144,15 +140,10 @@ const Enquiry_tab = ({
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Total Sq.Ft. :
             </Text>
-            {type == "approved" && (
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Status :
-              </Text>
-            )}
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.estimation_no}
+              {data.item.cont_estimation_no}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.product_name}
@@ -163,12 +154,6 @@ const Enquiry_tab = ({
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.totalfoot}
             </Text>
-            {type == "approved" && (
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item?.status_name?.length > 0 &&
-                  data.item?.status_name[0]}
-              </Text>
-            )}
           </View>
         </View>
         <View
@@ -190,7 +175,7 @@ const Enquiry_tab = ({
               borderWidth: 1.2,
             }}
           >
-            View Actions
+            {type == "new" ? "View Actions" : "View Details"}
           </Button>
         </View>
       </View>
@@ -200,216 +185,40 @@ const Enquiry_tab = ({
   const submit = () => {
     hideDialog();
     set(true);
-    console.log(current);
-    if (text == "Accept" || text == "Reject") {
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-          accept_status: text == "Accept" ? "1" : "2",
-          alter_labours_cost: current.changed
-            ? current.total_labours_cost_changed
-            : current.total_labours_cost,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_new_enquiry_acceptstatus_update,
-        params
-      )
-        .then((response) => {
-          console.log(response.data.data);
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(
-                0,
-                text == "Accept"
-                  ? "Accepted Successfully"
-                  : "Rejected Successfully!"
-              );
-            } else {
-              unload("Failed");
-            }
+    const params = {
+      data: {
+        Sess_UserRefno: userID,
+        cont_estimation_refno: current.cont_estimation_refno,
+      },
+    };
+    Provider.createDFClient(
+      text === "Accept"
+        ? Provider.API_URLS.client_mydesign_estimation_approve
+        : Provider.API_URLS.client_mydesign_estimation_reject,
+      params
+    )
+      .then((response) => {
+        console.log("resp", response.data);
+        console.log("params", params);
+        if (response.data && response.data.data) {
+          if (response.data.data.Updated == 1) {
+            fetch(
+              0,
+              text == "Accept"
+                ? "Accepted Successfully!"
+                : "Rejected Successfully!"
+            );
           } else {
             unload("Failed");
           }
-        })
-        .catch((e) => {
-          set(false);
+        } else {
           unload("Failed");
-        });
-    } else if (text == "Finally Take Project") {
-      console.log(3);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_company_refno: Sess_company_refno,
-          Sess_branch_refno: Sess_branch_refno,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_accepted_enquiry_finallytakeproject_update,
-        params
-      )
-        .then((response) => {
-          console.log(response.data.data);
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(1, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    } else if (text == "Cancel My Quotation") {
-      console.log(4);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_accepted_enquiry_cancel_update,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(1, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    } else if (text == "Cancel & Re-Quotation" && type == "approved") {
-      console.log(5);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_accepted_enquiry_cancelandrequotation_update,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(1, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    } else if (text == "Remove My List" && type == "approved") {
-      console.log(6);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_accepted_enquiry_remove_update,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(1, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    } else if (text == "Remove My List" && type == "rejected") {
-      console.log(7);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_rejected_enquiry_remove_update,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(2, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    } else if (text == "Cancel & Re-Quotation" && type == "rejected") {
-      console.log(8);
-      const params = {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          estimation_enquiry_refno: current.estimation_enquiry_refno,
-        },
-      };
-      Provider.createDFContractor(
-        Provider.API_URLS.appuser_rejected_enquiry_cancelandrequotation_update,
-        params
-      )
-        .then((response) => {
-          if (response.data && response.data.data) {
-            if (response.data.data.Updated == 1) {
-              fetch(2, `${text} Successfully!`);
-            } else {
-              unload("Failed");
-            }
-          } else {
-            unload("Failed");
-          }
-        })
-        .catch((e) => {
-          set(false);
-          unload("Failed");
-        });
-    }
+        }
+      })
+      .catch((e) => {
+        set(false);
+        unload("Failed");
+      });
   };
   return (
     <View style={[Styles.flex1]}>
@@ -424,7 +233,7 @@ const Enquiry_tab = ({
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData[0]?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar
             style={[Styles.margin16]}
@@ -462,7 +271,6 @@ const Enquiry_tab = ({
         />
       )}
       <View style={{ height: 80 }}></View>
-      
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -486,7 +294,7 @@ const Enquiry_tab = ({
             </View>
             <List.Item
               title="Estimate No"
-              description={current.estimation_no}
+              description={current.cont_estimation_no}
             />
             <List.Item title="Service" description={current.service_name} />
             <List.Item title="Category" description={current.category_name} />
@@ -505,40 +313,13 @@ const Enquiry_tab = ({
               title="Actual Labour Cost"
               description={current.total_labours_cost}
             />
-            {type == "approved" && (
+            {current?.estimation_status !== undefined && (
               <List.Item
-                title="Status"
-                description={
-                  current?.status_name?.length > 0 && current?.status_name[0]
-                }
+                title="Estimation Status"
+                description={current.estimation_status}
               />
             )}
-            {type !== "rejected" && (
-              <>
-                <List.Item title="Labour Cost" />
-                <TextInput
-                  mode="flat"
-                  disabled={type === "new" ? false : true}
-                  value={
-                    current.changed
-                      ? current.total_labours_cost_changed
-                      : current.total_labours_cost
-                  }
-                  onChangeText={(text) => {
-                    setCurrent((prev) => {
-                      return {
-                        ...prev,
-                        changed: true,
-                        total_labours_cost_changed: text,
-                      };
-                    });
-                  }}
-                  style={[stylesm.input]}
-                />
-              </>
-            )}
-
-            {type == "new" ? (
+            {type == "new" && (
               <>
                 <Card.Content style={[Styles.marginTop16]}>
                   <Button
@@ -565,25 +346,6 @@ const Enquiry_tab = ({
                   </Button>
                 </Card.Content>
               </>
-            ) : (
-              current?.action_status_name?.map((item, idx) => (
-                <Card.Content style={[Styles.marginTop16]} key={idx}>
-                  <Button
-                    mode="contained"
-                    onPress={() => {
-                      showDialog();
-                      setText(item);
-                    }}
-                    style={
-                      item == "Finally Take Project"
-                        ? stylesm.button
-                        : stylesm.button1
-                    }
-                  >
-                    {item}
-                  </Button>
-                </Card.Content>
-              ))
             )}
             <View style={{ height: 20 }}></View>
           </ScrollView>
@@ -662,4 +424,4 @@ const stylesm = StyleSheet.create({
     borderWidth: 1,
   },
 });
-export default Enquiry_tab;
+export default Design_tab;

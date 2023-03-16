@@ -110,6 +110,7 @@ import EmployeeEditScreen from "./src/screens/Common/Employee/AddItems/EmployeeE
 import BranchListScreen from "./src/screens/Common/Organization/BranchScreen";
 import BranchEditScreen from "./src/screens/Common/Organization/AddItem/AddBranchScreen";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
+import DesignWise from "./src/screens/Common/Client/Enquiries/DesignWise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
@@ -418,20 +419,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                      ? expanded2
-                      : i == 2
-                        ? expanded3
-                        : i == 3
-                          ? expanded4
-                          : i == 4
-                            ? expanded5
-                            : i == 5
-                              ? expanded6
-                              : i == 6
-                                ? expanded7
-                                : i == 7
-                                  ? expanded8
-                                  : expanded9
+                    ? expanded2
+                    : i == 2
+                    ? expanded3
+                    : i == 3
+                    ? expanded4
+                    : i == 4
+                    ? expanded5
+                    : i == 5
+                    ? expanded6
+                    : i == 6
+                    ? expanded7
+                    : i == 7
+                    ? expanded8
+                    : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -809,6 +810,7 @@ export default function App() {
                 name="EnquiryWise"
                 component={EnquiryWise}
               />
+
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="RateCardSetUp"
@@ -1265,6 +1267,11 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
+                name="DesignWise"
+                component={DesignWise}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
                 name="OpeningStockScrap"
                 component={OpeningStockScrap}
               />
@@ -1306,7 +1313,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => { });
+      const unsubscribe = navigation.addListener("focus", () => {});
       return unsubscribe;
     }, [navigation]);
 
@@ -1401,14 +1408,14 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                    ? UserProfile
-                    : parseInt(userDetails[0].RoleID) === 2
-                      ? UserProfile
-                      : parseInt(userDetails[0].RoleID) === 5
-                        ? BasicDetailsScreen
-                        : parseInt(userDetails[0].RoleID) === 6
-                          ? UserProfile
-                          : UserProfileScreen
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 2
+                  ? UserProfile
+                  : parseInt(userDetails[0].RoleID) === 5
+                  ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 6
+                  ? UserProfile
+                  : UserProfileScreen
               }
               options={{
                 unmountOnBlur: true,

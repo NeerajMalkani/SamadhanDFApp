@@ -2,24 +2,22 @@ import React, { useEffect } from "react";
 import { Dimensions, ScrollView, View } from "react-native";
 import { ActivityIndicator, Snackbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Header from "../../../components/Header";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import Header from "../../../../components/Header";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 import { TabBar, TabView } from "react-native-tab-view";
-import Provider from "../../../api/Provider";
-import DesignGalleryTab from "./Enquiry_tab";
-import DesignPendingTab from "./Enquiry_tab";
-import DesignApprovedTab from "./Enquiry_tab";
-import DesignRejectedTab from "./Enquiry_tab";
+import Provider from "../../../../api/Provider";
+import DesignPendingTab from "./Design_tab";
+import DesignApprovedTab from "./Design_tab";
+import DesignRejectedTab from "./Design_tab";
 
 const windowWidth = Dimensions.get("window").width;
 let Sess_UserRefno = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
-const EnquiryWise = ({ navigation }) => {
+const DesignWise = ({ navigation }) => {
   //#region Variables
   const [index, setIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [imageGalleryData, setDesignGalleryData] = React.useState([]);
   const pendingData = React.useState([]);
   const pendingSearchData = React.useState([]);
   const approvedData = React.useState([]);
@@ -53,11 +51,10 @@ const EnquiryWise = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: Sess_UserRefno,
-        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
       },
     };
     try {
-      const data = await Provider.getEnquiriesList(params, () =>
+      const data = await Provider.getmyestimation(params, () =>
         setIsLoading(false)
       );
       pendingData[1](data.newEnq);
@@ -152,7 +149,7 @@ const EnquiryWise = ({ navigation }) => {
     />
   );
   const [routes] = React.useState([
-    { key: "new", title: "New" },
+    { key: "new", title: "Pending" },
     { key: "approved", title: "Accepted" },
     { key: "rejected", title: "Rejected" },
     /* { key: "rejected", title: "Rejected" }, */
@@ -161,7 +158,10 @@ const EnquiryWise = ({ navigation }) => {
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
-      <Header navigation={navigation} title="App User Enquiry Wise" />
+      <Header
+        navigation={navigation}
+        title="CONTRACTOR DESIGNWISE ESTIMATION - PENDING"
+      />
       {isLoading ? (
         <View
           style={[
@@ -192,4 +192,4 @@ const EnquiryWise = ({ navigation }) => {
   );
 };
 
-export default EnquiryWise;
+export default DesignWise;
