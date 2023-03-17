@@ -19,16 +19,12 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      [
-        "expo-document-picker"
-      ]
+      ["expo-document-picker"]
     ],
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.diamondframes.samadhan",
@@ -51,7 +47,7 @@
         "android.permission.RECORD_AUDIO",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ] 
     },
     "web": {
       "favicon": "./assets/favicon.png"
