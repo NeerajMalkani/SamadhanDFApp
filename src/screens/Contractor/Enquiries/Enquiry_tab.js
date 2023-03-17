@@ -183,6 +183,7 @@ const Enquiry_tab = ({
             onPress={() => {
               refRBSheet.current.open();
               setCurrent(data.item);
+              console.log(data.item);
             }}
             style={{
               width: "80%",
@@ -208,9 +209,7 @@ const Enquiry_tab = ({
           Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
           estimation_enquiry_refno: current.estimation_enquiry_refno,
           accept_status: text == "Accept" ? "1" : "2",
-          alter_labours_cost: current.changed
-            ? current.total_labours_cost_changed
-            : current.total_labours_cost,
+          alter_labours_cost: current.alter_labours_cost,
         },
       };
       Provider.createDFContractor(
@@ -462,7 +461,7 @@ const Enquiry_tab = ({
         />
       )}
       <View style={{ height: 80 }}></View>
-      
+
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -519,17 +518,12 @@ const Enquiry_tab = ({
                 <TextInput
                   mode="flat"
                   disabled={type === "new" ? false : true}
-                  value={
-                    current.changed
-                      ? current.total_labours_cost_changed
-                      : current.total_labours_cost
-                  }
+                  value={current.alter_labours_cost}
                   onChangeText={(text) => {
                     setCurrent((prev) => {
                       return {
                         ...prev,
-                        changed: true,
-                        total_labours_cost_changed: text,
+                        alter_labours_cost: text,
                       };
                     });
                   }}

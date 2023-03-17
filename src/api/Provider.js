@@ -10,7 +10,7 @@ const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
 const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
-const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
+export const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
 const BASE_URL_Manufacturer = `${BASE_}/apimanufacturer/spawu7S4urax/tYjD`;
 const BASE_URL_CLIENT = `${BASE_}/apiclient/spawu7S4urax/tYjD`;
 
@@ -152,6 +152,8 @@ class Provider {
       "get_servicename_II_productforproductionform/",
     get_categoryname_II_productforproductionform:
       "get_categoryname_II_productforproductionform/",
+    contractor_scdesign_estimation_finallytakeproject_update:
+      "contractor_scdesign_estimation_finallytakeproject_update/",
     gsmrefnocheck: "gsmrefnocheck/",
     get_brandname_productforproductionform:
       "get_brandname_productforproductionform/",
@@ -741,6 +743,41 @@ class Provider {
         newEnq: newEnq.data.data ? newEnq.data.data : [],
         acceptedEnq: acceptedEnq.data.data ? acceptedEnq.data.data : [],
         rejectedEnq: rejectedEnq.data.data ? rejectedEnq.data.data : [],
+      };
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
+
+  async getcontractordesignwise(params, unload) {
+    try {
+      const gallery = await axios.post(
+        `${BASE_URL_Contractor}/contractor_get_servicewise_design/`,
+        params
+      );
+      const pending = await axios.post(
+        `${BASE_URL_Contractor}/contractor_scdesign_estimation_pending_list/`,
+        params
+      );
+      const accepted = await axios.post(
+        `${BASE_URL_Contractor}/contractor_scdesign_estimation_approved_list/`,
+        params
+      );
+      const rejected = await axios.post(
+        `${BASE_URL_Contractor}/contractor_scdesign_estimation_rejected_list/`,
+        params
+      );
+      const response = await axios.post(
+        `${BASE_URL_Contractor}/get_clientresponsetypelist/`,
+        params
+      );
+      return {
+        gallery: gallery.data.data ? gallery.data.data : [],
+        pending: pending.data.data ? pending.data.data : [],
+        accepted: accepted.data.data ? accepted.data.data : [],
+        rejected: rejected.data.data ? rejected.data.data : [],
+        response: response.data.data ? response.data.data : [],
       };
     } catch (e) {
       console.log(e);

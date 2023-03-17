@@ -1,37 +1,74 @@
-import React, { useRef } from "react";
-import { Image, ScrollView, TouchableNativeFeedback, View } from "react-native";
-import { List, Searchbar, Snackbar, Text, Title } from "react-native-paper";
+import React, { useEffect, useRef } from "react";
+import {
+  Image,
+  ActivityIndicator,
+  View,
+  RefreshControl,
+  LogBox,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import {
+  FAB,
+  List,
+  Searchbar,
+  Snackbar,
+  Title,
+  Dialog,
+  Portal,
+  Paragraph,
+  Button,
+  Text,
+  TextInput,
+  Card,
+  HelperText,
+} from "react-native-paper";
+import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
-import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { communication } from "../../../utils/communication";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Styles } from "../../../styles/styles";
+import { NullOrEmpty } from "../../../utils/validations";
 
-const DesignRejectedTab = ({ fetchData, listData, listSearchData, navigation }) => {
-   //#region Variables
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
+
+let userID = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
+let Sess_company_refno = 0;
+let Sess_branch_refno = 0;
+const DesignRejectedTab = ({
+  set,
+  listData2,
+  listSearchData2,
+  type,
+  fetch,
+  unload,
+}) => {
+  const [visible, setVisible] = React.useState(false);
+  const [text, setText] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-
-  const [id, setID] = React.useState(0);
-  const [fullName, setFullName] = React.useState("");
-  const [estimationNo, setEstimationNo] = React.useState("");
-  const [serviceName, setServiceName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [productName, setProductName] = React.useState("");
-  const [designTypeName, setDesignTypeName] = React.useState("");
-  const [designCode, setDesignCode] = React.useState("");
-  const [totalSqFt, setTotalSqFt] = React.useState("");
-  const [materialCost, setMaterialCost] = React.useState("");
-  const [labourCost, setLabourCost] = React.useState("");
-
+  const listData = React.useState([]);
+  const listSearchData = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [current, setCurrent] = React.useState({});
   const refRBSheet = useRef();
- //#endregion 
 
- //#region Functions
+  const FetchData = () => {
+    fetch();
+    listData[1](listData2);
+    listSearchData[1](listSearchData2);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    FetchData();
+  }, []);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -40,102 +77,244 @@ const DesignRejectedTab = ({ fetchData, listData, listSearchData, navigation }) 
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.fullName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.contactPerson
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase());
         })
       );
     }
   };
 
-  const ClickRow = (data) => {
-    refRBSheet.current.open();
-    setID(data.id);
-    setFullName(data.fullName);
-    setEstimationNo("AUG" + pad(data.id.toString(), 4, "0"));
-    setServiceName(data.serviceName);
-    setCategoryName(data.categoryName);
-    setProductName(data.productName);
-    setDesignTypeName(data.designTypeName);
-    setDesignCode("DS-" + pad(data.designTypeID.toString(), 4, "0"));
-    setTotalSqFt(CalculateSqFt(data));
-    setMaterialCost(data.subtotalAmount.toFixed(4));
-    setLabourCost(data.labourCost.toFixed(4));
+  const RenderItems = (data) => {
+    return (
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          {
+            height: 230,
+            borderWidth: 1.3,
+            marginBottom: 10,
+            borderRadius: 8,
+            borderColor: theme.colors.primary,
+          },
+        ]}
+      >
+        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
+          <Image
+            source={{ uri: data.item.design_image_url }}
+            style={{ width: 50, height: 50 }}
+          />
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Client Details :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Estimation No :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Product :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Design No :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Total Sq.Ft. :
+            </Text>
+          </View>
+          <View style={{ flex: 1.3 }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.cont_estimation_no}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.product_name}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.design_no}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.totalfoot}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 10,
+          }}
+        >
+          <Button
+            mode="outlined"
+            onPress={() => {
+              refRBSheet.current.open();
+              setCurrent(data.item);
+              console.log(data.item);
+            }}
+            style={{
+              width: "80%",
+              borderColor: theme.colors.primary,
+              borderWidth: 1.2,
+            }}
+          >
+            {type == "new" ? "View Actions" : "View Details"}
+          </Button>
+        </View>
+      </View>
+    );
   };
 
-  const CalculateSqFt = (data) => {
-    if (data) {
-      const lengthFeetIn = data["length"].toString().split(".");
-      const widthFeetIn = data["width"].toString().split(".");
-      const lf = lengthFeetIn[0];
-      const li = lengthFeetIn.length > 1 ? lengthFeetIn[1] : 0;
-      const wf = widthFeetIn[0];
-      const wi = widthFeetIn.length > 1 ? widthFeetIn[1] : 0;
-      const inches = ((parseInt(lf) * 12 + parseInt(li)) * (parseInt(wf) * 12 + parseInt(wi))) / 144;
-      return parseFloat(inches).toFixed(4);
-    } else {
-      return 0;
-    }
-  };
-
-  function pad(n, width, z) {
-    z = z || "0";
-    n = n + "";
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-  }
- //#endregion 
- 
   return (
     <View style={[Styles.flex1]}>
-      {listData[0].length > 0 ? (
+      {/* <Header navigation={navigation} title="My Employee List" /> */}
+      {isLoading ? (
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : listData[0]?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-          <ScrollView>
-            {listSearchData[0].map((k, i) => {
-              return (
-                <View key={i} style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter]}>
-                  <List.Item title={k.fullName} titleStyle={{ fontSize: 18 }} description={k.username} onPress={() => ClickRow(k)} left={() => <Image source={{ uri: k.designTypeImage }} style={[Styles.width56, Styles.height56]} />} right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />} />
-                </View>
-              );
-            })}
-          </ScrollView>
+          <Searchbar
+            style={[Styles.margin16]}
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+          />
+          <View style={{ padding: 10 }}>
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-160}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData[0]}
+              useFlatList={true}
+              disableRightSwipe={true}
+              rightOpenValue={-160}
+              renderItem={(data) => RenderItems(data)}
+            />
+          </View>
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
-        {snackbarText}
-      </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-        <View style={[Styles.flex1]}>
-          <View style={[Styles.flexRow, { justifyContent: "flex-end" }]}>
-            <Title numberOfLines={1} style={[Styles.flex1, Styles.paddingHorizontal16]}>
-              {fullName}
-            </Title>
-          </View>
-          <ScrollView>
-            <List.Item title="Estimation No." description={estimationNo} />
-            <List.Item title="Service" description={serviceName} />
-            <List.Item title="Category" description={categoryName} />
-            <List.Item title="Product" description={productName} />
-            <List.Item title="Design Type" description={designTypeName} />
-            <List.Item title="Design No." description={designCode} />
-            <List.Item title="Total Sq.Ft." description={totalSqFt} />
-            <List.Item title="Material Cost" description={materialCost} />
-            <List.Item title="Labour Cost" description={labourCost} />
+      <View style={{ height: 80 }}></View>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={620}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
+        <View>
+          <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
+          <ScrollView style={{ marginBottom: 64 }}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Image
+                source={{ uri: current.design_image_url }}
+                style={{ width: 350, height: 159 }}
+              />
+            </View>
             <List.Item
-              title="Approval Status"
-              description={() => {
-                return (
-                  <View style={[Styles.flexRow]}>
-                    <Text style={[Styles.redBgColor, Styles.textColorWhite, Styles.marginTop8, Styles.borderRadius4, Styles.paddingVertical4, Styles.paddingHorizontal12]}>Rejected</Text>
-                  </View>
-                );
-              }}
+              title="Client Details"
+              description={
+                current?.customer_data?.length == 2
+                  ? `${current.customer_data[0]} (${current.customer_data[1]})`
+                  : ""
+              }
             />
+            <List.Item
+              title="Estimate No"
+              description={current.cont_estimation_no}
+            />
+            <List.Item title="Service" description={current.service_name} />
+            <List.Item title="Category" description={current.category_name} />
+            <List.Item title="Product" description={current.product_name} />
+            <List.Item
+              title="Design Type"
+              description={current.designtype_name}
+            />
+            <List.Item title="Design No" description={current.design_no} />
+            <List.Item title="Total Sq.Ft" description={current.totalfoot} />
+            <List.Item
+              title="Actual Materials Cost"
+              description={current.total_materials_cost}
+            />
+            <List.Item
+              title="Actual Labour Cost"
+              description={current.total_labours_cost}
+            />
+            <List.Item title="Status" description={"Rejected"} />
+            <View style={{ height: 20 }}></View>
           </ScrollView>
         </View>
       </RBSheet>
     </View>
   );
 };
+const stylesm = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "green",
+  },
+  button1: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "red",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
+  modalIndex: {
+    zIndex: 999999999999999999,
+  },
+  input: {
+    margin: 15,
+    height: 40,
 
+    borderColor: "grey",
+    borderWidth: 1,
+  },
+});
 export default DesignRejectedTab;
