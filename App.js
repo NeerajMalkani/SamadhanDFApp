@@ -90,7 +90,7 @@ import AddMyServicesScreen from "./src/screens/Common/CompanyProfile/AddItem/Add
 import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
 import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
 import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
-
+import ContractorEstimation from "./src/screens/Contractor/QuotationAndEstimation/ContractorEstimation";
 import MaterialCalculatorScreen from "./src/screens/Common/MaterialCalculator/MaterialCalculatorScreen";
 import CommonDepartmentScreen from "./src/screens/Common/Organization/DepartmentScreen";
 import AddCommonDepartmentScreen from "./src/screens/Common/Organization/AddItem/AddDepartmentScreen";
@@ -1869,6 +1869,17 @@ export default function App() {
                 component={GetEstimationScreen}
                 options={{
                   headerTitle: "Design Estimation",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="ContractorEstimation"
+                component={ContractorEstimation}
+                options={{
+                  headerTitle: "Design Estimation Edit",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import axios from 'axios';
-import { BASE_URL_Contractor } from '../../../api/Provider';
+import React, { useEffect, useRef } from "react";
+import axios from "axios";
+import { BASE_URL_Contractor } from "../../../api/Provider";
 import {
   Image,
   ActivityIndicator,
@@ -9,7 +9,7 @@ import {
   LogBox,
   ScrollView,
   StyleSheet,
-} from 'react-native';
+} from "react-native";
 import {
   FAB,
   List,
@@ -26,23 +26,23 @@ import {
   HelperText,
   Subheading,
   RadioButton,
-} from 'react-native-paper';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import { creds } from '../../../utils/credentials';
-import Provider from '../../../api/Provider';
-import NoItems from '../../../components/NoItems';
-import { theme } from '../../../theme/apptheme';
-import { communication } from '../../../utils/communication';
-import { RNS3 } from 'react-native-aws3';
-import * as ImagePicker from 'expo-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Styles } from '../../../styles/styles';
-import { AWSImagePath } from '../../../utils/paths';
-import uuid from 'react-native-uuid';
+} from "react-native-paper";
+import { SwipeListView } from "react-native-swipe-list-view";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { creds } from "../../../utils/credentials";
+import Provider from "../../../api/Provider";
+import NoItems from "../../../components/NoItems";
+import { theme } from "../../../theme/apptheme";
+import { communication } from "../../../utils/communication";
+import { RNS3 } from "react-native-aws3";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Styles } from "../../../styles/styles";
+import { AWSImagePath } from "../../../utils/paths";
+import uuid from "react-native-uuid";
 
 LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
+  "Non-serializable values were found in the navigation state",
 ]);
 
 let userID = 0;
@@ -56,35 +56,36 @@ const DesignPendingTab = ({
   response,
   fetch,
   unload,
+  navigation,
 }) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
-  const [remarks, setRemarks] = React.useState('');
+  const [remarks, setRemarks] = React.useState("");
   const [errorR, setErrorR] = React.useState(false);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState("");
   const [errorCAT, setErrorCAT] = React.useState(false);
-  const [designImage, setDesignImage] = React.useState('');
+  const [designImage, setDesignImage] = React.useState("");
   const [image, setImage] = React.useState(
-    AWSImagePath + 'placeholder-image.png',
+    AWSImagePath + "placeholder-image.png"
   );
   const [filePath, setFilePath] = React.useState(null);
   const [status, setStatus] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState('');
+  const [text, setText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = React.useState("");
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const [current, setCurrent] = React.useState({});
   const refRBSheet = useRef();
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState('');
+  const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success,
+    theme.colors.success
   );
 
   const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem('user');
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       Sess_CompanyAdmin_UserRefno =
@@ -104,10 +105,10 @@ const DesignPendingTab = ({
         quality: 1,
       });
       if (!result.cancelled) {
-        const arrExt = result.uri.split('.');
+        const arrExt = result.uri.split(".");
         const unique_id = uuid.v4();
         setDesignImage(
-          AWSImagePath + unique_id + '.' + arrExt[arrExt.length - 1],
+          AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
         );
         setImage(result.uri);
         setFilePath(result);
@@ -127,35 +128,35 @@ const DesignPendingTab = ({
     try {
       set(true);
       const datas = new FormData();
-      datas.append('data', JSON.stringify(params));
+      datas.append("data", JSON.stringify(params));
       datas.append(
-        'attach_approved_proof',
+        "attach_approved_proof",
         status == true
           ? {
               name: designImage?.split(AWSImagePath)[1],
-              type: filePath?.type + '/*',
+              type: filePath?.type + "/*",
               uri:
-                Platform.OS === 'android'
+                Platform.OS === "android"
                   ? filePath?.uri
-                  : filePath?.uri.replace('file://', ''),
+                  : filePath?.uri.replace("file://", ""),
             }
-          : '',
+          : ""
       );
       const resp = await axios.post(
         `${BASE_URL_Contractor}/contractor_scdesign_estimation_reject/`,
         datas,
         {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        },
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
-      if (resp.data && resp.data.data.Rejected == '1') {
-        fetch(2, 'Rejected Successfully');
+      if (resp.data && resp.data.data.Rejected == "1") {
+        fetch(2, "Rejected Successfully");
       } else {
-        unload('Error While Rejecting');
+        unload("Error While Rejecting");
       }
     } catch (e) {
       console.log(e);
-      unload('Error While Rejecting');
+      unload("Error While Rejecting");
     }
   };
   const ValidateEstimationStatus = () => {
@@ -165,7 +166,7 @@ const DesignPendingTab = ({
       isValid = false;
       setErrorR(true);
     }
-    if (value === '') {
+    if (value === "") {
       isValid = false;
       setErrorCAT(true);
     }
@@ -197,7 +198,7 @@ const DesignPendingTab = ({
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
-    if (query === '') {
+    if (query === "") {
       listSearchData[1](listData[0]);
     } else {
       listSearchData[1](
@@ -206,7 +207,7 @@ const DesignPendingTab = ({
             .toString()
             .toLowerCase()
             .includes(query.toLowerCase());
-        }),
+        })
       );
     }
   };
@@ -222,16 +223,16 @@ const DesignPendingTab = ({
           Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
           cont_estimation_refno: current.cont_estimation_refno,
         },
-      },
+      }
     )
       .then((res) => {
-        if (res.response.data) fetch(2, 'Sent Quotation to Client');
+        if (res.response.data) fetch(2, "Sent Quotation to Client");
         else {
           throw res;
         }
       })
       .catch((error) => {
-        unload('Error while Sending Client');
+        unload("Error while Sending Client");
       });
   };
 
@@ -246,16 +247,16 @@ const DesignPendingTab = ({
           Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
           cont_estimation_refno: current.cont_estimation_refno,
         },
-      },
+      }
     )
       .then((res) => {
-        if (res.response.data) fetch(2, 'Sent Quotation to Client');
+        if (res.response.data) fetch(2, "Sent Quotation to Client");
         else {
           throw res;
         }
       })
       .catch((error) => {
-        unload('Error while Cancelling quotation');
+        unload("Error while Cancelling quotation");
       });
   };
   const RenderItems = (data) => {
@@ -274,59 +275,71 @@ const DesignPendingTab = ({
           },
         ]}
       >
-        <View style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
+        <View style={{ justifyContent: "center", alignItems: "flex-start" }}>
           <Image
             source={{ uri: data.item.design_image_url }}
             style={{ width: 50, height: 50 }}
           />
         </View>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Client Details :
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Estimation No :
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Product :
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Design No :
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Total Sq.Ft. :
             </Text>
           </View>
           <View style={{ flex: 1.3 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.cont_estimation_no}
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.product_name}
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.design_no}
             </Text>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: 'grey' }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.totalfoot}
             </Text>
           </View>
         </View>
         <View
           style={{
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            justifyContent: "space-between",
+            alignItems: "center",
             marginTop: 10,
-            flexDirection: 'row',
+            flexDirection: "row",
           }}
         >
           <Button
-            mode='outlined'
-            onPress={() => navigation.navigate('')}
+            mode="outlined"
+            onPress={() => {
+              // console.log(data.item);
+
+              navigation.navigate("ContractorEstimation", {
+                userDesignEstimationID: data.item?.cont_estimation_refno,
+                isContractor: true,
+                designImage: data.item?.design_image_url,
+                fetchData: fetch,
+                isUpdate: true,
+                data: data.item,
+                set: set,
+              });
+            }}
             style={{
               borderColor: theme.colors.primary,
               borderWidth: 1.2,
@@ -335,7 +348,7 @@ const DesignPendingTab = ({
             Edit
           </Button>
           <Button
-            mode='outlined'
+            mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
 
@@ -368,22 +381,22 @@ const DesignPendingTab = ({
     Provider.createDFContractor(
       Provider.API_URLS
         .contractor_scdesign_estimation_finallytakeproject_update,
-      params,
+      params
     )
       .then((response) => {
         if (response.data && response.data.data) {
           if (response.data.data.Updated == 1) {
-            fetch(0, text + 'Successfully!');
+            fetch(0, text + "Successfully!");
           } else {
-            unload('Failed');
+            unload("Failed");
           }
         } else {
-          unload('Failed');
+          unload("Failed");
         }
       })
       .catch((e) => {
         set(false);
-        unload('Failed');
+        unload("Failed");
       });
   };
   return (
@@ -396,13 +409,13 @@ const DesignPendingTab = ({
             Styles.flexAlignCenter,
           ]}
         >
-          <ActivityIndicator size='large' color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0]?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar
             style={[Styles.margin16]}
-            placeholder='Search'
+            placeholder="Search"
             onChangeText={onChangeSearch}
             value={searchQuery}
           />
@@ -410,7 +423,7 @@ const DesignPendingTab = ({
             <SwipeListView
               previewDuration={1000}
               previewOpenValue={-160}
-              previewRowKey='1'
+              previewRowKey="1"
               previewOpenDelay={1000}
               refreshControl={
                 <RefreshControl
@@ -431,8 +444,8 @@ const DesignPendingTab = ({
         </View>
       ) : (
         <NoItems
-          icon='format-list-bulleted'
-          text='No records found. Add records by clicking on plus icon.'
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
         />
       )}
       <View style={{ height: 80 }}></View>
@@ -443,45 +456,45 @@ const DesignPendingTab = ({
         dragFromTopOnly={true}
         // onClose={() => setCurrent({})}
         height={620}
-        animationType='fade'
+        animationType="fade"
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          draggableIcon: { backgroundColor: '#000' },
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
         }}
       >
         <View>
           <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
               <Image
                 source={{ uri: current.design_image_url }}
                 style={{ width: 350, height: 159 }}
               />
             </View>
             <List.Item
-              title='Estimate No'
+              title="Estimate No"
               description={current.cont_estimation_no}
             />
-            <List.Item title='Service' description={current.service_name} />
-            <List.Item title='Category' description={current.category_name} />
-            <List.Item title='Product' description={current.product_name} />
+            <List.Item title="Service" description={current.service_name} />
+            <List.Item title="Category" description={current.category_name} />
+            <List.Item title="Product" description={current.product_name} />
             <List.Item
-              title='Design Type'
+              title="Design Type"
               description={current.designtype_name}
             />
-            <List.Item title='Design No' description={current.design_no} />
-            <List.Item title='Total Sq.Ft' description={current.totalfoot} />
+            <List.Item title="Design No" description={current.design_no} />
+            <List.Item title="Total Sq.Ft" description={current.totalfoot} />
             <List.Item
-              title='Actual Materials Cost'
+              title="Actual Materials Cost"
               description={current.total_materials_cost}
             />
             <List.Item
-              title='Actual Labour Cost'
+              title="Actual Labour Cost"
               description={current.total_labours_cost}
             />
             {current?.estimation_status !== undefined && (
               <List.Item
-                title='Estimation Status'
+                title="Estimation Status"
                 description={current.estimation_status}
               />
             )}
@@ -489,57 +502,57 @@ const DesignPendingTab = ({
               <Card.Content style={[Styles.marginTop16]}>
                 {/* <Text>{current.action_status_name}</Text> */}
                 {current?.action_status_name?.includes(
-                  'Waiting for Client Approval',
+                  "Waiting for Client Approval"
                 ) ? (
                   <Text
-                    style={{ textAlign: 'center', color: 'red', fontSize: 20 }}
+                    style={{ textAlign: "center", color: "red", fontSize: 20 }}
                   >
                     Waiting for Client Approval
                   </Text>
                 ) : (
                   <>
-                    {current.action_status_name?.includes('Reject') && (
+                    {current.action_status_name?.includes("Reject") && (
                       <Button
-                        mode='outlined'
+                        mode="outlined"
                         style={{
-                          borderColor: 'red',
+                          borderColor: "red",
                           borderWidth: 1.2,
-                          color: 'red',
+                          color: "red",
                         }}
                         onPress={() => {
                           refRBSheet.current.close();
                           setPopupVisible(true);
                         }}
                       >
-                        <Text style={{ color: 'red' }}> Reject</Text>
+                        <Text style={{ color: "red" }}> Reject</Text>
                       </Button>
                     )}
-                    {current.action_status_name?.includes('Send to Client') && (
+                    {current.action_status_name?.includes("Send to Client") && (
                       <Button
-                        mode='outlined'
+                        mode="outlined"
                         style={{
-                          borderColor: 'green',
+                          borderColor: "green",
                           borderWidth: 1.2,
-                          color: 'green',
+                          color: "green",
                         }}
                         onPress={sendQuotationToClient}
                       >
-                        <Text style={{ color: 'green' }}>Send to Client</Text>
+                        <Text style={{ color: "green" }}>Send to Client</Text>
                       </Button>
                     )}
                     {current.action_status_name?.includes(
-                      'Cancel Quotation',
+                      "Cancel Quotation"
                     ) && (
                       <Button
                         onPress={cancelQuotation}
-                        mode='outlined'
+                        mode="outlined"
                         style={{
-                          borderColor: 'red',
+                          borderColor: "red",
                           borderWidth: 1.2,
-                          color: 'red',
+                          color: "red",
                         }}
                       >
-                        <Text style={{ color: 'red' }}>Cancel Quotation</Text>
+                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
                       </Button>
                     )}
                   </>
@@ -587,12 +600,12 @@ const DesignPendingTab = ({
             ></View>
             <View></View>
             <Card.Content style={[Styles.marginTop16]}>
-              <Button mode='contained' onPress={submit}>
+              <Button mode="contained" onPress={submit}>
                 Ok
               </Button>
             </Card.Content>
             <Card.Content style={[Styles.marginTop16]}>
-              <Button mode='contained' onPress={hideDialog}>
+              <Button mode="contained" onPress={hideDialog}>
                 Cancel
               </Button>
             </Card.Content>
@@ -606,12 +619,12 @@ const DesignPendingTab = ({
         <Dialog visible={popupVisible} dismissable={false}>
           <Dialog.Title>Estimation Status</Dialog.Title>
           <Dialog.Content>
-            <ScrollView keyboardShouldPersistTaps='handled'>
+            <ScrollView keyboardShouldPersistTaps="handled">
               <TextInput
-                mode='flat'
+                mode="flat"
                 dense
                 style={[Styles.backgroundColor]}
-                label='Remarks/Reason'
+                label="Remarks/Reason"
                 value={remarks}
                 onChangeText={(text) => {
                   setRemarks(text);
@@ -619,7 +632,7 @@ const DesignPendingTab = ({
                 }}
                 error={errorR}
               />
-              <HelperText type='error' visible={errorR}>
+              <HelperText type="error" visible={errorR}>
                 {communication.InvalidRemarks}
               </HelperText>
               <View>
@@ -636,7 +649,7 @@ const DesignPendingTab = ({
                   {response?.map((item, idx) => (
                     <RadioButton.Item
                       key={idx}
-                      position='leading'
+                      position="leading"
                       style={[Styles.paddingVertical2]}
                       labelStyle={[Styles.textLeft, Styles.paddingStart4]}
                       label={item.reponse_name}
@@ -644,7 +657,7 @@ const DesignPendingTab = ({
                     />
                   ))}
                 </RadioButton.Group>
-                <HelperText type='error' visible={errorCAT}>
+                <HelperText type="error" visible={errorCAT}>
                   {communication.InvalidClientApprovedThrough}
                 </HelperText>
               </View>
@@ -661,23 +674,23 @@ const DesignPendingTab = ({
                   source={{ uri: image }}
                   style={[Styles.width64, Styles.height64, Styles.border1]}
                 />
-                <Button mode='text' onPress={chooseFile}>
-                  {filePath !== null ? 'Replace' : 'Choose Image'}
+                <Button mode="text" onPress={chooseFile}>
+                  {filePath !== null ? "Replace" : "Choose Image"}
                 </Button>
               </View>
             </ScrollView>
           </Dialog.Content>
           <Dialog.Actions style={[Styles.padding16]}>
             <Button
-              mode='outlined'
+              mode="outlined"
               onPress={() => {
                 setPopupVisible(false);
-                setValue('');
-                setRemarks('');
+                setValue("");
+                setRemarks("");
                 setErrorR(false);
                 setErrorCAT(false);
-                setDesignImage('');
-                setImage(AWSImagePath + 'placeholder-image.png');
+                setDesignImage("");
+                setImage(AWSImagePath + "placeholder-image.png");
                 setFilePath(null);
               }}
             >
@@ -686,7 +699,7 @@ const DesignPendingTab = ({
             <Button
               style={[Styles.marginStart12]}
               loading={isButtonLoading}
-              mode='contained'
+              mode="contained"
               onPress={ValidateEstimationStatus}
             >
               Confirm
@@ -699,29 +712,29 @@ const DesignPendingTab = ({
 };
 const stylesm = StyleSheet.create({
   button: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'green',
+    backgroundColor: "green",
   },
   button1: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
   text: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 0.25,
-    color: 'white',
+    color: "white",
   },
   modalIndex: {
     zIndex: 999999,
@@ -730,7 +743,7 @@ const stylesm = StyleSheet.create({
     margin: 15,
     height: 40,
 
-    borderColor: 'grey',
+    borderColor: "grey",
     borderWidth: 1,
   },
 });

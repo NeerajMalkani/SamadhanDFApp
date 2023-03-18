@@ -120,6 +120,7 @@ const DesignWiseScreen = ({ navigation }) => {
               listData2={pendingData[0]}
               listSearchData2={pendingSearchData[0]}
               fetch={FetchData}
+              navigation={navigation}
             />
           </ScrollView>
         );
