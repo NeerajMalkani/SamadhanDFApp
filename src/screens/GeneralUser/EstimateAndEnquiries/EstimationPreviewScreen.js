@@ -107,6 +107,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
+  console.log(selectedData);
 
   const AddMoreDesigns = () => {
     InsertDesignEstimationEnquiry('add');

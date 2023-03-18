@@ -1,37 +1,43 @@
-import { View, ScrollView, StyleSheet } from "react-native";
-import React, { useEffect, useState } from "react";
-import { TextInput, Button, Snackbar } from "react-native-paper";
-import { Styles } from "../../../styles/styles";
-import Dropdown from "../../../components/Dropdown";
-import { Table, TableWrapper, Row, Col } from "react-native-table-component";
-import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { theme } from "../../../theme/apptheme";
-import { useIsFocused } from "@react-navigation/native";
-import Provider from "../../../api/Provider";
-import { communication } from "../../../utils/communication";
+import { View, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TextInput, Button, Snackbar } from 'react-native-paper';
+import { Styles } from '../../../styles/styles';
+import Dropdown from '../../../components/Dropdown';
+import { Table, TableWrapper, Row, Col } from 'react-native-table-component';
+import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { theme } from '../../../theme/apptheme';
+import { useIsFocused } from '@react-navigation/native';
+import Provider from '../../../api/Provider';
+import { communication } from '../../../utils/communication';
 let user = null;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 10, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 16, paddingTop: 10, backgroundColor: '#fff' },
   header: { height: 70, backgroundColor: theme.colors.primary },
-  subheader: { height: 30, backgroundColor: "white" },
-  text: { textAlign: "center", fontWeight: "100" },
-  headertext: { textAlign: "center", fontWeight: "800", color: "white" },
+  subheader: { height: 30, backgroundColor: 'white' },
+  text: { textAlign: 'center', fontWeight: '100' },
+  headertext: { textAlign: 'center', fontWeight: '800', color: 'white' },
   dataWrapper: { marginTop: -1 },
-  row: { height: 50, backgroundColor: "white" },
+  row: { height: 50, backgroundColor: 'white' },
 });
 
 const InvoiceReceipt = ({ route, navigation }) => {
   const [state, setState] = useState({
-    mf_po_refno: "",
-    mf_vo_refno: "",
-    invoice_no: "",
+    mf_po_refno: '',
+    mf_vo_refno: '',
+    invoice_no: '',
     invoice_entry_date: new Date().toLocaleDateString().substring(0, 11),
     invoice_date: new Date(),
-    transport_charges: "",
+    transport_charges: '',
+    cgst: '',
+    sgst: '',
+    igst: '',
   });
   const onChange = (text, name) => {
+    if (errors[name]) {
+      setErrors((state) => ({ ...state, [name]: false }));
+    }
     setState((state) => ({ ...state, [name]: text }));
   };
   const isFocused = useIsFocused();
@@ -40,9 +46,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
   const [production, setProduction] = useState([]);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarText, setSnackbarText] = useState('');
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
+    theme.colors.success,
   );
   const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -50,6 +56,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
     mf_vo_refno: false,
     invoice_no: false,
     transport_charges: false,
+    cgst: false,
+    igst: false,
+    sgst: false,
   });
   const fetchPurchaseOrderNo = () => {
     Provider.createDFManufacturer(
@@ -60,7 +69,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           Sess_company_refno: user.Sess_company_refno,
           Sess_branch_refno: user.Sess_branch_refno,
         },
-      }
+      },
     ).then((res) => {
       if (res.data.data) {
         setPurchaseNo(res.data.data);
@@ -78,9 +87,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
           Sess_branch_refno: user.Sess_branch_refno,
           mf_po_refno,
         },
-      }
+      },
     ).then((res) => {
-      console.log("other", res.data.data[0]);
+      console.log('other', res.data.data[0]);
       setState((state) => ({ ...state, ...res.data.data[0] }));
     });
 
@@ -93,11 +102,11 @@ const InvoiceReceipt = ({ route, navigation }) => {
           Sess_branch_refno: user.Sess_branch_refno,
           mf_po_refno,
         },
-      }
+      },
     )
       .then((res) => {
         console.log(res.data.data);
-        if (res.data.code == "200" && res.data.data) {
+        if (res.data.code == '200' && res.data.data) {
           setJobOrderNo(res.data.data);
         }
       })
@@ -105,7 +114,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
   };
 
   const fetchUser = async () => {
-    const data = await AsyncStorage.getItem("user");
+    const data = await AsyncStorage.getItem('user');
     if (data) {
       user = JSON.parse(data);
       fetchPurchaseOrderNo();
@@ -125,11 +134,14 @@ const InvoiceReceipt = ({ route, navigation }) => {
         Sess_company_refno: user.Sess_company_refno,
         Sess_branch_refno: user.Sess_branch_refno,
         mf_po_refno: purchaseno.find(
-          (item) => item.purchaseorderno === state.mf_po_refno
+          (item) => item.purchaseorderno === state.mf_po_refno,
         ).mf_po_refno,
         mf_vo_refno: joborderno.find(
-          (item) => item.joborderno === state.mf_vo_refno
+          (item) => item.joborderno === state.mf_vo_refno,
         ).mf_vo_refno,
+        cgst: state.cgst,
+        sgst: state.sgst,
+        igst: state.igst,
         invoice_no: state.invoice_no,
         invoice_entry_date: state.invoice_entry_date,
         invoice_date: state.invoice_date,
@@ -151,12 +163,12 @@ const InvoiceReceipt = ({ route, navigation }) => {
 
     Provider.createDFManufacturer(
       Provider.API_URLS.vendororder_invoiceformcreate,
-      params
+      params,
     )
       .then((response) => {
         console.log(response.data.data);
         if (response.data && response.data.data.Created == 1) {
-          route.params.fetchData("add");
+          route.params.fetchData('add');
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
@@ -176,6 +188,24 @@ const InvoiceReceipt = ({ route, navigation }) => {
 
   const ValidateData = () => {
     let isValid = true;
+    if (state.cgst === '') {
+      setErrors((prev) => {
+        return { ...prev, cgst: true };
+      });
+      isValid = false;
+    }
+    if (state.sgst === '') {
+      setErrors((prev) => {
+        return { ...prev, sgst: true };
+      });
+      isValid = false;
+    }
+    if (state.igst === '') {
+      setErrors((prev) => {
+        return { ...prev, igst: true };
+      });
+      isValid = false;
+    }
     if (state.mf_po_refno.length === 0) {
       setErrors((prev) => {
         return { ...prev, mf_po_refno: true };
@@ -214,19 +244,19 @@ const InvoiceReceipt = ({ route, navigation }) => {
         Sess_company_refno: user.Sess_company_refno,
         Sess_branch_refno: user.Sess_branch_refno,
         mf_po_refno: purchaseno.find(
-          (item) => item.purchaseorderno === state.mf_po_refno
+          (item) => item.purchaseorderno === state.mf_po_refno,
         ).mf_po_refno,
         mf_vo_refno: mf_vo_refno.mf_vo_refno,
-        mf_vo_invoice_refno: "0",
+        mf_vo_invoice_refno: '0',
       },
     };
     console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
-      params
+      params,
     )
       .then((res) => {
-        if (res.data.code == "200" && res.data.data) {
+        if (res.data.code == '200' && res.data.data) {
           setProduction(res.data.data);
         }
       })
@@ -236,7 +266,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
         style={[
           Styles.flex1,
           Styles.paddingHorizontal16,
@@ -245,15 +275,15 @@ const InvoiceReceipt = ({ route, navigation }) => {
       >
         <Dropdown
           data={purchaseno.map((obj) => obj.purchaseorderno)}
-          label="Purchase Order No"
+          label='Purchase Order No'
           onSelected={(text) => {
             if (text !== state.mf_po_refno) {
-              onChange(text, "mf_po_refno");
+              onChange(text, 'mf_po_refno');
               fetchOtherData(
                 purchaseno.find((item) => item.purchaseorderno === text)
-                  .mf_po_refno
+                  .mf_po_refno,
               );
-              setState((state) => ({ ...state, mf_vo_refno: "" }));
+              setState((state) => ({ ...state, mf_vo_refno: '' }));
               setJobOrderNo([]);
               setProduction([]);
               setErrors((prev) => {
@@ -270,14 +300,14 @@ const InvoiceReceipt = ({ route, navigation }) => {
         />
         <Dropdown
           data={joborderno?.map((obj) => obj.joborderno)}
-          label="Job Order No"
+          label='Job Order No'
           selectedItem={state.mf_vo_refno}
           onSelected={(text) => {
             if (text !== state.mf_vo_refno) {
-              onChange(text, "mf_vo_refno");
+              onChange(text, 'mf_vo_refno');
               setProduction([]);
               fetchProduction(
-                joborderno.find((item) => item.joborderno === text)
+                joborderno.find((item) => item.joborderno === text),
               );
               setErrors((prev) => {
                 return {
@@ -290,9 +320,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
           isError={errors.mf_vo_refno}
         />
         <TextInput
-          mode="flat"
-          label="Invoice No"
-          style={{ backgroundColor: "white" }}
+          mode='flat'
+          label='Invoice No'
+          style={{ backgroundColor: 'white' }}
           value={state.invoice_no}
           onChangeText={(text) => {
             setErrors((prev) => {
@@ -301,49 +331,77 @@ const InvoiceReceipt = ({ route, navigation }) => {
                 invoice_no: false,
               };
             });
-            onChange(text, "invoice_no");
+            onChange(text, 'invoice_no');
           }}
           error={errors.invoice_no}
         />
         <TextInput
-          mode="flat"
-          label="Invoice Entry Date"
+          mode='flat'
+          label='Invoice Entry Date'
           disabled={true}
           value={state.invoice_entry_date}
-          style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: 'white' }}
         />
         <DateTimePicker
-          label="Date of Invoice"
+          label='Date of Invoice'
           value={state.invoice_date}
-          type="date"
-          style={{ backgroundColor: "white" }}
-          onChangeDate={(date) => onChange(date, "invoice_date")}
+          type='date'
+          style={{ backgroundColor: 'white' }}
+          onChangeDate={(date) => onChange(date, 'invoice_date')}
         />
         <TextInput
-          mode="flat"
-          label="Supplier Name"
+          mode='flat'
+          label='Supplier Name'
           disabled={true}
-          value={state.supplier_name || ""}
-          style={{ backgroundColor: "white" }}
+          value={state.supplier_name || ''}
+          style={{ backgroundColor: 'white' }}
         />
         <TextInput
-          mode="flat"
-          label="Basic Amount"
+          mode='flat'
+          label='Basic Amount'
           disabled={true}
-          value={state.basic_amount || ""}
-          style={{ backgroundColor: "white" }}
+          value={state.basic_amount || ''}
+          style={{ backgroundColor: 'white' }}
+        />
+
+        <TextInput
+          mode='flat'
+          label='CGST(%)'
+          value={state.cgst || ''}
+          keyboardType='numeric'
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, 'cgst')}
+          style={{ backgroundColor: 'white' }}
+          error={errors.cgst}
         />
         <TextInput
-          mode="flat"
-          label="Transporation Charges"
-          style={{ backgroundColor: "white" }}
+          mode='flat'
+          label='SGST(%)'
+          value={state.sgst || ''}
+          keyboardType='numeric'
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, 'sgst')}
+          style={{ backgroundColor: 'white' }}
+          error={errors.sgst}
+        />
+        <TextInput
+          mode='flat'
+          label='IGST(%)'
+          value={state.igst || ''}
+          keyboardType='numeric'
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, 'igst')}
+          style={{ backgroundColor: 'white' }}
+          error={errors.igst}
+        />
+        <TextInput
+          mode='flat'
+          label='Transporation Charges'
+          style={{ backgroundColor: 'white' }}
           value={state.transport_charges}
           error={errors.transport_charges}
           onChangeText={(text) => {
             setErrors((prev) => {
               return { ...prev, transport_charges: false };
             });
-            onChange(text, "transport_charges");
+            onChange(text, 'transport_charges');
           }}
         />
 
@@ -351,13 +409,13 @@ const InvoiceReceipt = ({ route, navigation }) => {
           <View style={styles.container}>
             <ScrollView horizontal={true}>
               <View>
-                <Table borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}>
+                <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
                   <Row
                     data={[
-                      "Product Name \n » Brand",
-                      "Weight \n Per Piece",
-                      "Total.No. \n of Products",
-                      "No.of.Coil (Received)",
+                      'Product Name \n » Brand',
+                      'Weight \n Per Piece',
+                      'Total.No. \n of Products',
+                      'No.of.Coil (Received)',
                     ]}
                     widthArr={[85, 58, 58, 90]}
                     style={styles.header}
@@ -367,11 +425,11 @@ const InvoiceReceipt = ({ route, navigation }) => {
 
                 <ScrollView style={styles.dataWrapper}>
                   <Table
-                    borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
+                    borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
                   >
                     {production.map((item, index) => (
                       <TableWrapper
-                        style={{ flexDirection: "row" }}
+                        style={{ flexDirection: 'row' }}
                         key={index}
                       >
                         <Col
@@ -402,10 +460,10 @@ const InvoiceReceipt = ({ route, navigation }) => {
                                       length:
                                         parseInt(item.coils_received_nos) + 1,
                                     },
-                                    (_, i) => String(i + 1)
+                                    (_, i) => String(i + 1),
                                   ),
                                 ]}
-                                label=""
+                                label=''
                                 selectedItem={item.coils_received}
                                 onSelected={(selectedItem) =>
                                   setProduction((prev) =>
@@ -418,7 +476,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
                                           coils_received: selectedItem,
                                         };
                                       }
-                                    })
+                                    }),
                                   )
                                 }
                               />
@@ -439,35 +497,35 @@ const InvoiceReceipt = ({ route, navigation }) => {
         {console.log(production[0])}
         {production.length > 0 && (
           <View style={{ padding: 5 }}>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="flat"
-                  label="Slitting scrap (mm)"
+                  mode='flat'
+                  label='Slitting scrap (mm)'
                   disabled={true}
                   value={production[0].scrab_wastage}
-                  style={{ backgroundColor: "white" }}
+                  style={{ backgroundColor: 'white' }}
                 />
               </View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="flat"
-                  label="Slitting scrap (Kg)"
+                  mode='flat'
+                  label='Slitting scrap (Kg)'
                   disabled={true}
                   value={production[0].scrab_wastage_kg}
-                  style={{ backgroundColor: "white" }}
+                  style={{ backgroundColor: 'white' }}
                 />
               </View>
             </View>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 0.5 }}></View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="flat"
-                  label="Total Weight"
+                  mode='flat'
+                  label='Total Weight'
                   disabled={true}
                   value={production[0].total_weight}
-                  style={{ backgroundColor: "white" }}
+                  style={{ backgroundColor: 'white' }}
                 />
               </View>
               <View style={{ flex: 0.5 }}></View>
@@ -475,8 +533,8 @@ const InvoiceReceipt = ({ route, navigation }) => {
           </View>
         )}
         <Button
-          mode="contained"
-          style={{ alignSelf: "center", marginTop: 5 }}
+          mode='contained'
+          style={{ alignSelf: 'center', marginTop: 5 }}
           onPress={ValidateData}
           disabled={isbuttonLoading}
         >
