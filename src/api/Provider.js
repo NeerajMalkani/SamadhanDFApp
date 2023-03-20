@@ -154,6 +154,8 @@ class Provider {
       "get_categoryname_II_productforproductionform/",
     contractor_scdesign_estimation_finallytakeproject_update:
       "contractor_scdesign_estimation_finallytakeproject_update/",
+    contractor_quotation_finallytakeproject_update:
+      "contractor_quotation_finallytakeproject_update/",
     gsmrefnocheck: "gsmrefnocheck/",
     get_brandname_productforproductionform:
       "get_brandname_productforproductionform/",
@@ -584,6 +586,8 @@ class Provider {
     getbranchlist_pckaddexpensesform: "getbranchlist_pckaddexpensesform/",
     getdesignationlist_pckaddexpensesform:
       "getdesignationlist_pckaddexpensesform/",
+    client_quotation_approve: "client_quotation_approve/",
+    client_quotation_reject: "client_quotation_reject/",
     getemployeelist_pckaddexpensesform: "getemployeelist_pckaddexpensesform/",
     client_mydesign_estimation_approve: "client_mydesign_estimation_approve/",
     client_mydesign_estimation_reject: "client_mydesign_estimation_reject/",
@@ -766,11 +770,11 @@ class Provider {
         params
       );
       const acceptedEnq = await axios.post(
-        `${BASE_URL_CLIENT}/client_quotation_approve/`,
+        `${BASE_URL_CLIENT}/client_quotation_approvedlist/`,
         params
       );
       const rejectedEnq = await axios.post(
-        `${BASE_URL_CLIENT}/client_quotation_reject/`,
+        `${BASE_URL_CLIENT}/client_quotation_rejectedlist/`,
         params
       );
 
@@ -842,7 +846,6 @@ class Provider {
         `${BASE_URL_Contractor}/get_clientresponsetypelist/`,
         params
       );
-      console.log(approvedPending.data.data);
       return {
         approvedPending: approvedPending.data.data
           ? approvedPending.data.data

@@ -111,67 +111,51 @@ const QuotationWiseScreen = ({ navigation }) => {
         );
       case "quotationsendpendinglist":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <QuotationSendPendingList
-              type="QuotationSendPendingList"
-              set={setIsLoading}
-              unload={unload}
-              listData2={quotattionSendPending}
-              response={response}
-              fetch={FetchData}
-              navigation={navigation}
-            />
-            {/* <DesignPendingTab navigation={navigation} listData={pendingData} listSearchData={pendingSearchData} fetchData={FetchData} /> */}
-          </ScrollView>
+          <QuotationSendPendingList
+            type="QuotationSendPendingList"
+            set={setIsLoading}
+            unload={unload}
+            listData2={quotattionSendPending}
+            response={response}
+            fetch={FetchData}
+            navigation={navigation}
+          />
         );
       case "quotationapprovependinglist":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <QuotationApprovePendingList
-              type="QuotationApprovePendingList"
-              set={setIsLoading}
-              unload={unload}
-              listData2={quotationApprovePendingList}
-              response={response}
-              fetch={FetchData}
-              navigation={navigation}
-            />
-            {/* <DesignApprovedTab navigation={navigation} listData={approvedData} listSearchData={approvedSearchData} fetchData={FetchData} /> */}
-          </ScrollView>
+          <QuotationApprovePendingList
+            type="QuotationApprovePendingList"
+            set={setIsLoading}
+            unload={unload}
+            listData2={quotationApprovePendingList}
+            response={response}
+            fetch={FetchData}
+            navigation={navigation}
+          />
         );
       case "quotationapprovedlist":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <QuotationApprovedList
-              navigation={navigation}
-              designGalleryData={quotationApprovedList}
-              fetchData={FetchData}
-            />
-            {/* <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} /> */}
-          </ScrollView>
+          <QuotationApprovedList
+            type="QuotationApprovedList"
+            set={setIsLoading}
+            unload={unload}
+            listData2={quotationApprovedList}
+            response={response}
+            fetch={FetchData}
+            navigation={navigation}
+          />
         );
       case "rejected":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <QuotationRejected
-              navigation={navigation}
-              designGalleryData={quotationRejected}
-              fetchData={FetchData}
-            />
-            {/* <DesignRejectedTab navigation={navigation} listData={rejectedData} listSearchData={rejectedSearchData} fetchData={FetchData} /> */}
-          </ScrollView>
+          <QuotationRejected
+            type="QuotationRejectedList"
+            set={setIsLoading}
+            unload={unload}
+            listData2={quotationRejected}
+            response={response}
+            fetch={FetchData}
+            navigation={navigation}
+          />
         );
     }
   };

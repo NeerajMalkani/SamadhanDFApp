@@ -123,30 +123,24 @@ const QuotationTabs = ({
         <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Estimation No :
+              Quotation No :
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Product :
+              Project Name :
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Design No :
-            </Text>
-            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Total Sq.Ft. :
+              Contact Person & Number :
             </Text>
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.cont_estimation_no}
+              {data.item.cont_quot_no}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.product_name}
+              {data.item.project_name}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.design_no}
-            </Text>
-            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.totalfoot}
+              {data.item?.contact_person} & {data.item?.contact_mobile_no}
             </Text>
           </View>
         </View>
@@ -161,6 +155,7 @@ const QuotationTabs = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
+              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{
@@ -182,26 +177,19 @@ const QuotationTabs = ({
     const params = {
       data: {
         Sess_UserRefno: userID,
-        cont_estimation_refno: current.cont_estimation_refno,
+        cont_quot_refno: current.cont_quot_refno,
       },
     };
     Provider.createDFClient(
-      text === "Accept"
-        ? Provider.API_URLS.client_mydesign_estimation_approve
-        : Provider.API_URLS.client_mydesign_estimation_reject,
+      text === "Approve"
+        ? Provider.API_URLS.client_quotation_approve
+        : Provider.API_URLS.client_quotation_reject,
       params
     )
       .then((response) => {
-        console.log("resp", response.data);
-        console.log("params", params);
         if (response.data && response.data.data) {
           if (response.data.data.Updated == 1) {
-            fetch(
-              0,
-              text == "Accept"
-                ? "Accepted Successfully!"
-                : "Rejected Successfully!"
-            );
+            fetch(0, text + "Successfully!");
           } else {
             unload("Failed");
           }
@@ -278,70 +266,60 @@ const QuotationTabs = ({
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
+          <Title style={[Styles.paddingHorizontal16]}>Details</Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Image
-                source={{ uri: current.design_image_url }}
-                style={{ width: 350, height: 159 }}
+            <List.Item
+              title="Quotation No."
+              description={current.cont_quot_no}
+            />
+            <List.Item
+              title="Project Name"
+              description={current.project_name}
+            />
+            <List.Item
+              title="Contact Person"
+              description={current.contact_person}
+            />
+            <List.Item
+              title="Contact Person Number"
+              description={current.contact_mobile_no}
+            />
+            <List.Item
+              title="Quotation Unit"
+              description={current.quot_unit_type_name}
+            />
+            <List.Item
+              title="Materials"
+              description={current.material_status}
+            />
+            {current.quot_status_name !== undefined && (
+              <List.Item
+                title="Quotation Status"
+                description={current.quot_status_name}
               />
-            </View>
-            <List.Item
-              title="Estimate No"
-              description={current.cont_estimation_no}
-            />
-            <List.Item title="Service" description={current.service_name} />
-            <List.Item title="Category" description={current.category_name} />
-            <List.Item title="Product" description={current.product_name} />
-            <List.Item
-              title="Design Type"
-              description={current.designtype_name}
-            />
-            <List.Item title="Design No" description={current.design_no} />
-            <List.Item title="Total Sq.Ft" description={current.totalfoot} />
-            <List.Item
-              title="Actual Materials Cost"
-              description={current.total_materials_cost}
-            />
-            <List.Item
-              title="Actual Labour Cost"
-              description={current.total_labours_cost}
-            />
+            )}
             {current?.estimation_status !== undefined && (
               <List.Item
                 title="Estimation Status"
                 description={current.estimation_status}
               />
             )}
-            {type == "new" && (
-              <>
-                <Card.Content style={[Styles.marginTop16]}>
-                  <Button
-                    mode="contained"
-                    onPress={() => {
-                      showDialog();
-                      setText("Accept");
-                    }}
-                    style={stylesm.button}
-                  >
-                    Accept
-                  </Button>
-                </Card.Content>
-                <Card.Content style={[Styles.marginTop16]}>
-                  <Button
-                    mode="contained"
-                    onPress={() => {
-                      showDialog();
-                      setText("Reject");
-                    }}
-                    style={stylesm.button1}
-                  >
-                    Reject
-                  </Button>
-                </Card.Content>
-              </>
-            )}
-            <View style={{ height: 20 }}></View>
+            {current?.action_status_name?.map((item, index) => (
+              <Card.Content style={[Styles.marginTop16]} key={index}>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    showDialog();
+                    setText(item);
+                  }}
+                  style={item == "Reject" ? stylesm.button1 : stylesm.button}
+                >
+                  {item}
+                </Button>
+              </Card.Content>
+            ))}
+
+            <View style={{ height: 15 }}></View>
           </ScrollView>
         </View>
       </RBSheet>

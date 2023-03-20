@@ -88,51 +88,36 @@ const QuotationWise = ({ navigation }) => {
     switch (route.key) {
       case "new":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignPendingTab
-              set={setIsLoading}
-              unload={unload}
-              listData2={pendingData[0]}
-              listSearchData2={pendingSearchData[0]}
-              fetch={FetchData}
-              type={"new"}
-            />
-          </ScrollView>
+          <DesignPendingTab
+            set={setIsLoading}
+            unload={unload}
+            listData2={pendingData[0]}
+            listSearchData2={pendingSearchData[0]}
+            fetch={FetchData}
+            type={"new"}
+          />
         );
       case "approved":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignApprovedTab
-              set={setIsLoading}
-              unload={unload}
-              listData2={approvedData[0]}
-              listSearchData2={approvedSearchData[0]}
-              fetch={FetchData}
-              type="approved"
-            />
-          </ScrollView>
+          <DesignApprovedTab
+            set={setIsLoading}
+            unload={unload}
+            listData2={approvedData[0]}
+            listSearchData2={approvedSearchData[0]}
+            fetch={FetchData}
+            type="approved"
+          />
         );
       case "rejected":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignRejectedTab
-              set={setIsLoading}
-              unload={unload}
-              listData2={rejectedData[0]}
-              listSearchData2={rejectedSearchData[0]}
-              fetch={FetchData}
-              type="rejected"
-            />
-          </ScrollView>
+          <DesignRejectedTab
+            set={setIsLoading}
+            unload={unload}
+            listData2={rejectedData[0]}
+            listSearchData2={rejectedSearchData[0]}
+            fetch={FetchData}
+            type="rejected"
+          />
         );
     }
   };
