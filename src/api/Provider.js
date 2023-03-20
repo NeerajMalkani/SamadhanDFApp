@@ -740,11 +740,37 @@ class Provider {
         params
       );
       const acceptedEnq = await axios.post(
-        `${BASE_URL_CLIENT}/client_mydesign_estimation_approvedlist//`,
+        `${BASE_URL_CLIENT}/client_mydesign_estimation_approvedlist/`,
         params
       );
       const rejectedEnq = await axios.post(
         `${BASE_URL_CLIENT}/client_mydesign_estimation_rejectedlist/`,
+        params
+      );
+
+      return {
+        newEnq: newEnq.data.data ? newEnq.data.data : [],
+        acceptedEnq: acceptedEnq.data.data ? acceptedEnq.data.data : [],
+        rejectedEnq: rejectedEnq.data.data ? rejectedEnq.data.data : [],
+      };
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
+
+  async getmyquotation(params, unload) {
+    try {
+      const newEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_quotation_pendinglist/`,
+        params
+      );
+      const acceptedEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_quotation_approve/`,
+        params
+      );
+      const rejectedEnq = await axios.post(
+        `${BASE_URL_CLIENT}/client_quotation_reject/`,
         params
       );
 
@@ -785,6 +811,44 @@ class Provider {
         gallery: gallery.data.data ? gallery.data.data : [],
         pending: pending.data.data ? pending.data.data : [],
         accepted: accepted.data.data ? accepted.data.data : [],
+        rejected: rejected.data.data ? rejected.data.data : [],
+        response: response.data.data ? response.data.data : [],
+      };
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
+
+  async getcontractorquotationwise(params, unload) {
+    try {
+      const approvedPending = await axios.post(
+        `${BASE_URL_Contractor}/contractor_quotation_approved_pendng_list/`,
+        params
+      );
+      const sendPending = await axios.post(
+        `${BASE_URL_Contractor}/contractor_quotation_send_pendng_list/`,
+        params
+      );
+      const approved = await axios.post(
+        `${BASE_URL_Contractor}/contractor_quotation_approved_list/`,
+        params
+      );
+      const rejected = await axios.post(
+        `${BASE_URL_Contractor}/contractor_quotation_rejected_list/`,
+        params
+      );
+      const response = await axios.post(
+        `${BASE_URL_Contractor}/get_clientresponsetypelist/`,
+        params
+      );
+      console.log(approvedPending.data.data);
+      return {
+        approvedPending: approvedPending.data.data
+          ? approvedPending.data.data
+          : [],
+        sendPending: sendPending.data.data ? sendPending.data.data : [],
+        approved: approved.data.data ? approved.data.data : [],
         rejected: rejected.data.data ? rejected.data.data : [],
         response: response.data.data ? response.data.data : [],
       };

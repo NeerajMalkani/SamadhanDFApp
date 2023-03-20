@@ -111,6 +111,7 @@ import BranchListScreen from "./src/screens/Common/Organization/BranchScreen";
 import BranchEditScreen from "./src/screens/Common/Organization/AddItem/AddBranchScreen";
 import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
 import DesignWise from "./src/screens/Common/Client/Enquiries/DesignWise";
+import QuotationWise from "./src/screens/Common/Client/Quotations/QuotationWise";
 import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
 import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
 import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
@@ -1269,6 +1270,11 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="DesignWise"
                 component={DesignWise}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="QuotationWise"
+                component={QuotationWise}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}

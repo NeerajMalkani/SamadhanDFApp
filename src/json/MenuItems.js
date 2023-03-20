@@ -1326,7 +1326,7 @@ export const MenuItemsClient = [
         title: "My Quotation",
         type: "accordian",
         index: 10,
-        navigation: "YourEstimationsScreen",
+        navigation: "QuotationWise",
       },
       {
         title: "My Design Estimation",

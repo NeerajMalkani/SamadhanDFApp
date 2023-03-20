@@ -1,89 +1,198 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
-import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText, DataTable } from "react-native-paper";
+import axios from "axios";
+import { BASE_URL_Contractor } from "../../../api/Provider";
+import {
+  Image,
+  ActivityIndicator,
+  View,
+  RefreshControl,
+  LogBox,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import {
+  FAB,
+  List,
+  Searchbar,
+  Snackbar,
+  Title,
+  Dialog,
+  Portal,
+  Paragraph,
+  Button,
+  Text,
+  TextInput,
+  Card,
+  HelperText,
+  Subheading,
+  RadioButton,
+} from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { creds } from "../../../utils/credentials";
 import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RenderHiddenItems, RenderHiddenMultipleItems } from "../../../components/ListActions";
-import { Styles } from "../../../styles/styles";
-import { NullOrEmpty } from "../../../utils/validations";
-import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-// import SearchNAdd from "../../../AddItems/SearchNAdd";
+import { RNS3 } from "react-native-aws3";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Styles } from "../../../styles/styles";
+import { AWSImagePath } from "../../../utils/paths";
+import uuid from "react-native-uuid";
 
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 
-const QuotationApprovePendingList = ({ navigation }) => {
-
-   //#region Variables
-  const [searchQuery, setSearchQuery] = React.useState("");
+let userID = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
+let Sess_company_refno = 0;
+let Sess_branch_refno = 0;
+const QuotationApprovePendingList = ({
+  set,
+  listData2,
+  response,
+  fetch,
+  unload,
+  navigation,
+}) => {
+  const [popupVisible, setPopupVisible] = React.useState(false);
+  const [remarks, setRemarks] = React.useState("");
+  const [errorR, setErrorR] = React.useState(false);
+  const [value, setValue] = React.useState("");
+  const [errorCAT, setErrorCAT] = React.useState(false);
+  const [designImage, setDesignImage] = React.useState("");
+  const [image, setImage] = React.useState(
+    AWSImagePath + "placeholder-image.png"
+  );
+  const [filePath, setFilePath] = React.useState(null);
+  const [status, setStatus] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [text, setText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const listData = React.useState([]);
   const listSearchData = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [current, setCurrent] = React.useState({});
+  const refRBSheet = useRef();
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
 
-  const [quotationNo, setQuotationNo] = React.useState("");
-  const [projectName, setProjectName] = React.useState("");
-  const [clientContactPerson, setClientContactPerson] = React.useState("");
-  const [clientContactNumber, setClientContactNumber] = React.useState("");
-  const [quotationUnit,setQuotationUnit] = React.useState("");
-  const [material,setMaterial]=React.useState("");
-  const [clientStatus,setClientStatus]=React.useState("");
-  const [quotationStatus,setQuotationStatus]=React.useState("");
-  const [action, setAction] = React.useState("");
-  const refRBSheet = useRef();
-
-
-
- //#endregion 
-
- //#region Functions
-
-  const FetchData = (from) => {
-    if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
-      setSnackbarColor(theme.colors.success);
-      setSnackbarVisible(true);
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
+      Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+      FetchData();
     }
-    Provider.getAll("master/getactivityroles")
-      .then((response) => {
-        if (response.data && response.data.code === 200) {
-          if (response.data.data) {
-            const lisData = [...response.data.data];
-            lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
-            });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
-          }
-        } else {
-          listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
-        }
-        setIsLoading(false);
-        setRefreshing(false);
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        setSnackbarText(e.message);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-        setRefreshing(false);
+  };
+
+  const chooseFile = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
       });
+      if (!result.cancelled) {
+        const arrExt = result.uri.split(".");
+        const unique_id = uuid.v4();
+        setDesignImage(
+          AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
+        );
+        setImage(result.uri);
+        setFilePath(result);
+        setStatus(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const update = async () => {
+    const params = {
+      Sess_UserRefno: userID,
+      cont_estimation_refno: current.cont_estimation_refno,
+      estimation_remarks: remarks,
+      reponse_refno: value,
+    };
+    try {
+      set(true);
+      const datas = new FormData();
+      datas.append("data", JSON.stringify(params));
+      datas.append(
+        "attach_approved_proof",
+        status == true
+          ? {
+              name: designImage?.split(AWSImagePath)[1],
+              type: filePath?.type + "/*",
+              uri:
+                Platform.OS === "android"
+                  ? filePath?.uri
+                  : filePath?.uri.replace("file://", ""),
+            }
+          : ""
+      );
+      const resp = await axios.post(
+        `${BASE_URL_Contractor}/contractor_scdesign_estimation_reject/`,
+        datas,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (resp.data && resp.data.data.Rejected == "1") {
+        fetch(2, "Rejected Successfully");
+      } else {
+        unload("Error While Rejecting");
+      }
+    } catch (e) {
+      console.log(e);
+      unload("Error While Rejecting");
+    }
+  };
+  const ValidateEstimationStatus = () => {
+    let isValid = true;
+
+    if (remarks.length === 0) {
+      isValid = false;
+      setErrorR(true);
+    }
+    if (value === "") {
+      isValid = false;
+      setErrorCAT(true);
+    }
+
+    if (isValid) {
+      setPopupVisible(false);
+      update();
+    }
+  };
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const showDialog = () => {
+    refRBSheet.current.close();
+    setVisible(true);
+  };
+
+  const hideDialog = () => setVisible(false);
+
+  const FetchData = () => {
+    fetch();
+    listData[1](listData2);
+    listSearchData[1](listData2);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
 
   const onChangeSearch = (query) => {
@@ -93,166 +202,536 @@ const QuotationApprovePendingList = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.activityRoleName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.contactPerson
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase());
         })
       );
     }
   };
 
-//   const AddCallback = () => {
-//     navigation.navigate("AddSendRateCard", { type: "add", fetchData: FetchData });
-//   };
+  const sendQuotationToClient = () => {
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_scdesign_estimation_sendtoclient,
+      {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_company_refno: Sess_company_refno,
+          Sess_branch_refno: Sess_branch_refno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          cont_estimation_refno: current.cont_estimation_refno,
+        },
+      }
+    )
+      .then((res) => {
+        if (res.response.data) fetch(2, "Sent Quotation to Client");
+        else {
+          throw res;
+        }
+      })
+      .catch((error) => {
+        unload("Error while Sending Client");
+      });
+  };
 
+  const cancelQuotation = () => {
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_scdesign_estimation_cancel,
+      {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_company_refno: Sess_company_refno,
+          Sess_branch_refno: Sess_branch_refno,
+          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+          cont_estimation_refno: current.cont_estimation_refno,
+        },
+      }
+    )
+      .then((res) => {
+        if (res.response.data) fetch(2, "Sent Quotation to Client");
+        else {
+          throw res;
+        }
+      })
+      .catch((error) => {
+        unload("Error while Cancelling quotation");
+      });
+  };
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
-      <List.Item
-        title={data.item.projectName}
-        titleStyle={{ fontSize: 18 }}
-        description={`Quotation No: ${NullOrEmpty(data.item.quotationNo) ? "" : data.item.quotationNo} `}
-        onPress={() => {
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.paddingHorizontal16,
+          Styles.flexJustifyCenter,
+          {
+            height: 150,
+            borderWidth: 1.3,
+            marginBottom: 10,
+            borderRadius: 8,
+            borderColor: theme.colors.primary,
+          },
+        ]}
+      >
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Estimation No :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Product :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Design No :
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              Total Sq.Ft. :
+            </Text>
+          </View>
+          <View style={{ flex: 1.3 }}>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.cont_estimation_no}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.product_name}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.design_no}
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+              {data.item.totalfoot}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 10,
+            flexDirection: "row",
+          }}
+        >
+          <Button
+            mode="outlined"
+            onPress={() => {
+              // console.log(data.item);
 
-          refRBSheet.current.open(); 
-          setQuotationNo(data.item.quotationNo);
-          setProjectName(data.item.projectName);
-          setClientContactPerson(data.item.clientContactPerson);
-          setClientContactNumber(data.item.clientContactNumber);
-          setQuotationUnit(data.item.quotationUnit);
-          setMaterial(data.item.material);
-          setClientStatus(data.item.clientStatus);
-          setQuotationStatus(data.item.quotationStatus);
-          setAction(data.item.action);
+              navigation.navigate("ContractorEstimation", {
+                userDesignEstimationID: data.item?.cont_estimation_refno,
+                isContractor: true,
+                designImage: data.item?.design_image_url,
+                fetchData: fetch,
+                isUpdate: true,
+                data: data.item,
+                set: set,
+              });
+            }}
+            style={{
+              borderColor: theme.colors.primary,
+              borderWidth: 1.2,
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={() => {
+              refRBSheet.current.open();
 
-        }}
-        left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="notebook-check-outline" />}
-        right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-      />
-
-    </View>
+              setCurrent(data.item);
+            }}
+            style={{
+              borderColor: theme.colors.primary,
+              borderWidth: 1.2,
+            }}
+          >
+            View Actions
+          </Button>
+        </View>
+      </View>
     );
   };
 
-  const EditCallback = (data, rowMap) => {
-    rowMap[data.item.key].closeRow();
-    navigation.navigate("AddSendRateCard", {
-      type: "edit",
-      fetchData: FetchData,
+  const submit = () => {
+    hideDialog();
+    set(true);
+    const params = {
       data: {
-        id: data.item.id,
-        activityRoleName: data.item.activityRoleName,
-        display: data.item.display,
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+        cont_estimation_refno: current.cont_estimation_refno,
       },
-    });
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS
+        .contractor_scdesign_estimation_finallytakeproject_update,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          if (response.data.data.Updated == 1) {
+            fetch(0, text + "Successfully!");
+          } else {
+            unload("Failed");
+          }
+        } else {
+          unload("Failed");
+        }
+      })
+      .catch((e) => {
+        set(false);
+        unload("Failed");
+      });
   };
-
- //#endregion 
- 
   return (
     <View style={[Styles.flex1]}>
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData[0]?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            useFlatList={true}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
+          <Searchbar
+            style={[Styles.margin16]}
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
           />
+          <View style={{ padding: 10 }}>
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-160}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData[0]}
+              useFlatList={true}
+              disableRightSwipe={true}
+              rightOpenValue={-160}
+              renderItem={(data) => RenderItems(data)}
+            />
+          </View>
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
-      {/* <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} /> */}
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
-        {snackbarText}
-      </Snackbar>
-
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={620} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
-      <View style={[Styles.flexRow, Styles.paddingHorizontal16, Styles.marginTop12]}>
-            <Button
-              mode="contained"
-              onPress={() => {
-                refRBSheet.current.close();
-                setTimeout(() => {
-                  navigation.navigate("GetEstimationScreen", {
-                    userDesignEstimationID: id,
-                    clientID: clientID,
-                    isContractor: true,
-                    designImage: designTypeImage,
-                    fetchData: fetchData,
-                    isUpdate: true,
-                  });
-                }, 300);
-              }}
-              labelStyle={[{ textTransform: "capitalize" }]}
-              style={[Styles.yellowBgColor]}
-              icon={() => <Icon name="pencil" size={18} color={theme.colors.textLight} />}
-            >
-              Edit
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => {
-                setEstStatus(1);
-                refRBSheet.current.close();
-                setPopupVisible(true);
-              }}
-              labelStyle={[{ textTransform: "capitalize" }]}
-              style={[Styles.marginStart4, Styles.greenBgColor]}
-              icon={() => <Icon name="check-circle" size={18} color={theme.colors.textLight} />}
-            >
-              Approve
-            </Button>
-            <Button
-              mode="contained"
-              onPress={() => {
-                setEstStatus(2);
-                refRBSheet.current.close();
-                setPopupVisible(true);
-              }}
-              labelStyle={[{ textTransform: "capitalize" }]}
-              style={[Styles.marginStart4, Styles.redBgColor]}
-              icon={() => <Icon name="cancel" size={18} color={theme.colors.textLight} />}
-            >
-              Reject
-            </Button>
-          </View>
+      <View style={{ height: 80 }}></View>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        // onClose={() => setCurrent({})}
+        height={620}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{projectName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
           <ScrollView style={{ marginBottom: 64 }}>
-          <List.Item title="Quotation No" description={quotationNo} />
-            <List.Item title="Project Name" description={projectName} />
-            <List.Item title="Client Contact Person" description={clientContactPerson} />
-            <List.Item title="Client Contact Number" description={clientContactNumber} />
-            <List.Item title="Quotation Unit" description={quotationUnit} />
-            <List.Item title="Material" description={material} />
-            <List.Item title="Client Status" description={clientStatus} />
-            <List.Item title="Quotation Status" description={quotationStatus} />
-            <List.Item title="Action" description={action} />
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Image
+                source={{ uri: current.design_image_url }}
+                style={{ width: 350, height: 159 }}
+              />
+            </View>
+            <List.Item
+              title="Estimate No"
+              description={current.cont_estimation_no}
+            />
+            <List.Item title="Service" description={current.service_name} />
+            <List.Item title="Category" description={current.category_name} />
+            <List.Item title="Product" description={current.product_name} />
+            <List.Item
+              title="Design Type"
+              description={current.designtype_name}
+            />
+            <List.Item title="Design No" description={current.design_no} />
+            <List.Item title="Total Sq.Ft" description={current.totalfoot} />
+            <List.Item
+              title="Actual Materials Cost"
+              description={current.total_materials_cost}
+            />
+            <List.Item
+              title="Actual Labour Cost"
+              description={current.total_labours_cost}
+            />
+            {current?.estimation_status !== undefined && (
+              <List.Item
+                title="Estimation Status"
+                description={current.estimation_status}
+              />
+            )}
+            <>
+              <Card.Content style={[Styles.marginTop16]}>
+                {/* <Text>{current.action_status_name}</Text> */}
+                {current?.action_status_name?.includes(
+                  "Waiting for Client Approval"
+                ) ? (
+                  <Text
+                    style={{ textAlign: "center", color: "red", fontSize: 20 }}
+                  >
+                    Waiting for Client Approval
+                  </Text>
+                ) : (
+                  <>
+                    {/* {current.action_status_name?.includes("Reject") && ( */}
+                    <Button
+                      mode="outlined"
+                      style={{
+                        borderColor: "red",
+                        borderWidth: 1.2,
+                        color: "red",
+                      }}
+                      onPress={() => {
+                        refRBSheet.current.close();
+                        setPopupVisible(true);
+                      }}
+                    >
+                      <Text style={{ color: "red" }}> Reject</Text>
+                    </Button>
+                    {/* )} */}
+                    {current.action_status_name?.includes("Send to Client") && (
+                      <Button
+                        mode="outlined"
+                        style={{
+                          borderColor: "green",
+                          borderWidth: 1.2,
+                          color: "green",
+                        }}
+                        onPress={sendQuotationToClient}
+                      >
+                        <Text style={{ color: "green" }}>Send to Client</Text>
+                      </Button>
+                    )}
+                    {current.action_status_name?.includes(
+                      "Cancel Quotation"
+                    ) && (
+                      <Button
+                        onPress={cancelQuotation}
+                        mode="outlined"
+                        style={{
+                          borderColor: "red",
+                          borderWidth: 1.2,
+                          color: "red",
+                        }}
+                      >
+                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Card.Content>
+            </>
+            <View style={{ height: 20 }}></View>
           </ScrollView>
         </View>
       </RBSheet>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{
+          backgroundColor: snackbarColor,
+          zIndex: 99999999,
+        }}
+        zIndex={99999999}
+      >
+        {snackbarText}
+      </Snackbar>
 
+      {/* For 
+      -send quotation to client (button in list):379
+    -cancel quotation(button in list): 380
+    -reject(button click): opens same popup */}
+      <Portal>
+        <Dialog
+          visible={visible}
+          onDismiss={hideDialog}
+          style={[Styles.borderRadius8]}
+        >
+          <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>
+            Confirm to {text}?
+          </Dialog.Title>
+          <Dialog.Content>
+            <View
+              style={[
+                Styles.flexRow,
+                Styles.flexJustifyCenter,
+                Styles.flexAlignCenter,
+                Styles.marginTop16,
+              ]}
+            ></View>
+            <View></View>
+            <Card.Content style={[Styles.marginTop16]}>
+              <Button mode="contained" onPress={submit}>
+                Ok
+              </Button>
+            </Card.Content>
+            <Card.Content style={[Styles.marginTop16]}>
+              <Button mode="contained" onPress={hideDialog}>
+                Cancel
+              </Button>
+            </Card.Content>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
+
+      {/* for
+    -self & final approve(button click): opens a popup */}
+      <Portal>
+        <Dialog visible={popupVisible} dismissable={false}>
+          <Dialog.Title>Estimation Status</Dialog.Title>
+          <Dialog.Content>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <TextInput
+                mode="flat"
+                dense
+                style={[Styles.backgroundColor]}
+                label="Remarks/Reason"
+                value={remarks}
+                onChangeText={(text) => {
+                  setRemarks(text);
+                  setErrorR(false);
+                }}
+                error={errorR}
+              />
+              <HelperText type="error" visible={errorR}>
+                {communication.InvalidRemarks}
+              </HelperText>
+              <View>
+                <Subheading style={[Styles.marginBottom12]}>
+                  Client Approved Through
+                </Subheading>
+                <RadioButton.Group
+                  onValueChange={(value) => {
+                    setValue(value);
+                    setErrorCAT(false);
+                  }}
+                  value={value}
+                >
+                  {response?.map((item, idx) => (
+                    <RadioButton.Item
+                      key={idx}
+                      position="leading"
+                      style={[Styles.paddingVertical2]}
+                      labelStyle={[Styles.textLeft, Styles.paddingStart4]}
+                      label={item.reponse_name}
+                      value={item.reponse_refno}
+                    />
+                  ))}
+                </RadioButton.Group>
+                <HelperText type="error" visible={errorCAT}>
+                  {communication.InvalidClientApprovedThrough}
+                </HelperText>
+              </View>
+
+              <Subheading>Attach Client Approved Proof</Subheading>
+              <View
+                style={[
+                  Styles.flexRow,
+                  Styles.flexAlignEnd,
+                  Styles.marginTop16,
+                ]}
+              >
+                <Image
+                  source={{ uri: image }}
+                  style={[Styles.width64, Styles.height64, Styles.border1]}
+                />
+                <Button mode="text" onPress={chooseFile}>
+                  {filePath !== null ? "Replace" : "Choose Image"}
+                </Button>
+              </View>
+            </ScrollView>
+          </Dialog.Content>
+          <Dialog.Actions style={[Styles.padding16]}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setPopupVisible(false);
+                setValue("");
+                setRemarks("");
+                setErrorR(false);
+                setErrorCAT(false);
+                setDesignImage("");
+                setImage(AWSImagePath + "placeholder-image.png");
+                setFilePath(null);
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              style={[Styles.marginStart12]}
+              loading={isButtonLoading}
+              mode="contained"
+              onPress={ValidateEstimationStatus}
+            >
+              Confirm
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
+const stylesm = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "green",
+  },
+  button1: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "red",
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
+  modalIndex: {
+    zIndex: 999999,
+  },
+  input: {
+    margin: 15,
+    height: 40,
 
+    borderColor: "grey",
+    borderWidth: 1,
+  },
+});
 export default QuotationApprovePendingList;
