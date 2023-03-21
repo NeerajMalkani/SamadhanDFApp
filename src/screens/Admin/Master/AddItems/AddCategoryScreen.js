@@ -304,15 +304,15 @@ const AddCategoryScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSN}>
             {communication.InvalidServiceName}
           </HelperText>
-          <TextInput mode="flat" label="Category Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="outlined"label="Category Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput ref={ref_input2} mode="flat" label="HSN / SAC Code" value={hsn} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
+          <TextInput ref={ref_input2} mode="outlined" label="HSN / SAC Code" value={hsn} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onHSNChanged} style={{ backgroundColor: "white" }} error={hsnError} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput ref={ref_input3} mode="flat" label="GST Rate" value={gst} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
+          <TextInput ref={ref_input3} mode="outlined" label="GST Rate" value={gst} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>

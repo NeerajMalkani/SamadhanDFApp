@@ -325,7 +325,6 @@ const AddSource = ({ route, navigation }) => {
       setBankListStatus(true);
       //setMyBankList(data.pck_mybank_refno);
       setMyBankListEditID(data.pck_mybank_refno);
-      console.log('edit bank');
       FetchBankList(data.pck_mybank_refno, data.pck_mode_refno, data.pck_category_refno);
     }
 
@@ -334,7 +333,6 @@ const AddSource = ({ route, navigation }) => {
       setChequeNo(data.cheque_no);
     }
 
-    console.log(data.pck_sub_category_notes);
     if (data.pck_sub_category_notes != "") {
       setRentalDescriptionStatus(true);
       setRentalDescription(data.pck_sub_category_notes);
@@ -444,10 +442,8 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
       .then((response) => {
-        //console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //console.log(response.data.data);
             FetchRecepientMode();
             setEntryTypeFullData(response.data.data);
 
@@ -505,7 +501,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchReceptCategory = (receiptModeID, categoryID) => {
-    //console.log('start====');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -515,14 +510,11 @@ const AddSource = ({ route, navigation }) => {
         pck_entrytype_refno: _pktEntryTypeID,
       },
     };
-    //console.log(params);
     Provider.createDFPocketDairy(
       Provider.API_URLS.getcategoryname_pckaddsourceform,
       params
     )
       .then((response) => {
-        // console.log('recept data +++++++++++++');
-        // console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -581,9 +573,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchBankList = (bankID, receiptModeID, categoryID) => {
-    console.log(bankID);
-    console.log(receiptModeID);
-    console.log(categoryID);
+    
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -643,7 +633,6 @@ const AddSource = ({ route, navigation }) => {
     Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_sourceform, params)
       .then((response) => {
 
-        console.log('bank balance', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBankBalance(response.data.data[0].cashinbank.toString());
@@ -666,7 +655,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchReceiverList = (contactID, contactName, subCategoryID, contactTypeID) => {
-    //console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -676,11 +664,8 @@ const AddSource = ({ route, navigation }) => {
         UserPhoneBookAllContactList: ""
       }
     };
-    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        //console.log('Receiiver contact==============');
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
@@ -713,7 +698,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const CheckContactList = (contactList, originalList) => {
-    console.log('receiver data start ============');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -723,18 +707,11 @@ const AddSource = ({ route, navigation }) => {
         UserPhoneBookAllContactList: contactList
       }
     };
-    //console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
-        //console.log('Receiiver contact==============');
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('updated phone contact');
-            //console.log(originalList);
-            //console.log(response.data.data);
             var margedList = [];
-            console.log(originalList.length);
             let ct = 0;
             if (contactTypeStatus) {
               ct = contactTypeFullData.filter((el) => {
@@ -769,7 +746,6 @@ const AddSource = ({ route, navigation }) => {
               }
             });
 
-            //console.log(margedList);
             setIsContactLoading(false);
             navigation.navigate("PhoneContactDirectUpload", {
               phoneNumbers: margedList,
@@ -823,12 +799,10 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
       .then((response) => {
-        //console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setContactTypeFullData(response.data.data);
-            //console.log(response.data.data);
             const ct = response.data.data.map(
               (data) => data.pck_contacttype_name
             );
@@ -1038,10 +1012,6 @@ const AddSource = ({ route, navigation }) => {
       setReceivedStatus(true);
     }
 
-    ////console.log(receiptModeFullData);
-    ////console.log(mode[0].pckModeID);
-    ////console.log(category[0].pckCategoryID);
-
     if (category[0].pckCategoryID == 4) {
       setPaymentReminderStatus(true);
     }
@@ -1117,10 +1087,6 @@ const AddSource = ({ route, navigation }) => {
       return el.subCategoryName === text;
     });
 
-    ////console.log(receiptModeFullData);
-    ////console.log(mode[0].pckModeID);
-    ////console.log(category[0].pckCategoryID);
-
     if (category[0].pckCategoryID == 13) {
       setRentalDescriptionStatus(true);
     }
@@ -1129,8 +1095,6 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (mode[0].pckModeID == "1") {
-      ////console.log('Cash================');
-      // cash withdrawal
       if (subcat[0].subcategoryID == "1") {
         FetchBankList();
         setBankListStatus(true);
@@ -1170,7 +1134,6 @@ const AddSource = ({ route, navigation }) => {
       }
     } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setUTRNoStatus(true);
-      ////console.log('UPI================');
       if (subcat[0].subcategoryID == "7") {
         //setReceivedStatus(true);
         //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
@@ -1199,7 +1162,6 @@ const AddSource = ({ route, navigation }) => {
         setBankListStatus(true);
       }
     } else if (mode[0].pckModeID == "3") {
-      ////console.log('Cheque================');
       if (subcat[0].subcategoryID == "7") {
         //setReceivedStatus(true);
         //FetchReceiverList(null, null, subcat[0].subcategoryID, null);
@@ -1292,23 +1254,6 @@ const AddSource = ({ route, navigation }) => {
     setProjectList("");
     setPaymentGroupStatus(false);
   };
-
-  const resetFields_Level_1 = () => {
-    // setReceivedStatus(false);
-    // setDepositTypeStatus(false);
-    // setBankListStatus(false);
-    // setChequeNoStatus(false);
-    // setChequeDateStatus(false);
-    // setPaymentReminderStatus(false);
-    // setCommonStatus(false);
-    // setButtonStatus(true);
-    // setContactTypeStatus(false);
-    // setNewContactNameStatus(false);
-    // setNewMobileNumberStatus(false);
-
-  };
-
-
 
   const onReceivedFormChanged = (text) => {
     setReceivedForm(text);
@@ -1481,7 +1426,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
-    // console.log('insert===================');
     let contactID = "",
       bankID = "",
       depositID = "";
@@ -1556,10 +1500,7 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (subCatStatus) {
-      console.log('sdklfalsdflasdfl');
-      console.log(subCategoryNameFullData);
-      console.log(subCategoryName);
-      console.log('===========');
+      
       params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
         return el.subCategoryName === subCategoryName;
       })[0].subcategoryID;
@@ -1811,7 +1752,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    // console.log('start validate =========');
     let isValid = true;
 
     if (entryType == "") {
@@ -1823,47 +1763,38 @@ const AddSource = ({ route, navigation }) => {
       isValid = false;
       setAmountError(true);
     }
-    //console.log(receiptMode);
     if (receiptMode == "") {
       isValid = false;
       setRMError(true);
     }
-    //console.log(source);
     if (source == "") {
       isValid = false;
       setSSError(true);
     }
-    //console.log(subCategoryName);
     if (subCatStatus && subCategoryName == "") {
       isValid = false;
       setSCNError(true);
     }
-    //console.log(receivedForm);
     if (receivedStatus && receivedForm == "") {
       isValid = false;
       setRFError(true);
     }
-    //console.log(depositeType);
     if (depositTypeStatus && depositeType == "") {
       isValid = false;
       setDTError(true);
     }
-    // console.log(myBankList);
     if (bankListStatus && myBankList == "") {
       isValid = false;
       setBLError(true);
     }
-    // console.log(chequeNo);
     if (chequeNoStatus && chequeNo.trim() == "") {
       isValid = false;
       setChequeNoError(true);
     }
-    // console.log(chequeDate);
     if (chequeDateStatus && chequeDate == "") {
       isValid = false;
       setChequeDateError(true);
     }
-    // console.log(repaymentDate);
     if (paymentReminderStatus && repaymentDate == "") {
       isValid = false;
       setChequeDateError(true);
@@ -1899,14 +1830,10 @@ const AddSource = ({ route, navigation }) => {
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
-        //console.log('granted permission =====================');
         const { data } = await Contacts.getContactsAsync({
           fields: [Contacts.Fields.PhoneNumbers],
         });
-        //console.log(data.length);
         if (data.length > 0) {
-          //console.log(data[0]);
-          //console.log(data[1]);
           const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
           data.map((k, i) => {
             //if (i < 100) {
@@ -1936,10 +1863,8 @@ const AddSource = ({ route, navigation }) => {
             //}
           });
 
-          //console.log(arrNumbers[0]);
           let obj = {};
           arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
-          //console.log(obj);
           CheckContactList(obj, arrPhones);
 
         }
@@ -1948,8 +1873,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const PhoneClicked = (contact) => {
-    console.log('insert new');
-    console.log(contact);
+    
     if (contact != null) {
       InsertNewContact(contact.name, contact.number);
     }
@@ -1967,7 +1891,6 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckmycontactscreate, params)
       .then((response) => {
-        console.log(response.data);
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
 
