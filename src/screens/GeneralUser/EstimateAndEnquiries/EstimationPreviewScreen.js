@@ -24,9 +24,16 @@ import { Styles } from '../../../styles/styles';
 import { theme } from '../../../theme/apptheme';
 import { communication } from '../../../utils/communication';
 import { APIConverter } from '../../../utils/apiconverter';
+import { useIsFocused } from '@react-navigation/native';
 
 let userID = 0,
-  Sess_group_refno = 0;
+  Sess_group_refno = 0,
+  Sess_company_refno = '0',
+  Sess_branch_refno = '0',
+  Sess_CompanyAdmin_UserRefno = '0';
+function getKeyByValue(object, value) {
+  return Object.keys(object).find((key) => object[key] === value);
+}
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -61,19 +68,23 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const [totalSqFt, setTotalSqft] = React.useState('1.0000');
   const refRBSheet = useRef();
   //#endregion
-
+  const isFocused = useIsFocused();
   //#region Functions
 
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) GetUserID();
+  }, [isFocused]);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem('user');
     if (userData !== null) {
       const userDataParsed = JSON.parse(userData);
+
       userID = userDataParsed.UserID;
       Sess_group_refno = userDataParsed.Sess_group_refno;
+      Sess_company_refno = userDataParsed.Sess_company_refno;
+      Sess_branch_refno = userDataParsed.Sess_branch_refno;
+      Sess_CompanyAdmin_UserRefno = userDataParsed.Sess_CompanyAdmin_UserRefno;
       FetchImageGalleryProductDetail();
       if (route.params.isContractor) {
         FetchClients();
@@ -92,7 +103,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         designgallery_refno: route.params.data.id,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.Getgotoestimation, params)
+    Provider.createDFContractor(Provider.API_URLS.Getgotoestimation, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -107,8 +118,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         setSnackbarVisible(true);
       });
   };
-  console.log(selectedData);
-
   const AddMoreDesigns = () => {
     InsertDesignEstimationEnquiry('add');
     // const params = {
@@ -358,7 +367,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: Sess_group_refno,
-        clickaddmorecheck: from == 'add' ? '1' : '0',
         service_refno: route.params.data.serviceID,
         designtype_refno: route.params.data.designTypeID,
         product_refno: route.params.data.productID,
@@ -368,8 +376,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         widthheightfoot: widthFeet,
         widthheightinches: widthInches,
         totalfoot: totalSqFt,
+        Sess_company_refno,
+        Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno,
+        client_user_refno: getKeyByValue(selectedData.client_data, clientName),
       },
     };
+    console.log(params);
     // if (number === "2") {
     //   params.ID = userDesignEstimationID;
     // }
@@ -379,36 +392,19 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     //   }).id;
     //   params.ApprovalStatus = 0;
     // }
-    //Provider.create("generaluserenquiryestimations/insertdesignestimateenquiries", params)
-    //console.log(params);
-    Provider.createDFCommon(Provider.API_URLS.getsc_estimation, params)
+
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_createquote,
+      params,
+    )
       .then((response) => {
-        //console.log(response.data);
+        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
-          //if (number === "2") {
-          if (from === 'add') {
-            if (route.params.from === 'home') {
-              navigation.navigate('HomeScreen');
-            } else {
-              navigation.navigate('ImageGalleryScreen');
-            }
+          if (route.params.from === 'home') {
+            navigation.navigate('HomeScreen');
           } else {
-            navigation.navigate('GetEstimationScreen', {
-              userDesignEstimationID: response.data.data.estimation_refno,
-              designImage: route.params.data.designImage,
-              isContractor: route.params.isContractor,
-              fetchData: route.params.fetchData,
-              clientID: route.params.isContractor
-                ? clientsFullData.find((el) => {
-                    return el.companyName === clientName;
-                  }).id
-                : 0,
-            });
+            navigation.goBack();
           }
-          // } else {
-          //   console.log('step-7');
-          //   FetchEstimationData(response.data.data.estimation_refno, from);
-          // }
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);
@@ -617,7 +613,11 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
             >
               <Dropdown
                 label='Client Name'
-                data={clients}
+                data={
+                  selectedData.client_data
+                    ? Object.values(selectedData?.client_data)
+                    : []
+                }
                 onSelected={onClientNameSelected}
                 isError={errorCN}
                 selectedItem={clientName}
