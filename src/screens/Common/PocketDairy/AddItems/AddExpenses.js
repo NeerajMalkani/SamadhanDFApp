@@ -168,7 +168,7 @@ const AddExpenses = ({ route, navigation }) => {
   const [errorPE, setErrorPE] = React.useState(false);
 
   const [chequeNoError, setChequeNoError] = React.useState(false);
-  const [chequeNo, setChequeNo] = React.useState(route.params?.data?.chequeNo);
+  const [chequeNo, setChequeNo] = React.useState("");
 
   const [utrNoError, setUtrNoError] = React.useState(false);
   const [utrNo, setUtrNo] = React.useState("");
@@ -554,7 +554,6 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (data.exp_branch_refno != "" && data.exp_branch_refno != "0") {
       setBranchListstatus(true);
-      console.log('on edit 1:', data.exp_branch_refno);
       FetchBranchList(data.exp_branch_refno);
     }
 
@@ -925,7 +924,6 @@ const AddExpenses = ({ route, navigation }) => {
   };
 
   const FetchAvailableCashBalance = () => {
-    console.log('start');
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -937,7 +935,6 @@ const AddExpenses = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinhand_expensesform, params)
       .then((response) => {
-        console.log('Result', response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
@@ -971,7 +968,6 @@ const AddExpenses = ({ route, navigation }) => {
     Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_expensesform, params)
       .then((response) => {
 
-        console.log('bank balance', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBankBalance(response.data.data[0].cashinbank.toString());
@@ -1209,7 +1205,6 @@ const AddExpenses = ({ route, navigation }) => {
             const branch = listData.map((data) => data.displayName);
 
             setBranchData(branch);
-            console.log('on edit', editID);
             if (editID != null) {
               setBranch(
                 listData.filter((el) => {
@@ -1512,10 +1507,17 @@ const AddExpenses = ({ route, navigation }) => {
   const onPayModeChanged = (text) => {
     setPayMode(text);
     setPMError(false);
+    resetFields();
+
+    setExpensesData([]);
+    setExpenses("");
+
+    setSubCategoryNameData([]);
+    setSubCategoryName("");
+
     let a = payModeFullData.filter((el) => {
       return el.pckModeName === text;
     });
-    console.log('payment code:', a);
     FetchExpenseCategory(a[0].pckModeID);
 
     if (a[0].pckModeID == 5) {
@@ -1549,7 +1551,6 @@ const AddExpenses = ({ route, navigation }) => {
     setPaidToData([]);
     setPaidTo([]);
 
-    //resetFields();
     setSCNError(false);
     setCommonDisplayStatus(true);
     setButtonStatus(false);
@@ -1656,6 +1657,12 @@ const AddExpenses = ({ route, navigation }) => {
     setBranch(text);
     setErrorBR(false);
 
+    setEmployeeData([]);
+    setEmployee("")
+    
+    setDesignationData([]);
+    setDesignation("");
+
     setDesignationListstatus(true);
     FetchDesignationList();
   };
@@ -1664,11 +1671,13 @@ const AddExpenses = ({ route, navigation }) => {
     setDesignation(text);
     setErrorDesg(false);
 
+    setEmployeeData([]);
+    setEmployee("");
+
     let d = designationFullData.filter((el) => {
       return el.designation_name === text;
     });
 
-    console.log('desination:', d);
     setEmployeeListstatus(true);
     FetchEmployeeList(null, d[0].designation_refno);
   };
@@ -1728,6 +1737,10 @@ const AddExpenses = ({ route, navigation }) => {
   const onExpensesChanged = (text) => {
     setExpenses(text);
     setEXError(false);
+    resetFields_Level_1();
+
+    setSubCategoryNameData([]);
+    setSubCategoryName("");
 
     let a = expensesFullData.filter((el) => {
       return el.categoryName === text;
@@ -1900,6 +1913,66 @@ const AddExpenses = ({ route, navigation }) => {
     }
   };
 
+  const resetFields_Level_1 = () => {
+    setPaidToStatus(false);
+    setRecurringStatus(false);
+    setRecurringReminderDateStatus(false);
+    setDepositTypeStatus(false);
+    setBankStatus(false);
+    setUtrNoStatus(false);
+    setChequeNoStatus(false);
+    setChequeDateStatus(false);
+    setCommonDisplayStatus(false);
+    setButtonStatus(true);
+    setrecurringDateFlag("1");
+    setSubCatStatus(true);
+    setContactTypeStatus(false);
+    setNewContactNameStatus(false);
+    setNewMobileNumberStatus(false);
+
+    setContactTypeData([]);
+    setContactType("");
+
+    setPaidToData([]);
+    setPaidTo("");
+
+    setBankBalanceStatus(false);
+    setBankBalance("");
+
+    setMyBankData([]);
+    setMyBank("");
+
+    setBranchListstatus(false);
+    setBranchData([]);
+    setBranch("");
+
+    setDesignationListstatus(false);
+    setDesignationData([]);
+    setDesignation("");
+
+    setEmployeeListstatus(false);
+    setEmployeeData([]);
+    setEmployee("");
+
+    setUsageListstatus(false);
+    setUsageData([]);
+    setUsage("");
+
+    setProjectListstatus(false);
+    setProjectListData([]);
+    setProjectList("");
+
+    setClientListstatus(false);
+    setClientListData([]);
+    setClientList("");
+
+    setProjectExpenseStatus(false);
+    setProjectExpenseData([]);
+    setProjectExpense("");
+
+  };
+
+
   const resetFields = () => {
     setCardTypeStatus(false);
     setCardBankNameStatus(false);
@@ -1919,11 +1992,61 @@ const AddExpenses = ({ route, navigation }) => {
     setContactTypeStatus(false);
     setNewContactNameStatus(false);
     setNewMobileNumberStatus(false);
+
+    setContactTypeData([]);
+    setContactType("");
+
+    setPaidToData([]);
+    setPaidTo("");
+
+    setBankBalanceStatus(false);
+    setBankBalance("");
+
+    setCashBalanceStatus(false);
+    setCashBalance("");
+
+    setMyBankData([]);
+    setMyBank("");
+
+    setBranchListstatus(false);
+    setBranchData([]);
+    setBranch("");
+
+    setDesignationListstatus(false);
+    setDesignationData([]);
+    setDesignation("");
+
+    setEmployeeListstatus(false);
+    setEmployeeData([]);
+    setEmployee("");
+
+    setUsageListstatus(false);
+    setUsageData([]);
+    setUsage("");
+
+    setProjectListstatus(false);
+    setProjectListData([]);
+    setProjectList("");
+
+    setClientListstatus(false);
+    setClientListData([]);
+    setClientList("");
+
+    setProjectExpenseStatus(false);
+    setProjectExpenseData([]);
+    setProjectExpense("");
+
   };
 
   const onEntryTypeChanged = (selectedItem) => {
     setEntryType(selectedItem);
     resetFields();
+
+    setExpensesData([]);
+    setExpenses("");
+
+    setSubCategoryNameData([]);
+    setSubCategoryName("");
 
     let a = entryTypeFullData.filter((el) => {
       return el.pck_entrytype_name === selectedItem;
@@ -1993,7 +2116,6 @@ const AddExpenses = ({ route, navigation }) => {
       return el.pckModeName === payMode;
     });
 
-    console.log('mode', mode);
 
     if (mode[0].pckModeID == 2 || mode[0].pckModeID == 3 || mode[0].pckModeID == 4) {
       setBankBalanceStatus(true);
@@ -2302,7 +2424,7 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (chequeNoStatus) {
-      params.cheque_no = chequeNo.trim();
+      params.cheque_no = chequeNo == "" ? "" : chequeNo.trim();
     }
 
     if (depositTypeStatus) {
@@ -2545,7 +2667,7 @@ const AddExpenses = ({ route, navigation }) => {
           )}
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Amount"
             value={amount}
             returnKeyType="next"
@@ -2634,7 +2756,7 @@ const AddExpenses = ({ route, navigation }) => {
             selectedItem={payMode}
           />
           <HelperText type="error" visible={errorPM}>
-            Please select valid payment mode
+            Please select a valid payment mode
           </HelperText>
           {cashBalanceStatus && (
             <>
@@ -2647,7 +2769,7 @@ const AddExpenses = ({ route, navigation }) => {
                 keyboardType="number-pad"
                 onSubmitEditing={() => ref_input2.current.focus()}
                 disabled={true}
-                style={[Styles.marginTop8, { backgroundColor: "white" }]}
+                style={[Styles.marginTop8, Styles.marginBottom16, { backgroundColor: "white" }]}
               />
             </>
           )}
@@ -2677,7 +2799,7 @@ const AddExpenses = ({ route, navigation }) => {
                 selectedItem={cardBank}
               />
               <HelperText type="error" visible={errorCB}>
-                Please select valid bank
+                Please select a valid bank
               </HelperText>
             </>
           )}
@@ -2708,7 +2830,7 @@ const AddExpenses = ({ route, navigation }) => {
             selectedItem={expenses}
           />
           <HelperText type="error" visible={errorEX}>
-            Please select valid Expenses / Payment
+            Please select a valid Expenses / Payment
           </HelperText>
 
           {branchListStatus && (
@@ -2862,7 +2984,7 @@ const AddExpenses = ({ route, navigation }) => {
                 selectedItem={subCategoryName}
               />
               <HelperText type="error" visible={errorSCN}>
-                Please select valid sub category
+                Please select a valid sub category
               </HelperText>
             </>
           )}
@@ -2877,7 +2999,7 @@ const AddExpenses = ({ route, navigation }) => {
                 selectedItem={contactType}
               />
               <HelperText type="error" visible={errorContactType}>
-                Please select valid contact type
+                Please select a valid contact type
               </HelperText>
             </>
           )}
@@ -2900,7 +3022,7 @@ const AddExpenses = ({ route, navigation }) => {
                   selectedItem={paidTo}
                 />
                 <HelperText type="error" visible={errorPT}>
-                  Please select valid recepient
+                  Please select a valid recepient
                 </HelperText>
                 <Button
                   icon={"card-account-phone-outline"}
@@ -3010,7 +3132,7 @@ const AddExpenses = ({ route, navigation }) => {
                   selectedItem={MyBank}
                 />
                 <HelperText type="error" visible={errorMB}>
-                  Please select valid bank
+                  Please select a valid bank
                 </HelperText>
                 <Button
                   icon={"plus"}
