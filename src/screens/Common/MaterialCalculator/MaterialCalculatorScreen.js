@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions, ScrollView, Image, View, useWindowDimensions, InteractionManager, Modal, TouchableOpacity,
   SafeAreaView, FlatList, StyleSheet
@@ -22,8 +22,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../utils/apiconverter";
 import ImageViewer from "react-native-image-zoom-viewer";
-//import { FlatList } from "react-native-gesture-handler";
-//import MultiSelectDropDown from "react-native-paper-dropdown";
 import DropDownPicker from 'react-native-dropdown-picker';
 import DFButton from "../../../components/Button";
 
@@ -97,16 +95,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   const [showBrandCategory, setShowBrandCategory] = React.useState(false);
   const [brandCategoryData, setBrandCategoryData] = React.useState([]);
   const [brandCategoryFullData, setBrandCategoryFullData] = React.useState([]);
-  const [categoryWiseBrandData, setCategoryWiseBrandData] = React.useState([]);
-
-  // const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
-  // const [multiBrand, setMultiBrand] = React.useState("");
-  // const brandList = [
-  //   {
-  //     label: "Brand Name",
-  //     value: "Brand Name",
-  //   }
-  // ];
+  const [categoryWiseBrandData, setCategoryWiseBrandData] = useState([]);
+  const [categoryWiseBrandFullData, setCategoryWiseBrandFullData] = React.useState([]);
+  const [selectedBrandCategoryID, setSelectedBrandCategoryID] = React.useState("");
 
   const [showMultiSelectDropDown, setShowMultiSelectDropDown] = React.useState(false);
   const [multiBrand, setMultiBrand] = React.useState([]);
@@ -118,69 +109,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
   //#endregion
 
   //#region Functions
-  // const LengthRoute = () => (
-  //   <>
-  //     <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
-  //       <View style={[Styles.flexAlignSelfStart]}>
-  //         <IconButton
-  //           icon="gesture-swipe-left"
-  //           color={theme.colors.textfield}
-  //           size={22}
-  //         />
-  //       </View>
-  //       <View style={Styles.paddingHorizontal16}>
-  //         <Subheading>Length</Subheading>
-
-  //         <View style={[Styles.flexRow, Styles.flexAlignCenter,]}>
-  //           <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-  //             <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
-  //           </View>
-  //           <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-  //           <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-  //             <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
-  //           </View>
-  //           <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-  //         </View>
-  //         <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
-  //         <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-  //           <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-  //             <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
-  //           </View>
-  //           <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-  //           <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-  //             <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
-  //           </View>
-  //           <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-  //         </View>
-  //       </View>
-
-  //     </View>
-
-  //   </>
-  // );
-
-  // const TotalRoute = () => (
-
-  //   <>
-  //     <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]} >
-  //       <View style={[Styles.flexAlignSelfEnd]}>
-  //         <IconButton
-  //           icon="gesture-swipe-right"
-  //           color={theme.colors.textfield}
-  //           size={22}
-  //         />
-  //       </View>
-  //       <View style={Styles.paddingHorizontal16}>
-  //         <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
-  //         <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-  //           <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea}
-  //             returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]}
-  //           />
-  //         </View>
-  //       </View>
-  //     </View>
-  //   </>
-  // );
 
   const onTotalAreaChanged = (text) => {
     ResetLengthWidth();
@@ -193,7 +121,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       groupID = JSON.parse(userData).Sess_group_refno;
-      //FetchBasicDetails();
       FetchServicesFromActivity();
     }
   };
@@ -207,11 +134,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     { key: "length", title: "Length / Width" },
     { key: "total", title: "Total Area" },
   ]);
-
-  // const renderScene = SceneMap({
-  //   length: LengthRoute,
-  //   total: TotalRoute,
-  // });
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -270,12 +192,101 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     GetUserID();
-  }, []);
+  }, [categoryWiseBrandData]);
+
+  const onBrandItemSelection = (brandID) => {
+    setCategoryWiseBrandData([]);
+
+    let brandFullData = categoryWiseBrandFullData;
+    const index = brandFullData[selectedBrandCategoryID].findIndex(element => element.brand_refno == brandID);
+    let brandItem = brandFullData[selectedBrandCategoryID][index];
+
+    if (brandItem != null) {
+
+      for (var i = 0; i < brandFullData[selectedBrandCategoryID].length; i++) {
+        brandFullData[selectedBrandCategoryID][i].isChecked = false;
+      }
+
+      if (brandItem.isChecked) {
+        brandFullData[selectedBrandCategoryID][index].isChecked = false
+      }
+      else {
+        brandFullData[selectedBrandCategoryID][index].isChecked = true
+      }
+
+      setCategoryWiseBrandFullData(brandFullData);
+      setCategoryWiseBrandData(brandFullData[selectedBrandCategoryID]);
+      refBrandRBSheet.current.forceUpdate();
+      FetchProductPriceOnBrandSelection(brandID);
+    }
+
+  };
 
   const SetCategoryBrand = (category) => {
-    console.log('Clicked Category Name:', category);
-    //brandCategoryFullData.filter();
-    //let brandData = brandCategoryFullData.filter((item) => item.categoryNameDisplay == categoryName);
+    setCategoryWiseBrandData([]);
+    let brandData = brandCategoryFullData.filter((item) => item.categoryNameDisplay == category);
+    let categoryID = brandData[0].categoryName.split("#")[0].toString();
+    setSelectedBrandCategoryID(categoryID);
+
+    let brandUpdatedJson = [];
+
+    JSON.parse(brandData[0].brandData).map((item) => {
+
+      if (categoryWiseBrandFullData.length == 0) {
+        brandUpdatedJson.push({
+          ...item,
+          isChecked: false
+        });
+      }
+      else {
+
+        let brandFullData = categoryWiseBrandFullData;
+
+        if (brandFullData[categoryID] != null && brandFullData[categoryID] != undefined) {
+          const index = brandFullData[categoryID].findIndex(element => element.brand_refno == item.brand_refno);
+          let brandItem = brandFullData[categoryID][index];
+
+          brandUpdatedJson.push({
+            ...item,
+            isChecked: brandItem.isChecked == null ? false : brandItem.isChecked
+          });
+        }
+        else {
+          brandUpdatedJson.push({
+            ...item,
+            isChecked: false
+          });
+        }
+      }
+
+    });
+
+    let manageCategoryWiseBrand = {}, x = {};
+    if (categoryWiseBrandFullData.length == 0) {
+      manageCategoryWiseBrand[categoryID] = brandUpdatedJson;
+      setCategoryWiseBrandFullData(manageCategoryWiseBrand);
+    }
+    else {
+      const objectArray = Object.keys(categoryWiseBrandFullData);
+
+      if (!objectArray.includes(categoryID)) {
+        manageCategoryWiseBrand[categoryID] = brandUpdatedJson;
+        x = {
+          ...categoryWiseBrandFullData,
+          ...manageCategoryWiseBrand
+        }
+      }
+      else {
+        x = {
+          ...categoryWiseBrandFullData
+        }
+      }
+
+      setCategoryWiseBrandFullData(x);
+    }
+
+    setCategoryWiseBrandData(brandUpdatedJson);
+    refBrandRBSheet.current.open();
 
   };
 
@@ -439,48 +450,14 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               setShowBrandCategory(false);
             }
 
-            //console.log('BrandCategory:', brandCategory);
-
             response.data.data = APIConverter(JSON.stringify(response.data.data));
             setBrandsFullData(response.data.data);
 
             const key = "brandID";
             const formattedResult = [];
-            const categoryData = [], categoryWiseBrandData = [];
             const uniqueBrands = [...new Map(response.data.data.map((item) => [item[key], item])).values()];
-            //console.log('Unique Brands Data:', uniqueBrands);
 
             uniqueBrands.map((item) => {
-              // if (categoryData.length == 0) {
-              //   categoryData.push({
-              //     categoryName: item.categoryName,
-              //     id: item.id,
-              //   });
-              // }
-              // else {
-              //   //console.log('more then 0');
-              //   //console.log('categoryData', categoryData);
-              //   //console.log('item', item.id);
-              //   // console.log(categoryData.find((el) => {
-              //   //   return el.id == item.id;
-              //   // }));
-
-              //   // console.log(categoryData.find((el) => {
-              //   //   return el.id == item.id;
-              //   // }).id);
-              //   //console.log('dddddddddd:', d);
-
-              //   let d = categoryData.find((el) => {
-              //     return el.id == item.id;
-              //   })
-
-              //   if (d == undefined) {
-              //     categoryData.push({
-              //       categoryName: item.categoryName,
-              //       id: item.id,
-              //     });
-              //   }
-              // }
 
               formattedResult.push({
                 brandID: item.brandID,
@@ -490,42 +467,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 fullBrandName: item.brandName + " (" + item.categoryName + ")"
               });
             });
-
-            //console.log('Category Data:', categoryData);
-
-            // if (categoryData.length > 0) {
-            //   categoryData.map((i, index) => {
-
-            //     let brandData = uniqueBrands.filter((item) => item.id == i.id);
-            //     //console.log('brandData:', brandData);
-            //     if (brandData != undefined && brandData != null) {
-
-            //       categoryWiseBrandData.push({
-            //         id: i.id,
-            //         categoryName: i.categoryName,
-            //         brands: []
-            //       });
-
-            //       //categoryWiseBrandData[index].brands.push(...brandData);
-            //       //categoryWiseBrandData[0].brands.push(brandData);
-            //       //parentArray[0].children = parentArray[0].children.concat(childArray);
-
-            //       // brandData.map((j, ind) => {
-            //       //   console.log('jjjjjjjjjj:', j);
-            //       //   console.log(categoryWiseBrandData[index]["brandData"]);
-            //       //   categoryWiseBrandData[index]["brandData"].push({
-            //       //     brandID: j.brandID,
-            //       //     brandName: j.brandName
-            //       //   });
-
-            //       // });
-
-            //     }
-
-            //   });
-            // }
-            // console.log('************************************');
-            // console.log('categoryWiseBrandData:', categoryWiseBrandData);
 
             setUniqueBrandsData(formattedResult);
             const formattedData = uniqueBrands.map((data) => data.brandName + " (" + data.categoryName + ")");
@@ -575,12 +516,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 k.brandName = foundProduct.brandName;
                 k.price = foundProduct.price;
                 k.amount = foundProduct.amount;
+                k.productUnit = foundProduct.displayUnit;
               }
-              // else {
-              //   k.amount = "0";
-              // }
+
             });
-            //const amounts = newData.map((data) => data.amount);
 
             const amounts = newData.map(data => {
               if (data.amount > 0) {
@@ -631,6 +570,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
               tempArr.push({
                 productID: k.productID,
                 productName: k.productName,
+                productUnit: "",
                 brandID: 0,
                 brandName: "",
                 price: 0,
@@ -639,7 +579,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                 formula: 0,
               });
             });
-            // setTotal(totalTemp);
             arrProductData[1](tempArr);
             autoScroll();
             setBrandsData([]);
@@ -733,48 +672,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     setBNError(false);
     FetchProductPriceOnBrandSelection(selecedBrand.brandID);
 
-    // const selecedBrand = uniqueBrandsData[parseInt(index)];
-    // const appliedProducts = brandsFullData.filter((el) => {
-    //   return el.brandID === selecedBrand.brandID;
-    // });
-
-    // const newData = [...arrProductData[0]];
-    // newData.map((k) => {
-    //   const foundProduct = appliedProducts.find((el) => el.productID === k.productID);
-    //   if (foundProduct) {
-    //     k.brandID = foundProduct.brandID;
-    //     k.brandName = foundProduct.brandName;
-    //     k.price = foundProduct.price.toFixed(4);
-    //     if (k.formula) {
-    //       const quants = parseFloat(totalSqFt.toString()) / parseFloat(k.formula);
-    //       k.quantity = quants.toFixed(4);
-    //       if (k.price) {
-    //         k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-    //       } else {
-    //         k.amount = "0.0000";
-    //       }
-    //     } else {
-    //       k.quantity = "";
-    //       k.amount = "0.0000";
-    //     }
-    //   }
-    // });
-    // const amounts = newData.map((data) => data.amount);
-    // if (isNaN(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4))) {
-    //   setTotal(0);
-    // }
-    // else {
-    //   setTotal(amounts.reduce((a, b) => a + parseFloat(b), 0).toFixed(4));
-    // }
-    // arrProductData[1](newData);
   };
   const onBrandMultiSelect = (selectedItem) => {
     const brand = uniqueBrandsData.find((el) => el.fullBrandName === selectedItem[0].value);
     FetchProductPriceOnBrandSelection(brand.brandID);
   };
-
-
-
 
 
   const InsertData = () => {
@@ -954,22 +856,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       let total = 0;
       const arrMaterialProducts = [...productData];
       arrMaterialProducts.map((k) => {
-        // if (k.formula) {
-        //   k.quantity = (parseFloat(totArea.toString()) / parseFloat(k.formula)).toFixed(4);
-        //   if (k.price) {
-        //     k.amount = (0).toFixed(4);
-        //   } else {
-        //     k.amount = "0.0000";
-        //   }
-
-        //   total += parseFloat(k.amount);
-        // } else {
-        //   k.quantity = "33";
-        //   k.amount = "0.0000";
-        // }
         total += parseFloat(k.amount);
-        // k.brandID = 0;
-        // k.brandName = "";
       });
       arrProductData[1](arrMaterialProducts);
       if (total > 0) {
@@ -990,18 +877,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           const arrMaterialProducts = [...arrProductData[0]];
           arrMaterialProducts.map((k) => {
             total += parseFloat(k.amount);
-            // if (k.formula) {
-            //   k.quantity = (parseFloat(inches.toString()) / parseFloat(k.formula)).toFixed(4);
-            //   if (k.price) {
-            //     k.amount = (parseFloat(k.quantity) * parseFloat(k.price)).toFixed(4);
-            //   } else {
-            //     k.amount = "0.0000";
-            //   }
-            //   total += parseFloat(k.amount);
-            // } else {
-            //   k.quantity = "11";
-            //   k.amount = "0.0000";
-            // }
+
           });
           arrProductData[1](arrMaterialProducts);
           setTotal(parseFloat(total).toFixed(4));
@@ -1058,15 +934,12 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
       flexDirection: 'row',
       zIndex: 10,
 
-      //
       marginTop: 150,
       flex: 1,
     },
     containerStyles: {
       minHeight: 50,
       minWidth: 149,
-      // borderColor: '#6F8C95',
-      // borderRadius: 6,
     },
     dropDownStyles: {
       backgroundColor: '#fff',
@@ -1137,100 +1010,44 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
           <TextInput mode="flat" label="Total (Sq.Ft.)" style={[Styles.marginBottom16]} onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
-          {/* <Button mode="contained" style={[Styles.marginTop16]} onPress={GetMaterialDetails}>
-            View Materials
-          </Button> */}
           <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />
 
           <HelperText type="error" visible={errorPL}>
             {communication.InvalidProductList}
           </HelperText>
           <View>
-            <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected}
+            {/* <Dropdown label="Select Product Brand" data={brandsData} onSelected={onBrandNameSelected}
               selectedItem={brandName}
-            />
+            /> */}
 
             {showBrandCategory &&
               <>
-                <View style={[Styles.flexRow, Styles.flexWrap, Styles.flexJustifyCenter, Styles.marginTop16]}>
+                <View style={[Styles.flexRow, Styles.flexWrap, Styles.flexJustifyCenter]}>
                   {brandCategoryData.map((category, index) => (
 
-                    <Button
+                    <TouchableOpacity
                       key={index}
-                      style={[Styles.marginHorizontal4, Styles.marginBottom8]}
-                      mode={"outlined"}
-                      categoryName={category}
-                      //onPress={SetCategoryBrand}
+                      style={[
+                        Styles.borderRadius8,
+                        Styles.homeBox,
+                        Styles.flexColumn,
+                        Styles.flexJustifyCenter,
+                        Styles.flexAlignCenter,
+                        Styles.marginHorizontal4,
+                        Styles.marginBottom8,
+                        { width: 100, height: 72 },
+                      ]}
                       onPress={() => {
-                        console.log('called button');
-                        refBrandRBSheet.current.open();
                         SetCategoryBrand(category);
                       }}
                     >
-                      {category}
-                    </Button>
+                      <Text style={[Styles.buttonIconLabel, { textTransform: "uppercase" }]}>{category}</Text>
+                    </TouchableOpacity>
+
                   ))}
                 </View>
               </>
             }
-
-            {/* <MultiSelectDropDown
-              label={"Select Product Brand"}
-              mode={"outlined"}
-              visible={showMultiSelectDropDown}
-              showDropDown={() => setShowMultiSelectDropDown(true)}
-              onDismiss={() => setShowMultiSelectDropDown(false)}
-              value={multiBrand}
-              setValue={setMultiBrand}
-              list={brandList}
-              multiSelect
-            /> */}
-            {/* <DropDownPicker
-              open={showMultiSelectDropDown}
-              value={multiBrand}
-              items={brandList}
-              setOpen={setShowMultiSelectDropDown}
-              setValue={setMultiBrand}
-              setItems={setBrandList}
-              theme="LIGHT"
-              multiple={true}
-              mode="SIMPLE"
-              // onSelectItem={(item) => {
-              //   onBrandMultiSelect(item);
-              // }}
-
-              onChangeItem={item => console.log(item.label, item.value)}
-            // onChangeValue={(value) => {
-            //   console.log('onChangeValue', value);
-            // }}
-
-            //listMode="MODAL"
-            /> */}
-
-            {/* <View style={styles.container}>
-              <DropDownPicker
-                items={[
-                  { label: 'Each Monday', value: 'monday' },
-                  { label: 'Each Tuesday', value: 'tuesday' },
-                  { label: 'Each Wednesday', value: 'wednesday' },
-                  { label: 'Each Thursday', value: 'thursday' },
-                  { label: 'Each Friday', value: 'friday' },
-                  { label: 'Each Saturday', value: 'saturday' },
-                  { label: 'Each Sunday', value: 'sunday' },
-                ]}
-                itemStyle={styles.itemStyles}
-                onChangeItem={(item) => setMultiBrand(item.value)}
-                containerStyle={styles.containerStyles}
-                style={styles.dropDownStyles}
-                dropDownStyle={styles.dropDownStyles}
-                defaultValue={multiBrand}
-                labelStyle={styles.labelStyles}
-                placeholderStyle={styles.labelStyles}
-                placeholder="Select Day"
-              />
-            </View> */}
-
-
 
             <HelperText type="error" visible={errorBN}>
               {communication.InvalidBrnadSelected}
@@ -1248,7 +1065,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                       <View style={[Styles.width48per]}>
                         <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Quantity" value={parseFloat(k.quantity).toFixed(4).toString()} />
                       </View>
-                      <View style={[Styles.width48per]}>{k.price > 0 ? <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label="Rate" value={k.price ? parseFloat(k.price).toFixed(4) : ""} /> : null}</View>
+                      <View style={[Styles.width48per]}>{k.price > 0 ? <TextInput mode="outlined" dense style={[Styles.flex1]} disabled={true} label={`Rate / ${k.productUnit}`} value={k.price ? parseFloat(k.price).toFixed(4) : ""} /> : null}</View>
                     </View>
                     {k.brandName != "" && k.brandName != null ? (
                       <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
@@ -1260,7 +1077,6 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
                   </Card.Content>
                 </Card>
 
-                // removed from here
               );
             })}
           </View>
@@ -1306,26 +1122,21 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
         <View style={[Styles.flex1, Styles.marginBottom16]}>
           <ScrollView style={[Styles.marginBottom48]}>
             <List.Section>
-              {/* {services.map((item, i) => {
+              {categoryWiseBrandData.map((item, i) => {
                 return (
                   <List.Item
                     key={i}
-                    title={item.name}
+                    title={item.brand_name}
                     onPress={() => {
-                      onServiceChanged(item.id);
+                      onBrandItemSelection(item.brand_refno);
                     }}
                     style={[Styles.borderBottom1, Styles.height48, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
                     right={(props) => <List.Icon {...props} icon="check" color={theme.colors.success} style={{ opacity: item.isChecked ? 1 : 0 }} />}
                   >
-                    <Text>{item.name}</Text>
+                    <Text>{item.brand_name}</Text>
                   </List.Item>
                 );
-              })} */}
-              <List.Item title="Brand Name 1" />
-              <List.Item title="Brand Name 2" />
-              <List.Item title="Brand Name 3" />
-              <List.Item title="Brand Name 4" />
-              <List.Item title="Brand Name 5" />
+              })}
             </List.Section>
           </ScrollView>
           <Button

@@ -107,6 +107,9 @@ export const Styles = StyleSheet.create({
   backgroundColorYelow: {
     backgroundColor: "#FECA0A"
   },
+  backgroundColorFullWhite: {
+    backgroundColor: "#FFFFFF"
+  },
   backgroundColorWhite: {
     backgroundColor: "#FAFAFA"
   },
@@ -1018,6 +1021,9 @@ export const Styles = StyleSheet.create({
   /*#end position*/
 
   /*#start Top */
+  Top_8: {
+    top: -8
+  },
   Top16: {
     top: 16
   },

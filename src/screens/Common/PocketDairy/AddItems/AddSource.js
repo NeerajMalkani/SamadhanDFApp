@@ -1005,9 +1005,6 @@ const AddSource = ({ route, navigation }) => {
     setReceivedFormFullData([]);
     setReceivedFormData([]);
     setReceivedForm([]);
-
-    //resetFields();
-    //setSubCategoryName(text);
     setSCNError(false);
     setCommonStatus(true);
     setButtonStatus(false);
@@ -1283,7 +1280,35 @@ const AddSource = ({ route, navigation }) => {
     setContactTypeStatus(false);
     setNewContactNameStatus(false);
     setNewMobileNumberStatus(false);
+    setRentalDescriptionStatus(false);
+    setSubCategoryName("");
+    setSubCategoryNameData([]);
+    setUTRNoStatus(false);
+    setClientListstatus(false);
+    setClientListData([]);
+    setClientList("");
+    setProjectListstatus(false);
+    setProjectListData([]);
+    setProjectList("");
+    setPaymentGroupStatus(false);
   };
+
+  const resetFields_Level_1 = () => {
+    // setReceivedStatus(false);
+    // setDepositTypeStatus(false);
+    // setBankListStatus(false);
+    // setChequeNoStatus(false);
+    // setChequeDateStatus(false);
+    // setPaymentReminderStatus(false);
+    // setCommonStatus(false);
+    // setButtonStatus(true);
+    // setContactTypeStatus(false);
+    // setNewContactNameStatus(false);
+    // setNewMobileNumberStatus(false);
+
+  };
+
+
 
   const onReceivedFormChanged = (text) => {
     setReceivedForm(text);
@@ -2006,7 +2031,7 @@ const AddSource = ({ route, navigation }) => {
           )}
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Amount"
             value={amount}
             keyboardType="number-pad"
@@ -2305,7 +2330,7 @@ const AddSource = ({ route, navigation }) => {
                   selectedItem={myBankList}
                 />
                 <HelperText type="error" visible={errorBL}>
-                  {communication.InvalidBankName}
+                  Please select a valid bank
                 </HelperText>
                 <Button
                   icon={"plus"}
@@ -2353,7 +2378,7 @@ const AddSource = ({ route, navigation }) => {
                 error={chequeNoError}
               />
               <HelperText type="error" visible={chequeNoError}>
-                {communication.InvalidChequeNo}
+                Please enter a valid Cheque number
               </HelperText>
             </>
           )}

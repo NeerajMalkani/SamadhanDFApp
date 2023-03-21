@@ -761,7 +761,7 @@ function AddProduction({ route, navigation }) {
           </View>
           <TextInput
             mode="flat"
-            label="Raw material width in mm"
+            label="Slitting width in mm"
             value={data.width_mm_value}
             returnKeyType="next"
             onChangeText={(text) => {

@@ -2262,57 +2262,6 @@ const HomeScreen = ({ route, navigation }) => {
                 </View>
                 {/* Sponsered Ad */}
 
-                {userRoleID === "3" ? (
-                  <View style={[Styles.padding16]}>
-                    <View
-                      style={[
-                        Styles.bordergray,
-                        Styles.bordergray,
-                        Styles.borderRadius8,
-                        Styles.paddingBottom8,
-                      ]}
-                    >
-                      <Title style={[Styles.padding16, Styles.paddingBottom0]}>
-                        Switch Role
-                      </Title>
-                      <View style={[Styles.paddingHorizontal16]}>
-                        <Dropdown
-                          label="SELECT"
-                          data={switchRoleNames}
-                          onSelected={onRoleSelected}
-                          isError={errorRole}
-                          selectedItem={roleName}
-                        />
-                        <Button
-                          mode="contained"
-                          style={[Styles.marginTop12]}
-                          loading={isButtonLoading}
-                          disabled={isButtonLoading}
-                          onPress={ValidateSwitchRole}
-                        >
-                          Switch
-                        </Button>
-                      </View>
-                      <Portal>
-                        <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
-                          <Dialog.Title>Confirmation</Dialog.Title>
-                          <Dialog.Content>
-                            <Paragraph>
-                              Do you really want to switch your role to {roleName}
-                              ? If OK, then your active role will get
-                              automatically changed
-                            </Paragraph>
-                          </Dialog.Content>
-                          <Dialog.Actions>
-                            <Button onPress={UpdateUserRole}>Ok</Button>
-                            <Button onPress={hideDialog}>Cancel</Button>
-                          </Dialog.Actions>
-                        </Dialog>
-                      </Portal>
-                    </View>
-                  </View>
-                ) : null}
-
                 <View
                   style={[
                     Styles.width100per,
@@ -2320,6 +2269,8 @@ const HomeScreen = ({ route, navigation }) => {
                     Styles.positionRelative,
                   ]}
                 >
+
+                  {/* Design Your Dream */}
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate("DesignYourDreamCategories")
@@ -2369,6 +2320,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </View>
                     </View>
                   </TouchableOpacity>
+                  {/* Design Your Dream */}
 
                   {/* Material Calculator */}
                   <TouchableOpacity
@@ -2414,6 +2366,8 @@ const HomeScreen = ({ route, navigation }) => {
                     </ImageBackground>
                   </TouchableOpacity>
                   {/* Material Calculator */}
+
+                  {/* Enquiry & Estimation */}
                   <View style={[Styles.paddingTop16]}>
                     <View
                       style={[
@@ -2479,6 +2433,8 @@ const HomeScreen = ({ route, navigation }) => {
                       </View>
                     </View>
                   </View>
+                  {/* Enquiry & Estimation */}
+
                   {(userRoleID === "4" || userRoleID === "5") && (
                     <>
                       <View
@@ -2512,6 +2468,7 @@ const HomeScreen = ({ route, navigation }) => {
                       </View>
                     </>
                   )}
+
                   {/* Pocket Diary */}
                   <TouchableOpacity
                     onPress={() => {
@@ -2689,63 +2646,59 @@ const HomeScreen = ({ route, navigation }) => {
                   </View>
                   {/* QR Code End */}
 
-                  {/* <View style={[Styles.width100per, Styles.flexRow, Styles.marginTop16]}>
-                  <View style={Styles.width50per}>
-                    <Card
-                      onPress={() => {
-                        if (roleID == 2) {
-                          navigation.navigate("ApprovedUserScreen", { type: "add" });
-                        }
-                      }}
-                      style={[Styles.width100per, Styles.height250, Styles.borderRadius8, Styles.border1, Styles.marginEnd16, { backgroundColor: "#42c6a5" }]}
-                    >
-                      <Card.Title
-                        style={[Styles.width100per]}
-                        title={
-                          <View style={[Styles.flexSpaceBetween, Styles.flexRow, Styles.width100per]}>
-                            <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>
-                              <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>Users</Text>
-                            </View>
-                          </View>
-                        }
-                        right={(props) => (
-                          <View style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite, Styles.marginEnd8]}>
-                            <Text style={[Styles.fontSize16, Styles.fontBold, Styles.textColorWhite]}>{totalUsers}</Text>
-                          </View>
-                        )}
-                        titleStyle={[Styles.textColorWhite]}
-                      />
-                      <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginStart12, Styles.textColorWhite]}>{15}</Text>
-                      <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>General Users</Text>
-                      <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>15</Text>
-                      <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Contractors</Text>
-                      <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>28</Text>
-                      <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Dealers</Text>
-                      <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop8, Styles.marginStart12, Styles.textColorWhite]}>1</Text>
-                      <Text style={[Styles.fontSize12, Styles.fontRegular, Styles.marginStart12, Styles.textColorWhite]}>Architechts</Text>
-                    </Card>
-                  </View>
+                   {/* Switch Role */}
+                   {userRoleID === "3" ? (
+                    <View style={[Styles.marginTop16]}>
+                      <View
+                        style={[
+                          Styles.bordergray,
+                          Styles.bordergray,
+                          Styles.borderRadius8,
+                          Styles.paddingBottom8,
+                        ]}
+                      >
+                        <Title style={[Styles.padding16, Styles.paddingBottom0]}>
+                          Switch Role
+                        </Title>
+                        <View style={[Styles.paddingHorizontal16]}>
+                          <Dropdown
+                            label="SELECT"
+                            data={switchRoleNames}
+                            onSelected={onRoleSelected}
+                            isError={errorRole}
+                            selectedItem={roleName}
+                          />
+                          <Button
+                            mode="contained"
+                            style={[Styles.marginTop12]}
+                            loading={isButtonLoading}
+                            disabled={isButtonLoading}
+                            onPress={ValidateSwitchRole}
+                          >
+                            Switch
+                          </Button>
+                        </View>
+                        <Portal>
+                          <Dialog visible={isDialogVisible} onDismiss={hideDialog}>
+                            <Dialog.Title>Confirmation</Dialog.Title>
+                            <Dialog.Content>
+                              <Paragraph>
+                                Do you really want to switch your role to {roleName}
+                                ? If OK, then your active role will get
+                                automatically changed
+                              </Paragraph>
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                              <Button onPress={UpdateUserRole}>Ok</Button>
+                              <Button onPress={hideDialog}>Cancel</Button>
+                            </Dialog.Actions>
+                          </Dialog>
+                        </Portal>
+                      </View>
+                    </View>
+                  ) : null}
+                  {/* Switch Role */}
 
-                  <View style={Styles.width50per}>
-                    <Card
-                      onPress={() => {
-                        if (roleID == 2) {
-                          navigation.navigate("MaterialSetupScreen", { type: "add" });
-                        } else {
-                          navigation.navigate("MaterialCalculatorScreen", { type: "add" });
-                        }
-                      }}
-                      style={[Styles.height120, Styles.width100per, Styles.borderRadius8, Styles.border1, Styles.OverFlow, Styles.marginStart4, { backgroundColor: "#55AEF7" }]}
-                    >
-                      {roleID == 2 ? <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Setup</Text> : <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Material Calculator</Text>}
-                      <Image source={require("../../assets/material-calculator.png")} style={[Styles.width96, Styles.height96, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
-                    </Card>
-                    <Card style={[Styles.height120, Styles.width100per, Styles.marginTop8, Styles.borderRadius8, Styles.border1, Styles.marginStart4, Styles.positionRelative, Styles.OverFlow, { backgroundColor: "#D4a311" }]}>
-                      <Text style={[Styles.fontSize16, Styles.fontBold, Styles.marginTop12, Styles.marginStart12, Styles.textColorWhite]}>Looking For Job</Text>
-                      <Image source={require("../../assets/job-seeker.png")} style={[Styles.width104, Styles.height104, Styles.flexJustifyEnd, Styles.flexRow, Styles.flexAlignEnd, Styles.resizeModeContain, Styles.positionAbsolute, Styles.Bottom_20, Styles.Right_20]} />
-                    </Card>
-                  </View>
-                </View> */}
                 </View>
               </View>
             )}
