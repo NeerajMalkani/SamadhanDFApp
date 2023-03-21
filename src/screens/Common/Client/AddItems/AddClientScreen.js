@@ -362,19 +362,19 @@ const AddClientScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.paddingHorizontal16, Styles.paddingTop16]}>
-          <TextInput ref={companyNameRef} disabled={addedBy} mode="flat" dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+          <TextInput ref={companyNameRef} disabled={addedBy} mode="outlined" dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
           <HelperText type="error" visible={companyNameInvalid}>
             {communication.InvalidCompanyName}
           </HelperText>
-          <TextInput ref={contactNameRef} disabled={addedBy} mode="flat" dense label="Contact Person" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
+          <TextInput ref={contactNameRef} disabled={addedBy} mode="outlined" dense label="Contact Person" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
           <HelperText type="error" visible={contactNameInvalid}>
             {communication.InvalidContactPerson}
           </HelperText>
-          <TextInput ref={contactNumberRef} disabled={addedBy} mode="flat" dense keyboardType="number-pad" label="Contact Mobile No." value={contactNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+          <TextInput ref={contactNumberRef} disabled={addedBy} mode="outlined" dense keyboardType="number-pad" label="Contact Mobile No." value={contactNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
           <HelperText type="error" visible={contactNumberInvalid}>
             {communication.InvalidContactMobileNo}
           </HelperText>
-          <TextInput ref={addressRef} disabled={addedBy} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+          <TextInput ref={addressRef} disabled={addedBy} mode="outlined" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
           <HelperText type="error" visible={addressInvalid}>
             {communication.InvalidAddress}
           </HelperText>
@@ -386,15 +386,15 @@ const AddClientScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCity}
           </HelperText>
-          <TextInput ref={pincodenRef} mode="flat" disabled={addedBy} dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+          <TextInput ref={pincodenRef} mode="outlined" disabled={addedBy} dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
           <HelperText type="error" visible={pincodeInvalid}>
             {communication.InvalidPincode}
           </HelperText>
-          <TextInput ref={gstNumberRef} mode="flat" disabled={addedBy} dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+          <TextInput ref={gstNumberRef} mode="outlined" disabled={addedBy} dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
           <HelperText type="error" visible={gstNumberInvalid}>
             {communication.InvalidGSTNo}
           </HelperText>
-          <TextInput ref={panNumberRef} mode="flat" disabled={addedBy} dense label="PAN No." value={panNumber} returnKeyType="done" onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+          <TextInput ref={panNumberRef} mode="outlined" disabled={addedBy} dense label="PAN No." value={panNumber} returnKeyType="done" onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
           <HelperText type="error" visible={panNumberInvalid}>
             {communication.InvalidPANNo}
           </HelperText>

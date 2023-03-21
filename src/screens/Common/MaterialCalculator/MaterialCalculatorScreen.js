@@ -179,7 +179,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
             <View style={Styles.paddingHorizontal16}>
               <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
               <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-                <TextInput mode="flat" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
+                <TextInput mode="outlined" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
               </View>
             </View>
           </View>
@@ -980,7 +980,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorDT}>
             {communication.InvalidDesignTypeName}
           </HelperText>
-          <TextInput mode="flat" label="Specification" value={specification} disabled={true} editable={false} />
+          <TextInput mode="outlined" label="Specification" value={specification} disabled={true} editable={false} />
           <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
             <TouchableOpacity
               style={[Styles.height100per, Styles.width100per]}
@@ -1009,7 +1009,7 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
             <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" style={[Styles.marginBottom16]} onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
+          <TextInput mode="outlined" label="Total (Sq.Ft.)" style={[Styles.marginBottom16]} onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
           <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />
 
           <HelperText type="error" visible={errorPL}>

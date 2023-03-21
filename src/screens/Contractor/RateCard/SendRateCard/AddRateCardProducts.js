@@ -187,12 +187,12 @@ const AddRateCardProducts = ({ arrProductData, inclusiveMaterial, unitSalesName 
                             <Row style={[Styles.height40]}>
                                 <Col size={75}><Text>{k.productName}</Text></Col>
                                 <Col size={25}>
-                                    <TextInput mode="flat" dense label="Unit" disabled value={unitSalesName === "Foot" ? k.unit1Name : k.unit2Name}></TextInput>
+                                    <TextInput mode="outlined" dense label="Unit" disabled value={unitSalesName === "Foot" ? k.unit1Name : k.unit2Name}></TextInput>
                                 </Col>
                             </Row>
                             <Row>
                                 <Col size={50}>
-                                    <TextInput mode="flat" dense label="Rate" value={unitSalesName === "Foot" ? k.footRate : k.meterRate}
+                                    <TextInput mode="outlined" dense label="Rate" value={unitSalesName === "Foot" ? k.footRate : k.meterRate}
                                         style={{ backgroundColor: "white" }} keyboardType="number-pad" maxLength={7}
                                         defaultValue={(unitSalesName === "Foot" ? k.footRate : k.meterRate).toString()}
                                         onChangeText={(e) => {

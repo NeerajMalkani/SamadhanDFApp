@@ -343,19 +343,19 @@ const AddBankScreen = ({ route, navigation }) => {
                 <HelperText type="error" visible={companyBranchNameError}>
                     {communication.InvalidCompanyBranchName}
                 </HelperText>
-                <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+                <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
                 <HelperText type="error" visible={accountNoInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+                <TextInput ref={bankNameRef} mode="outlined" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
                 <HelperText type="error" visible={bankNameInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+                <TextInput ref={bankBranchNameRef} mode="outlined" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
                 <HelperText type="error" visible={bankBranchNameInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+                <TextInput ref={ifscCodeRef} mode="outlined" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
                 <HelperText type="error" visible={ifscCodeInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
@@ -389,11 +389,11 @@ const AddBankScreen = ({ route, navigation }) => {
                 <HelperText type="error" visible={cardTypeInvalid}>
                     Please select card Type
                 </HelperText>
-                <TextInput ref={openingBalanceRef} mode="flat" dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
+                <TextInput ref={openingBalanceRef} mode="outlined" dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
                 <HelperText type="error" visible={openingBalanceInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={remarksRef} mode="flat" dense label="Remarks" value={remarks} returnKeyType="done" onChangeText={onRemarksChanged} style={{ backgroundColor: "white" }} error={remarksInvalid} />
+                <TextInput ref={remarksRef} mode="outlined" dense label="Remarks" value={remarks} returnKeyType="done" onChangeText={onRemarksChanged} style={{ backgroundColor: "white" }} error={remarksInvalid} />
                 <HelperText type="error" visible={remarksInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>

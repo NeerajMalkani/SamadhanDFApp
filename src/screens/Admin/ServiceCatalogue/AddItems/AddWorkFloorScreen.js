@@ -108,7 +108,7 @@ const AddWorkFloorScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Work Floor Name" value={workFloorName} onChangeText={onWorkFloorNameChanged} style={{ backgroundColor: "white" }} error={workFloorNameError} />
+          <TextInput mode="outlined" label="Work Floor Name" value={workFloorName} onChangeText={onWorkFloorNameChanged} style={{ backgroundColor: "white" }} error={workFloorNameError} />
           <HelperText type="error" visible={workFloorNameError}>
             {communication.InvalidWorkFloorName}
           </HelperText>

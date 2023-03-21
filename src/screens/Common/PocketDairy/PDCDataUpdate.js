@@ -248,7 +248,7 @@ const PDCDataUpdate = ({ route, navigation }) => {
                         {communication.InvalidDesignImage}
                     </HelperText>
 
-                    <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotesChange} style={{ backgroundColor: "white" }} />
+                    <TextInput mode="outlined" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNotesChange} style={{ backgroundColor: "white" }} />
 
                 </View>
             </ScrollView>

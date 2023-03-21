@@ -294,7 +294,7 @@ const JobPostingForm = ({ navigation }) => {
             </View>
           </View>
           <TextInput
-            mode='flat'
+            mode="outlined"
             label='CTC details'
             returnKeyType='next'
             onChangeText={(e) => onChange(e, 'ctc_salary')}
@@ -307,7 +307,7 @@ const JobPostingForm = ({ navigation }) => {
             Please enter ctc salary
           </HelperText>
           <TextInput
-            mode='flat'
+            mode="outlined"
             multiline={true}
             label='Job Skills'
             onChangeText={(e) => onChange(e, 'job_skills')}
@@ -324,7 +324,7 @@ const JobPostingForm = ({ navigation }) => {
             Please enter job skills
           </HelperText>
           <TextInput
-            mode='flat'
+            mode="outlined"
             label='Job Responsibility'
             onChangeText={(e) => onChange(e, 'job_responsibility')}
             value={state.job_responsibility}
@@ -340,7 +340,7 @@ const JobPostingForm = ({ navigation }) => {
             Please enter job responsibility
           </HelperText>
           <TextInput
-            mode='flat'
+            mode="outlined"
             label='Notes'
             onChangeText={(e) => onChange(e, 'notes')}
             value={state.notes}

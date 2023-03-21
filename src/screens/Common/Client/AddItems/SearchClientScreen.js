@@ -159,11 +159,11 @@ const SearchClientScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.paddingHorizontal16, Styles.paddingTop16]}>
-          <TextInput ref={companyNameRef} mode="flat" dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+          <TextInput ref={companyNameRef} mode="outlined"dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
           <HelperText type="error" visible={companyNameInvalid}>
             {communication.InvalidCompanyClient}
           </HelperText>
-          <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="done" onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
+          <TextInput ref={mobileNoRef} mode="outlined" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="done" onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
           <HelperText type="error" visible={mobileNoInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>

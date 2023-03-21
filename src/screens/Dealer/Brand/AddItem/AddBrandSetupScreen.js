@@ -514,15 +514,15 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>
-          <TextInput ref={ref_input1} mode="flat" label="Brand Prefix Name" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} value={brandSetupName} onChangeText={onBrandSetupNameChanged} style={{ backgroundColor: "white" }} error={brandSetupNameError} />
+          <TextInput ref={ref_input1} mode="outlined" label="Brand Prefix Name" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} value={brandSetupName} onChangeText={onBrandSetupNameChanged} style={{ backgroundColor: "white" }} error={brandSetupNameError} />
           <HelperText type="error" visible={brandSetupNameError}>
             {communication.InvalidBrandPrefixName}
           </HelperText>
@@ -534,19 +534,19 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput ref={ref_input2} mode="flat" label="General Discount (%)" returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} value={generalDiscount} onChangeText={onGeneralDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={generalDiscountError} />
+          <TextInput ref={ref_input2} mode="outlined" label="General Discount (%)" returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} value={generalDiscount} onChangeText={onGeneralDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={generalDiscountError} />
           <HelperText type="error" visible={generalDiscountError}>
             {communication.InvalidGeneralDiscount}
           </HelperText>
-          <TextInput ref={ref_input3} mode="flat" label="App Provider Promotion (%)" returnKeyType="next" onSubmitEditing={() => ref_input4.current.focus()} value={appProviderPromotion} onChangeText={onAppProviderPromotionChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={referralPointsError} />
+          <TextInput ref={ref_input3} mode="outlined" label="App Provider Promotion (%)" returnKeyType="next" onSubmitEditing={() => ref_input4.current.focus()} value={appProviderPromotion} onChangeText={onAppProviderPromotionChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={referralPointsError} />
           <HelperText type="error" visible={appProviderPromotionError}>
             {communication.InvalidAppProviderPromotion}
           </HelperText>
-          <TextInput ref={ref_input4} mode="flat" label="Referral Points (%)" returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} value={referralPoints} onChangeText={onReferralPointsChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={appProviderPromotionError} />
+          <TextInput ref={ref_input4} mode="outlined" label="Referral Points (%)" returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} value={referralPoints} onChangeText={onReferralPointsChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={appProviderPromotionError} />
           <HelperText type="error" visible={referralPointsError}>
             {communication.InvalidReferralPoints}
           </HelperText>
-          <TextInput ref={ref_input5} mode="flat" label="Contractor Discount (%)" returnKeyType="done" value={contractorDiscount} onChangeText={onContractorDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={contractorDiscountError} />
+          <TextInput ref={ref_input5} mode="outlined" label="Contractor Discount (%)" returnKeyType="done" value={contractorDiscount} onChangeText={onContractorDiscountChanged} keyboardType="decimal-pad" style={{ backgroundColor: "white" }} error={contractorDiscountError} />
           <HelperText type="error" visible={contractorDiscountError}>
             {communication.InvalidContractorDiscount}
           </HelperText>
@@ -557,7 +557,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
                 return (
                   <TextInput
                     key={i}
-                    mode="flat"
+                    mode="outlined"
                     value={k.buyerCategoryDiscount}
                     returnKeyType={i == buyerCategoryFullData.length - 1 ? "done" : "next"}
                     onSubmitEditing={() => {

@@ -2009,7 +2009,7 @@ const AddSource = ({ route, navigation }) => {
           {rentalDescriptionStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Rental Description"
                 value={rentalDescription}
                 returnKeyType="next"
@@ -2136,7 +2136,7 @@ const AddSource = ({ route, navigation }) => {
           {invoiceStatus && (
             <>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 label="Invoice No"
                 value={invoiceNo}
                 returnKeyType="next"
@@ -2183,7 +2183,7 @@ const AddSource = ({ route, navigation }) => {
           {newContactNameStatus && (
             <>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 label="Received From"
                 value={contactName}
                 returnKeyType="next"
@@ -2202,7 +2202,7 @@ const AddSource = ({ route, navigation }) => {
           {newMobileNumberStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Mobile No."
                 value={mobileNumber}
                 returnKeyType="next"
@@ -2290,7 +2290,7 @@ const AddSource = ({ route, navigation }) => {
           {chequeNoStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Cheque No"
                 value={chequeNo}
                 returnKeyType="next"
@@ -2309,7 +2309,7 @@ const AddSource = ({ route, navigation }) => {
           {UTRNoStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="UTR No"
                 value={UTRNo}
                 returnKeyType="next"
@@ -2361,7 +2361,7 @@ const AddSource = ({ route, navigation }) => {
           {commonStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Notes"
                 value={notes}
                 returnKeyType="next"

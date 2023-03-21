@@ -462,25 +462,25 @@ const AddDealerProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorPI}>
             {communication.InvalidDesignImage}
           </HelperText>
-          <TextInput mode="flat" label="Price" dense value={price} returnKeyType="next" keyboardType="decimal-pad" onChangeText={onPriceChanged} style={{ backgroundColor: "white" }} error={errorP} />
+          <TextInput mode="outlined"label="Price" dense value={price} returnKeyType="next" keyboardType="decimal-pad" onChangeText={onPriceChanged} style={{ backgroundColor: "white" }} error={errorP} />
           <HelperText type="error" visible={errorP}>
             {communication.InvalidPrice}
           </HelperText>
-          <TextInput mode="flat" label="Sales Unit" dense value={unitName} editable={false} onChangeText={onSalesUnitChanged} error={errorUN} />
+          <TextInput mode="outlined" label="Sales Unit" dense value={unitName} editable={false} onChangeText={onSalesUnitChanged} error={errorUN} />
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
           <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
             <Text style={[Styles.textCenter, { flex: unitName === "" ? 0 : 1 }]}>{unitName === "" ? "" : "1 " + unitName + " ="}</Text>
             <View style={[Styles.flex3]}>
-              <TextInput mode="flat" label="Unit Value" dense value={unitValue} returnKeyType="next" keyboardType="decimal-pad" onChangeText={onUnitValueChanged} style={{ backgroundColor: "white" }} error={errorUV} />
+              <TextInput mode="outlined" label="Unit Value" dense value={unitValue} returnKeyType="next" keyboardType="decimal-pad" onChangeText={onUnitValueChanged} style={{ backgroundColor: "white" }} error={errorUV} />
               <HelperText type="error" visible={errorUV}>
                 {communication.InvalidUnitValue}
               </HelperText>
             </View>
             <Text style={[Styles.textCenter, { flex: unitName2 === "" ? 0 : 1 }]}>{unitName2}</Text>
           </View>
-          <TextInput mode="flat" label="Description" dense value={description} returnKeyType="done" onChangeText={onDescriptionChanged} style={{ backgroundColor: "white" }} error={errorD} />
+          <TextInput mode="outlined" label="Description" dense value={description} returnKeyType="done" onChangeText={onDescriptionChanged} style={{ backgroundColor: "white" }} error={errorD} />
           <HelperText type="error" visible={errorD}>
             {communication.InvalidDescription}
           </HelperText>

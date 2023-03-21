@@ -328,7 +328,7 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={entryTypeInvalid}>
             Please select Entry Type
           </HelperText>
-          <TextInput mode="flat" label="Category Name" value={categoryName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={categoryNameError} />
+          <TextInput mode="outlined" label="Category Name" value={categoryName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={categoryNameError} />
           <HelperText type="error" visible={categoryNameError}>
             {communication.InvalidCategoryName}
           </HelperText>

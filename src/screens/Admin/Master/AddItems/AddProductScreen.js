@@ -454,15 +454,15 @@ const AddProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput mode="flat" label="GST Rate" value={gst} keyboardType={"number-pad"} onChangeText={onGSTChanged} error={gstError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="GST Rate" value={gst} keyboardType={"number-pad"} onChangeText={onGSTChanged} error={gstError} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>
-          <TextInput dense mode="flat" label="Product Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput dense mode="outlined" label="Product Name" value={name} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidProductName}
           </HelperText>

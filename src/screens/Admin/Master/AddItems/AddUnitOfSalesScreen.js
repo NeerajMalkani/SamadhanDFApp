@@ -119,11 +119,11 @@ const AddUnitOfSalesScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Unit Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="outlined" label="Unit Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput ref={ref_input2} mode="flat" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
+          <TextInput ref={ref_input2} mode="outlined" label="Conversion Unit" value={conversion} onChangeText={onConversionChanged} style={{ backgroundColor: "white" }} error={errorC} />
           <HelperText type="error" visible={errorC}>
             {communication.InvalidUnitConversionUnit}
           </HelperText>

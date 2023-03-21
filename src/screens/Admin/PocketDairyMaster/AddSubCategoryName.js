@@ -374,11 +374,11 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCT}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="Sub Category Name" value={subCategoryName} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onSubCategoryNameChanged} style={{ backgroundColor: "white" }} error={subCategoryNameError} />
+          <TextInput mode="outlined" label="Sub Category Name" value={subCategoryName} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onSubCategoryNameChanged} style={{ backgroundColor: "white" }} error={subCategoryNameError} />
           <HelperText type="error" visible={subCategoryNameError}>
             {communication.InvalidSubCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onNotesChanged} style={{ backgroundColor: "white" }} error={notesError} />
+          <TextInput mode="outlined" label="Notes" value={notes} returnKeyType="next" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onNotesChanged} style={{ backgroundColor: "white" }} error={notesError} />
           <HelperText type="error" visible={notesError}>
             {communication.InvalidNotes}
           </HelperText>

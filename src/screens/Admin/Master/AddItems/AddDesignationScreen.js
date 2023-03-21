@@ -105,7 +105,7 @@ const AddDesignationScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Designation Name" value={designationName} onChangeText={onDesignationNameChanged} style={{ backgroundColor: "white" }} error={designationNameError} />
+          <TextInput mode="outlined" label="Designation Name" value={designationName} onChangeText={onDesignationNameChanged} style={{ backgroundColor: "white" }} error={designationNameError} />
           <HelperText type="error" visible={designationNameError}>
             {communication.InvalidDesignationName}
           </HelperText>

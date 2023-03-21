@@ -714,26 +714,26 @@ const AddRateCard = ({ route, navigation }) => {
             <TextInput value={gst} style={[Styles.width48per]} label="GST Rate (%)" disabled />
           </View>
 
-          <Dropdown label="Service Product Name" data={productsData} onSelected={onProductsNameSelected} isError={errorPN} selectedItem={productsName} reference={productsDDRef} />
+            <Dropdown label="Service Product Name" data={productsData} onSelected={onProductsNameSelected} isError={errorPN} selectedItem={productsName} reference={productsDDRef} />
 
           <Dropdown label="Unit Name" data={unitsData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
 
           <View style={[Styles.marginTop16, { backgroundColor: "#f2f2f2" }, Styles.bordergray, Styles.borderRadius4]}>
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>With Material</Text>
             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
-              <TextInput value={rum} keyboardType="decimal-pad" onEndEditing={onRUMChanged} error={errorRUM} style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              <TextInput value={arum} error={errorRUWM} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
+              <TextInput mode="outlined" value={rum} keyboardType="decimal-pad" onEndEditing={onRUMChanged} error={errorRUM} style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
+              <TextInput mode="outlined" value={arum} error={errorRUWM} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
             </View>
           </View>
           <View style={[Styles.marginTop16, { backgroundColor: "#f2f2f2" }, Styles.bordergray, Styles.borderRadius4]}>
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>Without Material</Text>
             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
-              <TextInput value={ruwm} onEndEditing={onRUWMChanged} keyboardType="decimal-pad" style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              <TextInput value={aruwm} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
+              <TextInput mode="outlined" value={ruwm} onEndEditing={onRUWMChanged} keyboardType="decimal-pad" style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
+              <TextInput mode="outlined" value={aruwm} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
             </View>
           </View>
-          <TextInput multiline value={shortSpec} label="Short Specification" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
-          <TextInput multiline value={spec} label="Specification of Service Provider" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
+          <TextInput mode="outlined" multiline value={shortSpec} label="Short Specification" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
+          <TextInput mode="outlined" multiline value={spec} label="Specification of Service Provider" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
 
           <Checkbox.Item
             label="Display"

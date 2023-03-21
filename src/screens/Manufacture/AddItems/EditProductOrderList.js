@@ -805,7 +805,7 @@ function EditProductOrderList({ route, navigation }) {
               ))}
           </View>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Total Weight"
             value={data.total_weight}
             editable={false}
@@ -814,7 +814,7 @@ function EditProductOrderList({ route, navigation }) {
             style={[{ backgroundColor: "white" }]}
           />
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Total Length"
             value={data.total_length}
             editable={false}
@@ -824,7 +824,7 @@ function EditProductOrderList({ route, navigation }) {
           />
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Rate per Unit"
             value={data.rate}
             keyboardType={"numeric"}
@@ -847,7 +847,7 @@ function EditProductOrderList({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Amount"
             value={data.amount}
             editable={false}

@@ -662,7 +662,7 @@ function AddProductionStatus({ route, navigation }) {
           </View>
           <View>
             <TextInput
-              mode="flat"
+              mode="outlined"
               label="Total Products (Achieved)"
               value={data.total_achieved_products}
               returnKeyType="next"
@@ -720,7 +720,7 @@ function AddProductionStatus({ route, navigation }) {
 
           <View>
             <TextInput
-              mode="flat"
+             mode="outlined"
               label="Scrap Kg (Production)"
               value={data.scrap_wastage}
               returnKeyType="next"

@@ -333,8 +333,8 @@ const AddSendRateCard = ({ route, navigation }) => {
               <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]} icon={"account-multiple-plus"} size={35} color="#198754"></IconButton>
             </View>
           </View>
-          <TextInput mode="flat" dense label="Client Name" value={cName} disabled></TextInput>
-          <TextInput mode="flat" dense label="Client Number" value={clientNumber} disabled style={{ marginTop: 20 }}></TextInput>
+          <TextInput mode="outlined" dense label="Client Name" value={cName} disabled></TextInput>
+          <TextInput mode="outlined" dense label="Client Number" value={clientNumber} disabled style={{ marginTop: 20 }}></TextInput>
         </View>
 
         <View style={[Styles.padding16]}>
@@ -379,27 +379,27 @@ const AddSendRateCard = ({ route, navigation }) => {
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Service Name</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
+                  <TextInput mode="outlined"" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Category Name</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Product Name</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Unit</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Rate</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
                 <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                   <Text style={[Styles.flex1]}>Action</Text>
-                  <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
                 </View>
               </View>
             );

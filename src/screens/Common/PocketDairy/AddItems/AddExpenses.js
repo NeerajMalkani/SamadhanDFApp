@@ -3040,7 +3040,7 @@ const AddExpenses = ({ route, navigation }) => {
           {newContactNameStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Received From"
                 value={contactName}
                 returnKeyType="next"
@@ -3055,7 +3055,7 @@ const AddExpenses = ({ route, navigation }) => {
           {newMobileNumberStatus && (
             <>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 label="Mobile No."
                 value={mobileNumber}
                 returnKeyType="next"
@@ -3169,7 +3169,7 @@ const AddExpenses = ({ route, navigation }) => {
           {personalBankStatus && (
             <>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 label="Employee Personal Bank"
                 value={personalBankName + ">>" + personalBankAccNo}
                 disabled={true}
@@ -3197,7 +3197,7 @@ const AddExpenses = ({ route, navigation }) => {
           {chequeNoStatus && (
             <>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 label="Cheque No"
                 value={chequeNo}
                 returnKeyType="next"
@@ -3226,7 +3226,7 @@ const AddExpenses = ({ route, navigation }) => {
           {commonDisplayStatus && (
             <>
               <TextInput
-                mode="flat"
+               mode="outlined"
                 label="Notes"
                 value={notes}
                 returnKeyType="next"

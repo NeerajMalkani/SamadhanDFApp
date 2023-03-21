@@ -548,7 +548,7 @@ function AddStockList({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Total Products"
             value={data.total_products}
             returnKeyType="next"
@@ -572,7 +572,7 @@ function AddStockList({ route, navigation }) {
             {communication.InvalidProductList}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Weight Per Piece"
             value={data.opstock_weightper_piece}
             returnKeyType="next"

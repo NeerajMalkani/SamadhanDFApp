@@ -174,7 +174,7 @@ const EditStockScrap = ({ route, navigation }) => {
       >
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Total Opening Stock Scrap (kg)"
             value={name}
             returnKeyType="next"

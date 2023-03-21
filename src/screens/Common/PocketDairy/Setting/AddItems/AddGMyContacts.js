@@ -255,7 +255,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
         </View>
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label=" Name"
             value={name}
             onChangeText={onNameChanged}
@@ -266,7 +266,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
             {communication.InvalidCategoryName}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Mobile No"
             keyboardType="number-pad"
             value={mobileNo}
@@ -278,7 +278,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
             {communication.InvalidMobileNo}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Remarks"
             value={remarkName}
             onChangeText={onRemarkChanged}

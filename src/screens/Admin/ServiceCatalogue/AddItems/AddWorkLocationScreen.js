@@ -108,7 +108,7 @@ const AddWorkLocationScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Work Location Name" value={workLocationName} onChangeText={onWorkLocationNameChanged} style={{ backgroundColor: "white" }} error={workLocationNameError} />
+          <TextInput mode="outlined" label="Work Location Name" value={workLocationName} onChangeText={onWorkLocationNameChanged} style={{ backgroundColor: "white" }} error={workLocationNameError} />
           <HelperText type="error" visible={workLocationNameError}>
             {communication.InvalidWorkLocationName}
           </HelperText>

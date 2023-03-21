@@ -291,7 +291,7 @@ const JobSeekerForm = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps='handled'>
         <View style={[Styles.padding16]}>
           <TextInput
-            mode='flat'
+           mode="outlined"
             label='Job Seeking From'
             disabled={true}
             value={route.params.employergroup.employergroup_name}
@@ -384,7 +384,7 @@ const JobSeekerForm = ({ route, navigation }) => {
             </View>
           </View>
           <TextInput
-            mode='flat'
+            mode="outlined"
             label='Expected Salary'
             returnKeyType='next'
             onChangeText={(e) => onChange(e, 'expected_salary')}
@@ -397,7 +397,7 @@ const JobSeekerForm = ({ route, navigation }) => {
             Please enter expected salary
           </HelperText>
           <TextInput
-            mode='flat'
+            mode="outlined"
             label='Subscription Fees'
             onChangeText={(e) => onChange(e, 'subscription_fees')}
             value={state.subscription_fees}

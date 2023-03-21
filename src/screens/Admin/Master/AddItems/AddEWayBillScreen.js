@@ -204,11 +204,11 @@ const AddEWayBillScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSN}>
             {communication.InvalidStateName}
           </HelperText>
-          <TextInput mode="flat" label="In State Limit" keyboardType="decimal-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} value={inStateLimit} onChangeText={onInStateLimitChanged} style={{ backgroundColor: "white" }} error={inStateLimitError} />
+          <TextInput mode="outlined" label="In State Limit" keyboardType="decimal-pad" returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} value={inStateLimit} onChangeText={onInStateLimitChanged} style={{ backgroundColor: "white" }} error={inStateLimitError} />
           <HelperText type="error" visible={inStateLimitError}>
             {communication.InvalidInStateLimit}
           </HelperText>
-          <TextInput ref={ref_input2} mode="flat" label="Inter State Limit" keyboardType="decimal-pad" value={interStateLimit} onChangeText={onInterStateLimitChanged} style={{ backgroundColor: "white" }} error={interStateLimitError} />
+          <TextInput ref={ref_input2} mode="outlined" label="Inter State Limit" keyboardType="decimal-pad" value={interStateLimit} onChangeText={onInterStateLimitChanged} style={{ backgroundColor: "white" }} error={interStateLimitError} />
           <HelperText type="error" visible={interStateLimitError}>
             {communication.InvalidInterStateLimit}
           </HelperText>

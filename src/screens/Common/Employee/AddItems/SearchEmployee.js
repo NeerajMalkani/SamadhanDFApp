@@ -378,7 +378,7 @@ const SearchEmployee = ({ route, navigation }) => {
           />
           {/* <TextInput
             ref={aadharNoRef}
-            mode="flat"
+            mode="outlined"
             dense
             label="Employee Aadhar No"
             value={aadharNo}
@@ -394,7 +394,7 @@ const SearchEmployee = ({ route, navigation }) => {
 
           {/* <TextInput
             ref={mobileNoRef}
-            mode="flat"
+           mode="outlined"
             dense
             keyboardType="number-pad"
             label="Mobile No"

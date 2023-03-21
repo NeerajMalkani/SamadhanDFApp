@@ -174,7 +174,7 @@ const AddEmployee = ({ route, navigation }) => {
           </View>
           <TextInput
             ref={employeeNameRef}
-            mode="flat"
+            mode="outlined"
             dense
             label="Employee Name"
             value={employeeName}
@@ -191,7 +191,7 @@ const AddEmployee = ({ route, navigation }) => {
 
           <TextInput
             ref={addMobileNoRef}
-            mode="flat"
+            mode="outlined"
             dense
             keyboardType="number-pad"
             maxLength={10}
@@ -209,7 +209,7 @@ const AddEmployee = ({ route, navigation }) => {
 
           <TextInput
             ref={addAadharNoRef}
-            mode="flat"
+            mode="outlined"
             dense
             keyboardType="number-pad"
             maxLength={12}

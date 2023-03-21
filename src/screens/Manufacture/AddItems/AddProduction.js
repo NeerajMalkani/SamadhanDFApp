@@ -594,7 +594,7 @@ function AddProduction({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Product length in Mtrs"
             value={data.length_mtr_value}
             returnKeyType="next"
@@ -760,7 +760,7 @@ function AddProduction({ route, navigation }) {
             </View>
           </View>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Slitting width in mm"
             value={data.width_mm_value}
             returnKeyType="next"

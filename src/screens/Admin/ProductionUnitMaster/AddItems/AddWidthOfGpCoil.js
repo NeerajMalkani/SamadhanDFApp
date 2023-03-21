@@ -186,7 +186,7 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
       >
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Width Of Gp Coil"
             value={widthOfGpCoil}
             onChangeText={onWidthChanged}
@@ -198,7 +198,7 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
             {communication.InvalidUnitWidth}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Description"
             value={description}
             onChangeText={onDescriptionChanged}

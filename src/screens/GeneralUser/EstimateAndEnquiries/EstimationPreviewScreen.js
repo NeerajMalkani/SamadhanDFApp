@@ -710,7 +710,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
             </View>
             <TextInput
-              mode='flat'
+             mode="outlined"
               label='Total (Sq.Ft.)'
               value={totalSqFt}
               editable={false}
