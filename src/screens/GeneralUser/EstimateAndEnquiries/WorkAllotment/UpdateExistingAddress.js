@@ -315,7 +315,7 @@ function UpdateExistingAddress({ route, navigation }) {
       >
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Name / Company Name"
             name="company_name"
             value={data.company_name}
@@ -331,7 +331,7 @@ function UpdateExistingAddress({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Contact Person"
             name="contact_person"
             value={data.contact_person}
@@ -347,7 +347,7 @@ function UpdateExistingAddress({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Contact Mobile No."
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}
@@ -363,7 +363,7 @@ function UpdateExistingAddress({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Address 1"
             name="address"
             value={data.address}
@@ -434,7 +434,7 @@ function UpdateExistingAddress({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Pincode"
             name="pincode"
             value={data.pincode}

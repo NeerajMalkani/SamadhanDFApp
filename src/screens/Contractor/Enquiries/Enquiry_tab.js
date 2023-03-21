@@ -516,7 +516,7 @@ const Enquiry_tab = ({
               <>
                 <List.Item title="Labour Cost" />
                 <TextInput
-                  mode="flat"
+                 mode="outlined"
                   disabled={type === "new" ? false : true}
                   value={current.alter_labours_cost}
                   onChangeText={(text) => {

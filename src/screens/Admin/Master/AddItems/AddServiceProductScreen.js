@@ -500,11 +500,11 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorCN}>
             {communication.InvalidCategoryName}
           </HelperText>
-          <TextInput mode="flat" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="HSN / SAC Code" value={hsn} onChangeText={onHSNChanged} error={hsnError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput mode="flat" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="GST Rate" value={gst} onChangeText={onGSTChanged} error={gstError} editable={false} dense style={[Styles.marginTop12, Styles.backgroundSecondaryColor]} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>
@@ -516,27 +516,27 @@ const AddServiceProductScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorUN}>
             {communication.InvalidUnitName}
           </HelperText>
-          <TextInput mode="flat" label="Rate / Unit (with materials)" value={rum} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onRUMChanged} style={{ backgroundColor: "white" }} error={errorRUM} />
+          <TextInput mode="outlined" label="Rate / Unit (with materials)" value={rum} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onRUMChanged} style={{ backgroundColor: "white" }} error={errorRUM} />
           <HelperText type={errorRUM ? "error" : "info"} visible={true}>
             {rumht}
           </HelperText>
-          <TextInput ref={ref_input2} mode="flat" label="Rate / Unit (without materials)" value={ruwm} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onRUWMChanged} style={{ backgroundColor: "white" }} error={errorRUWM} />
+          <TextInput ref={ref_input2} mode="outlined" label="Rate / Unit (without materials)" value={ruwm} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input3.current.focus()} onChangeText={onRUWMChanged} style={{ backgroundColor: "white" }} error={errorRUWM} />
           <HelperText type={errorRUWM ? "error" : "info"} visible={true}>
             {ruwmht}
           </HelperText>
           <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
             <Text style={[Styles.textCenter, { flex: unitSelected === "" ? 0 : 1 }]}>{unitSelected === "" ? "" : "1 " + unitSelected + " ="}</Text>
             <View style={[Styles.flex3]}>
-              <TextInput ref={ref_input3} mode="flat" label="Alternative Unit of Sales" value={auos} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input4.current.focus()} onChangeText={onAUOSChanged} style={{ backgroundColor: "white" }} error={errorAUOS} />
+              <TextInput ref={ref_input3} mode="outlined" label="Alternative Unit of Sales" value={auos} returnKeyType="next" keyboardType="decimal-pad" onSubmitEditing={() => ref_input4.current.focus()} onChangeText={onAUOSChanged} style={{ backgroundColor: "white" }} error={errorAUOS} />
               <HelperText type="error" visible={errorAUOS}>
                 {communication.InvalidAlternateUnitOfSales}
               </HelperText>
             </View>
             <Text style={[Styles.textCenter, { flex: conversionUnitSelected === "" ? 0 : 1 }]}>{conversionUnitSelected}</Text>
           </View>
-          <TextInput ref={ref_input4} multiline mode="flat" label="Short Specification" value={shortSpec} returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} onChangeText={onSSChanged} style={{ backgroundColor: "white" }} error={errorSS} />
+          <TextInput ref={ref_input4} multiline mode="outlined" label="Short Specification" value={shortSpec} returnKeyType="next" onSubmitEditing={() => ref_input5.current.focus()} onChangeText={onSSChanged} style={{ backgroundColor: "white" }} error={errorSS} />
           <HelperText type="error" visible={errorSS}></HelperText>
-          <TextInput ref={ref_input5} multiline mode="flat" label="Specification" value={spec} returnKeyType="done" onChangeText={onSChanged} style={{ backgroundColor: "white" }} error={errorS} />
+          <TextInput ref={ref_input5} multiline mode="outlined" label="Specification" value={spec} returnKeyType="done" onChangeText={onSChanged} style={{ backgroundColor: "white" }} error={errorS} />
           <HelperText type="error" visible={errorS}></HelperText>
           <View style={{ width: 160 }}>
             <Checkbox.Item

@@ -372,12 +372,12 @@ const [searchQuery, setSearchQuery] = React.useState("");
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2, Styles.marginBottom8]}>
                     <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Search Employee</Text>
                 </View>
-              <TextInput ref={aadharNoRef} mode="flat" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
+              <TextInput ref={aadharNoRef} mode="outlined" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
               <HelperText type="error" visible={aadharNoInvalid}>
                 {communication.InvalidAadharNo}
               </HelperText>
 
-              <TextInput ref={mobileNoRef} mode="flat" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} 
+              <TextInput ref={mobileNoRef} mode="outlined" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} 
               returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
               <HelperText type="error" visible={mobileNoInvalid}>
                 {communication.InvalidMobileNumber}
@@ -437,20 +437,20 @@ const [searchQuery, setSearchQuery] = React.useState("");
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2, Styles.marginBottom16]}>
                     <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Add New Employee</Text>
                 </View>
-              <TextInput ref={employeeNameRef} mode="flat" dense label="Employee Name" value={employeeName} returnKeyType="next" 
+              <TextInput ref={employeeNameRef} mode="outlined" dense label="Employee Name" value={employeeName} returnKeyType="next" 
               onSubmitEditing={() => employeeNameRef.current.focus()} selectTextOnFocus={false} onChangeText={onEmployeeNameChanged} 
               style={{ backgroundColor: "white" }} error={employeeNameInvalid} />
               <HelperText type="error" visible={employeeNameInvalid}>
                 {communication.InvalidEmployeeName}
               </HelperText>
 
-              <TextInput ref={addMobileNoRef} mode="flat" dense keyboardType="number-pad" maxLength={10} label="Mobile No" value={addMobileNo} 
+              <TextInput ref={addMobileNoRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Mobile No" value={addMobileNo} 
               returnKeyType="next" onSubmitEditing={() => addMobileNoRef.current.focus()} onChangeText={onAddMobileNoChanged} style={{ backgroundColor: "white" }} error={addMobileNoInvalid} />
               <HelperText type="error" visible={addMobileNoInvalid}>
                 {communication.InvalidMobileNumber}
               </HelperText>
 
-              <TextInput ref={addAadharNoRef} mode="flat" dense keyboardType="number-pad" maxLength={12} label="Aadhar No" value={addAadharNo} returnKeyType="next" onSubmitEditing={() => addAadharNoRef.current.focus()} onChangeText={onAddAadharNoChanged} style={{ backgroundColor: "white" }} error={addAadharNoInvalid} />
+              <TextInput ref={addAadharNoRef} mode="outlined" dense keyboardType="number-pad" maxLength={12} label="Aadhar No" value={addAadharNo} returnKeyType="next" onSubmitEditing={() => addAadharNoRef.current.focus()} onChangeText={onAddAadharNoChanged} style={{ backgroundColor: "white" }} error={addAadharNoInvalid} />
               <HelperText type="error" visible={addAadharNoInvalid}>
                 {communication.InvalidAadharNo}
               </HelperText>

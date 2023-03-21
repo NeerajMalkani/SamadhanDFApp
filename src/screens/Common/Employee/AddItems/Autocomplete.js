@@ -23,7 +23,7 @@ const Autocomplete = ({
     <View style={[containerStyle]}>
       <TextInput
         ref={ref}
-        mode="flat"
+        mode="outlined"
         keyboardType={keyboardType ? keyboardType : ""}
         onFocus={() => {
           if (value.length === 0) {

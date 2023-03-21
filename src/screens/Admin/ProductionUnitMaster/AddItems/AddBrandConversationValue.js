@@ -384,7 +384,7 @@ const AddBrandConversationValue = ({ route, navigation }) => {
             {communication.InvalidBrandName}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Conversion Value"
             value={conversionvalue}
             onChangeText={onCVChanged}

@@ -123,7 +123,7 @@ const AddDealerBuyerCategoryScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Buyer Category Name" value={buyerCategoryName} onChangeText={onBuyerCategoryNameChanged} style={{ backgroundColor: "white" }} error={buyerCategoryNameError} />
+          <TextInput mode="outlined" label="Buyer Category Name" value={buyerCategoryName} onChangeText={onBuyerCategoryNameChanged} style={{ backgroundColor: "white" }} error={buyerCategoryNameError} />
           <HelperText type="error" visible={buyerCategoryNameError}>
             {communication.InvalidBuyerCategoryName}
           </HelperText>

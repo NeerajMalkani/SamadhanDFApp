@@ -172,7 +172,7 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
       >
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Gsm"
             value={gsm}
             onChangeText={onGSMChanged}
@@ -184,7 +184,7 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
             {communication.InvalidUnitGsm}
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Description"
             value={description}
             onChangeText={onDescriptionChanged}
@@ -227,7 +227,7 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
           >
             Submit
           </Button> */}
-           <DFButton mode="contained" onPress={ValidateData} title="Submit" loader={isButtonLoading} />
+          <DFButton mode="contained" onPress={ValidateData} title="Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Snackbar

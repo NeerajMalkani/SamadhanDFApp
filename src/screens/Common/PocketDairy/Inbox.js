@@ -1103,23 +1103,23 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
       //       <RadioGroup containerStyle={[Styles.marginTop16]} layout="row" radioButtons={wagesRadioButtons} onPress={onPressWagesRadioButton} />
 
-      //       <TextInput ref={salaryRef} mode="flat" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
+      //       <TextInput ref={salaryRef} mode="outlined" dense keyboardType="number-pad" label="Salary" value={salary} returnKeyType="next" onSubmitEditing={() => salaryRef.current.focus()} onChangeText={onSalaryChanged} style={{ backgroundColor: "white" }} error={salaryInvalid} />
 
-      //       <TextInput ref={accountHolderNameRef} mode="flat" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
+      //       <TextInput ref={accountHolderNameRef} mode="outlined" dense label="Account Holder Name" value={accountHolderName} returnKeyType="next" onSubmitEditing={() => accountHolderNameRef.current.focus()} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameInvalid} />
 
-      //       <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+      //       <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
       //       {/* <HelperText type="error" visible={accountNoInvalid}>
       //         {communication.InvalidActivityName}
       //       </HelperText> */}
-      //       <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+      //       <TextInput ref={bankNameRef} mode="outlined" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
       //       {/* <HelperText type="error" visible={bankNameInvalid}>
       //         {communication.InvalidActivityName}
       //       </HelperText> */}
-      //       <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+      //       <TextInput ref={bankBranchNameRef} mode="outlined" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
       //       {/* <HelperText type="error" visible={bankBranchNameInvalid}>
       //         {communication.InvalidActivityName}
       //       </HelperText> */}
-      //       <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+      //       <TextInput ref={ifscCodeRef} mode="outlined" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
       //       {/* <HelperText type="error" visible={ifscCodeInvalid}>
       //         {communication.InvalidActivityName}
       //       </HelperText> */}

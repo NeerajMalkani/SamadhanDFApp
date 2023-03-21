@@ -621,7 +621,7 @@ const DesignPendingTab = ({
           <Dialog.Content>
             <ScrollView keyboardShouldPersistTaps="handled">
               <TextInput
-                mode="flat"
+                mode="outlined"
                 dense
                 style={[Styles.backgroundColor]}
                 label="Remarks/Reason"

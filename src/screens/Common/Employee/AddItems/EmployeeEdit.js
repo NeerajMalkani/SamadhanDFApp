@@ -1120,7 +1120,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             <View style={[Styles.padding16]}>
               <TextInput
                 ref={employeeNameRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Employee Name"
                 value={employeeName}
@@ -1138,7 +1138,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={employeeCodeRef}
-                mode="flat"
+                mode="outlined""
                 dense
                 label="Employee Code"
                 value={employeeCode}
@@ -1157,7 +1157,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={mobileNoRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 keyboardType="number-pad"
                 label="Mobile No"
@@ -1173,7 +1173,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText>
               <TextInput
                 ref={aadharNoRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Aadhar No"
                 value={aadharNo}
@@ -1188,8 +1188,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText>
               <TextInput
                 ref={fatherNameRef}
-                mode="flat"
-                dense
+                mode="outlined"
                 label="Father Name"
                 value={fatherName}
                 returnKeyType="next"
@@ -1203,7 +1202,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText>
               <TextInput
                 ref={addressRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Address"
                 value={address}
@@ -1233,7 +1232,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={pincodeRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 keyboardType="number-pad"
                 label="Pincode"
@@ -1279,7 +1278,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={emergencyContactNameRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Emergency Contact Name"
                 value={emergencyContactName}
@@ -1292,7 +1291,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={emergencyContactNoRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Emergency Contact No"
                 value={emergencyContactNo}
@@ -1421,7 +1420,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={salaryRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 keyboardType="number-pad"
                 label="Salary"
@@ -1435,7 +1434,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={accountHolderNameRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Account Holder Name"
                 value={accountHolderName}
@@ -1448,7 +1447,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
               <TextInput
                 ref={accountNoRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Account Number"
                 value={accountNo}
@@ -1463,7 +1462,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText> */}
               <TextInput
                 ref={bankNameRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Bank Name"
                 value={bankName}
@@ -1478,7 +1477,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText> */}
               <TextInput
                 ref={bankBranchNameRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="Bank Branch Name"
                 value={bankBranchName}
@@ -1493,7 +1492,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
               </HelperText> */}
               <TextInput
                 ref={ifscCodeRef}
-                mode="flat"
+                mode="outlined"
                 dense
                 label="IFSC Code"
                 value={ifscCode}

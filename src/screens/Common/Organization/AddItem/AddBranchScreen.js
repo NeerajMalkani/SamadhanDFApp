@@ -669,7 +669,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
@@ -680,14 +680,14 @@ const BranchEditScreen = ({ route, navigation }) => {
               }
               <Dropdown label="Assign Branch Admin" data={assignBranchAdminData} onSelected={onBranchAdminSelected} isError={errorBA} selectedItem={assignBranchAdminName} />
 
-              <TextInput ref={contactPersonNoRef} mode="flat" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()} style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
+              <TextInput ref={contactPersonNoRef} mode="outlined" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()} style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
 
-              <TextInput ref={gstNoRef} mode="flat" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
+              <TextInput ref={gstNoRef} mode="outlined" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
               <HelperText type="error" visible={gstNoInvalid}>
                 {communication.InvalidGSTNo}
               </HelperText>
 
-              <TextInput ref={panNoRef} mode="flat" dense label="Pan No" value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
+              <TextInput ref={panNoRef} mode="outlined" dense label="Pan No" value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
               <HelperText type="error" visible={panNoInvalid}>
                 {communication.InvalidPANNo}
               </HelperText>
@@ -708,18 +708,18 @@ const BranchEditScreen = ({ route, navigation }) => {
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
 
-              <TextInput ref={branchLocationNameRef} mode="flat" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={branchLocationNameInvalid} />
+              <TextInput ref={branchLocationNameRef} mode="outlined" dense label="Branch Location Name" value={branchLocationName} returnKeyType="next" onSubmitEditing={() => branchLocationNameRef.current.focus()} onChangeText={onBranchLocationNameChanged} style={{ backgroundColor: "white" }} error={branchLocationNameInvalid} />
               <HelperText type="error" visible={setBranchLocationNameInvalid}>
                 {communication.InvalidBranchLocationName}
               </HelperText>
 
-              <TextInput ref={addressRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+              <TextInput ref={addressRef} mode="outlined" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
 
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
 
               <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
 
-              <TextInput ref={pincodeRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodeRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
             </View>
           </ScrollView>
         );
@@ -727,13 +727,13 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
 
-              <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+              <TextInput ref={bankNameRef} mode="outlined" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
 
-              <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+              <TextInput ref={bankBranchNameRef} mode="outlined" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
 
-              <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+              <TextInput ref={ifscCodeRef} mode="outlined" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
 
             </View>
           </ScrollView>

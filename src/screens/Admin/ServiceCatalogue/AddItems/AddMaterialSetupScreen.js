@@ -671,7 +671,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorDT}>
             {communication.InvalidDesignTypeName}
           </HelperText>
-          <TextInput mode="flat" multiline={true} disabled={true} label="Specification" value={specification} returnKeyType="done"
+          <TextInput mode="outlined" multiline={true} disabled={true} label="Specification" value={specification} returnKeyType="done"
             style={{ backgroundColor: "white" }} />
           <View style={[Styles.flexRow, Styles.flexAlignEnd, Styles.marginTop16]}>
           <Image source={{ uri: designImage }} style={[Styles.border1, Styles.width100per, Styles.height250]} />
@@ -701,7 +701,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
             </View>
             <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
           </View>
-          <TextInput mode="flat" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
+          <TextInput mode="outlined" label="Total (Sq.Ft.)" value={totalSqFt} editable={false} />
           <Button mode="contained" style={[Styles.marginTop16]} onPress={OpenProductDialog}>
             Add Products
           </Button>
@@ -751,16 +751,16 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Brand Name</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
+                    <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Quantity</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                    <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Rate</Text>
                     <TextInput
-                      mode="flat"
+                      mode="outlined"
                       dense
                       keyboardType="decimal-pad"
                       value={k.price}
@@ -779,12 +779,12 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
                   </View>
                   <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Amount</Text>
-                    <TextInput mode="flat" dense style={[Styles.flex1]} editable={false} value={k.amount} />
+                    <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.amount} />
                   </View>
                   <View style={[Styles.flexRow, Styles.padding4, Styles.flexAlignCenter]}>
                     <Text style={[Styles.flex1]}>Formula</Text>
                     <TextInput
-                      mode="flat"
+                      mode="outlined"
                       dense
                       keyboardType="decimal-pad"
                       value={k.formula}

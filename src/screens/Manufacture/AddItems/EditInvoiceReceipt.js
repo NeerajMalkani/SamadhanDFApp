@@ -343,7 +343,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           isError={errors.mf_vo_refno}
         />
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='Invoice No'
           style={{ backgroundColor: 'white' }}
           value={state.invoice_no}
@@ -359,7 +359,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           error={errors.invoice_no}
         />
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='Invoice Entry Date'
           disabled={true}
           value={state.invoice_entry_date}
@@ -373,14 +373,14 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           onChangeDate={(date) => onChange(date, 'invoice_date')}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Supplier Name'
           disabled={true}
           value={state.supplier_name || ''}
           style={{ backgroundColor: 'white' }}
         />
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='Basic Amount'
           disabled={true}
           value={state.basic_amount || ''}
@@ -388,7 +388,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         />
 
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='SGST(%)'
           value={state.sgst || ''}
           keyboardType='numeric'
@@ -397,7 +397,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           error={errors.sgst}
         />
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='IGST(%)'
           value={state.igst || ''}
           keyboardType='numeric'
@@ -406,7 +406,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           error={errors.igst}
         />
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='Transporation Charges'
           style={{ backgroundColor: 'white' }}
           value={state.transport_charges}
@@ -420,7 +420,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         />
 
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Transporation Charges'
           style={{ backgroundColor: 'white' }}
           value={state.transport_charges}
@@ -531,7 +531,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                  mode="outlined"
                   label='Slitting scrap (mm)'
                   disabled={true}
                   value={production[0].scrab_wastage}
@@ -540,7 +540,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
               </View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                 mode="outlined"
                   label='Slitting scrap (Kg)'
                   disabled={true}
                   value={production[0].scrab_wastage_kg}
@@ -552,7 +552,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
               <View style={{ flex: 0.5 }}></View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                  mode="outlined"
                   label='Total Weight'
                   disabled={true}
                   value={production[0].total_weight}

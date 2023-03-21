@@ -427,7 +427,7 @@ function EditVendorOrderForm({ route, navigation }) {
           </HelperText>
           {route.params.type == "edit" && (
             <TextInput
-              mode="flat"
+            mode="outlined"
               label="Job Order No"
               value={route.params.data?.job_order_no}
               disabled={true}
@@ -654,7 +654,7 @@ function EditVendorOrderForm({ route, navigation }) {
           </View>
 
           <TextInput
-            mode="flat"
+           mode="outlined"
             style={{ marginTop: 10 }}
             label="Slitting Scrap (mm)"
             value={data.ss_mm}
@@ -662,7 +662,7 @@ function EditVendorOrderForm({ route, navigation }) {
             dense
           />
           <TextInput
-            mode="flat"
+           mode="outlined"
             style={{ marginTop: 10 }}
             label="Slitting Scrap (kg)"
             value={data.ss_kg}
@@ -670,7 +670,7 @@ function EditVendorOrderForm({ route, navigation }) {
             dense
           />
           <TextInput
-            mode="flat"
+            mode="outlined"
             style={{ marginTop: 10 }}
             label="Total Weight"
             value={data.total_weight}

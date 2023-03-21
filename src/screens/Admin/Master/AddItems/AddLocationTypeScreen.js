@@ -253,7 +253,7 @@ const AddLocationTypeScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>
         <View style={[Styles.flex1, Styles.padding16]}>
-          <TextInput mode="flat" label="Branch Type" value={branchType} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "white" }} error={branchTypeError} />
+          <TextInput mode="outlined" label="Branch Type" value={branchType} onChangeText={onBranchTypeChanged} style={{ backgroundColor: "white" }} error={branchTypeError} />
           <HelperText type="error" visible={branchTypeError}>
             {communication.InvalidBranchType}
           </HelperText>

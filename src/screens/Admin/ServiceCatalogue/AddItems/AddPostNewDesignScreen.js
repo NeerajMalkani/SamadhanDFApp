@@ -543,8 +543,8 @@ const AddPostNewDesignScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorWL}>
             {communication.InvalidWorkLocationName}
           </HelperText>
-          <TextInput mode="flat" label="Design Number" value={designNumber} editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
-          <TextInput mode="flat" label="Labour Cost" value={name} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="outlined" label="Design Number" value={designNumber} editable={false} dense style={[Styles.marginVertical12, Styles.backgroundSecondaryColor]} />
+          <TextInput mode="outlined" label="Labour Cost" value={name} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidLabourCost}
           </HelperText>

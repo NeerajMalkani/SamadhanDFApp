@@ -393,12 +393,12 @@ const AddDesignTypeScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorPN}>
             {communication.InvalidProductName}
           </HelperText>
-          <TextInput mode="flat" label="Design Type Name" value={name} returnKeyType="done" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="outlined" label="Design Type Name" value={name} returnKeyType="done" onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidDesignTypeName}
           </HelperText>
 
-          <TextInput mode="flat" multiline={true} label="Specification" value={specification} returnKeyType="done"
+          <TextInput mode="outlined" multiline={true} label="Specification" value={specification} returnKeyType="done"
             onChangeText={onSpecificationChanged} style={{ backgroundColor: "white" }} error={errorSpec} />
           <HelperText type="error" visible={errorSpec}>
             Please enter specification

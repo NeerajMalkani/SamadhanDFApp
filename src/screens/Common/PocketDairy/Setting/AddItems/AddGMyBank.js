@@ -245,27 +245,27 @@ const AddGMyBankScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Account Holder Name" value={accountHolderName} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameError} />
+          <TextInput mode="outlined" label="Account Holder Name" value={accountHolderName} onChangeText={onAccountHolderNameChanged} style={{ backgroundColor: "white" }} error={accountHolderNameError} />
           <HelperText type="error" visible={accountHolderNameError}>
             Please enter valid name
           </HelperText>
 
-          <TextInput mode="flat" label="Bank Account No" value={bankAccountNo} keyboardType="number-pad" onChangeText={onBankAccountNoChanged} style={{ backgroundColor: "white" }} error={bankAccountNoError} />
+          <TextInput mode="outlined" label="Bank Account No" value={bankAccountNo} keyboardType="number-pad" onChangeText={onBankAccountNoChanged} style={{ backgroundColor: "white" }} error={bankAccountNoError} />
           <HelperText type="error" visible={bankAccountNoError}>
             Please enter valid account number
           </HelperText>
 
-          <TextInput mode="flat" label="Bank Name" value={bankName} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameError} />
+          <TextInput mode="outlined" label="Bank Name" value={bankName} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameError} />
           <HelperText type="error" visible={bankNameError}>
             {communication.InvalidBrandName}
           </HelperText>
 
-          <TextInput mode="flat" label="Bank Branch Name" value={bankBranchName} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameError} />
+          <TextInput mode="outlined" label="Bank Branch Name" value={bankBranchName} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameError} />
           <HelperText type="error" visible={bankBranchNameError}>
             Please enter valid branch name
           </HelperText>
 
-          <TextInput mode="flat" label="IFSC Code" value={ifscCode} onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeError} />
+          <TextInput mode="outlined" label="IFSC Code" value={ifscCode} onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeError} />
           <HelperText type="error" visible={ifscCodeError}>
             Please enter valid IFSC Code
           </HelperText>
@@ -300,11 +300,11 @@ const AddGMyBankScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={cardTypeInvalid}>
             Please select Card Type
           </HelperText>
-          <TextInput mode="flat" label="Opening Balance" value={openingBalance} onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceError} />
+          <TextInput mode="outlined" label="Opening Balance" value={openingBalance} onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceError} />
           <HelperText type="error" visible={openingBalanceError}>
             {communication.InvalidOpeningBalance}
           </HelperText>
-          <TextInput mode="flat" label="Remarks" value={remarks} onChangeText={onRemarksChanged} style={{ backgroundColor: "white" }} error={remarksError} />
+          <TextInput mode="outlined" label="Remarks" value={remarks} onChangeText={onRemarksChanged} style={{ backgroundColor: "white" }} error={remarksError} />
           <HelperText type="error" visible={remarksError}>
             {communication.InvalidRemarks}
           </HelperText>

@@ -599,7 +599,7 @@ function EditProductForProduction({ route, navigation }) {
           </HelperText>
 
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Product length in Mtrs"
             value={data.length_mtr_value}
             returnKeyType="next"
@@ -765,7 +765,7 @@ function EditProductForProduction({ route, navigation }) {
             </View>
           </View>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Raw material width in mm"
             value={data.width_mm_value}
             returnKeyType="next"

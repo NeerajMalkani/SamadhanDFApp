@@ -484,19 +484,19 @@ const UserProfile = ({ route, navigation }) => {
             {/* <Header navigation={navigation} title="Update Profile" isDrawer="false" /> */}
             <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
               <View style={[Styles.padding16]}>
-                <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+                <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
                 <HelperText type="error" visible={companyNameInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={contactNameRef} mode="flat" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
+                <TextInput ref={contactNameRef} mode="outlined" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
                 <HelperText type="error" visible={contactNameInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={contactNumberRef} mode="flat" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
                 <HelperText type="error" visible={contactNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+                <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
                 <HelperText type="error" visible={addressInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
@@ -508,15 +508,15 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={errorCN}>
                   {communication.InvalidStateName}
                 </HelperText>
-                <TextInput ref={pincodenRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+                <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
                 <HelperText type="error" visible={pincodeInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+                <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." value={gstNumber} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
                 <HelperText type="error" visible={gstNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                 <HelperText type="error" visible={panNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>

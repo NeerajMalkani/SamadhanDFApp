@@ -490,7 +490,7 @@ const EmployeeListScreen = ({ navigation }) => {
             >
               <Text>Enter OTP No:</Text>
               <TextInput
-                mode="flat"
+                mode="outlined"
                 value={otp}
                 onChangeText={onOTPChange}
                 error={otpError}

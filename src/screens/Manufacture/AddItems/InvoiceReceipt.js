@@ -320,7 +320,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           isError={errors.mf_vo_refno}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Invoice No'
           style={{ backgroundColor: 'white' }}
           value={state.invoice_no}
@@ -336,7 +336,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           error={errors.invoice_no}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Invoice Entry Date'
           disabled={true}
           value={state.invoice_entry_date}
@@ -350,7 +350,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           onChangeDate={(date) => onChange(date, 'invoice_date')}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Supplier Name'
           disabled={true}
           value={state.supplier_name || ''}
@@ -365,7 +365,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
         />
 
         <TextInput
-          mode='flat'
+          mode="outlined"
           label='CGST(%)'
           value={state.cgst || ''}
           keyboardType='numeric'
@@ -374,7 +374,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           error={errors.cgst}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='SGST(%)'
           value={state.sgst || ''}
           keyboardType='numeric'
@@ -383,7 +383,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           error={errors.sgst}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='IGST(%)'
           value={state.igst || ''}
           keyboardType='numeric'
@@ -392,7 +392,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           error={errors.igst}
         />
         <TextInput
-          mode='flat'
+         mode="outlined"
           label='Transporation Charges'
           style={{ backgroundColor: 'white' }}
           value={state.transport_charges}
@@ -500,7 +500,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                 mode="outlined"
                   label='Slitting scrap (mm)'
                   disabled={true}
                   value={production[0].scrab_wastage}
@@ -509,7 +509,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
               </View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                mode="outlined"
                   label='Slitting scrap (Kg)'
                   disabled={true}
                   value={production[0].scrab_wastage_kg}
@@ -521,7 +521,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
               <View style={{ flex: 0.5 }}></View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode='flat'
+                  mode="outlined"
                   label='Total Weight'
                   disabled={true}
                   value={production[0].total_weight}

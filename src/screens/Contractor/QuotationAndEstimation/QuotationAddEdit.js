@@ -223,9 +223,9 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    <TextInput mode="flat" dense label="Client Name" value={cName} disabled></TextInput>
+                    <TextInput mode="outlined" dense label="Client Name" value={cName} disabled></TextInput>
 
-                    <TextInput mode="flat" dense label="Client Number" value={clientNumber} disabled style={{ marginTop: 20 }}></TextInput>
+                    <TextInput mode="outlined" dense label="Client Number" value={clientNumber} disabled style={{ marginTop: 20 }}></TextInput>
                 </View>
                 <View style={[Styles.padding16]}>
                     <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginBottom16]}>
@@ -233,23 +233,23 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                     </View>
                     <View style={[Styles.width100per, Styles.flexRow, Styles.flexAlignCenter]}>
                         <View style={[Styles.width100per]}>
-                            <TextInput ref={projectNameRef} mode="flat" dense label="Project Name" value={projectName} returnKeyType="next" onSubmitEditing={() => projectNameRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={projectNameInvalid} />
+                            <TextInput ref={projectNameRef} mode="outlined" dense label="Project Name" value={projectName} returnKeyType="next" onSubmitEditing={() => projectNameRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={projectNameInvalid} />
                             <HelperText type="error" visible={projectNameInvalid}>
                                 {communication.projectNameInvalid}
                             </HelperText>
-                            <TextInput ref={contactPersonRef} mode="flat" dense label="Contact Person" value={contactPerson} returnKeyType="next" onSubmitEditing={() => contactPersonRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={contactPersonInvalid} />
+                            <TextInput ref={contactPersonRef} mode="outlined" dense label="Contact Person" value={contactPerson} returnKeyType="next" onSubmitEditing={() => contactPersonRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={contactPersonInvalid} />
                             <HelperText type="error" visible={contactPersonInvalid}>
                                 {communication.contactPersonInvalid}
                             </HelperText>
-                            <TextInput ref={contactNumberRef} mode="flat" dense label="Conatct Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+                            <TextInput ref={contactNumberRef}mode="outlined" dense label="Conatct Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onProjectNameChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
                             <HelperText type="error" visible={contactNumberInvalid}>
                                 {communication.contactNumberInvalid}
                             </HelperText>
-                            <TextInput multiline ref={projectDescriptionRef} mode="flat" dense label="Project Description" value={projectDescription} returnKeyType="next" onSubmitEditing={() => projectDescriptionRef.current.focus()} onChangeText={onProjectDescriptionChanged} style={{ backgroundColor: "white" }} error={projectDescriptionInvalid} />
+                            <TextInput multiline ref={projectDescriptionRef} mode="outlined" dense label="Project Description" value={projectDescription} returnKeyType="next" onSubmitEditing={() => projectDescriptionRef.current.focus()} onChangeText={onProjectDescriptionChanged} style={{ backgroundColor: "white" }} error={projectDescriptionInvalid} />
                             <HelperText type="error" visible={projectDescriptionInvalid}>
                                 {communication.projectDescriptionInvalid}
                             </HelperText>
-                            <TextInput multiline ref={projectSiteAddressRef} mode="flat" dense label="Project Site Address" value={projectSiteAddress} returnKeyType="next" onSubmitEditing={() => projectSiteAddressRef.current.focus()} onChangeText={onProjectSiteAddressChanged} style={{ backgroundColor: "white" }} error={projectSiteAddressInvalid} />
+                            <TextInput multiline ref={projectSiteAddressRef} mode="outlined" dense label="Project Site Address" value={projectSiteAddress} returnKeyType="next" onSubmitEditing={() => projectSiteAddressRef.current.focus()} onChangeText={onProjectSiteAddressChanged} style={{ backgroundColor: "white" }} error={projectSiteAddressInvalid} />
                             <HelperText type="error" visible={projectSiteAddressInvalid}>
                                 {communication.projectSiteAddressInvalid}
                             </HelperText>

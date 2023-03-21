@@ -214,7 +214,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Category Name" value={categoryName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={categoryNameError} />
+          <TextInput mode="outlined" label="Category Name" value={categoryName} onChangeText={onCategoryNameChanged} style={{ backgroundColor: "white" }} error={categoryNameError} />
           <HelperText type="error" visible={categoryNameError}>
             {communication.InvalidCategoryName}
           </HelperText>

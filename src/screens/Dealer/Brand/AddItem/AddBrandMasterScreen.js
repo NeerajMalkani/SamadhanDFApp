@@ -121,7 +121,7 @@ const AddDealerBrandMasterScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
-          <TextInput mode="flat" label="Brand Name" value={brandName} onChangeText={onBrandNameChanged} style={{ backgroundColor: "white" }} error={brandNameError} />
+          <TextInput mode="outlined" label="Brand Name" value={brandName} onChangeText={onBrandNameChanged} style={{ backgroundColor: "white" }} error={brandNameError} />
           <HelperText type="error" visible={brandNameError}>
             {communication.InvalidBrandName}
           </HelperText>

@@ -422,31 +422,31 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="flat" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={contactNameRef} mode="flat" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
+              <TextInput ref={contactNameRef} mode="outlined" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
               <HelperText type="error" visible={contactNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={contactNumberRef} mode="flat" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
               <HelperText type="error" visible={contactNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={gstNumberRef} mode="flat" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+              <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
               <HelperText type="error" visible={gstNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={panNumberRef} mode="flat" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+              <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={addressRef} mode="flat" dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
+              <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
               <HelperText type="error" visible={locationInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={locationRef} mode="flat" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+              <TextInput ref={locationRef} mode="outlined" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
               <HelperText type="error" visible={addressInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
@@ -458,7 +458,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={errorCN}>
                 {communication.InvalidStateName}
               </HelperText>
-              <TextInput ref={pincodenRef} mode="flat" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
               <HelperText type="error" visible={pincodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
@@ -469,19 +469,19 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={accountNoRef} mode="flat" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={bankNameRef} mode="flat" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
+              <TextInput ref={bankNameRef} mode="outlined" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
               <HelperText type="error" visible={bankNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={bankBranchNameRef} mode="flat" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
+              <TextInput ref={bankBranchNameRef} mode="outlined" dense label="Bank Branch Name" value={bankBranchName} returnKeyType="next" onSubmitEditing={() => ifscCodeRef.current.focus()} onChangeText={onBankBranchNameChanged} style={{ backgroundColor: "white" }} error={bankBranchNameInvalid} />
               <HelperText type="error" visible={bankBranchNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={ifscCodeRef} mode="flat" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
+              <TextInput ref={ifscCodeRef} mode="outlined" dense label="IFSC Code" value={ifscCode} returnKeyType="done" onChangeText={onIfscCodeChanged} style={{ backgroundColor: "white" }} error={ifscCodeInvalid} />
               <HelperText type="error" visible={ifscCodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
@@ -496,19 +496,19 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
                 <Subheading style={[Styles.flexGrow]}>Create Brand & Product</Subheading>
                 <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} />
               </View>
-              <TextInput ref={cnPrefixRef} mode="flat" dense label="Company Name Prefix" value={cnPrefix} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
+              <TextInput ref={cnPrefixRef} mode="outlined" dense label="Company Name Prefix" value={cnPrefix} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
               <HelperText type="error" visible={cnPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={ecPrefixRef} mode="flat" dense label="Employee Code Prefix" value={ecPrefix} returnKeyType="next" onSubmitEditing={() => poPrefixRef.current.focus()} onChangeText={onECPChanged} style={{ backgroundColor: "white" }} error={ecPrefixInvalid} />
+              <TextInput ref={ecPrefixRef} mode="outlined" dense label="Employee Code Prefix" value={ecPrefix} returnKeyType="next" onSubmitEditing={() => poPrefixRef.current.focus()} onChangeText={onECPChanged} style={{ backgroundColor: "white" }} error={ecPrefixInvalid} />
               <HelperText type="error" visible={ecPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={poPrefixRef} mode="flat" dense label="Purchase Order Prefix" value={poPrefix} returnKeyType="next" onSubmitEditing={() => soPrefixRef.current.focus()} onChangeText={onPOPChanged} style={{ backgroundColor: "white" }} error={poPrefixInvalid} />
+              <TextInput ref={poPrefixRef} mode="outlined" dense label="Purchase Order Prefix" value={poPrefix} returnKeyType="next" onSubmitEditing={() => soPrefixRef.current.focus()} onChangeText={onPOPChanged} style={{ backgroundColor: "white" }} error={poPrefixInvalid} />
               <HelperText type="error" visible={poPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={soPrefixRef} mode="flat" dense label="Sales Order Prefix" value={soPrefix} returnKeyType="done" onChangeText={onSOPChanged} style={{ backgroundColor: "white" }} error={soPrefixInvalid} />
+              <TextInput ref={soPrefixRef} mode="outlined" dense label="Sales Order Prefix" value={soPrefix} returnKeyType="done" onChangeText={onSOPChanged} style={{ backgroundColor: "white" }} error={soPrefixInvalid} />
               <HelperText type="error" visible={soPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>

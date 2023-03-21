@@ -323,7 +323,7 @@ const Form = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <TextInput
-            mode="flat"
+           mode="outlined"
             label="Property Type"
             disabled={true}
             value={route.params.selectedProperty.propertytype_name}
@@ -332,7 +332,7 @@ const Form = ({ route, navigation }) => {
           />
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Work Given To"
             disabled={true}
             value={route.params.workgiven.group_name}
@@ -449,7 +449,7 @@ const Form = ({ route, navigation }) => {
             </View>
           </View>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Total (Sq.ft)"
             disabled={true}
             returnKeyType="next"
@@ -462,7 +462,7 @@ const Form = ({ route, navigation }) => {
           />
 
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Contact Name"
             returnKeyType="next"
             isError={errors.contact_mobile_no}
@@ -477,7 +477,7 @@ const Form = ({ route, navigation }) => {
             Please enter the contact name
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             ref={refs.contact_no}
             label="Contact Number"
             maxLength={10}
@@ -494,7 +494,7 @@ const Form = ({ route, navigation }) => {
             Please enter the contact number
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Property Address"
             multiline={true}
             value={state.property_address}
@@ -543,7 +543,7 @@ const Form = ({ route, navigation }) => {
             Please Select a district
           </HelperText>
           <TextInput
-            mode="flat"
+            mode="outlined"
             label="Pincode"
             keyboardType="number-pad"
             multiline={false}
