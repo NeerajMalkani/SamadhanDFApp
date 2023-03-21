@@ -86,12 +86,10 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       Sess_branch_refno = userDataParsed.Sess_branch_refno;
       Sess_CompanyAdmin_UserRefno = userDataParsed.Sess_CompanyAdmin_UserRefno;
       FetchImageGalleryProductDetail();
-      if (route.params.isContractor) {
-        FetchClients();
-      }
     }
   };
 
+  console.log(selectedData.client_data);
   const FetchImageGalleryProductDetail = () => {
     let params = {
       data: {
@@ -103,6 +101,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         designgallery_refno: route.params.data.id,
       },
     };
+    console.log(params);
     Provider.createDFContractor(Provider.API_URLS.Getgotoestimation, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -120,62 +119,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   };
   const AddMoreDesigns = () => {
     InsertDesignEstimationEnquiry('add');
-    // const params = {
-    //   data: {
-    //     Sess_UserRefno: userID,
-    //     Sess_group_refno: Sess_group_refno,
-    //     clickaddmorecheck: "0",
-    //     service_refno: route.params.data.id,
-    //     designtype_refno: route.params.data.designTypeID,
-    //     product_refno: route.params.data.productID,
-    //     designgallery_refno: route.params.data.designgallery_refno,
-    //     lengthfoot: lengthFeet,
-    //     lengthinches: lengthInches,
-    //     widthheightfoot: widthFeet,
-    //     widthheightinches: widthInches,
-    //     totalfoot: totalSqFt,
-    //   },
-    // };
-
-    // Provider.createDFCommon(Provider.API_URLS.GetscEstimation, params)
-    //   .then((response) => {
-    //     if (response.data && response.data.code === 200) {
-    //       navigation.navigate("ImageGalleryScreen");
-    //       // if (number === "2") {
-    //       //   if (from === "add") {
-    //       //     if (route.params.from === "home") {
-    //       //       navigation.navigate("HomeScreen");
-    //       //     } else {
-    //       //       navigation.navigate("ImageGalleryScreen");
-    //       //     }
-    //       //   } else {
-    //       //     navigation.navigate("GetEstimationScreen", {
-    //       //       userDesignEstimationID: response.data.data[0].userDesignEstimationID,
-    //       //       designImage: route.params.data.designImage,
-    //       //       isContractor: route.params.isContractor,
-    //       //       fetchData: route.params.fetchData,
-    //       //       clientID: route.params.isContractor
-    //       //         ? clientsFullData.find((el) => {
-    //       //           return el.companyName === clientName;
-    //       //         }).id
-    //       //         : 0,
-    //       //     });
-    //       //   }
-    //       // } else {
-    //       //   console.log(response.data.data[0].userDesignEstimationID);
-    //       //   FetchEstimationData(response.data.data[0].userDesignEstimationID, from);
-    //       // }
-    //     } else {
-    //       // setSnackMsg(communication.Error);
-    //       // setSnackbarType("error");
-    //       // setOpen(true);
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     // setSnackMsg(communication.NetworkError);
-    //     // setSnackbarType("error");
-    //     // setOpen(true);
-    //   });
   };
 
   const FetchClients = () => {
@@ -258,12 +201,14 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno,
         company_name_s: companyName,
         mobile_no_s: mobileno,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setOtherClients(response.data.data);
@@ -349,88 +294,143 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     userDesignEstimationID,
     labourCost,
   ) => {
-    const totAm =
-      subtotal +
-      subtotal * (5 / 100) +
-      parseFloat(totalSqFt) * parseFloat(labourCost);
-    const params = {
-      // UserID: userID,
-      // DesignTypeID: route.params.data.designTypeID,
-      // WorkLocationID: route.params.data.workLocationID,
-      // Length: lengthFeet + "." + lengthInches,
-      // Width: widthFeet + "." + widthInches,
-      // Status: false,
-      // SubtotalAmount: subtotal ? parseFloat(subtotal) : 0,
-      // LabourCost: subtotal ? parseFloat(totalSqFt) * parseFloat(labourCost) : 0,
-      // TotalAmount: subtotal ? totAm : 0,
+    if (route.params.isContractor) {
+      const params = {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_group_refno: Sess_group_refno,
+          service_refno: route.params.data.serviceID,
+          designtype_refno: route.params.data.designTypeID,
+          product_refno: route.params.data.productID,
+          designgallery_refno: route.params.data.id,
+          lengthfoot: lengthFeet,
+          lengthinches: lengthInches,
+          widthheightfoot: widthFeet,
+          widthheightinches: widthInches,
+          totalfoot: totalSqFt,
+          Sess_company_refno,
+          Sess_branch_refno,
+          Sess_CompanyAdmin_UserRefno,
+          client_user_refno: getKeyByValue(
+            selectedData.client_data,
+            clientName,
+          ),
+        },
+      };
 
-      data: {
-        Sess_UserRefno: userID,
-        Sess_group_refno: Sess_group_refno,
-        service_refno: route.params.data.serviceID,
-        designtype_refno: route.params.data.designTypeID,
-        product_refno: route.params.data.productID,
-        designgallery_refno: route.params.data.id,
-        lengthfoot: lengthFeet,
-        lengthinches: lengthInches,
-        widthheightfoot: widthFeet,
-        widthheightinches: widthInches,
-        totalfoot: totalSqFt,
-        Sess_company_refno,
-        Sess_branch_refno,
-        Sess_CompanyAdmin_UserRefno,
-        client_user_refno: getKeyByValue(selectedData.client_data, clientName),
-      },
-    };
-    console.log(params);
-    // if (number === "2") {
-    //   params.ID = userDesignEstimationID;
-    // }
-    // if (route.params.isContractor) {
-    //   params.ClientID = clientsFullData.find((el) => {
-    //     return el.companyName === clientName;
-    //   }).id;
-    //   params.ApprovalStatus = 0;
-    // }
-
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_createquote,
-      params,
-    )
-      .then((response) => {
-        console.log(response.data.data);
-        if (response.data && response.data.code === 200) {
-          if (route.params.from === 'home') {
-            navigation.navigate('HomeScreen');
+      Provider.createDFContractor(
+        Provider.API_URLS.contractor_createquote,
+        params,
+      )
+        .then((response) => {
+          console.log(response.data.data);
+          if (response.data && response.data.code === 200) {
+            if (from === 'add') {
+              if (route.params.from === 'home') {
+                navigation.navigate('HomeScreen');
+              } else {
+                navigation.navigate('ImageGalleryScreen');
+              }
+            } else {
+              console.log(response.data.data);
+              navigation.navigate('GetEstimationScreen', {
+                userDesignEstimationID:
+                  response.data.data.cont_estimation_refno,
+                designImage: route.params.data.designImage,
+                isContractor: route.params.isContractor,
+                fetchData: route.params.fetchData,
+                clientID: route.params.isContractor
+                  ? getKeyByValue(selectedData.client_data, clientName)
+                  : 0,
+              });
+            }
           } else {
-            navigation.goBack();
+            setSnackbarText(communication.InsertError);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarVisible(true);
           }
-        } else {
-          setSnackbarText(communication.InsertError);
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarText(communication.NetworkError);
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarText(communication.NetworkError);
-        setSnackbarColor(theme.colors.error);
-        setSnackbarVisible(true);
-      });
-  };
+        });
+    } else {
+      const params = {
+        data: {
+          Sess_UserRefno: userID,
+          Sess_group_refno: Sess_group_refno,
+          clickaddmorecheck: from == 'add' ? '1' : '0',
+          service_refno: route.params.data.serviceID,
+          designtype_refno: route.params.data.designTypeID,
+          product_refno: route.params.data.productID,
+          designgallery_refno: route.params.data.id,
+          lengthfoot: lengthFeet,
+          lengthinches: lengthInches,
+          widthheightfoot: widthFeet,
+          widthheightinches: widthInches,
+          totalfoot: totalSqFt,
+        },
+      };
 
+      Provider.createDFCommon(Provider.API_URLS.getsc_estimation, params)
+        .then((response) => {
+          //console.log(response.data);
+          if (response.data && response.data.code === 200) {
+            //if (number === "2") {
+            if (from === 'add') {
+              if (route.params.from === 'home') {
+                navigation.navigate('HomeScreen');
+              } else {
+                navigation.navigate('ImageGalleryScreen');
+              }
+            } else {
+              navigation.navigate('GetEstimationScreen', {
+                userDesignEstimationID: response.data.data.estimation_refno,
+                designImage: route.params.data.designImage,
+                isContractor: route.params.isContractor,
+                fetchData: route.params.fetchData,
+                clientID: route.params.isContractor
+                  ? clientsFullData.find((el) => {
+                      return el.companyName === clientName;
+                    }).id
+                  : 0,
+              });
+            }
+            // } else {
+            //   console.log('step-7');
+            //   FetchEstimationData(response.data.data.estimation_refno, from);
+            // }
+          } else {
+            setSnackbarText(communication.InsertError);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarVisible(true);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarText(communication.NetworkError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        });
+    }
+  };
   const InsertOtherClient = (selectedID) => {
     const params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno,
+        Sess_branch_refno,
         client_user_refno: selectedID,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.ClientAdd, params)
       .then((response) => {
+        console.log(response.data);
         if (response.data && response.data.code === 200) {
           refRBSheet.current.close();
-          FetchClients();
+          FetchImageGalleryProductDetail();
         } else {
           setSnackbarText(communication.InsertError);
           setSnackbarColor(theme.colors.error);
@@ -616,7 +616,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 data={
                   selectedData.client_data
                     ? Object.values(selectedData?.client_data)
-                    : []
+                    : clients
                 }
                 onSelected={onClientNameSelected}
                 isError={errorCN}
@@ -641,9 +641,9 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 <Button
                   mode='contained'
                   onPress={() => {
-                    navigation.navigate('AddClient', {
+                    navigation.navigate('AddClientScreen', {
                       type: 'client',
-                      fetchData: FetchClients,
+                      fetchData: FetchImageGalleryProductDetail,
                     });
                   }}
                 >
