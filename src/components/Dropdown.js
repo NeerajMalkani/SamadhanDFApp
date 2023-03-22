@@ -9,10 +9,10 @@ import { theme } from "../theme/apptheme";
 export default Dropdown = ({ data, label, onSelected, isError, selectedItem, reference, forceDisable }) => {
   const [isFocused, setFocused] = useState(false);
   return (
-    <View style={[Styles.borderRadius4, Styles.marginTop16, { borderWidth: 1, borderColor: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textfield }]}>
+    <View style={[Styles.borderRadius2, Styles.marginTop16, { borderWidth: 1, borderColor: isError ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.textfield }]}>
 
       <Text style={
-        [Styles.positionAbsolute, Styles.Left16, Styles.Top_8, Styles.backgroundColorFullWhite, Styles.paddingHorizontal4, Styles.fontSize10, selectedItem ? {
+        [Styles.positionAbsolute, Styles.Left16, Styles.Top_8, Styles.backgroundColorFullWhite, Styles.paddingHorizontal4, Styles.fontSize12, selectedItem ? {
           color: isError ? theme.colors.error : isFocused ? theme.colors.primary : forceDisable ? theme.colors.disabled :
             theme.colors.text
         } :

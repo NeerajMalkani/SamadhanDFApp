@@ -536,6 +536,7 @@ const AddSendRateCard = ({ route, navigation }) => {
                   ]}
                 >
                   <Text style={[Styles.flex1]}>Service Name</Text>
+
                   <TextInput
                     mode="outlined"
                     dense
@@ -543,6 +544,7 @@ const AddSendRateCard = ({ route, navigation }) => {
                     editable={false}
                     value={k.brandName}
                   />
+
                 </View>
                 <View
                   style={[

@@ -63,7 +63,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const [filePath, setFilePath] = React.useState(null);
   const [status, setStatus] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState(() => {});
+  const [text, setText] = React.useState(() => { });
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const listData = React.useState([]);
@@ -126,20 +126,19 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
         "attach_approved_proof",
         status == true
           ? {
-              name: designImage?.split(AWSImagePath)[1],
-              type: filePath?.type + "/*",
-              uri:
-                Platform.OS === "android"
-                  ? filePath?.uri
-                  : filePath?.uri.replace("file://", ""),
-            }
+            name: designImage?.split(AWSImagePath)[1],
+            type: filePath?.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath?.uri
+                : filePath?.uri.replace("file://", ""),
+          }
           : ""
       );
       const resp = await axios.post(
-        `${BASE_URL_Contractor}/${
-          text == "Reject"
-            ? "contractor_scdesign_estimation_reject"
-            : "contractor_scdesign_estimation_selfapprove"
+        `${BASE_URL_Contractor}/${text == "Reject"
+          ? "contractor_scdesign_estimation_reject"
+          : "contractor_scdesign_estimation_selfapprove"
         }/`,
         datas,
         {
@@ -251,6 +250,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
           fetch(2, "Sent Quotation to Client");
         } else {
           unload("Error while Sending Client");
+
         }
       })
       .catch((error) => {
@@ -352,8 +352,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
           <Button
             mode="outlined"
             onPress={() => {
-              console.log(data.item);
-
               navigation.navigate("ContractorEstimation", {
                 userDesignEstimationID: data.item?.cont_estimation_refno,
                 isContractor: true,
@@ -571,42 +569,42 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
                     {current.action_status_name?.includes(
                       "Cancel Quotation"
                     ) && (
-                      <Button
-                        onPress={() => {
-                          setText(`cancelQuotation`);
-                          showDialog();
-                        }}
-                        mode="outlined"
-                        style={{
-                          borderColor: "red",
-                          borderWidth: 1.2,
-                          color: "red",
-                        }}
-                      >
-                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
-                      </Button>
-                    )}
+                        <Button
+                          onPress={() => {
+                            setText(`cancelQuotation`);
+                            showDialog();
+                          }}
+                          mode="outlined"
+                          style={{
+                            borderColor: "red",
+                            borderWidth: 1.2,
+                            color: "red",
+                          }}
+                        >
+                          <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                        </Button>
+                      )}
                     {current.action_status_name?.includes(
                       "Self & Final Approve"
                     ) && (
-                      <Button
-                        mode="outlined"
-                        style={{
-                          borderColor: "green",
-                          borderWidth: 1.2,
-                          color: "green",
-                        }}
-                        onPress={() => {
-                          refRBSheet.current.close();
-                          setText("Self & Final Approve");
-                          setPopupVisible(true);
-                        }}
-                      >
-                        <Text style={{ color: "green" }}>
-                          Self & Final Approve
-                        </Text>
-                      </Button>
-                    )}
+                        <Button
+                          mode="outlined"
+                          style={{
+                            borderColor: "green",
+                            borderWidth: 1.2,
+                            color: "green",
+                          }}
+                          onPress={() => {
+                            refRBSheet.current.close();
+                            setText("Self & Final Approve");
+                            setPopupVisible(true);
+                          }}
+                        >
+                          <Text style={{ color: "green" }}>
+                            Self & Final Approve
+                          </Text>
+                        </Button>
+                      )}
                   </>
                 )}
               </Card.Content>
