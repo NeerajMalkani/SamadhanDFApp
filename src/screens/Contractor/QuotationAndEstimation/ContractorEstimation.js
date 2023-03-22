@@ -1,6 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState, useRef } from "react";
-import { Image, ScrollView, View, TouchableOpacity } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState, useRef } from 'react';
+import { Image, ScrollView, View, TouchableOpacity } from 'react-native';
 import {
   ActivityIndicator,
   Button,
@@ -10,13 +10,13 @@ import {
   Text,
   Title,
   List,
-} from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
-import Provider from "../../../api/Provider";
-import Dropdown from "../../../components/Dropdown";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { communication } from "../../../utils/communication";
+} from 'react-native-paper';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import Provider from '../../../api/Provider';
+import Dropdown from '../../../components/Dropdown';
+import { Styles } from '../../../styles/styles';
+import { theme } from '../../../theme/apptheme';
+import { communication } from '../../../utils/communication';
 
 let userID = 0;
 let Sess_group_refno = 0;
@@ -27,17 +27,19 @@ const ContractorEstimation = ({ route, navigation }) => {
   //#region Variables
   const [isLoading, setIsLoading] = React.useState(true);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarText, setSnackbarText] = React.useState('');
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
+    theme.colors.success,
   );
 
   const [showBrandCategory, setShowBrandCategory] = React.useState(false);
   const [brandCategoryData, setBrandCategoryData] = React.useState([]);
   const [brandCategoryFullData, setBrandCategoryFullData] = React.useState([]);
   const [categoryWiseBrandData, setCategoryWiseBrandData] = useState([]);
-  const [selectedBrandCategoryID, setSelectedBrandCategoryID] = React.useState("");
-  const [categoryWiseBrandFullData, setCategoryWiseBrandFullData] = React.useState([]);
+  const [selectedBrandCategoryID, setSelectedBrandCategoryID] =
+    React.useState('');
+  const [categoryWiseBrandFullData, setCategoryWiseBrandFullData] =
+    React.useState([]);
   const refBrandRBSheet = useRef();
 
   const [estimationData, setEstimationData] = React.useState([]);
@@ -49,14 +51,14 @@ const ContractorEstimation = ({ route, navigation }) => {
 
   const [showMCLC, setShowMCLC] = React.useState(false);
   const [showMCD, setShowMCD] = React.useState(false);
-  const [brandName, setBrandName] = React.useState("");
+  const [brandName, setBrandName] = React.useState('');
   //#endregion
 
   //#region Functions
 
   const GetUserID = async () => {
     console.log('load page');
-    const userData = await AsyncStorage.getItem("user");
+    const userData = await AsyncStorage.getItem('user');
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       Sess_group_refno = JSON.parse(userData).Sess_group_refno;
@@ -65,10 +67,8 @@ const ContractorEstimation = ({ route, navigation }) => {
       Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
       if (singleLoad == 0) {
-
         FetchEstimationData();
       }
-
     }
   };
 
@@ -80,12 +80,12 @@ const ContractorEstimation = ({ route, navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
         Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
         cont_estimation_refno: route.params.userDesignEstimationID.toString(),
-        outputformat: "1",
+        outputformat: '1',
       },
     };
     Provider.createDFContractor(
       Provider.API_URLS.contractor_scdesign_estimation_edit,
-      params
+      params,
     )
       .then((response) => {
         setSingleLoad(1);
@@ -94,29 +94,28 @@ const ContractorEstimation = ({ route, navigation }) => {
             //console.log('EstimationData:', response.data.data);
             //console.log('dealer_brand_refno:', response.data.data[0].dealer_brand_refno);
 
-            const objectArray = Object.entries(response.data.data[0].dealer_brand_refno);
+            const objectArray = Object.entries(
+              response.data.data[0].dealer_brand_refno,
+            );
 
             if (objectArray.length > 0) {
-
               let brandCategory = [];
               objectArray.map(([key, value]) => {
-
                 brandCategory.push({
-                  brandData: [
-                    JSON.stringify(value)
-                  ],
+                  brandData: [JSON.stringify(value)],
                   categoryName: key,
-                  categoryNameDisplay: key.split("#")[1],
+                  categoryNameDisplay: key.split('#')[1],
                 });
               });
 
-              const onlyCatName = brandCategory.map((el) => el.categoryNameDisplay);
+              const onlyCatName = brandCategory.map(
+                (el) => el.categoryNameDisplay,
+              );
               //console.log('onlyCatName', onlyCatName);
               setShowBrandCategory(true);
               setBrandCategoryData(onlyCatName);
               setBrandCategoryFullData(brandCategory);
-            }
-            else {
+            } else {
               setShowBrandCategory(false);
             }
             console.log('step 4');
@@ -126,7 +125,7 @@ const ContractorEstimation = ({ route, navigation }) => {
         } else {
           console.log('step 1');
           setEstimationData([]);
-          setSnackbarText("No data found");
+          setSnackbarText('No data found');
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
           setIsLoading(false);
@@ -135,7 +134,7 @@ const ContractorEstimation = ({ route, navigation }) => {
       .catch((e) => {
         console.log('step 2');
         setEstimationData([]);
-        setSnackbarText("No data found");
+        setSnackbarText('No data found');
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
         setIsLoading(false);
@@ -164,7 +163,7 @@ const ContractorEstimation = ({ route, navigation }) => {
 
     Provider.createDFContractor(
       Provider.API_URLS.contractor_scdesign_estimation_update,
-      params
+      params,
     )
       .then((response) => {
         //console.log("params", params);
@@ -173,8 +172,8 @@ const ContractorEstimation = ({ route, navigation }) => {
           if (route.params.isContractor) {
             if (response.data.data.Updated == 1) {
               route.params.set(true);
-              route.params.fetchData(1, "Updated Successfully");
-              navigation.navigate("DesignWiseScreen");
+              route.params.fetchData(1, 'Updated Successfully');
+              navigation.navigate('DesignWiseScreen');
             }
           }
         } else {
@@ -192,7 +191,6 @@ const ContractorEstimation = ({ route, navigation }) => {
   };
   const [branddata, setBrandData] = useState(null);
   const onBrandNameSelected = (brands) => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -200,12 +198,14 @@ const ContractorEstimation = ({ route, navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
         Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
         cont_estimation_refno: route.params.userDesignEstimationID.toString(),
-        dealer_brand_refno:
-          brands,
+        dealer_brand_refno: brands,
       },
     };
     //console.log('Params:', params);
-    Provider.createDFContractor(Provider.API_URLS.contractor_dealer_brand_refno_change, params)
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_dealer_brand_refno_change,
+      params,
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -226,46 +226,45 @@ const ContractorEstimation = ({ route, navigation }) => {
             //setIsLoading(false);
           }
         } else {
-          setSnackbarText("Error Occured");
+          setSnackbarText('Error Occured');
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
           setIsLoading(false);
         }
       })
       .catch((e) => {
-        setSnackbarText("Error Occured");
+        setSnackbarText('Error Occured');
         setSnackbarColor(theme.colors.error);
         setSnackbarVisible(true);
         setIsLoading(false);
       });
-
   };
 
   const onBrandItemSelection = (brandID) => {
     setCategoryWiseBrandData([]);
 
     let brandFullData = categoryWiseBrandFullData;
-    const index = brandFullData[selectedBrandCategoryID].findIndex(element => element.brand_refno == brandID);
+    const index = brandFullData[selectedBrandCategoryID].findIndex(
+      (element) => element.brand_refno == brandID,
+    );
     let brandItem = brandFullData[selectedBrandCategoryID][index];
 
     if (brandItem != null) {
-
       for (var i = 0; i < brandFullData[selectedBrandCategoryID].length; i++) {
         brandFullData[selectedBrandCategoryID][i].isChecked = false;
       }
 
       if (brandItem.isChecked) {
-        brandFullData[selectedBrandCategoryID][index].isChecked = false
-      }
-      else {
-        brandFullData[selectedBrandCategoryID][index].isChecked = true
+        brandFullData[selectedBrandCategoryID][index].isChecked = false;
+      } else {
+        brandFullData[selectedBrandCategoryID][index].isChecked = true;
       }
 
       const objectArray = Object.entries(brandFullData);
 
       if (objectArray.length > 0) {
-
-        let brandCategory = [], brandID = [];
+        let brandCategory = [],
+          brandID = [];
         objectArray.map(([key, value]) => {
           value.map((item) => {
             if (item.isChecked) {
@@ -280,9 +279,7 @@ const ContractorEstimation = ({ route, navigation }) => {
         refBrandRBSheet.current.forceUpdate();
         onBrandNameSelected(brandID);
       }
-
     }
-
   };
 
   const resetBrandSelection = () => {
@@ -296,11 +293,9 @@ const ContractorEstimation = ({ route, navigation }) => {
     console.log(objectArray.length);
 
     if (objectArray.length > 0) {
-
       let brandCategory = [];
       objectArray.map(([key, value]) => {
-
-        console.log("key wise data", brandFullData[key]);
+        console.log('key wise data', brandFullData[key]);
       });
 
       // const onlyCatName = brandCategory.map((el) => el.categoryNameDisplay);
@@ -309,7 +304,6 @@ const ContractorEstimation = ({ route, navigation }) => {
       // setBrandCategoryData(onlyCatName);
       // setBrandCategoryFullData(brandCategory);
     }
-
 
     // for (var k = 0; k < brandFullData.length; k++) {
 
@@ -320,68 +314,68 @@ const ContractorEstimation = ({ route, navigation }) => {
     // }
 
     //setCategoryWiseBrandFullData(brandFullData);
-
-
   };
 
   const SetCategoryBrand = (category) => {
     setCategoryWiseBrandData([]);
-    let brandData = brandCategoryFullData.filter((item) => item.categoryNameDisplay == category);
-    let categoryID = brandData[0].categoryName.split("#")[0].toString();
+    let brandData = brandCategoryFullData.filter(
+      (item) => item.categoryNameDisplay == category,
+    );
+    let categoryID = brandData[0].categoryName.split('#')[0].toString();
     setSelectedBrandCategoryID(categoryID);
 
     let brandUpdatedJson = [];
 
     JSON.parse(brandData[0].brandData).map((item) => {
-
       if (categoryWiseBrandFullData.length == 0) {
         brandUpdatedJson.push({
           ...item,
-          isChecked: false
+          isChecked: false,
         });
-      }
-      else {
-
+      } else {
         let brandFullData = categoryWiseBrandFullData;
 
-        if (brandFullData[categoryID] != null && brandFullData[categoryID] != undefined) {
-          const index = brandFullData[categoryID].findIndex(element => element.brand_refno == item.brand_refno);
+        if (
+          brandFullData[categoryID] != null &&
+          brandFullData[categoryID] != undefined
+        ) {
+          const index = brandFullData[categoryID].findIndex(
+            (element) => element.brand_refno == item.brand_refno,
+          );
           let brandItem = brandFullData[categoryID][index];
 
           brandUpdatedJson.push({
             ...item,
-            isChecked: brandItem.isChecked == null ? false : brandItem.isChecked
+            isChecked:
+              brandItem.isChecked == null ? false : brandItem.isChecked,
           });
-        }
-        else {
+        } else {
           brandUpdatedJson.push({
             ...item,
-            isChecked: false
+            isChecked: false,
           });
         }
       }
-
     });
 
-    let manageCategoryWiseBrand = {}, x = {};
+    let manageCategoryWiseBrand = {},
+      x = {};
     if (categoryWiseBrandFullData.length == 0) {
       manageCategoryWiseBrand[categoryID] = brandUpdatedJson;
       setCategoryWiseBrandFullData(manageCategoryWiseBrand);
-    }
-    else {
+    } else {
       const objectArray = Object.keys(categoryWiseBrandFullData);
 
       if (!objectArray.includes(categoryID)) {
         manageCategoryWiseBrand[categoryID] = brandUpdatedJson;
         x = {
           ...categoryWiseBrandFullData,
-          ...manageCategoryWiseBrand
-        }
-      }
-      else {
+          ...manageCategoryWiseBrand,
+        };
+      } else {
         x = {
-          ...categoryWiseBrandFullData
-        }
+          ...categoryWiseBrandFullData,
+        };
       }
 
       setCategoryWiseBrandFullData(x);
@@ -389,7 +383,6 @@ const ContractorEstimation = ({ route, navigation }) => {
 
     setCategoryWiseBrandData(brandUpdatedJson);
     refBrandRBSheet.current.open();
-
   };
 
   useEffect(() => {
@@ -413,7 +406,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                   ]}
                 >
                   <Subheading style={[Styles.fontBold]}>
-                    {k.productname + " >> "}
+                    {k.productname + ' >> '}
                   </Subheading>
                   <Subheading
                     style={[Styles.fontBold, { color: theme.colors.primary }]}
@@ -489,7 +482,7 @@ const ContractorEstimation = ({ route, navigation }) => {
             Styles.flexAlignCenter,
           ]}
         >
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size='large' color={theme.colors.primary} />
         </View>
       ) : (
         <View style={[Styles.flex1, Styles.backgroundColor]}>
@@ -526,7 +519,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                 </View>
                 {!showMCLC && (
                   <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
-                    <Button mode="text" onPress={() => setShowMCLC(true)}>
+                    <Button mode='text' onPress={() => setShowMCLC(true)}>
                       Details
                     </Button>
                   </View>
@@ -536,7 +529,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                     Styles.flexRow,
                     {
                       opacity: showMCLC ? 1 : 0,
-                      height: showMCLC ? "auto" : 0,
+                      height: showMCLC ? 'auto' : 0,
                     },
                   ]}
                 >
@@ -547,7 +540,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                     style={[
                       Styles.flex1,
                       Styles.padding8,
-                      { alignSelf: "stretch" },
+                      { alignSelf: 'stretch' },
                     ]}
                   >
                     <Card>
@@ -565,7 +558,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                         {!showMCD && showMCLC && !route.params.isContractor && (
                           <View style={[Styles.flexRow]}>
                             <Button
-                              mode="text"
+                              mode='text'
                               style={[Styles.marginStart8]}
                               labelStyle={[Styles.fontSize12]}
                               compact
@@ -585,7 +578,7 @@ const ContractorEstimation = ({ route, navigation }) => {
                     style={[
                       Styles.flex1,
                       Styles.margin8,
-                      { alignSelf: "stretch" },
+                      { alignSelf: 'stretch' },
                     ]}
                   >
                     <Card style={[Styles.flex1]}>
@@ -613,11 +606,16 @@ const ContractorEstimation = ({ route, navigation }) => {
                   selectedItem={brandName !== "" ? brandName : ""}
                 /> */}
 
-                {showBrandCategory &&
+                {showBrandCategory && (
                   <>
-                    <View style={[Styles.flexRow, Styles.flexWrap, Styles.flexJustifyCenter]}>
+                    <View
+                      style={[
+                        Styles.flexRow,
+                        Styles.flexWrap,
+                        Styles.flexJustifyCenter,
+                      ]}
+                    >
                       {brandCategoryData.map((category, index) => (
-
                         <TouchableOpacity
                           key={index}
                           style={[
@@ -634,26 +632,30 @@ const ContractorEstimation = ({ route, navigation }) => {
                             SetCategoryBrand(category);
                           }}
                         >
-                          <Text style={[Styles.buttonIconLabel, { textTransform: "uppercase" }]}>{category}</Text>
+                          <Text
+                            style={[
+                              Styles.buttonIconLabel,
+                              { textTransform: 'uppercase' },
+                            ]}
+                          >
+                            {category}
+                          </Text>
                         </TouchableOpacity>
-
                       ))}
                     </View>
                   </>
-                }
-
+                )}
               </View>
             )}
 
             {branddata !== null && (
               <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
                 <Button
-                  mode="text"
+                  mode='text'
                   onPress={() => {
                     resetBrandSelection();
-                    setBrandName("");
+                    setBrandName('');
                     setBrandData(null);
-
                   }}
                 >
                   Reset
@@ -663,19 +665,19 @@ const ContractorEstimation = ({ route, navigation }) => {
             {(estimationData &&
               estimationData[0] &&
               !estimationData[0].status) ||
-              (route.params.isContractor && branddata !== null) ? (
+            (route.params.isContractor && branddata !== null) ? (
               <View style={[Styles.padding16]}>
                 {route.params.isContractor && branddata !== null && (
                   <>
                     <Button
-                      mode="contained"
+                      mode='contained'
                       onPress={() => {
                         InsertDesignEstimationEnquiry();
                       }}
                     >
                       {route.params.isUpdate
-                        ? "Update and Send Quote"
-                        : "Send Quote to Client"}
+                        ? 'Update and Send Quote'
+                        : 'Send Quote to Client'}
                     </Button>
                   </>
                 )}
@@ -685,7 +687,18 @@ const ContractorEstimation = ({ route, navigation }) => {
         </View>
       )}
 
-      <RBSheet ref={refBrandRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={400} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refBrandRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={400}
+        animationType='fade'
+        customStyles={{
+          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
+          draggableIcon: { backgroundColor: '#000' },
+        }}
+      >
         <View style={[Styles.flex1, Styles.marginBottom16]}>
           <ScrollView style={[Styles.marginBottom48]}>
             <List.Section>
@@ -697,8 +710,20 @@ const ContractorEstimation = ({ route, navigation }) => {
                     onPress={() => {
                       onBrandItemSelection(item.brand_refno);
                     }}
-                    style={[Styles.borderBottom1, Styles.height48, Styles.flexAlignCenter, Styles.flexJustifyCenter]}
-                    right={(props) => <List.Icon {...props} icon="check" color={theme.colors.success} style={{ opacity: item.isChecked ? 1 : 0 }} />}
+                    style={[
+                      Styles.borderBottom1,
+                      Styles.height48,
+                      Styles.flexAlignCenter,
+                      Styles.flexJustifyCenter,
+                    ]}
+                    right={(props) => (
+                      <List.Icon
+                        {...props}
+                        icon='check'
+                        color={theme.colors.success}
+                        style={{ opacity: item.isChecked ? 1 : 0 }}
+                      />
+                    )}
                   >
                     <Text>{item.brand_name}</Text>
                   </List.Item>
@@ -707,8 +732,12 @@ const ContractorEstimation = ({ route, navigation }) => {
             </List.Section>
           </ScrollView>
           <Button
-            mode="contained"
-            style={[Styles.width104, Styles.flexAlignSelfCenter, { position: "absolute", bottom: 0 }]}
+            mode='contained'
+            style={[
+              Styles.width104,
+              Styles.flexAlignSelfCenter,
+              { position: 'absolute', bottom: 0 },
+            ]}
             onPress={() => {
               refBrandRBSheet.current.close();
             }}

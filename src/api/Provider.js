@@ -502,6 +502,7 @@ class Provider {
     sc_estimationsendenquiry: 'sc_estimationsendenquiry/',
     contractor_getsc_estimationdetail: 'contractor_getsc_estimationdetail/',
     myestimationlist: 'myestimationlist/',
+    contractor_sc_estimationsendenquiry: 'contractor_sc_estimationsendenquiry/',
     contractor_scdesign_estimation_update:
       'contractor_scdesign_estimation_update/',
     myestimationcontractordetails: 'myestimationcontractordetails/',

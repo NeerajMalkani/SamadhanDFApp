@@ -159,6 +159,48 @@ const GetEstimationScreen = ({ route, navigation }) => {
   };
 
   const InsertDesignEstimationEnquiry = () => {
+    if (route.params.isContractor) {
+      let params = {
+        // ID: route.params.userDesignEstimationID,
+        // SubtotalAmount: parseFloat(subtotal),
+        // LabourCost: parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost),
+        // TotalAmount: (subtotal + subtotal * (5 / 100) + parseFloat(CalculateSqFt(estimationData[0])) * parseFloat(estimationData[0].total_labours_cost)).toFixed(4),
+        // Status: true,
+
+        data: {
+          Sess_UserRefno: userID,
+          Sess_group_refno: Sess_group_refno,
+          cont_estimation_refno: route.params.userDesignEstimationID,
+        },
+      };
+      Provider.createDFContractor(
+        Provider.API_URLS.contractor_sc_estimationsendenquiry,
+        params,
+      )
+        .then((response) => {
+          console.log(response.data);
+          if (response.data && response.data.code === 200) {
+            if (route.params.isContractor) {
+              if (route.params.fetchData) {
+                route.params.fetchData(0, 'Quotation Sent To Client');
+              }
+              navigation.navigate('DesignWiseScreen');
+            } else {
+              navigation.navigate('YourEstimationsScreen');
+            }
+          } else {
+            setSnackbarText(communication.InsertError);
+            setSnackbarColor(theme.colors.error);
+            setSnackbarVisible(true);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarText(communication.NetworkError);
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        });
+    }
     let params = {
       // ID: route.params.userDesignEstimationID,
       // SubtotalAmount: parseFloat(subtotal),
@@ -172,10 +214,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
         estimation_refno: route.params.userDesignEstimationID,
       },
     };
-    // if (route.params.isContractor) {
-    //   params.ClientID = route.params.clientID;
-    //   params.ApprovalStatus = 0;
-    // }
+
     Provider.createDFCommon(Provider.API_URLS.sc_estimationsendenquiry, params)
       .then((response) => {
         console.log(response.data);
