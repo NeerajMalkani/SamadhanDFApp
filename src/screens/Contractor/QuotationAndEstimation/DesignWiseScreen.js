@@ -65,12 +65,6 @@ const DesignWiseScreen = ({ navigation }) => {
       const data = await Provider.getcontractordesignwise(params, () =>
         setIsLoading(false)
       );
-      pendingData[1](data.pending);
-      pendingSearchData[1](data.pending);
-      approvedData[1](data.accepted);
-      approvedSearchData[1](data.accepted);
-      rejectedData[1](data.rejected);
-      rejectedSearchData[1](data.rejected);
       setDesignGalleryData(data.gallery);
       setResponse(data.response);
       setIsLoading(false);
@@ -108,54 +102,33 @@ const DesignWiseScreen = ({ navigation }) => {
         );
       case "pending":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignPendingTab
-              type={"pending"}
-              response={response}
-              set={setIsLoading}
-              unload={unload}
-              listData2={pendingData[0]}
-              listSearchData2={pendingSearchData[0]}
-              fetch={FetchData}
-              navigation={navigation}
-            />
-          </ScrollView>
+          <DesignPendingTab
+            type={"pending"}
+            response={response}
+            set={setIsLoading}
+            unload={unload}
+            fetch={FetchData}
+            navigation={navigation}
+          />
         );
       case "approved":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignApprovedTab
-              type={"approved"}
-              response={response}
-              set={setIsLoading}
-              unload={unload}
-              listData2={approvedData[0]}
-              listSearchData2={approvedSearchData[0]}
-              fetch={FetchData}
-            />
-          </ScrollView>
+          <DesignApprovedTab
+            type={"approved"}
+            response={response}
+            set={setIsLoading}
+            unload={unload}
+            fetch={FetchData}
+          />
         );
       case "rejected":
         return (
-          <ScrollView
-            style={[Styles.flex1, Styles.backgroundColor]}
-            contentContainerStyle={[Styles.height100per]}
-          >
-            <DesignRejectedTab
-              type={"rejected"}
-              set={setIsLoading}
-              unload={unload}
-              listData2={rejectedData[0]}
-              listSearchData2={rejectedSearchData[0]}
-              fetch={FetchData}
-            />
-          </ScrollView>
+          <DesignRejectedTab
+            type={"rejected"}
+            set={setIsLoading}
+            unload={unload}
+            fetch={FetchData}
+          />
         );
     }
   };

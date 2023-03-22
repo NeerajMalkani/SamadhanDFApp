@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Image,
   ActivityIndicator,
@@ -41,14 +42,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const DesignRejectedTab = ({
-  set,
-  listData2,
-  listSearchData2,
-  type,
-  fetch,
-  unload,
-}) => {
+const DesignRejectedTab = ({ set, type, fetch }) => {
   const [visible, setVisible] = React.useState(false);
   const [text, setText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
@@ -60,11 +54,45 @@ const DesignRejectedTab = ({
   const refRBSheet = useRef();
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listSearchData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_scdesign_estimation_rejected_list,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
+
+  const isFocused = useIsFocused();
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
+      Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+      FetchData();
+    }
+  };
+  useEffect(() => {
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     FetchData();

@@ -64,6 +64,7 @@ const ContractorEstimation = ({ route, navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
         Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
         cont_estimation_refno: route.params.userDesignEstimationID.toString(),
+        outputformat: "0",
       },
     };
     Provider.createDFContractor(
@@ -73,6 +74,7 @@ const ContractorEstimation = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
+            console.log("376", response.data.data);
             setEstimationData(response.data.data);
             setIsLoading(false);
           }
@@ -416,7 +418,6 @@ const ContractorEstimation = ({ route, navigation }) => {
                 />
               </View>
             )}
-            {console.log(brandName)}
             {branddata !== null && (
               <View style={[Styles.flexRow, Styles.flexAlignSelfCenter]}>
                 <Button

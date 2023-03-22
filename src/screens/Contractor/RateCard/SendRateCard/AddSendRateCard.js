@@ -1,6 +1,19 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View, Dimensions } from "react-native";
-import { Button, Card, Checkbox, HelperText, IconButton, Snackbar, Subheading, Text, TextInput, Portal, Dialog, Paragraph } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Checkbox,
+  HelperText,
+  IconButton,
+  Snackbar,
+  Subheading,
+  Text,
+  TextInput,
+  Portal,
+  Dialog,
+  Paragraph,
+} from "react-native-paper";
 import Provider from "../../../../api/Provider";
 import Dropdown from "../../../../components/Dropdown";
 import { Styles } from "../../../../styles/styles";
@@ -36,7 +49,9 @@ const AddSendRateCard = ({ route, navigation }) => {
   const arrProductData = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
   const [refreshing, setRefreshing] = React.useState(false);
   const refRBSheet = useRef();
   const windowHeight = Dimensions.get("window").height;
@@ -72,16 +87,23 @@ const AddSendRateCard = ({ route, navigation }) => {
       ID: id,
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getcontractorsentratecardbyid?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getcontractorsentratecardbyid?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setClientNameID(response.data.data[0].clientID);
-            setUnitSalesName(response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter");
+            setUnitSalesName(
+              response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter"
+            );
             setChecked(response.data.data[0].inclusiveMaterials);
 
             FetchCompanyName(response.data.data[0].clientID);
-            FetchProductsByID(id, response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter");
+            FetchProductsByID(
+              id,
+              response.data.data[0].selectedUnitID == 1 ? "Foot" : "Meter"
+            );
           }
         }
         setIsLoading(false);
@@ -100,7 +122,9 @@ const AddSendRateCard = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getcontractorclientlist?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getcontractorclientlist?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -136,7 +160,9 @@ const AddSendRateCard = ({ route, navigation }) => {
       ContractorID: userID,
       RateCardMappingID: selectedID,
     };
-    Provider.getAll(`master/getcontractorratecardproductsbyid?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getcontractorratecardproductsbyid?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -158,12 +184,23 @@ const AddSendRateCard = ({ route, navigation }) => {
                 unit2ID: item.unit2ID,
                 unit2Name: item.unit2Name,
                 unitOfSalesID: item.unitOfSalesID,
-                selectedUnitID: selectedUnit == "Foot" ? item.unit1ID : item.unit2ID,
+                selectedUnitID:
+                  selectedUnit == "Foot" ? item.unit1ID : item.unit2ID,
                 unit: selectedUnit == "Foot" ? item.unit1Name : item.unit2Name,
                 rate: selectedUnit == "Foot" ? item.footRate : item.meterRate,
                 //altRate: selectedUnit == "Foot" ? item.meterRate : item.footRate,
-                altUnit: selectedUnit == "Foot" ? item.unit2Name : item.unit1Name,
-                altRate: selectedUnit == "Foot" ? (parseFloat(item.footRate) * parseFloat(item.meterConversion)).toFixed(2) : (parseFloat(item.meterRate) * parseFloat(item.footConversion)).toFixed(2),
+                altUnit:
+                  selectedUnit == "Foot" ? item.unit2Name : item.unit1Name,
+                altRate:
+                  selectedUnit == "Foot"
+                    ? (
+                        parseFloat(item.footRate) *
+                        parseFloat(item.meterConversion)
+                      ).toFixed(2)
+                    : (
+                        parseFloat(item.meterRate) *
+                        parseFloat(item.footConversion)
+                      ).toFixed(2),
               });
             });
             arrProductData[1](arr);
@@ -229,7 +266,8 @@ const AddSendRateCard = ({ route, navigation }) => {
       item.unit = item.altUnit;
       item.altRate = rate;
       item.altUnit = unit;
-      item.selectedUnitID = updatedUnit === "Meter" ? item.unit2ID : item.unit1ID;
+      item.selectedUnitID =
+        updatedUnit === "Meter" ? item.unit2ID : item.unit1ID;
     });
 
     setIsDialogVisible(false);
@@ -290,7 +328,9 @@ const AddSendRateCard = ({ route, navigation }) => {
     Provider.create("master/insertupdatesendratecard", params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData(route.params.type === "edit" ? "update" : "add");
+          route.params.fetchData(
+            route.params.type === "edit" ? "update" : "add"
+          );
           navigation.goBack();
         } else {
           setSnackbarColor(theme.colors.error);
@@ -310,19 +350,54 @@ const AddSendRateCard = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={[Styles.padding16]}>
-          <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginBottom16]}>
-            <Text style={[Styles.fontSize20, Styles.fontBold, Styles.marginBottom4, Styles.blueFontColor]}>Client Details</Text>
+          <View
+            style={[
+              Styles.width100per,
+              Styles.borderBottom2,
+              Styles.borderBottom2,
+              Styles.marginBottom16,
+            ]}
+          >
+            <Text
+              style={[
+                Styles.fontSize20,
+                Styles.fontBold,
+                Styles.marginBottom4,
+                Styles.blueFontColor,
+              ]}
+            >
+              Client Details
+            </Text>
           </View>
-          <View style={[Styles.width100per, Styles.flexRow, Styles.flexAlignCenter]}>
+          <View
+            style={[Styles.width100per, Styles.flexRow, Styles.flexAlignCenter]}
+          >
             <View style={[Styles.width75per]}>
-              <Dropdown label="Client Name" data={clientNameData} onSelected={onClientNameSelected} isError={errorCN} selectedItem={clientName} />
+              <Dropdown
+                label="Client Name"
+                data={clientNameData}
+                onSelected={onClientNameSelected}
+                isError={errorCN}
+                selectedItem={clientName}
+              />
               <HelperText type="error" visible={errorCN}>
                 {communication.InvalidClientName}
               </HelperText>
             </View>
-            <View style={[Styles.width20per, Styles.flexAlignSelfCenter, Styles.flexJustifyEnd, Styles.marginStart16, Styles.marginBottom24]}>
+            <View
+              style={[
+                Styles.width20per,
+                Styles.flexAlignSelfCenter,
+                Styles.flexJustifyEnd,
+                Styles.marginStart16,
+                Styles.marginBottom24,
+              ]}
+            >
               {/* <Button icon={'account-multiple-plus'} style={[Styles.width48,Styles.textCenter]} mode="contained" /> */}
               {/* <IconButton 
               icon={'account-multiple-plus'}
@@ -330,18 +405,58 @@ const AddSendRateCard = ({ route, navigation }) => {
               backgroundColor="#000"
               
               ></IconButton> */}
-              <IconButton style={[Styles.border2, Styles.borderRadius4, Styles.width72]} icon={"account-multiple-plus"} size={35} color="#198754"></IconButton>
+              <IconButton
+                style={[Styles.border2, Styles.borderRadius4, Styles.width72]}
+                icon={"account-multiple-plus"}
+                size={35}
+                color="#198754"
+              ></IconButton>
             </View>
           </View>
-          <TextInput mode="outlined" dense label="Client Name" value={cName} disabled></TextInput>
-          <TextInput mode="outlined" dense label="Client Number" value={clientNumber} disabled style={{ marginTop: 20 }}></TextInput>
+          <TextInput
+            mode="outlined"
+            dense
+            label="Client Name"
+            value={cName}
+            disabled
+          ></TextInput>
+          <TextInput
+            mode="outlined"
+            dense
+            label="Client Number"
+            value={clientNumber}
+            disabled
+            style={{ marginTop: 20 }}
+          ></TextInput>
         </View>
 
         <View style={[Styles.padding16]}>
-          <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginBottom16]}>
-            <Text style={[Styles.fontSize20, Styles.fontBold, Styles.marginBottom4, Styles.blueFontColor]}>Rate Card Prparation Type</Text>
+          <View
+            style={[
+              Styles.width100per,
+              Styles.borderBottom2,
+              Styles.borderBottom2,
+              Styles.marginBottom16,
+            ]}
+          >
+            <Text
+              style={[
+                Styles.fontSize20,
+                Styles.fontBold,
+                Styles.marginBottom4,
+                Styles.blueFontColor,
+              ]}
+            >
+              Rate Card Prparation Type
+            </Text>
           </View>
-          <Dropdown label="Unit Of Sales" data={unitSalesData} onSelected={onUnitSaleSelected} isError={errorUS} selectedItem={unitSalesName} />
+          <Dropdown
+            label="Unit Of Sales"
+            data={unitSalesData}
+            onSelected={onUnitSaleSelected}
+            isError={errorUS}
+            selectedItem={unitSalesName}
+          />
           <HelperText type="error" visible={errorUS}>
             {communication.InvalidSalesUnit}
           </HelperText>
@@ -365,41 +480,154 @@ const AddSendRateCard = ({ route, navigation }) => {
         </View>
 
         <View style={[Styles.padding16]}>
-          <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginBottom16]}>
-            <Text style={[Styles.fontSize20, Styles.fontBold, Styles.marginBottom4, Styles.blueFontColor]}>Product Details</Text>
+          <View
+            style={[
+              Styles.width100per,
+              Styles.borderBottom2,
+              Styles.borderBottom2,
+              Styles.marginBottom16,
+            ]}
+          >
+            <Text
+              style={[
+                Styles.fontSize20,
+                Styles.fontBold,
+                Styles.marginBottom4,
+                Styles.blueFontColor,
+              ]}
+            >
+              Product Details
+            </Text>
           </View>
         </View>
 
         <View style={[Styles.padding16]}>
           {arrProductData[0].map((k, i) => {
             return (
-              <View key={i} style={[Styles.flexColumn, Styles.border1, Styles.marginTop16, Styles.paddingHorizontal16]}>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
-                  <Subheading style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}>{k.productName}</Subheading>
+              <View
+                key={i}
+                style={[
+                  Styles.flexColumn,
+                  Styles.border1,
+                  Styles.marginTop16,
+                  Styles.paddingHorizontal16,
+                ]}
+              >
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
+                  <Subheading
+                    style={[Styles.flex1, Styles.primaryColor, Styles.fontBold]}
+                  >
+                    {k.productName}
+                  </Subheading>
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Service Name</Text>
-                  <TextInput mode="outlined"" dense style={[Styles.flex1]} editable={false} value={k.brandName} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.brandName}
+                  />
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Category Name</Text>
-                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.quantity ? parseFloat(k.quantity).toFixed(4) : ""}
+                  />
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Product Name</Text>
-                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.price ? parseFloat(k.price).toFixed(4) : ""}
+                  />
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Unit</Text>
-                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.price ? parseFloat(k.price).toFixed(4) : ""}
+                  />
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Rate</Text>
-                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.price ? parseFloat(k.price).toFixed(4) : ""}
+                  />
                 </View>
-                <View style={[Styles.flexRow, Styles.borderBottom1, Styles.padding4, Styles.flexAlignCenter]}>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.borderBottom1,
+                    Styles.padding4,
+                    Styles.flexAlignCenter,
+                  ]}
+                >
                   <Text style={[Styles.flex1]}>Action</Text>
-                  <TextInput mode="outlined" dense style={[Styles.flex1]} editable={false} value={k.price ? parseFloat(k.price).toFixed(4) : ""} />
+                  <TextInput
+                    mode="outlined"
+                    dense
+                    style={[Styles.flex1]}
+                    editable={false}
+                    value={k.price ? parseFloat(k.price).toFixed(4) : ""}
+                  />
                 </View>
               </View>
             );
@@ -407,7 +635,12 @@ const AddSendRateCard = ({ route, navigation }) => {
         </View>
       </ScrollView>
 
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: theme.colors.error }}
+      >
         {snackbarText}
       </Snackbar>
     </View>

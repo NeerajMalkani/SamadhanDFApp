@@ -40,6 +40,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Styles } from "../../../styles/styles";
 import { AWSImagePath } from "../../../utils/paths";
 import uuid from "react-native-uuid";
+import { useIsFocused } from "@react-navigation/native";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -49,15 +50,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const DesignPendingTab = ({
-  set,
-  listData2,
-  listSearchData2,
-  response,
-  fetch,
-  unload,
-  navigation,
-}) => {
+const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [remarks, setRemarks] = React.useState("");
   const [errorR, setErrorR] = React.useState(false);
@@ -70,7 +63,7 @@ const DesignPendingTab = ({
   const [filePath, setFilePath] = React.useState(null);
   const [status, setStatus] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState("");
+  const [text, setText] = React.useState(() => {});
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const listData = React.useState([]);
@@ -143,20 +136,28 @@ const DesignPendingTab = ({
           : ""
       );
       const resp = await axios.post(
-        `${BASE_URL_Contractor}/contractor_scdesign_estimation_reject/`,
+        `${BASE_URL_Contractor}/${
+          text == "Reject"
+            ? "contractor_scdesign_estimation_reject"
+            : "contractor_scdesign_estimation_selfapprove"
+        }/`,
         datas,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      if (resp.data && resp.data.data.Rejected == "1") {
-        fetch(2, "Rejected Successfully");
+      if (
+        resp.data &&
+        (resp.data.data.Rejected == "1" ||
+          resp.data.data["Self Approved"] == "1")
+      ) {
+        fetch(2, text + " Successfully!");
       } else {
-        unload("Error While Rejecting");
+        unload("Error While " + text);
       }
     } catch (e) {
       console.log(e);
-      unload("Error While Rejecting");
+      unload("Error While " + text);
     }
   };
   const ValidateEstimationStatus = () => {
@@ -186,15 +187,34 @@ const DesignPendingTab = ({
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listSearchData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_scdesign_estimation_pending_list,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -213,6 +233,7 @@ const DesignPendingTab = ({
   };
 
   const sendQuotationToClient = () => {
+    set(true);
     Provider.createDFContractor(
       Provider.API_URLS.contractor_scdesign_estimation_sendtoclient,
       {
@@ -226,9 +247,10 @@ const DesignPendingTab = ({
       }
     )
       .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
+        if (res.data && res.data.data.Send == 1) {
+          fetch(2, "Sent Quotation to Client");
+        } else {
+          unload("Error while Sending Client");
         }
       })
       .catch((error) => {
@@ -237,6 +259,7 @@ const DesignPendingTab = ({
   };
 
   const cancelQuotation = () => {
+    set(true);
     Provider.createDFContractor(
       Provider.API_URLS.contractor_scdesign_estimation_cancel,
       {
@@ -250,9 +273,10 @@ const DesignPendingTab = ({
       }
     )
       .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
+        if (res.data && res.data.data.Updated == "1") {
+          fetch(2, "Cancel Quotation Successfully!");
+        } else {
+          unload("Error while Cancelling quotation");
         }
       })
       .catch((error) => {
@@ -328,7 +352,7 @@ const DesignPendingTab = ({
           <Button
             mode="outlined"
             onPress={() => {
-              // console.log(data.item);
+              console.log(data.item);
 
               navigation.navigate("ContractorEstimation", {
                 userDesignEstimationID: data.item?.cont_estimation_refno,
@@ -521,6 +545,7 @@ const DesignPendingTab = ({
                         }}
                         onPress={() => {
                           refRBSheet.current.close();
+                          setText("Reject");
                           setPopupVisible(true);
                         }}
                       >
@@ -535,7 +560,10 @@ const DesignPendingTab = ({
                           borderWidth: 1.2,
                           color: "green",
                         }}
-                        onPress={sendQuotationToClient}
+                        onPress={() => {
+                          setText(`sendQuotationToClient`);
+                          showDialog();
+                        }}
                       >
                         <Text style={{ color: "green" }}>Send to Client</Text>
                       </Button>
@@ -544,7 +572,10 @@ const DesignPendingTab = ({
                       "Cancel Quotation"
                     ) && (
                       <Button
-                        onPress={cancelQuotation}
+                        onPress={() => {
+                          setText(`cancelQuotation`);
+                          showDialog();
+                        }}
                         mode="outlined"
                         style={{
                           borderColor: "red",
@@ -553,6 +584,27 @@ const DesignPendingTab = ({
                         }}
                       >
                         <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                      </Button>
+                    )}
+                    {current.action_status_name?.includes(
+                      "Self & Final Approve"
+                    ) && (
+                      <Button
+                        mode="outlined"
+                        style={{
+                          borderColor: "green",
+                          borderWidth: 1.2,
+                          color: "green",
+                        }}
+                        onPress={() => {
+                          refRBSheet.current.close();
+                          setText("Self & Final Approve");
+                          setPopupVisible(true);
+                        }}
+                      >
+                        <Text style={{ color: "green" }}>
+                          Self & Final Approve
+                        </Text>
                       </Button>
                     )}
                   </>
@@ -600,7 +652,14 @@ const DesignPendingTab = ({
             ></View>
             <View></View>
             <Card.Content style={[Styles.marginTop16]}>
-              <Button mode="contained" onPress={submit}>
+              <Button
+                mode="contained"
+                onPress={
+                  text == "cancelQuotation"
+                    ? cancelQuotation
+                    : sendQuotationToClient
+                }
+              >
                 Ok
               </Button>
             </Card.Content>

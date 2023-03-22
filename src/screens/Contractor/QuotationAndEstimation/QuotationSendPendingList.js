@@ -49,6 +49,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
+let Sess_group_refno = 0;
 const QuotationSendPendingList = ({
   set,
   listData2,
@@ -277,27 +278,24 @@ const QuotationSendPendingList = ({
         <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Estimation No :
+              Quotation No :
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Product :
+              Project Name :
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Design No :
-            </Text>
-            <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              Total Sq.Ft. :
+              Contact Person & Number :
             </Text>
           </View>
           <View style={{ flex: 1.3 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.cont_estimation_no}
+              {data.item.cont_quot_no}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.product_name}
+              {data.item.project_name}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-              {data.item.design_no}
+              {data.item.contact_person} & {data.item.contact_mobile_no}
             </Text>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               {data.item.totalfoot}
@@ -338,7 +336,7 @@ const QuotationSendPendingList = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
-
+              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{
@@ -362,18 +360,19 @@ const QuotationSendPendingList = ({
         Sess_company_refno: Sess_company_refno,
         Sess_branch_refno: Sess_branch_refno,
         Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-        cont_estimation_refno: current.cont_estimation_refno,
+        cont_quot_refno: current.cont_quot_refno,
       },
     };
     Provider.createDFContractor(
-      Provider.API_URLS
-        .contractor_scdesign_estimation_finallytakeproject_update,
+      text == "Send Quotation to Client"
+        ? Provider.API_URLS.contractor_quotation_sendtoclient
+        : Provider.API_URLS.contractor_quotation_cancel,
       params
     )
       .then((response) => {
         if (response.data && response.data.data) {
           if (response.data.data.Updated == 1) {
-            fetch(0, text + "Successfully!");
+            fetch(1, text + " Successfully!");
           } else {
             unload("Failed");
           }
@@ -450,102 +449,92 @@ const QuotationSendPendingList = ({
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>Client Detail</Title>
+          <Title style={[Styles.paddingHorizontal16]}>
+            {current.cont_quot_no}
+          </Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Image
-                source={{ uri: current.design_image_url }}
-                style={{ width: 350, height: 159 }}
-              />
-            </View>
             <List.Item
-              title="Estimate No"
-              description={current.cont_estimation_no}
-            />
-            <List.Item title="Service" description={current.service_name} />
-            <List.Item title="Category" description={current.category_name} />
-            <List.Item title="Product" description={current.product_name} />
-            <List.Item
-              title="Design Type"
-              description={current.designtype_name}
-            />
-            <List.Item title="Design No" description={current.design_no} />
-            <List.Item title="Total Sq.Ft" description={current.totalfoot} />
-            <List.Item
-              title="Actual Materials Cost"
-              description={current.total_materials_cost}
+              title="Quotation No"
+              description={current.cont_quot_no}
             />
             <List.Item
-              title="Actual Labour Cost"
-              description={current.total_labours_cost}
+              title="Project Name"
+              description={current.project_name}
             />
-            {current?.estimation_status !== undefined && (
-              <List.Item
-                title="Estimation Status"
-                description={current.estimation_status}
-              />
+            <List.Item
+              title="Contact Person & Number"
+              description={`${current.contact_person} & ${current.contact_mobile_no}`}
+            />
+            <List.Item
+              title="Quotation Unit"
+              description={current.quot_unit_type_name}
+            />
+            <List.Item
+              title="Materials"
+              description={current.material_status}
+            />
+            <List.Item title="Status" description={current.quot_status_name} />
+
+            {current?.action_status_name?.includes("Preview Quotation") && (
+              <View style={{ alignItems: "center" }}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    borderColor: "#d13d94",
+                    borderWidth: 1.2,
+                    color: "#d13d94",
+                    width: "80%",
+                    marginBottom: "4%",
+                  }}
+                  // onPress={showDialog}
+                >
+                  <Text style={{ color: "#d13d94" }}>Preview Quotation</Text>
+                </Button>
+              </View>
             )}
-            <>
-              <Card.Content style={[Styles.marginTop16]}>
-                {/* <Text>{current.action_status_name}</Text> */}
-                {current?.action_status_name?.includes(
-                  "Waiting for Client Approval"
-                ) ? (
-                  <Text
-                    style={{ textAlign: "center", color: "red", fontSize: 20 }}
-                  >
-                    Waiting for Client Approval
+            {current?.action_status_name?.includes(
+              "Send Quotation to Client"
+            ) && (
+              <View style={{ alignItems: "center" }}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    borderColor: "green",
+                    borderWidth: 1.2,
+                    color: "green",
+                    width: "80%",
+                  }}
+                  onPress={() => {
+                    setText("Send Quotation to Client");
+                    showDialog();
+                  }}
+                >
+                  <Text style={{ color: "green" }}>
+                    Send Quotation to Client
                   </Text>
-                ) : (
-                  <>
-                    {current.action_status_name?.includes("Reject") && (
-                      <Button
-                        mode="outlined"
-                        style={{
-                          borderColor: "red",
-                          borderWidth: 1.2,
-                          color: "red",
-                        }}
-                        onPress={() => {
-                          refRBSheet.current.close();
-                          setPopupVisible(true);
-                        }}
-                      >
-                        <Text style={{ color: "red" }}> Reject</Text>
-                      </Button>
-                    )}
-                    {current.action_status_name?.includes("Send to Client") && (
-                      <Button
-                        mode="outlined"
-                        style={{
-                          borderColor: "green",
-                          borderWidth: 1.2,
-                          color: "green",
-                        }}
-                        onPress={sendQuotationToClient}
-                      >
-                        <Text style={{ color: "green" }}>Send to Client</Text>
-                      </Button>
-                    )}
-                    {current.action_status_name?.includes(
-                      "Cancel Quotation"
-                    ) && (
-                      <Button
-                        onPress={cancelQuotation}
-                        mode="outlined"
-                        style={{
-                          borderColor: "red",
-                          borderWidth: 1.2,
-                          color: "red",
-                        }}
-                      >
-                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
-                      </Button>
-                    )}
-                  </>
-                )}
-              </Card.Content>
-            </>
+                </Button>
+              </View>
+            )}
+
+            {current?.action_status_name?.includes("Cancel Quotation") && (
+              <View style={{ alignItems: "center", marginTop: "4%" }}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    borderColor: "red",
+                    borderWidth: 1.2,
+                    color: "red",
+                    width: "80%",
+                  }}
+                  onPress={() => {
+                    setText("Cancel Quotation");
+                    showDialog();
+                  }}
+                >
+                  <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                </Button>
+              </View>
+            )}
             <View style={{ height: 20 }}></View>
           </ScrollView>
         </View>

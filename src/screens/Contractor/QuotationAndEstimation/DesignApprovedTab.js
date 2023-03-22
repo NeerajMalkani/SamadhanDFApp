@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 import { BASE_URL_Contractor } from "../../../api/Provider";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Image,
   ActivityIndicator,
@@ -49,14 +50,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const DesignApprovedTab = ({
-  set,
-  listData2,
-  listSearchData2,
-  response,
-  fetch,
-  unload,
-}) => {
+const DesignApprovedTab = ({ response, navigation, fetch, set, unload }) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [remarks, setRemarks] = React.useState("");
   const [errorR, setErrorR] = React.useState(false);
@@ -185,15 +179,34 @@ const DesignApprovedTab = ({
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listSearchData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_scdesign_estimation_approved_list,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -519,7 +532,7 @@ const DesignApprovedTab = ({
           <Dialog.Content>
             <ScrollView keyboardShouldPersistTaps="handled">
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 dense
                 style={[Styles.backgroundColor]}
                 label="Remarks/Reason"

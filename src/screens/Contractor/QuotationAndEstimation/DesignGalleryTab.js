@@ -1,12 +1,12 @@
-import { ScrollView, View } from 'react-native';
-import NoItems from '../../../components/NoItems';
-import CreateSCCards from '../../../components/SCCards';
-import { Styles } from '../../../styles/styles';
+import { ScrollView, View } from "react-native";
+import NoItems from "../../../components/NoItems";
+import CreateSCCards from "../../../components/SCCards";
+import { Styles } from "../../../styles/styles";
 
 const DesignGalleryTab = ({ navigation, designGalleryData, fetchData }) => {
   //#region Functions
   const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate('ImageGalleryWorkLocationScreen', {
+    navigation.navigate("ImageGalleryWorkLocationScreen", {
       headerTitle: headerTitle,
       categoryID: categoryID,
       data: data,
@@ -37,7 +37,7 @@ const DesignGalleryTab = ({ navigation, designGalleryData, fetchData }) => {
           </View>
         </ScrollView>
       ) : (
-        <NoItems icon='format-list-bulleted' text='No records found.' />
+        <NoItems icon="format-list-bulleted" text="No records found." />
       )}
     </View>
   );

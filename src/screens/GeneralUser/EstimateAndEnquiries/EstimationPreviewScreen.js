@@ -1,14 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useRef } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef } from "react";
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   View,
-} from 'react-native';
-import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
-import RBSheet from 'react-native-raw-bottom-sheet';
+} from "react-native";
+import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
+import RBSheet from "react-native-raw-bottom-sheet";
 import {
   Button,
   Card,
@@ -17,55 +17,55 @@ import {
   Subheading,
   Text,
   TextInput,
-} from 'react-native-paper';
-import Provider from '../../../api/Provider';
-import Dropdown from '../../../components/Dropdown';
-import { Styles } from '../../../styles/styles';
-import { theme } from '../../../theme/apptheme';
-import { communication } from '../../../utils/communication';
-import { APIConverter } from '../../../utils/apiconverter';
-import { useIsFocused } from '@react-navigation/native';
+} from "react-native-paper";
+import Provider from "../../../api/Provider";
+import Dropdown from "../../../components/Dropdown";
+import { Styles } from "../../../styles/styles";
+import { theme } from "../../../theme/apptheme";
+import { communication } from "../../../utils/communication";
+import { APIConverter } from "../../../utils/apiconverter";
+import { useIsFocused } from "@react-navigation/native";
 
 let userID = 0,
   Sess_group_refno = 0,
-  Sess_company_refno = '0',
-  Sess_branch_refno = '0',
-  Sess_CompanyAdmin_UserRefno = '0';
+  Sess_company_refno = "0",
+  Sess_branch_refno = "0",
+  Sess_CompanyAdmin_UserRefno = "0";
 function getKeyByValue(object, value) {
   return Object.keys(object).find((key) => object[key] === value);
 }
 const EstimationPreviewScreen = ({ route, navigation }) => {
   //#region Variables
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState('');
+  const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success,
+    theme.colors.success
   );
 
   const [otherClients, setOtherClients] = React.useState([]);
   const [selectedData, setSelectedData] = React.useState([]);
-  const [selectedClient, setSelectedClient] = React.useState('');
+  const [selectedClient, setSelectedClient] = React.useState("");
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
 
   const [clientsFullData, setClientsFullData] = React.useState([]);
   const [clients, setClients] = React.useState([]);
-  const [clientName, setClientName] = React.useState('');
+  const [clientName, setClientName] = React.useState("");
   const [errorCN, setCNError] = React.useState(false);
 
   const [mobilenoData, setMobileNoData] = React.useState([]);
-  const [mobileno, setMobileNo] = React.useState('');
+  const [mobileno, setMobileNo] = React.useState("");
   const [errorMN, setMNError] = React.useState(false);
 
   const [companyData, setCompanyData] = React.useState([]);
-  const [companyName, setCompanyName] = React.useState('');
+  const [companyName, setCompanyName] = React.useState("");
   const [errorCON, setCONError] = React.useState(false);
 
-  const [lengthFeet, setLengthFeet] = React.useState('1');
-  const [lengthInches, setLengthInches] = React.useState('0');
+  const [lengthFeet, setLengthFeet] = React.useState("1");
+  const [lengthInches, setLengthInches] = React.useState("0");
 
-  const [widthFeet, setWidthFeet] = React.useState('1');
-  const [widthInches, setWidthInches] = React.useState('0');
-  const [totalSqFt, setTotalSqft] = React.useState('1.0000');
+  const [widthFeet, setWidthFeet] = React.useState("1");
+  const [widthInches, setWidthInches] = React.useState("0");
+  const [totalSqFt, setTotalSqft] = React.useState("1.0000");
   const refRBSheet = useRef();
   //#endregion
   const isFocused = useIsFocused();
@@ -76,7 +76,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   }, [isFocused]);
 
   const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem('user');
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       const userDataParsed = JSON.parse(userData);
 
@@ -118,7 +118,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       });
   };
   const AddMoreDesigns = () => {
-    InsertDesignEstimationEnquiry('add');
+    InsertDesignEstimationEnquiry("add");
   };
 
   const FetchClients = () => {
@@ -126,7 +126,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: Sess_group_refno,
-        client_user_refno: 'all',
+        client_user_refno: "all",
       },
     };
     Provider.createDFCommon(Provider.API_URLS.MyClientUserRefNoCheck, params)
@@ -156,16 +156,16 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         company_name: selectedItem,
       },
     };
-    if (type === 'company') {
+    if (type === "company") {
       params.data.company_name = selectedItem;
     } else {
       params.data.mobile_no = selectedItem;
     }
     Provider.createDFCommon(
-      type === 'company'
+      type === "company"
         ? Provider.API_URLS.CompanyNameAutocompleteClientSearch
         : Provider.API_URLS.MobileNoAutocompleteClientSearch,
-      params,
+      params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -175,12 +175,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               clientData.push({
                 id: i,
                 title:
-                  type === 'company'
+                  type === "company"
                     ? data.companyname_Result
                     : data.mobile_no_Result,
               });
             });
-            if (type === 'company') {
+            if (type === "company") {
               setCompanyData(clientData);
             } else {
               setMobileNoData(clientData);
@@ -226,15 +226,15 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     materialSetupID,
     from,
     userDesignEstimationID,
-    labourCost,
+    labourCost
   ) => {
     let params = {
       MaterialSetupID: materialSetupID,
     };
     Provider.getAll(
       `generaluserenquiryestimations/getdesignestimateenquiriesformaterialsetup?${new URLSearchParams(
-        params,
-      )}`,
+        params
+      )}`
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -252,10 +252,10 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
             });
             InsertDesignEstimationEnquiry(
               from,
-              '2',
+              "2",
               subtotalCal,
               userDesignEstimationID,
-              labourCost,
+              labourCost
             );
           }
         }
@@ -269,8 +269,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.getAll(
       `generaluserenquiryestimations/getdesignestimateenquiries?${new URLSearchParams(
-        params,
-      )}`,
+        params
+      )}`
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -279,7 +279,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               response.data.data[0].id,
               from,
               userDesignEstimationID,
-              response.data.data[0].labourCost,
+              response.data.data[0].labourCost
             );
           }
         }
@@ -292,7 +292,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     number,
     subtotal,
     userDesignEstimationID,
-    labourCost,
+    labourCost
   ) => {
     if (route.params.isContractor) {
       const params = {
@@ -313,27 +313,26 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           Sess_CompanyAdmin_UserRefno,
           client_user_refno: getKeyByValue(
             selectedData.client_data,
-            clientName,
+            clientName
           ),
         },
       };
 
       Provider.createDFContractor(
         Provider.API_URLS.contractor_createquote,
-        params,
+        params
       )
         .then((response) => {
           console.log(response.data.data);
           if (response.data && response.data.code === 200) {
-            if (from === 'add') {
-              if (route.params.from === 'home') {
-                navigation.navigate('HomeScreen');
+            if (from === "add") {
+              if (route.params.from === "home") {
+                navigation.navigate("HomeScreen");
               } else {
-                navigation.navigate('ImageGalleryScreen');
+                navigation.navigate("ImageGalleryScreen");
               }
             } else {
-              console.log(response.data.data);
-              navigation.navigate('GetEstimationScreen', {
+              navigation.navigate("GetEstimationScreen", {
                 userDesignEstimationID:
                   response.data.data.cont_estimation_refno,
                 designImage: route.params.data.designImage,
@@ -342,6 +341,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 clientID: route.params.isContractor
                   ? getKeyByValue(selectedData.client_data, clientName)
                   : 0,
+                type: "do",
+                snackopen: () => {
+                  setSnackbarText("Quotation Added");
+                  setSnackbarColor(theme.colors.success);
+                  setSnackbarVisible(true);
+                },
               });
             }
           } else {
@@ -361,7 +366,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         data: {
           Sess_UserRefno: userID,
           Sess_group_refno: Sess_group_refno,
-          clickaddmorecheck: from == 'add' ? '1' : '0',
+          clickaddmorecheck: from == "add" ? "1" : "0",
           service_refno: route.params.data.serviceID,
           designtype_refno: route.params.data.designTypeID,
           product_refno: route.params.data.productID,
@@ -379,14 +384,14 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           //console.log(response.data);
           if (response.data && response.data.code === 200) {
             //if (number === "2") {
-            if (from === 'add') {
-              if (route.params.from === 'home') {
-                navigation.navigate('HomeScreen');
+            if (from === "add") {
+              if (route.params.from === "home") {
+                navigation.navigate("HomeScreen");
               } else {
-                navigation.navigate('ImageGalleryScreen');
+                navigation.navigate("ImageGalleryScreen");
               }
             } else {
-              navigation.navigate('GetEstimationScreen', {
+              navigation.navigate("GetEstimationScreen", {
                 userDesignEstimationID: response.data.data.estimation_refno,
                 designImage: route.params.data.designImage,
                 isContractor: route.params.isContractor,
@@ -452,7 +457,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       setCNError(true);
     }
     if (isValid) {
-      InsertDesignEstimationEnquiry('get', '1');
+      InsertDesignEstimationEnquiry("get", "1");
     }
   };
 
@@ -470,8 +475,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   const CalculateSqFtData = (data) => {
     if (data) {
-      const lengthFeetIn = data['length'].toString().split('.');
-      const widthFeetIn = data['width'].toString().split('.');
+      const lengthFeetIn = data["length"].toString().split(".");
+      const widthFeetIn = data["width"].toString().split(".");
       const lf = lengthFeetIn[0];
       const li = lengthFeetIn.length > 1 ? lengthFeetIn[1] : 0;
       const wf = widthFeetIn[0];
@@ -502,13 +507,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   const onCompanyNameSelected = (selectedItem) => {
     setCompanyName(selectedItem);
     setCONError(false);
-    FetchOtherClients(selectedItem, 'company');
+    FetchOtherClients(selectedItem, "company");
   };
 
   const onMobileNumberSelected = (selectedItem) => {
     setMobileNo(selectedItem);
     setMNError(false);
-    FetchOtherClients(selectedItem, 'mobile');
+    FetchOtherClients(selectedItem, "mobile");
   };
 
   const onLengthFeetSelected = (selectedItem) => {
@@ -537,13 +542,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         enabled
       >
         <ScrollView
           style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
-          contentInsetAdjustmentBehavior='automatic'
-          keyboardShouldPersistTaps='handled'
+          contentInsetAdjustmentBehavior="automatic"
+          keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
         >
           <Image
@@ -612,7 +617,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               style={[Styles.padding16, Styles.paddingBottom0, { zIndex: 10 }]}
             >
               <Dropdown
-                label='Client Name'
+                label="Client Name"
                 data={
                   selectedData.client_data
                     ? Object.values(selectedData?.client_data)
@@ -622,27 +627,27 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 isError={errorCN}
                 selectedItem={clientName}
               />
-              <HelperText type='error' visible={errorCN}>
+              <HelperText type="error" visible={errorCN}>
                 {communication.InvalidClient}
               </HelperText>
               <View
                 style={[
                   Styles.flexRow,
                   Styles.marginTop8,
-                  { justifyContent: 'space-between' },
+                  { justifyContent: "space-between" },
                 ]}
               >
                 <Button
-                  mode='outlined'
+                  mode="outlined"
                   onPress={() => refRBSheet.current.open()}
                 >
                   Search & Add
                 </Button>
                 <Button
-                  mode='contained'
+                  mode="contained"
                   onPress={() => {
-                    navigation.navigate('AddClientScreen', {
-                      type: 'client',
+                    navigation.navigate("AddClientScreen", {
+                      type: "client",
                       fetchData: FetchImageGalleryProductDetail,
                     });
                   }}
@@ -659,7 +664,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}
               >
                 <Dropdown
-                  label='Feet'
+                  label="Feet"
                   data={CreateNumberDropdown(1, 50)}
                   onSelected={onLengthFeetSelected}
                   selectedItem={lengthFeet}
@@ -670,7 +675,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}
               >
                 <Dropdown
-                  label='Inches'
+                  label="Inches"
                   data={CreateNumberDropdown(0, 11)}
                   onSelected={onLengthInchesSelected}
                   selectedItem={lengthInches}
@@ -690,7 +695,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}
               >
                 <Dropdown
-                  label='Feet'
+                  label="Feet"
                   data={CreateNumberDropdown(1, 50)}
                   onSelected={onWidthFeetSelected}
                   selectedItem={widthFeet}
@@ -701,7 +706,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}
               >
                 <Dropdown
-                  label='Inches'
+                  label="Inches"
                   data={CreateNumberDropdown(0, 11)}
                   onSelected={onWidthInchesSelected}
                   selectedItem={widthInches}
@@ -710,8 +715,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
             </View>
             <TextInput
-             mode="outlined"
-              label='Total (Sq.Ft.)'
+              mode="outlined"
+              label="Total (Sq.Ft.)"
               value={totalSqFt}
               editable={false}
             />
@@ -724,25 +729,25 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           Styles.width100per,
           Styles.marginTop32,
           Styles.padding16,
-          { position: 'absolute', bottom: 0, elevation: 3 },
+          { position: "absolute", bottom: 0, elevation: 3 },
         ]}
       >
         {route.params.isContractor ? (
           <Card.Content>
-            <Button mode='contained' onPress={() => CreateQuote()}>
+            <Button mode="contained" onPress={() => CreateQuote()}>
               Create Quote
             </Button>
           </Card.Content>
         ) : (
           <Card.Content
-            style={[Styles.flexRow, { justifyContent: 'space-between' }]}
+            style={[Styles.flexRow, { justifyContent: "space-between" }]}
           >
-            <Button mode='outlined' onPress={() => AddMoreDesigns()}>
+            <Button mode="outlined" onPress={() => AddMoreDesigns()}>
               Add More
             </Button>
             <Button
-              mode='contained'
-              onPress={() => InsertDesignEstimationEnquiry('get', '1')}
+              mode="contained"
+              onPress={() => InsertDesignEstimationEnquiry("get", "1")}
             >
               Get Estimation
             </Button>
@@ -755,16 +760,16 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         closeOnPressMask={true}
         dragFromTopOnly={true}
         height={640}
-        animationType='fade'
+        animationType="fade"
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          draggableIcon: { backgroundColor: '#000' },
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
         }}
       >
         <ScrollView
           style={[Styles.flex1, Styles.backgroundColor]}
           contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps='handled'
+          keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
         >
           <View
@@ -774,7 +779,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               <AutocompleteDropdown
                 clearOnFocus={false}
                 closeOnBlur={true}
-                direction='down'
+                direction="down"
                 suggestionsListContainerStyle={{
                   borderColor: theme.colors.border,
                   borderWidth: 1,
@@ -787,7 +792,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                   borderBottomWidth: 1,
                 }}
                 textInputProps={{
-                  placeholder: 'Company Name',
+                  placeholder: "Company Name",
                   value: companyName,
                   placeholderTextColor: errorCON
                     ? theme.colors.error
@@ -802,13 +807,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                         paddingHorizontal: 16,
                       }}
                     >
-                      {item ? item.title : ''}
+                      {item ? item.title : ""}
                     </Text>
                   </View>
                 )}
                 onClear={() => {
                   setIsButtonDisabled(true);
-                  setCompanyName('');
+                  setCompanyName("");
                   setCompanyData([]);
                 }}
                 onSelectItem={(item) => {
@@ -819,13 +824,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 }}
                 dataSet={companyData}
               />
-              <HelperText type='error' visible={errorCON}>
+              <HelperText type="error" visible={errorCON}>
                 {communication.InvalidClient}
               </HelperText>
               <AutocompleteDropdown
                 clearOnFocus={false}
                 closeOnBlur={true}
-                direction='down'
+                direction="down"
                 suggestionsListContainerStyle={{
                   borderColor: theme.colors.border,
                   borderWidth: 1,
@@ -838,7 +843,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                   borderBottomWidth: 1,
                 }}
                 textInputProps={{
-                  placeholder: 'Mobile No',
+                  placeholder: "Mobile No",
                   value: mobileno,
                   placeholderTextColor: errorMN
                     ? theme.colors.error
@@ -853,7 +858,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                         paddingHorizontal: 16,
                       }}
                     >
-                      {item ? item.title : ''}
+                      {item ? item.title : ""}
                     </Text>
                     <Text
                       style={{
@@ -861,13 +866,13 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                         paddingHorizontal: 16,
                       }}
                     >
-                      {item ? item.contact : ''}
+                      {item ? item.contact : ""}
                     </Text>
                   </View>
                 )}
                 onClear={() => {
                   setIsButtonDisabled(true);
-                  setMobileNo('');
+                  setMobileNo("");
                   setMobileNoData([]);
                 }}
                 onSelectItem={(item) => {
@@ -878,12 +883,12 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 }}
                 dataSet={mobilenoData}
               />
-              <HelperText type='error' visible={errorMN}>
+              <HelperText type="error" visible={errorMN}>
                 {communication.InvalidClient}
               </HelperText>
             </View>
             <Button
-              mode='contained'
+              mode="contained"
               disabled={isButtonDisabled}
               style={[Styles.marginTop32, { zIndex: -1 }]}
               onPress={SearchClient}
@@ -902,7 +907,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                         Styles.padding16,
                         Styles.flexAlignCenter,
                         Styles.borderBottom1,
-                        { justifyContent: 'space-between' },
+                        { justifyContent: "space-between" },
                       ]}
                     >
                       <View style={[Styles.flexColumn]}>
@@ -914,7 +919,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                         </Text>
                       </View>
                       <Button
-                        mode='contained'
+                        mode="contained"
                         disabled={isButtonDisabled}
                         onPress={() => InsertOtherClient(v.Search_user_refno)}
                       >
