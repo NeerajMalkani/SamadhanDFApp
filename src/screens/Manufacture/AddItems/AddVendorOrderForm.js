@@ -396,7 +396,7 @@ function AddVendorOrderForm({ route, navigation }) {
                   setData((prev) => {
                     return {
                       ...prev,
-                      mf_po_no: selectedItem,
+                      mf_po_no: selectedItem === 'Select' ? '' : selectedItem,
                       otherdata: {},
                       coils_data: [],
                       slitting_data: [],
@@ -557,7 +557,7 @@ function AddVendorOrderForm({ route, navigation }) {
                                   <View style={{ padding: 10 }}>
                                     <Dropdown
                                       data={[
-                                        'Select',
+                                        '0',
                                         ...Array.from(
                                           {
                                             length: parseInt(item.no_of_qty),
