@@ -478,7 +478,7 @@ function EditVendorOrderForm({ route, navigation }) {
                               key={index}
                             >
                               <Col
-                                data={[index]}
+                                data={[index + 1]}
                                 height={40}
                                 textStyle={styles.text}
                                 width={50}

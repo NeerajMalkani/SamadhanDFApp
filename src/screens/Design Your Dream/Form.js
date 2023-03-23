@@ -129,18 +129,18 @@ const Form = ({ route, navigation }) => {
       errors = true;
       setErrors((state) => ({ ...state, lengthfoot: true }));
     }
-    if (state.lengthinches === "") {
-      errors = true;
-      setErrors((state) => ({ ...state, lengthinches: true }));
-    }
+    // if (state.lengthinches === "") {
+    //   errors = true;
+    //   setErrors((state) => ({ ...state, lengthinches: true }));
+    // }
     if (state.widthheightfoot === "") {
       errors = true;
       setErrors((state) => ({ ...state, widthheightfoot: true }));
     }
-    if (state.widthheightinches === "") {
-      errors = true;
-      setErrors((state) => ({ ...state, widthheightinches: true }));
-    }
+    // if (state.widthheightinches === "") {
+    //   errors = true;
+    //   setErrors((state) => ({ ...state, widthheightinches: true }));
+    // }
     if (state.contact_name === "") {
       errors = true;
       setErrors((state) => ({ ...state, contact_name: true }));
@@ -232,9 +232,9 @@ const Form = ({ route, navigation }) => {
   useEffect(() => {
     if (
       state.lengthfoot !== "" &&
-      state.lengthinches !== "" &&
+      // state.lengthinches !== "" &&
       state.widthheightfoot !== "" &&
-      state.widthheightinches !== "" &&
+      // state.widthheightinches !== "" &&
       changed
     ) {
       Provider.createDFCommon(Provider.API_URLS.getsqftcalculation, {
