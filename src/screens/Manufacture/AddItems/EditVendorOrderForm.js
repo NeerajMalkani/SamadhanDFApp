@@ -428,8 +428,8 @@ function EditVendorOrderForm({ route, navigation }) {
           </HelperText>
           {route.params.type == 'edit' && (
             <TextInput
-              mode='outlined'
-              label='Job Order No'
+              mode="outlined"
+              label="Job Order No"
               value={route.params.data?.job_order_no}
               disabled={true}
               dense
@@ -516,6 +516,27 @@ function EditVendorOrderForm({ route, navigation }) {
             >
               Slitting Details
             </Title>
+            {data.slitting_data.length > 0 && (
+              <View>
+                <Button
+                  onPress={() => {
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        slitting_data: prev.slitting_data.map((item) => {
+                          return {
+                            ...item,
+                            total: "0",
+                          };
+                        }),
+                      };
+                    });
+                  }}
+                >
+                  Reset Slitting Details
+                </Button>
+              </View>
+            )}
             <View style={styles.container}>
               <ScrollView horizontal={true}>
                 <View>
@@ -565,7 +586,7 @@ function EditVendorOrderForm({ route, navigation }) {
                                   <View style={{ padding: 10 }}>
                                     <Dropdown
                                       data={[
-                                        '0',
+                                        "Select",
                                         ...Array.from(
                                           {
                                             length: parseInt(item.no_of_qty),
@@ -576,38 +597,59 @@ function EditVendorOrderForm({ route, navigation }) {
                                       label=''
                                       selectedItem={
                                         parseInt(item.total) == 0
-                                          ? ''
+                                          ? "Select"
                                           : String(
                                               parseFloat(item.total) /
                                                 parseFloat(item.width_mm_value),
                                             )
                                       }
                                       onSelected={(selectedItem) => {
-                                        setData((prev) => {
-                                          return {
-                                            ...prev,
-                                            slitting_data:
-                                              prev.slitting_data.map(
-                                                (current, idx) => {
-                                                  if (idx !== index) {
-                                                    return current;
-                                                  } else {
-                                                    return {
-                                                      ...current,
-                                                      total: String(
-                                                        parseFloat(
-                                                          item.width_mm_value,
-                                                        ) *
+                                        if (selectedItem !== "Select") {
+                                          setData((prev) => {
+                                            return {
+                                              ...prev,
+                                              slitting_data:
+                                                prev.slitting_data.map(
+                                                  (current, idx) => {
+                                                    if (idx !== index) {
+                                                      return current;
+                                                    } else {
+                                                      return {
+                                                        ...current,
+                                                        total: String(
                                                           parseFloat(
-                                                            selectedItem,
-                                                          ),
-                                                      ),
-                                                    };
+                                                            item.width_mm_value
+                                                          ) *
+                                                            parseFloat(
+                                                              selectedItem
+                                                            )
+                                                        ),
+                                                      };
+                                                    }
                                                   }
-                                                },
-                                              ),
-                                          };
-                                        });
+                                                ),
+                                            };
+                                          });
+                                        } else {
+                                          setData((prev) => {
+                                            return {
+                                              ...prev,
+                                              slitting_data:
+                                                prev.slitting_data.map(
+                                                  (current, idx) => {
+                                                    if (idx !== index) {
+                                                      return current;
+                                                    } else {
+                                                      return {
+                                                        ...current,
+                                                        total: 0,
+                                                      };
+                                                    }
+                                                  }
+                                                ),
+                                            };
+                                          });
+                                        }
                                       }}
                                     />
                                   </View>,
@@ -656,7 +698,7 @@ function EditVendorOrderForm({ route, navigation }) {
           </View>
 
           <TextInput
-            mode='outlined'
+            mode="outlined"
             style={{ marginTop: 10 }}
             label='Slitting Scrap (mm)'
             value={data.ss_mm}
@@ -664,7 +706,7 @@ function EditVendorOrderForm({ route, navigation }) {
             dense
           />
           <TextInput
-            mode='outlined'
+            mode="outlined"
             style={{ marginTop: 10 }}
             label='Slitting Scrap (kg)'
             value={data.ss_kg}
