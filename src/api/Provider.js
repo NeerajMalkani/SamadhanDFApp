@@ -1,10 +1,10 @@
 import axios from "axios";
 import { onePixelImage, timeoutLimit } from "../utils/paths";
 
-const BASE_OLD = 'https://dfsolutions.in/api';
-const BASE_4 = 'https://samadhanerp.com/api';
-const BASE_ = 'https://samadhanerp.com/testkit/api';
-const BASE_URL_OLD = 'https://api.starselector.com/api';
+const BASE_OLD = "https://dfsolutions.in/api";
+const BASE_4 = "https://samadhanerp.com/api";
+const BASE_ = "https://samadhanerp.com/api";
+const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
