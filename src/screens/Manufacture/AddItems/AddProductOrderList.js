@@ -181,11 +181,13 @@ function AddProductOrderList({ route, navigation }) {
         }
       })
       .catch((e) => console.log(e));
+      console.log('asdasdf');
     Provider.createDFManufacturer(
       Provider.API_URLS.get_widthofgpcoil_manufacturer_poform,
       params
     )
       .then((response) => {
+        console.log('width of gp coil:',  response.data.data);
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
             console.log(response.data.data);
@@ -193,6 +195,7 @@ function AddProductOrderList({ route, navigation }) {
               return response.data.data;
             });
             let filter = response.data.data.map((item) => item.gpcoil_width);
+            //console.log('filter:', filter);
             setData((prev) => {
               return {
                 ...prev,
@@ -213,7 +216,7 @@ function AddProductOrderList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
+            //console.log(response.data.data);
             setZincFullData(() => {
               return response.data.data;
             });
@@ -238,7 +241,7 @@ function AddProductOrderList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
+            //console.log(response.data.data);
             setCoilnumFullData(() => {
               return response.data.data;
             });
@@ -268,8 +271,8 @@ function AddProductOrderList({ route, navigation }) {
                 item.mf_po_refno === route.params.data.mf_po_refno &&
                 item.no_gpcoil === route.params.data.no_gpcoil
             );
-            console.log(response.data.data[0]);
-            console.log("gpcoilrefno", route.params.data);
+            //console.log(response.data.data[0]);
+            //console.log("gpcoilrefno", route.params.data);
             setData((prev) => {
               return {
                 ...prev,
@@ -294,7 +297,7 @@ function AddProductOrderList({ route, navigation }) {
   };
 
   useEffect(() => {
-    console.log(data.service_name);
+    //console.log(data.service_name);
     if (data.service_name !== "") {
       let params = {
         data: {
@@ -332,7 +335,7 @@ function AddProductOrderList({ route, navigation }) {
   }, [data.service_name]);
 
   useEffect(() => {
-    console.log(data.category_name);
+    //console.log(data.category_name);
     if (data.category_name !== "") {
       let params = {
         data: {
@@ -371,7 +374,6 @@ function AddProductOrderList({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log("res", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setBrandFullData(response.data.data);
@@ -414,7 +416,7 @@ function AddProductOrderList({ route, navigation }) {
   }, []);
   const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const update = () => {
-    console.log(widthFullData);
+    //console.log(widthFullData);
     setIsButtonLoading(false);
 
     let params = {
@@ -467,7 +469,7 @@ function AddProductOrderList({ route, navigation }) {
       params
     )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         if (response.data && response.data.data.Created == 1) {
           route.params.fetchData("add");
           navigation.goBack();

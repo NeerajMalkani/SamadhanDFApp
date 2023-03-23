@@ -260,7 +260,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchEstimationData = (userDesignEstimationID, from) => {
@@ -284,7 +284,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const InsertDesignEstimationEnquiry = (
@@ -317,7 +317,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           ),
         },
       };
-
+      console.log('estimation params:', params);
       Provider.createDFContractor(
         Provider.API_URLS.contractor_createquote,
         params
@@ -398,8 +398,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 fetchData: route.params.fetchData,
                 clientID: route.params.isContractor
                   ? clientsFullData.find((el) => {
-                      return el.companyName === clientName;
-                    }).id
+                    return el.companyName === clientName;
+                  }).id
                   : 0,
               });
             }

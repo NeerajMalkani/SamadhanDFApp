@@ -74,12 +74,13 @@ function ProductionOrderList({ navigation }) {
           setSnackbarVisible(true);
         }
       );
+      
       listData[1](data.order);
       listSearchData[1](data.order);
       setReference(data);
-      console.log(data.order[0]);
-      console.log(data.supplier);
-      console.log(data.vendor);
+      //console.log(data.order[0]);
+      //console.log("Supplier:", data.supplier);
+      //console.log(data.vendor);
     } catch (e) {
       setIsLoading(false);
       setSnackbarText(e.message);
@@ -140,25 +141,23 @@ function ProductionOrderList({ navigation }) {
           title={
             data.item?.supplier_user_refno
               ? reference?.supplier?.find(
-                  (item) =>
-                    item.client_user_refno === data.item.supplier_user_refno
-                ).client_name
+                (item) =>
+                  item.client_user_refno === data.item.supplier_user_refno
+              ).company_name
               : ""
           }
           titleStyle={{ fontSize: 18 }}
-          description={`Vendor Name: ${
-            data.item?.vendor_user_refno
+          description={`Vendor Name: ${data.item?.vendor_user_refno
               ? reference?.vendor?.find(
-                  (item) =>
-                    item.client_user_refno === data.item.vendor_user_refno
-                ).client_name
+                (item) =>
+                  item.client_user_refno === data.item.vendor_user_refno
+              ).client_name
               : ""
-          }\nService Name: ${
-            NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
-          } `}
+            }\nService Name: ${NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
+            } `}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
+            //console.log(data.item);
             setCurrent(data.item);
           }}
           left={() => (
@@ -193,6 +192,7 @@ function ProductionOrderList({ navigation }) {
   };
 
   const EditCallback = (data, rowMap) => {
+    //console.log('qqqqqqqqqqq:', data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("EditProductOrderList", {
       type: "edit",
@@ -206,7 +206,7 @@ function ProductionOrderList({ navigation }) {
   //#endregion
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title="Production Order List" />
+      <Header navigation={navigation} title="Purchase Order List" />
       {isLoading ? (
         <View
           style={[
@@ -287,9 +287,9 @@ function ProductionOrderList({ navigation }) {
           <Title style={[Styles.paddingHorizontal16]}>
             {current?.supplier_user_refno
               ? reference?.supplier?.find(
-                  (item) =>
-                    item.client_user_refno === current.supplier_user_refno
-                )?.client_name
+                (item) =>
+                  item.client_user_refno === current.supplier_user_refno
+              )?.company_name
               : ""}
           </Title>
           <ScrollView>
@@ -298,9 +298,9 @@ function ProductionOrderList({ navigation }) {
               description={
                 current?.supplier_user_refno
                   ? reference?.supplier?.find(
-                      (item) =>
-                        item.client_user_refno === current.supplier_user_refno
-                    )?.client_name
+                    (item) =>
+                      item.client_user_refno === current.supplier_user_refno
+                  )?.client_name
                   : ""
               }
             />
@@ -309,9 +309,9 @@ function ProductionOrderList({ navigation }) {
               description={
                 current?.vendor_user_refno
                   ? reference?.vendor?.find(
-                      (item) =>
-                        item.client_user_refno === current.vendor_user_refno
-                    )?.client_name
+                    (item) =>
+                      item.client_user_refno === current.vendor_user_refno
+                  )?.client_name
                   : ""
               }
             />

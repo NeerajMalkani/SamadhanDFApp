@@ -188,17 +188,15 @@ function EditProductOrderList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setWidthFullData(() => {
               return response.data.data;
             });
-            let filter = response.data.data.map((item) => item.gpcoil_width);
+            let filter = response.data.data.filter((item) => item.gpcoil_refno == route.params.data?.gpcoil_refno);
+
             setData((prev) => {
               return {
                 ...prev,
-                gpcoil_width: filter.includes(route.params.data?.gpcoil_width)
-                  ? route.params.data?.gpcoil_width
-                  : filter[0],
+                gpcoil_width: filter[0].gpcoil_width,
               };
             });
           }

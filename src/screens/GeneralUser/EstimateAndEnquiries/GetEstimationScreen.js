@@ -73,7 +73,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
         Provider.API_URLS.contractor_getsc_estimationdetail,
         body,
       ).then((response) => {
-        console.log(response.data);
+        console.log("Estimation Data:", response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             // FetchEstimationMaterialSetupData();
@@ -267,7 +267,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const onBrandNameSelected = (selectedItem, index) => {
@@ -555,7 +555,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
             {(estimationData &&
               estimationData[0] &&
               !estimationData[0].status) ||
-            route.params.isContractor ? (
+              route.params.isContractor ? (
               <View style={[Styles.padding16]}>
                 {route.params.isContractor && (
                   <>
@@ -671,7 +671,7 @@ const GetEstimationScreen = ({ route, navigation }) => {
                 <Subheading style={[Styles.paddingEnd16]}>
                   To buy material
                 </Subheading>
-                <Button mode='contained' onPress={() => {}}>
+                <Button mode='contained' onPress={() => { }}>
                   Add to Cart
                 </Button>
               </Card.Content>

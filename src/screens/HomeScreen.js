@@ -510,14 +510,14 @@ const HomeScreen = ({ route, navigation }) => {
       params
     )
       .then((response) => {
-        //console.log('manufactoring data', response.data.data);
+        console.log('manufactoring data', response.data.data);
 
         if (response.data && response.data.code === 200) {
-          setAvailableRawMaterialKg(response.data.data.Available_Raw_Materials_Kg_Total);
+          setAvailableRawMaterialKg(response.data.data.total_materials_available);
           setAvailableRawMaterialNo(response.data.data.Available_Raw_Materials_Nos_Total);
           setProductionDoneKg(response.data.data.OpeningStock_Production_Done_Kg_Total);
           setProductionDoneNo(response.data.data.OpeningStock_Production_Done_Nos_Total);
-          setScrapWastage(response.data.data.Production_Done_Kg_Total);
+          setScrapWastage(response.data.data.slitting_invoice_scrap_total);
 
         } else {
           setSnackbarText(communication.NoData);

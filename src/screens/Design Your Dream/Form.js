@@ -293,11 +293,15 @@ const Form = ({ route, navigation }) => {
   };
 
   const fetchLength = () => {
-    Provider.createDFAdmin(Provider.API_URLS.getlength)
-      .then((res) => {
-        setLengthFeet(res.data.data);
-      })
-      .catch((error) => console.log(error));
+
+    let lengthFT = [];
+    for (let i = 1; i <= 500; i++) {
+      lengthFT.push({
+        lengthfoot: i
+      });
+    }
+    setLengthFeet(lengthFT);
+   
     Provider.createDFAdmin(Provider.API_URLS.getlengthinches)
       .then((res) => {
         setLengthInches(res.data.data);
@@ -306,11 +310,14 @@ const Form = ({ route, navigation }) => {
   };
 
   const fetchWidth = () => {
-    Provider.createDFAdmin(Provider.API_URLS.getwidthheightfoot)
-      .then((res) => {
-        setWidthFeet(res.data.data);
-      })
-      .catch((error) => console.log(error));
+
+    let widthFT = [];
+    for (let i = 1; i <= 500; i++) {
+      widthFT.push({
+        widthheightfoot: i
+      });
+    }
+    setWidthFeet(widthFT);
     Provider.createDFAdmin(Provider.API_URLS.getwidthheightinches)
       .then((res) => {
         setWidthInches(res.data.data);
@@ -323,7 +330,7 @@ const Form = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           <TextInput
-           mode="outlined"
+            mode="outlined"
             label="Property Type"
             disabled={true}
             value={route.params.selectedProperty.propertytype_name}
