@@ -24,7 +24,7 @@ const QuotationWiseScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   // const [imageGalleryData, setDesignGalleryData] = React.useState([]);
   const [quotattionAddEdit, setQuotationAddEdit] = React.useState([]);
-
+  const [type, setType] = React.useState("add");
   const [quotattionSendPending, setQuotationSendPending] = React.useState([]);
   const [quotationApprovePendingList, setQutationApprovedPendingList] =
     React.useState([]);
@@ -45,7 +45,11 @@ const QuotationWiseScreen = ({ navigation }) => {
     setSnackbarColor(theme.colors.error);
     setSnackbarVisible(true);
   };
-
+  const snack = (msg,color) => {
+    setSnackbarText(msg);
+    setSnackbarColor(color);
+    setSnackbarVisible(true);
+  };
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
@@ -71,10 +75,6 @@ const QuotationWiseScreen = ({ navigation }) => {
       const data = await Provider.getcontractorquotationwise(params, () =>
         setIsLoading(false)
       );
-      setQutationApprovedPendingList(data.approvedPending);
-      setQuotationSendPending(data.sendPending);
-      setQutationApprovedList(data.approved);
-      setQutationRejected(data.rejected);
       setResponse(data.response);
       setIsLoading(false);
     } catch (e) {
@@ -105,7 +105,13 @@ const QuotationWiseScreen = ({ navigation }) => {
             <QuotationAddEditTab
               navigation={navigation}
               designGalleryData={quotattionAddEdit}
-              fetchData={FetchData}
+              set={setIsLoading}
+              unload={unload}
+              fetch={FetchData}
+              index1={index}
+              type={type}
+              setType={setType}
+              snack={snack}
             />
           </ScrollView>
         );
@@ -115,10 +121,12 @@ const QuotationWiseScreen = ({ navigation }) => {
             type="QuotationSendPendingList"
             set={setIsLoading}
             unload={unload}
-            listData2={quotattionSendPending}
             response={response}
             fetch={FetchData}
             navigation={navigation}
+            index1={index}
+            setType={setType}
+            setIndex={setIndex}
           />
         );
       case "quotationapprovependinglist":
@@ -131,6 +139,9 @@ const QuotationWiseScreen = ({ navigation }) => {
             response={response}
             fetch={FetchData}
             navigation={navigation}
+            index1={index}
+            setType={setType}
+            setIndex={setIndex}
           />
         );
       case "quotationapprovedlist":
@@ -139,7 +150,6 @@ const QuotationWiseScreen = ({ navigation }) => {
             type="QuotationApprovedList"
             set={setIsLoading}
             unload={unload}
-            listData2={quotationApprovedList}
             response={response}
             fetch={FetchData}
             navigation={navigation}
@@ -151,7 +161,6 @@ const QuotationWiseScreen = ({ navigation }) => {
             type="QuotationRejectedList"
             set={setIsLoading}
             unload={unload}
-            listData2={quotationRejected}
             response={response}
             fetch={FetchData}
             navigation={navigation}
@@ -202,7 +211,11 @@ const QuotationWiseScreen = ({ navigation }) => {
           renderTabBar={renderTabBar}
           navigationState={{ index, routes }}
           renderScene={renderScene}
-          onIndexChange={setIndex}
+          onIndexChange={(index) => {
+            setIndex(index);
+            setType("add");
+          }}
+          swipeEnabled={false}
         />
       )}
       <Snackbar

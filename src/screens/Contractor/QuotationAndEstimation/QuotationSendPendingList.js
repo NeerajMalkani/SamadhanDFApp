@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
+import { useIsFocused } from "@react-navigation/native";
 import { BASE_URL_Contractor } from "../../../api/Provider";
 import {
   Image,
@@ -52,11 +53,13 @@ let Sess_branch_refno = 0;
 let Sess_group_refno = 0;
 const QuotationSendPendingList = ({
   set,
-  listData2,
   response,
   fetch,
   unload,
   navigation,
+  index1,
+  setType,
+  setIndex,
 }) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [remarks, setRemarks] = React.useState("");
@@ -186,15 +189,35 @@ const QuotationSendPendingList = ({
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_send_pendng_list,
+      params
+    )
+      .then((response) => {
+        // console.log("response:", JSON.stringify(response.data));
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused && index1 == 1) {
+      GetUserID();
+    }
+  }, [isFocused, index1]);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -212,53 +235,6 @@ const QuotationSendPendingList = ({
     }
   };
 
-  const sendQuotationToClient = () => {
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_scdesign_estimation_sendtoclient,
-      {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_company_refno: Sess_company_refno,
-          Sess_branch_refno: Sess_branch_refno,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          cont_estimation_refno: current.cont_estimation_refno,
-        },
-      }
-    )
-      .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
-        }
-      })
-      .catch((error) => {
-        unload("Error while Sending Client");
-      });
-  };
-
-  const cancelQuotation = () => {
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_scdesign_estimation_cancel,
-      {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_company_refno: Sess_company_refno,
-          Sess_branch_refno: Sess_branch_refno,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          cont_estimation_refno: current.cont_estimation_refno,
-        },
-      }
-    )
-      .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
-        }
-      })
-      .catch((error) => {
-        unload("Error while Cancelling quotation");
-      });
-  };
   const RenderItems = (data) => {
     return (
       <View
@@ -313,17 +289,8 @@ const QuotationSendPendingList = ({
           <Button
             mode="outlined"
             onPress={() => {
-              // console.log(data.item);
-
-              navigation.navigate("ContractorEstimation", {
-                userDesignEstimationID: data.item?.cont_estimation_refno,
-                isContractor: true,
-                designImage: data.item?.design_image_url,
-                fetchData: fetch,
-                isUpdate: true,
-                data: data.item,
-                set: set,
-              });
+              setType(data.item.cont_quot_refno);
+              setIndex(0);
             }}
             style={{
               borderColor: theme.colors.primary,

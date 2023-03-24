@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, ScrollView, TouchableNativeFeedback, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  TouchableNativeFeedback,
+  View,
+  StyleSheet,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Table, TableWrapper, Row, Col } from "react-native-table-component";
 import {
   Button,
   Dialog,
@@ -36,89 +43,46 @@ let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 let Sess_group_refno = 0;
-const QuotationAddEditTab = ({ route, navigation }) => {
+const styles = StyleSheet.create({
+  container: { marginTop: 10, backgroundColor: "#fff" },
+  header: { height: 50, backgroundColor: theme.colors.primary },
+  subheader: { height: 30, backgroundColor: "white" },
+  text: { textAlign: "center", fontWeight: "100" },
+  headertext: { textAlign: "center", fontWeight: "800", color: "white" },
+  dataWrapper: { marginTop: -1 },
+  row: { height: 50, backgroundColor: "white" },
+});
+const QuotationAddEditTab = ({
+  route,
+  navigation,
+  index1,
+  type,
+  set,
+  unload,
+  fetch,
+  setType,
+  snack,
+}) => {
   //#region Variable
   const [isLoading, setIsLoading] = React.useState(true);
-  const [clientName, setClientName] = React.useState("");
-  const [errorClientName, setClientNameError] = React.useState(false);
 
-  const [cName, setCName] = React.useState("");
-  const [clientNumber, setClientNumber] = React.useState("");
-
-  const [projectName, setProjectName] = useState("");
-  const [projectNameInvalid, setProjectNameInvalid] = useState("");
   const projectNameRef = useRef({});
 
-  const [contactPerson, setContactPerson] = useState("");
-  const [contactPersonInvalid, setContactPersonInvalid] = useState("");
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
+
   const contactPersonRef = useRef({});
 
-  const [contactNumber, setContactNumber] = useState("");
-  const [contactNumberInvalid, setContactNumberInvalid] = useState("");
-  const contactNumberRef = useRef({});
-
-  const [projectDescription, setProjectDescription] = useState("");
-  const [projectDescriptionInvalid, setProjectDescriptionInvalid] =
-    useState("");
-  const projectDescriptionRef = useRef({});
-
-  const [projectSiteAddress, setProjectSiteAddress] = useState("");
-  const [projectSiteAddressInvalid, setProjectSiteAddressInvalid] =
-    useState("");
-  const projectSiteAddressRef = useRef({});
-
-  const [statesFullData, setStatesFullData] = React.useState([]);
-  const [statesData, setStatesData] = React.useState([]);
-  const [statesID, setStatesID] = React.useState([]);
-  const [stateName, setStateName] = React.useState("");
-  const [errorSN, setSNError] = React.useState(false);
   const stateRef = useRef({});
 
-  const [cityFullData, setCityFullData] = React.useState([]);
-  const [cityData, setCityData] = React.useState([]);
-  const [cityID, setCityID] = React.useState([]);
-  const [cityName, setCityName] = React.useState("");
-  const [errorCN, setCNError] = React.useState(false);
   const cityRef = useRef({});
 
-  const [unitSalesFullData, setUnitSalesFullData] = React.useState([]);
-  const [unitSalesData, setUnitSalesData] = React.useState(["Foot", "Meter"]);
-  const [unitSalesName, setUnitSalesName] = React.useState("");
-  const [errorUS, setUSError] = React.useState(false);
-
   // const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
-  const arrProductData = React.useState([]);
-
-  const onClientNameSelected = (selectedItem) => {
-    setClientName(selectedItem);
-    setClientNameError(false);
-  };
-
-  const onProjectNameChanged = (text) => {
-    setProjectName(text);
-    setProjectNameInvalid(false);
-  };
-
-  const onProjectDescriptionChanged = (text) => {
-    setProjectDescription(text);
-    setProjectDescriptionInvalid(false);
-  };
-
-  const onProjectSiteAddressChanged = (text) => {
-    setProjectSiteAddress(text);
-    setProjectSiteAddressInvalid(false);
-  };
-
-  const onCityNameSelected = (selectedItem) => {
-    setCityName(selectedItem);
-    setCNError(false);
-  };
-
-  const onUnitSaleSelected = (selectedItem) => {
-    unitSalesName(selectedItem);
-    setUSError(false);
-  };
   const [visible, setVisible] = React.useState(false);
+  const [visible2, setVisible2] = React.useState(false);
   const [dropdowndata, setDropDownData] = React.useState({
     clients: [],
     states: [],
@@ -142,8 +106,9 @@ const QuotationAddEditTab = ({ route, navigation }) => {
     unit: "",
     quot_unit_type_refno: "",
     product_details: [],
-    product_list: [],
     inclusive: false,
+    terms: "",
+    send_to_client: true,
   });
   const [errors, setErrors] = React.useState({
     client_name: false,
@@ -189,14 +154,69 @@ const QuotationAddEditTab = ({ route, navigation }) => {
           ...data,
         };
       });
-      console.log("units", data.units);
+      if (type == "add") {
+        setIsLoading(false);
+      } else {
+        fetchQuotationData(data);
+      }
     } catch (e) {
       console.log(e);
-    } finally {
       setIsLoading(false);
     }
   };
-
+  const fetchQuotationData = (data) => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_group_refno: Sess_group_refno,
+        cont_quot_refno: type,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_contquotrefnocheck,
+      params
+    )
+      .then((response) => {
+        console.log(response.data.data);
+        if (response.data && response.data.data) {
+          fetchClientData(response.data.data[0].client_user_refno);
+          fetchDistrictData(response.data.data[0].state_refno, "dropdown2");
+          setData((prev) => {
+            return {
+              ...prev,
+              client_name:
+                data.clients[0].client_data[
+                  response.data.data[0].client_user_refno
+                ],
+              project_name: response.data.data[0].project_name,
+              contact_person: response.data.data[0].contact_person,
+              contact_person_mobile_no: response.data.data[0].contact_mobile_no,
+              project_description: response.data.data[0].project_desc,
+              state_refno: response.data.data[0].state_refno,
+              district_refno: response.data.data[0].district_refno,
+              project_site_address: response.data.data[0].project_address,
+              unit: data.units.find(
+                (item) =>
+                  item.quot_unit_type_refno ==
+                  response.data.data[0].quot_unit_type_refno
+              ).quot_unit_type_name,
+              quot_unit_type_refno: response.data.data[0].quot_unit_type_refno,
+              product_details: response.data.data[0].ProductDetails,
+              inclusive:
+                response.data.data[0].quot_type_refno == "1" ? true : false,
+              terms: response.data.data[0].terms_condition,
+              send_to_client: true,
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => setIsLoading(false));
+  };
   const fetchClientData = (ref) => {
     let params = {
       data: {
@@ -248,6 +268,7 @@ const QuotationAddEditTab = ({ route, navigation }) => {
         console.log(e);
       });
   };
+  const [IsButtonLoading, setIsButtonLoading] = useState(false);
 
   const createnewclient = () => {
     let isValid = true;
@@ -297,7 +318,81 @@ const QuotationAddEditTab = ({ route, navigation }) => {
       isValid = false;
     }
     if (isValid) {
-      console.log(newclient);
+      setIsButtonLoading(true);
+      setVisible(false);
+      let params = {
+        data: {
+          Sess_UserRefno: Sess_UserRefno,
+          Sess_company_refno: Sess_company_refno,
+          Sess_branch_refno: Sess_branch_refno,
+          Sess_group_refno: Sess_group_refno,
+          company_name: newclient.company_name,
+          contact_person: newclient.contact_person,
+          contact_person_mobile_no: newclient.contact_person_mobile_no,
+          address: newclient.address,
+          state_refno: newclient.state_refno,
+          district_refno: newclient.district_refno,
+          pincode: newclient.pincode,
+          gst_no: newclient.gst_no,
+          pan_no: newclient.pan_no,
+          client_role_refno: [8],
+          buyercategory_refno: "0",
+          view_status: "1",
+        },
+      };
+      Provider.createDFCommon(Provider.API_URLS.clientcreate, params)
+        .then((response) => {
+          console.log(response.data);
+          console.log("params", params);
+          if (response.data && response.data.data.Created == 1) {
+            setNewClient((prev) => {
+              return {
+                ...prev,
+                company_name: "",
+                contact_person: "",
+                contact_person_mobile_no: "",
+                address: "",
+                pincode: "",
+                gst_no: "",
+                pan_no: "",
+                client_role_refno: "",
+                buyercategory_refno: "",
+                view_status: "1",
+              };
+            });
+            setNewClientErrors({
+              company_name: false,
+              contact_person_mobile_no: false,
+              address: false,
+              state_refno: false,
+              district_refno: false,
+            });
+            Provider.createDFContractor(
+              Provider.API_URLS.contractor_get_clientname_quotationform,
+              params
+            )
+              .then((response) => {
+                if (response.data && response.data.data) {
+                  setDropDownData((prev) => {
+                    return {
+                      ...prev,
+                      ...response.data.data,
+                    };
+                  });
+                }
+              })
+              .catch((e) => console.log(e))
+              .finally(() =>
+                snack(response.data.message, theme.colors.success)
+              );
+          } else {
+            snack(response.data.message, theme.colors.error);
+          }
+        })
+        .catch((e) => {
+          snack(e.message, theme.colors.error);
+        })
+        .finally(() => setIsButtonLoading(false));
     }
   };
   const GetUserID = async () => {
@@ -318,8 +413,365 @@ const QuotationAddEditTab = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (index1 == 0) {
+      setIsLoading(true);
+      setDropDownData({
+        clients: [],
+        states: [],
+        cities1: [],
+        cities2: [],
+        units: [],
+        services: [],
+        categories: [],
+      });
+      setProductList({
+        list: [],
+        service_refno: "",
+        category_refno: "",
+      });
+      setNewClient({
+        company_name: "",
+        contact_person: "",
+        contact_person_mobile_no: "",
+        address: "",
+        state_refno: "",
+        district_refno: "",
+        pincode: "",
+        gst_no: "",
+        pan_no: "",
+        client_role_refno: "",
+        buyercategory_refno: "",
+        view_status: "1",
+      });
+      setNewClientErrors({
+        company_name: false,
+        contact_person_mobile_no: false,
+        address: false,
+        state_refno: false,
+        district_refno: false,
+      });
+      setErrors({
+        client_name: false,
+        project_name: false,
+        project_site_address: false,
+        unit: false,
+      });
+      setData({
+        client_name: "",
+        client_contact_name: "",
+        client_contact_number: "",
+        project_name: "",
+        contact_person: "",
+        contact_person_mobile_no: "",
+        project_description: "",
+        state_refno: "",
+        district_refno: "",
+        project_site_address: "",
+        unit: "",
+        quot_unit_type_refno: "",
+        product_details: [],
+        inclusive: false,
+        terms: "",
+        send_to_client: true,
+      });
+      setTotal("");
+      GetUserID();
+    }
+  }, [index1, type]);
+
+  const [productlist, setProductList] = React.useState({
+    list: [],
+    service_refno: "",
+    category_refno: "",
+  });
+
+  const fetchCategoriesData = (ref) => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        service_refno: ref,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_getcategoryname_popup_quotationform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setDropDownData((prev) => {
+            return {
+              ...prev,
+              categories: response.data.data,
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const fetchProductList = (ref) => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        service_refno: productlist.service_refno,
+        category_refno: ref,
+        quot_type_refno: data.inclusive ? "1" : "2",
+        quot_unit_type_refno: data.quot_unit_type_refno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_getproductlist_popup_quotationform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setProductList((prev) => {
+            return {
+              ...prev,
+              list: response.data.data,
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const fetchProductDetails = (ref) => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        quot_unit_type_refno: ref,
+        product_refno: [],
+        unit_category_refno: [],
+        unit_refno: [],
+        qty: [],
+        rate: [],
+        remarks: [],
+      },
+    };
+    data.product_details.map((item, idx) => {
+      params.data.product_refno[idx] = item.product_refno;
+      params.data.unit_category_refno[idx] = item.unit_category_refno;
+      params.data.unit_refno[idx] = item.unit_refno;
+      params.data.qty[idx] = item.qty;
+      params.data.rate[idx] = item.rate;
+      params.data.remarks[idx] = item.remarks;
+    });
+    Provider.createDFContractor(
+      Provider.API_URLS
+        .contractor_getproductlist_quot_unit_type_refno_onchange_quotationform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.data) {
+          setData((prev) => {
+            return {
+              ...prev,
+              product_details: response.data.data,
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  const [total, setTotal] = React.useState("");
+  useEffect(() => {
+    let temp = 0;
+    data.product_details.map((item) => {
+      temp = parseFloat(temp) + parseFloat(item.qty) * parseFloat(item.rate);
+    });
+    setTotal(String(temp));
+  }, [data.product_details]);
+
+  const AddQuotation = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+        client_user_refno: Object.entries(
+          dropdowndata?.clients[0]?.client_data
+        ).find(([key, value]) => data.client_name == value)[0],
+        project_name: data.project_name,
+        contact_person: data.contact_person,
+        contact_mobile_no: data.contact_person_mobile_no,
+        project_desc: data.project_description,
+        project_address: data.project_site_address,
+        state_refno: data.state_refno,
+        district_refno: data.district_refno,
+        quot_unit_type_refno: data.quot_unit_type_refno,
+        quot_type_refno: data.inclusive ? "1" : "2",
+        product_refno: [],
+        unit_refno: [],
+        qty: [],
+        rate: [],
+        amount: [],
+        remarks: [],
+        terms_condition: data.terms,
+        client_send_status: data.send_to_client ? "1" : "0",
+      },
+    };
+    data.product_details.map((item, idx) => {
+      params.data.product_refno[idx] = item.product_refno;
+      params.data.unit_refno[idx] = item.unit_refno;
+      params.data.qty[idx] = item.qty;
+      params.data.rate[idx] = item.rate;
+      params.data.amount[idx] = String(
+        parseFloat(item.qty) * parseFloat(item.rate)
+      );
+      params.data.remarks[idx] = item.remarks;
+    });
+
+    set(true);
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_create,
+      params
+    )
+      .then((response) => {
+        console.log("params", params);
+        console.log("response", response.data);
+        if (response.data && response.data.data.Created == 1) {
+          data.send_to_client
+            ? fetch(2, "Quotation Created & Sent Successfully!")
+            : fetch(1, "Quotation Created Successfully!");
+          set(false);
+        } else {
+          unload(response.data.message);
+        }
+      })
+      .catch((e) => {
+        unload("Quotation Add error");
+        console.log(e);
+      });
+  };
+
+  const EditQuotation = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+        cont_quot_refno: type,
+        client_user_refno: Object.entries(
+          dropdowndata?.clients[0]?.client_data
+        ).find(([key, value]) => data.client_name == value)[0],
+        project_name: data.project_name,
+        contact_person: data.contact_person,
+        contact_mobile_no: data.contact_person_mobile_no,
+        project_desc: data.project_description,
+        project_address: data.project_site_address,
+        state_refno: data.state_refno,
+        district_refno: data.district_refno,
+        quot_unit_type_refno: data.quot_unit_type_refno,
+        quot_type_refno: data.inclusive ? "1" : "2",
+        product_refno: [],
+        unit_refno: [],
+        qty: [],
+        rate: [],
+        amount: [],
+        remarks: [],
+        terms_condition: data.terms,
+        client_send_status: data.send_to_client ? "1" : "0",
+      },
+    };
+    data.product_details.map((item, idx) => {
+      params.data.product_refno[idx] = item.product_refno;
+      params.data.unit_refno[idx] = item.unit_refno;
+      params.data.qty[idx] = item.qty;
+      params.data.rate[idx] = item.rate;
+      params.data.amount[idx] = String(
+        parseFloat(item.qty) * parseFloat(item.rate)
+      );
+      params.data.remarks[idx] = item.remarks;
+    });
+
+    set(true);
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_update,
+      params
+    )
+      .then((response) => {
+        console.log("params", params);
+        console.log("response", response.data);
+        if (response.data && response.data.data.Updated == 1) {
+          data.send_to_client
+            ? fetch(2, "Quotation Updated & Sent Successfully!")
+            : fetch(1, "Quotation Updated Successfully!");
+          setIsLoading(true);
+          set(false);
+        } else {
+          setIsLoading(true);
+          unload(response.data.message);
+        }
+      })
+      .catch((e) => {
+        unload("Quotation Update error");
+        console.log(e);
+      });
+  };
+  const checkform = () => {
+    let isValid = true;
+    if (data.client_name.length < 1) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          client_name: true,
+        };
+      });
+      isValid = false;
+    }
+    if (data.project_name.length < 1) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          project_name: true,
+        };
+      });
+      isValid = false;
+    }
+    if (data.project_site_address.length < 1) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          project_site_address: true,
+        };
+      });
+      isValid = false;
+    }
+    if (data.unit.length < 1) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          unit: true,
+        };
+      });
+      isValid = false;
+    }
+    if (data.unit.length < 1) {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          unit: true,
+        };
+      });
+      isValid = false;
+    }
+    if (isValid) {
+      if (type == "add") {
+        AddQuotation();
+      } else {
+        EditQuotation();
+      }
+    }
+  };
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       {isLoading ? (
@@ -678,20 +1130,32 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                       (item) => item.quot_unit_type_name
                     )}
                     onSelected={(selectedItem, idx) => {
-                      setErrors((prev) => {
-                        return {
-                          ...prev,
-                          unit: false,
-                        };
-                      });
-                      setData((prev) => {
-                        return {
-                          ...prev,
-                          quot_unit_type_refno:
-                            dropdowndata.units[idx].quot_unit_type_refno,
-                          unit: dropdowndata.units[idx].quot_unit_type_name,
-                        };
-                      });
+                      if (selectedItem !== data.unit) {
+                        setErrors((prev) => {
+                          return {
+                            ...prev,
+                            unit: false,
+                          };
+                        });
+                        setData((prev) => {
+                          return {
+                            ...prev,
+                            quot_unit_type_refno:
+                              dropdowndata.units[idx].quot_unit_type_refno,
+                            unit: dropdowndata.units[idx].quot_unit_type_name,
+                          };
+                        });
+                        setProductList({
+                          list: [],
+                          service_refno: "",
+                          category_refno: "",
+                        });
+                        if (data.product_details.length > 0) {
+                          fetchProductDetails(
+                            dropdowndata.units[idx].quot_unit_type_refno
+                          );
+                        }
+                      }
                     }}
                     isError={errors.unit}
                     selectedItem={data.unit}
@@ -703,23 +1167,46 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                     <Checkbox.Item
                       label="Inclusive Material"
                       position="leading"
-                      disabled={data.product_details.length > 1 ? true : false}
+                      disabled={data.product_details.length > 0 ? true : false}
                       onPress={() => {
                         setData((prev) => {
                           return {
                             ...prev,
+                            inclusive: !prev.inclusive,
                           };
+                        });
+                        setProductList({
+                          list: [],
+                          service_refno: "",
+                          category_refno: "",
                         });
                       }}
                       labelStyle={{ textAlign: "left", paddingLeft: 8 }}
                       color={theme.colors.primary}
-                      checked={true}
+                      status={data.inclusive ? "checked" : "unchecked"}
                     />
                   </View>
                   <Button
                     mode="contained"
                     style={{ marginTop: 20 }}
                     icon="plus"
+                    onPress={() => {
+                      if (data.unit.length < 1) {
+                        setErrors((prev) => {
+                          return {
+                            ...prev,
+                            unit: true,
+                          };
+                        });
+                      } else {
+                        setProductList({
+                          list: [],
+                          service_refno: "",
+                          category_refno: "",
+                        });
+                        setVisible2(true);
+                      }
+                    }}
                   >
                     Add Product
                   </Button>
@@ -746,6 +1233,164 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                   Product Details
                 </Text>
               </View>
+              <View style={styles.container}>
+                <ScrollView horizontal={true}>
+                  <View>
+                    <Table
+                      borderStyle={{
+                        borderWidth: 1,
+                        borderColor: "#C1C0B9",
+                      }}
+                    >
+                      <Row
+                        data={[
+                          "Service Product Name",
+                          "Unit",
+                          "Quantity",
+                          "Rate",
+                          "Amount",
+                          "Remarks",
+                          "Action",
+                        ]}
+                        widthArr={[150, 50, 110, 110, 110, 120, 80]}
+                        style={styles.header}
+                        textStyle={styles.headertext}
+                      />
+                    </Table>
+                    <ScrollView style={styles.dataWrapper}>
+                      <Table
+                        borderStyle={{
+                          borderWidth: 1,
+                          borderColor: "#C1C0B9",
+                        }}
+                      >
+                        {data.product_details?.map((item, idx) => (
+                          <TableWrapper
+                            style={{ flexDirection: "row" }}
+                            key={idx}
+                          >
+                            <Col
+                              data={[item.product_name]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={150}
+                            />
+                            <Col
+                              data={[item.unit_name]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={50}
+                            />
+                            <Col
+                              data={[
+                                <View style={{ padding: "6%" }}>
+                                  <TextInput
+                                    mode="outlined"
+                                    disabled
+                                    value={item?.qty ? item.qty : ""}
+                                    dense
+                                  />
+                                </View>,
+                              ]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={110}
+                            />
+                            <Col
+                              data={[
+                                <View style={{ padding: "6%" }}>
+                                  <TextInput
+                                    mode="outlined"
+                                    dense
+                                    disabled
+                                    value={item.rate}
+                                  />
+                                </View>,
+                              ]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={110}
+                            />
+                            <Col
+                              data={[
+                                <View style={{ padding: "6%" }}>
+                                  <TextInput
+                                    disabled
+                                    mode="outlined"
+                                    dense
+                                    value={String(
+                                      parseFloat(item.qty) *
+                                        parseFloat(item.rate)
+                                    )}
+                                  />
+                                </View>,
+                              ]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={110}
+                            />
+                            <Col
+                              data={[
+                                <View style={{ padding: "6%" }}>
+                                  <TextInput
+                                    mode="outlined"
+                                    dense
+                                    value={item?.remarks ? item.remarks : ""}
+                                  />
+                                </View>,
+                              ]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={120}
+                            />
+                            <Col
+                              data={[
+                                <View style={{ padding: "6%" }}>
+                                  <IconButton
+                                    icon={"delete"}
+                                    size={35}
+                                    color="#198754"
+                                    onPress={() => {
+                                      setData((prev) => {
+                                        return {
+                                          ...prev,
+                                          product_details: [
+                                            ...prev.product_details.filter(
+                                              (i) =>
+                                                i.product_refno !==
+                                                item.product_refno
+                                            ),
+                                          ],
+                                        };
+                                      });
+                                    }}
+                                  />
+                                </View>,
+                              ]}
+                              height={50}
+                              textStyle={styles.text}
+                              width={80}
+                            />
+                          </TableWrapper>
+                        ))}
+                      </Table>
+                    </ScrollView>
+                    <Table
+                      borderStyle={{
+                        borderWidth: 1,
+                        borderColor: "#C1C0B9",
+                      }}
+                    >
+                      <Row
+                        data={["Sub Total", total, ""]}
+                        widthArr={[420, 110, 200]}
+                        style={styles.row}
+                        textStyle={{ textAlign: "center" }}
+                      />
+                    </Table>
+                  </View>
+                </ScrollView>
+              </View>
             </View>
             <View style={[Styles.padding16]}>
               <View
@@ -767,8 +1412,71 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                   Terms & Condition
                 </Text>
               </View>
+              <TextInput
+                multiline
+                mode="outlined"
+                dense
+                label="Terms & Condition"
+                returnKeyType="next"
+                onChangeText={(text) => {
+                  setData((prev) => {
+                    return {
+                      ...prev,
+                      terms: text,
+                    };
+                  });
+                }}
+                value={data.terms}
+                style={{ backgroundColor: "white" }}
+              />
             </View>
+            {data.product_details.length > 0 && (
+              <View>
+                <Checkbox.Item
+                  label="Send To Client"
+                  position="leading"
+                  onPress={() => {
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        send_to_client: !prev.send_to_client,
+                      };
+                    });
+                  }}
+                  labelStyle={{ textAlign: "left", paddingLeft: 8 }}
+                  color={theme.colors.primary}
+                  status={data.send_to_client ? "checked" : "unchecked"}
+                />
+              </View>
+            )}
+            {data.product_details.length > 0 && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    checkform();
+                  }}
+                  style={[Styles.marginTop16, { width: "80%" }]}
+                >
+                  Submit
+                </Button>
+              </View>
+            )}
           </ScrollView>
+          <Snackbar
+            visible={snackbarVisible}
+            onDismiss={() => setSnackbarVisible(false)}
+            duration={3000}
+            style={{ backgroundColor: snackbarColor }}
+          >
+            {snackbarText}
+          </Snackbar>
           {/* // AddClient */}
           <Portal>
             <Dialog
@@ -1012,12 +1720,329 @@ const QuotationAddEditTab = ({ route, navigation }) => {
                     <View style={{ flex: 0.2 }}></View>
                     <Button
                       mode="contained"
+                      disabled={IsButtonLoading}
                       onPress={() => {
                         createnewclient();
                       }}
                       style={[Styles.marginTop16, { flex: 1 }]}
                     >
                       Add
+                    </Button>
+                  </View>
+                </Dialog.Content>
+              </ScrollView>
+            </Dialog>
+          </Portal>
+          {/* Add ProductDetail */}
+          <Portal>
+            <Dialog
+              visible={visible2}
+              onDismiss={() => setVisible2(false)}
+              style={[Styles.borderRadius8, { height: 600 }]}
+            >
+              <ScrollView>
+                <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>
+                  Product List
+                </Dialog.Title>
+                <Dialog.Content>
+                  <View>
+                    <DropDown2
+                      label="Service Name"
+                      style={{ backgroundColor: "white", marginBottom: "3%" }}
+                      data={
+                        dropdowndata?.services?.length < 1
+                          ? []
+                          : dropdowndata.services.map(
+                              (item) => item.service_name
+                            )
+                      }
+                      onSelected={(selectedItem, idx) => {
+                        if (
+                          dropdowndata.services[idx].service_refno !==
+                          productlist.service_refno
+                        ) {
+                          setProductList((prev) => {
+                            return {
+                              ...prev,
+                              service_refno:
+                                dropdowndata.services[idx].service_refno,
+                              category_refno: "",
+                              list: [],
+                            };
+                          });
+                          setDropDownData((prev) => {
+                            return {
+                              ...prev,
+                              categories: [],
+                            };
+                          });
+
+                          fetchCategoriesData(
+                            dropdowndata.services[idx].service_refno
+                          );
+                        }
+                      }}
+                      selectedItem={
+                        dropdowndata.services.find(
+                          (item) =>
+                            item.service_refno === productlist.service_refno
+                        )?.service_name
+                      }
+                    />
+                    <DropDown2
+                      label="Category Name"
+                      style={{ backgroundColor: "white", marginBottom: "3%" }}
+                      data={
+                        dropdowndata?.categories?.length < 1
+                          ? []
+                          : dropdowndata.categories.map(
+                              (item) => item.category_name
+                            )
+                      }
+                      onSelected={(selectedItem, idx) => {
+                        if (
+                          dropdowndata.categories[idx].category_refno !==
+                          productlist.category_refno
+                        ) {
+                          setProductList((prev) => {
+                            return {
+                              ...prev,
+                              category_refno:
+                                dropdowndata.categories[idx].category_refno,
+                              list: [],
+                            };
+                          });
+                          fetchProductList(
+                            dropdowndata.categories[idx].category_refno
+                          );
+                        }
+                      }}
+                      selectedItem={
+                        dropdowndata.categories.find(
+                          (item) =>
+                            item.category_refno === productlist.category_refno
+                        )?.category_name
+                      }
+                    />
+                  </View>
+                  <View style={styles.container}>
+                    <ScrollView horizontal={true}>
+                      <View>
+                        <Table
+                          borderStyle={{
+                            borderWidth: 1,
+                            borderColor: "#C1C0B9",
+                          }}
+                        >
+                          <Row
+                            data={[
+                              "Service Product Name",
+                              "Unit",
+                              "Quantity",
+                              "Rate",
+                              "Amount",
+                              "Remarks",
+                              "Action",
+                            ]}
+                            widthArr={[150, 50, 110, 110, 110, 120, 80]}
+                            style={styles.header}
+                            textStyle={styles.headertext}
+                          />
+                        </Table>
+                        <ScrollView style={styles.dataWrapper}>
+                          <Table
+                            borderStyle={{
+                              borderWidth: 1,
+                              borderColor: "#C1C0B9",
+                            }}
+                          >
+                            {productlist?.list?.map((item, idx) => (
+                              <TableWrapper
+                                style={{ flexDirection: "row" }}
+                                key={idx}
+                              >
+                                <Col
+                                  data={[item.product_name]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={150}
+                                />
+                                <Col
+                                  data={[item.unit_name]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={50}
+                                />
+                                <Col
+                                  data={[
+                                    <View style={{ padding: "6%" }}>
+                                      <TextInput
+                                        mode="outlined"
+                                        onChangeText={(text) => {
+                                          setProductList((prev) => {
+                                            let temp = [...prev.list];
+                                            temp[idx].qty = text;
+                                            return {
+                                              ...prev,
+                                              list: [...temp],
+                                            };
+                                          });
+                                        }}
+                                        value={item?.qty ? item.qty : ""}
+                                        dense
+                                      />
+                                    </View>,
+                                  ]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={110}
+                                />
+                                <Col
+                                  data={[
+                                    <View style={{ padding: "6%" }}>
+                                      <TextInput
+                                        mode="outlined"
+                                        dense
+                                        onChangeText={(text) => {
+                                          setProductList((prev) => {
+                                            let temp = [...prev.list];
+                                            temp[idx].rate = text;
+                                            return {
+                                              ...prev,
+                                              list: [...temp],
+                                            };
+                                          });
+                                        }}
+                                        value={item.rate}
+                                      />
+                                    </View>,
+                                  ]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={110}
+                                />
+                                <Col
+                                  data={[
+                                    <View style={{ padding: "6%" }}>
+                                      <TextInput
+                                        disabled
+                                        mode="outlined"
+                                        dense
+                                        value={
+                                          item.qty !== undefined &&
+                                          item.qty !== "" &&
+                                          item.rate !== ""
+                                            ? String(
+                                                parseFloat(item.qty) *
+                                                  parseFloat(item.rate)
+                                              )
+                                            : ""
+                                        }
+                                      />
+                                    </View>,
+                                  ]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={110}
+                                />
+                                <Col
+                                  data={[
+                                    <View style={{ padding: "6%" }}>
+                                      <TextInput
+                                        mode="outlined"
+                                        dense
+                                        onChangeText={(text) => {
+                                          setProductList((prev) => {
+                                            let temp = [...prev.list];
+                                            temp[idx].remarks = text;
+                                            return {
+                                              ...prev,
+                                              list: [...temp],
+                                            };
+                                          });
+                                        }}
+                                        value={
+                                          item?.remarks ? item.remarks : ""
+                                        }
+                                      />
+                                    </View>,
+                                  ]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={120}
+                                />
+                                <Col
+                                  data={[
+                                    <View style={{ padding: "6%" }}>
+                                      <IconButton
+                                        icon={"plus"}
+                                        size={35}
+                                        color="#198754"
+                                        onPress={() => {
+                                          if (
+                                            item?.qty &&
+                                            item?.qty.length > 0 &&
+                                            item?.rate.length > 0
+                                          ) {
+                                            if (
+                                              data.product_details.find(
+                                                (i) =>
+                                                  i.product_refno ===
+                                                  item.product_refno
+                                              ) === undefined
+                                            ) {
+                                              setData((prev) => {
+                                                return {
+                                                  ...prev,
+                                                  product_details: [
+                                                    ...prev.product_details,
+                                                    {
+                                                      ...item,
+                                                      remarks: item.remarks
+                                                        ? item.remarks
+                                                        : "",
+                                                    },
+                                                  ],
+                                                };
+                                              });
+                                              setProductList((prev) => {
+                                                return {
+                                                  ...prev,
+                                                  list: [
+                                                    ...prev.list.filter(
+                                                      (i) =>
+                                                        i.product_refno !==
+                                                        item.product_refno
+                                                    ),
+                                                  ],
+                                                };
+                                              });
+                                            }
+                                          }
+                                        }}
+                                      />
+                                    </View>,
+                                  ]}
+                                  height={50}
+                                  textStyle={styles.text}
+                                  width={80}
+                                />
+                              </TableWrapper>
+                            ))}
+                          </Table>
+                        </ScrollView>
+                      </View>
+                    </ScrollView>
+                  </View>
+                  <View style={{ flexDirection: "row" }}>
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        setVisible2(false);
+                      }}
+                      style={[Styles.marginTop16, { flex: 1 }]}
+                    >
+                      Done
                     </Button>
                   </View>
                 </Dialog.Content>

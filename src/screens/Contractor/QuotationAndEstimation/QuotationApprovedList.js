@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 import { BASE_URL_Contractor } from "../../../api/Provider";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Image,
   ActivityIndicator,
@@ -51,7 +52,6 @@ let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 const QuotationApprovedList = ({
   set,
-  listData2,
   response,
   fetch,
   unload,
@@ -185,15 +185,35 @@ const QuotationApprovedList = ({
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_approved_list,
+      params
+    )
+      .then((response) => {
+        // console.log("response:", JSON.stringify(response.data));
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -211,53 +231,6 @@ const QuotationApprovedList = ({
     }
   };
 
-  const sendQuotationToClient = () => {
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_scdesign_estimation_sendtoclient,
-      {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_company_refno: Sess_company_refno,
-          Sess_branch_refno: Sess_branch_refno,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          cont_estimation_refno: current.cont_estimation_refno,
-        },
-      }
-    )
-      .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
-        }
-      })
-      .catch((error) => {
-        unload("Error while Sending Client");
-      });
-  };
-
-  const cancelQuotation = () => {
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_scdesign_estimation_cancel,
-      {
-        data: {
-          Sess_UserRefno: userID,
-          Sess_company_refno: Sess_company_refno,
-          Sess_branch_refno: Sess_branch_refno,
-          Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-          cont_estimation_refno: current.cont_estimation_refno,
-        },
-      }
-    )
-      .then((res) => {
-        if (res.response.data) fetch(2, "Sent Quotation to Client");
-        else {
-          throw res;
-        }
-      })
-      .catch((error) => {
-        unload("Error while Cancelling quotation");
-      });
-  };
   const RenderItems = (data) => {
     return (
       <View
@@ -367,7 +340,7 @@ const QuotationApprovedList = ({
       .then((response) => {
         if (response.data && response.data.data) {
           if (response.data.data.Updated == 1) {
-            fetch(0, text + "Successfully!");
+            fetch(0, text + " Successfully!");
           } else {
             unload("Failed");
           }
@@ -479,7 +452,10 @@ const QuotationApprovedList = ({
                     color: "green",
                     width: "80%",
                   }}
-                  onPress={showDialog}
+                  onPress={() => {
+                    setText("Finally Take Project");
+                    showDialog();
+                  }}
                 >
                   <Text style={{ color: "green" }}>Finally Take Project</Text>
                 </Button>

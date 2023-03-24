@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
-import { BASE_URL_Contractor } from "../../../api/Provider";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Image,
   ActivityIndicator,
@@ -49,14 +49,7 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const QuotationRejected = ({
-  set,
-  listData2,
-  response,
-  fetch,
-  unload,
-  navigation,
-}) => {
+const QuotationRejected = ({ set, response, fetch, unload, navigation }) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [remarks, setRemarks] = React.useState("");
   const [errorR, setErrorR] = React.useState(false);
@@ -96,15 +89,35 @@ const QuotationRejected = ({
   };
 
   const FetchData = () => {
-    fetch();
-    listData[1](listData2);
-    listSearchData[1](listData2);
-    setIsLoading(false);
+    setIsLoading(true);
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_quotation_rejected_list,
+      params
+    )
+      .then((response) => {
+        // console.log("response:", JSON.stringify(response.data));
+        if (response.data && response.data.data) {
+          listData[1](response.data.data);
+          listSearchData[1](response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    GetUserID();
-  }, []);
+    if (isFocused) {
+      GetUserID();
+    }
+  }, [isFocused]);
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);

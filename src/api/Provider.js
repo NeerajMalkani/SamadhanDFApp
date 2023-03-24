@@ -625,6 +625,9 @@ class Provider {
     contractor_quotation_contquotrefnocheck:
       "contractor_quotation_contquotrefnocheck/",
     contractor_quotation_update: "contractor_quotation_update/",
+    clientcreate: "clientcreate/",
+    contractor_get_clientname_quotationform:
+      "contractor_get_clientname_quotationform",
   };
 
   createDFPocketDairy(resource, params) {
