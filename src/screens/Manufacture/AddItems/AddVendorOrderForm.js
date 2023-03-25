@@ -94,9 +94,9 @@ function AddVendorOrderForm({ route, navigation }) {
         return {
           ...prev,
           ss_kg: String(
-            (parseFloat(data.total_weight) /
-              (parseFloat(data.otherdata.gpcoil_width_value) * 1000)) *
-              parseFloat(data.ss_mm)
+            parseFloat((parseFloat(data.total_weight) /
+            (parseFloat(data.otherdata.gpcoil_width_value) * 1000)) *
+            parseFloat(data.ss_mm)).toFixed(3)
           ),
         };
       });

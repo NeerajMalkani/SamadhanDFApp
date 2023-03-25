@@ -440,6 +440,7 @@ const HomeScreen = ({ route, navigation }) => {
               response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
             Sess_empe_refno: response.data.data.Sess_empe_refno,
+            Sess_profile_address: response.data.data.Sess_profile_address,
           };
 
           StoreUserData(user);
