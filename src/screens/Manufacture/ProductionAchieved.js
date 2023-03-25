@@ -405,7 +405,7 @@ function ProductionAchieved({ navigation }) {
             ) : (
               <NoItems
                 icon="format-list-bulleted"
-                text="No records found. Add records by clicking on plus icon."
+                text="No records found"
               />
             )}
           </ScrollView>

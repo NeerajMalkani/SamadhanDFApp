@@ -61,6 +61,7 @@ function ProductforProduction({ navigation }) {
       },
     })
       .then((res) => {
+        console.log('res data:', res.data.data);
         if (res.data.data) {
           setOrders(res.data.data);
         }
@@ -69,22 +70,22 @@ function ProductforProduction({ navigation }) {
   };
 
   const fetchOrderData = () => {
-    Provider.createDFManufacturer(
-      Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
-      {
-        data: {
-          Sess_UserRefno: user?.UserID,
-          Sess_branch_refno: user?.Sess_branch_refno,
-          Sess_company_refno: user?.Sess_company_refno,
-          mf_po_refno: selectedItem.mf_po_refno,
-          mf_vo_refno: selectedItem.mf_vo_refno,
-          mf_vo_invoice_refno: selectedItem.mf_vo_invoice_refno,
-        },
+    let params = {
+      data: {
+        Sess_UserRefno: user?.UserID,
+        Sess_branch_refno: user?.Sess_branch_refno,
+        Sess_company_refno: user?.Sess_company_refno,
+        mf_po_refno: selectedItem.mf_po_refno,
+        mf_vo_refno: selectedItem.mf_vo_refno,
+        mf_vo_invoice_refno: selectedItem.mf_vo_invoice_refno,
       }
-    ).then((res) => {
-      console.log(res.data.data);
-      setOtherData(res.data.data);
-    });
+    }
+    Provider.createDFManufacturer(
+      Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform, params)
+      .then((res) => {
+        console.log("rb sheet data:", res.data.data);
+        setOtherData(res.data.data);
+      });
   };
 
   useEffect(() => {
@@ -256,7 +257,7 @@ function ProductforProduction({ navigation }) {
                   key={index}
                   descriptionNumberOfLines={3}
                   title={`${obj.productname} ${obj.brand_name}`}
-                  description={`Weight Per Piece - ${obj.weightper_piece_txt}\nTotal No of Products - ${obj.total_no_products_txt}\nNo of Coils received - ${obj.coils_received}`}
+                  description={`Weight Per Piece - ${obj.weightper_piece_txt}\nTotal No of Products - ${obj.total_no_products_txt}\nNo of Coils received - ${obj.coils_received == null ? 0 : obj.coils_received}`}
                 />
               );
             })}
