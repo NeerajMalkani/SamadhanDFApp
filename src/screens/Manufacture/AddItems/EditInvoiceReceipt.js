@@ -1,43 +1,43 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { TextInput, Button, Snackbar } from 'react-native-paper';
-import { Styles } from '../../../styles/styles';
-import Dropdown from '../../../components/Dropdown';
-import { Table, TableWrapper, Row, Col } from 'react-native-table-component';
-import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { theme } from '../../../theme/apptheme';
-import { useIsFocused } from '@react-navigation/native';
-import Provider from '../../../api/Provider';
-import { communication } from '../../../utils/communication';
+import { View, ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { TextInput, Button, Snackbar } from "react-native-paper";
+import { Styles } from "../../../styles/styles";
+import Dropdown from "../../../components/Dropdown";
+import { Table, TableWrapper, Row, Col } from "react-native-table-component";
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { theme } from "../../../theme/apptheme";
+import { useIsFocused } from "@react-navigation/native";
+import Provider from "../../../api/Provider";
+import { communication } from "../../../utils/communication";
 let user = null;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 10, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 16, paddingTop: 10, backgroundColor: "#fff" },
   header: { height: 70, backgroundColor: theme.colors.primary },
-  subheader: { height: 30, backgroundColor: 'white' },
-  text: { textAlign: 'center', fontWeight: '100' },
-  headertext: { textAlign: 'center', fontWeight: '800', color: 'white' },
+  subheader: { height: 30, backgroundColor: "white" },
+  text: { textAlign: "center", fontWeight: "100" },
+  headertext: { textAlign: "center", fontWeight: "800", color: "white" },
   dataWrapper: { marginTop: -1 },
-  row: { height: 50, backgroundColor: 'white' },
+  row: { height: 50, backgroundColor: "white" },
 });
 
 const EditInvoiceReceipt = ({ route, navigation }) => {
-  console.log('data', route.params.data);
+  console.log("data", route.params.data);
   const [state, setState] = useState({
-    mf_po_refno: '',
-    mf_vo_refno: '',
-    cgst: '',
-    sgst: '',
-    igst: '',
+    mf_po_refno: "",
+    mf_vo_refno: "",
+    cgst: "",
+    sgst: "",
+    igst: "",
     invoice_no: route.params.data.invoice_no,
     invoice_entry_date: route.params.data.invoice_entry_date,
     invoice_date: new Date(
       route.params.data.invoice_date.substring(6, 11) +
-        '/' +
+        "/" +
         route.params.data.invoice_date.substring(3, 5) +
-        '/' +
-        route.params.data.invoice_date.substring(0, 2),
+        "/" +
+        route.params.data.invoice_date.substring(0, 2)
     ),
     transport_charges: route.params.data.transport_charges,
   });
@@ -50,9 +50,9 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
   const [production, setProduction] = useState([]);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarText, setSnackbarText] = useState('');
+  const [snackbarText, setSnackbarText] = useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success,
+    theme.colors.success
   );
   const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -73,12 +73,19 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           Sess_company_refno: user.Sess_company_refno,
           Sess_branch_refno: user.Sess_branch_refno,
         },
-      },
+      }
     ).then((res) => {
       if (res.data.data) {
         setPurchaseNo(res.data.data);
+        console.log("data2", route.params.data);
         setState((prev) => {
-          return { ...prev, mf_po_refno: route.params.data.mf_po_no };
+          return {
+            ...prev,
+            mf_po_refno: route.params.data.mf_po_no,
+            cgst: route.params.data.cgst,
+            igst: route.params.data.igst,
+            sgst: route.params.data.sgst,
+          };
         });
       }
     });
@@ -94,9 +101,10 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           Sess_branch_refno: user.Sess_branch_refno,
           mf_po_refno,
         },
-      },
+      }
     ).then((res) => {
       if (res.data.data) {
+        console.log(res.data.data);
         setState((state) => ({ ...state, ...res.data.data[0] }));
       }
     });
@@ -110,18 +118,18 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           Sess_branch_refno: user.Sess_branch_refno,
           mf_po_refno,
         },
-      },
+      }
     )
       .then((res) => {
-        if (res.data.code == '200' && res.data.data) {
+        if (res.data.code == "200" && res.data.data) {
           setJobOrderNo(res.data.data);
           let temp = res.data.data.find(
-            (item) => item.mf_vo_refno == route.params.data.mf_vo_refno,
+            (item) => item.mf_vo_refno == route.params.data.mf_vo_refno
           );
           setState((prev) => {
             return {
               ...prev,
-              mf_vo_refno: temp ? temp.joborderno : '',
+              mf_vo_refno: temp ? temp.joborderno : "",
             };
           });
         }
@@ -130,7 +138,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
   };
 
   const fetchUser = async () => {
-    const data = await AsyncStorage.getItem('user');
+    const data = await AsyncStorage.getItem("user");
     if (data) {
       user = JSON.parse(data);
       fetchPurchaseOrderNo();
@@ -153,10 +161,10 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         sgst: state.sgst,
         igst: state.igst,
         mf_po_refno: purchaseno.find(
-          (item) => item.purchaseorderno === state.mf_po_refno,
+          (item) => item.purchaseorderno === state.mf_po_refno
         )?.mf_po_refno,
         mf_vo_refno: joborderno.find(
-          (item) => item.joborderno === state.mf_vo_refno,
+          (item) => item.joborderno === state.mf_vo_refno
         ).mf_vo_refno,
         invoice_no: state.invoice_no,
         invoice_entry_date: state.invoice_entry_date,
@@ -179,11 +187,11 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     });
     Provider.createDFManufacturer(
       Provider.API_URLS.vendororder_invoiceformupdate,
-      params,
+      params
     )
       .then((response) => {
         if (response.data && response.data.data.Created == 1) {
-          route.params.fetchData('update');
+          route.params.fetchData("update");
           navigation.goBack();
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
@@ -203,19 +211,19 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
 
   const ValidateData = () => {
     let isValid = true;
-    if (state.cgst === '') {
+    if (state.cgst === "") {
       setErrors((prev) => {
         return { ...prev, cgst: true };
       });
       isValid = false;
     }
-    if (state.sgst === '') {
+    if (state.sgst === "") {
       setErrors((prev) => {
         return { ...prev, sgst: true };
       });
       isValid = false;
     }
-    if (state.igst === '') {
+    if (state.igst === "") {
       setErrors((prev) => {
         return { ...prev, igst: true };
       });
@@ -258,7 +266,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         Sess_company_refno: user.Sess_company_refno,
         Sess_branch_refno: user.Sess_branch_refno,
         mf_po_refno: purchaseno.find(
-          (item) => item.purchaseorderno === state.mf_po_refno,
+          (item) => item.purchaseorderno === state.mf_po_refno
         )?.mf_po_refno,
         mf_vo_refno: mf_vo_refno.mf_vo_refno,
         mf_vo_invoice_refno: route.params.data.mf_vo_invoice_refno,
@@ -266,10 +274,10 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     };
     Provider.createDFManufacturer(
       Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
-      params,
+      params
     )
       .then((res) => {
-        if (res.data.code == '200' && res.data.data) {
+        if (res.data.code == "200" && res.data.data) {
           console.log(res.data.data);
           setProduction(res.data.data);
         }
@@ -281,7 +289,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     if (state.mf_po_refno.length > 0 && purchaseno.length > 0) {
       fetchOtherData(
         purchaseno.find((item) => item.purchaseorderno === state.mf_po_refno)
-          ?.mf_po_refno,
+          ?.mf_po_refno
       );
     }
   }, [state.mf_po_refno, purchaseno]);
@@ -289,14 +297,14 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
   useEffect(() => {
     if (state.mf_vo_refno.length > 0) {
       fetchProduction(
-        joborderno.find((item) => item.joborderno === state.mf_vo_refno),
+        joborderno.find((item) => item.joborderno === state.mf_vo_refno)
       );
     }
   }, [state.mf_vo_refno]);
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView
-        keyboardShouldPersistTaps='handled'
+        keyboardShouldPersistTaps="handled"
         style={[
           Styles.flex1,
           Styles.paddingHorizontal16,
@@ -305,11 +313,11 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
       >
         <Dropdown
           data={purchaseno.map((obj) => obj.purchaseorderno)}
-          label='Purchase Order No'
+          label="Purchase Order No"
           onSelected={(text) => {
             if (text !== state.mf_po_refno) {
-              onChange(text, 'mf_po_refno');
-              setState((state) => ({ ...state, mf_vo_refno: '' }));
+              onChange(text, "mf_po_refno");
+              setState((state) => ({ ...state, mf_vo_refno: "" }));
               setJobOrderNo([]);
               setProduction([]);
               setErrors((prev) => {
@@ -326,11 +334,11 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         />
         <Dropdown
           data={joborderno?.map((obj) => obj.joborderno)}
-          label='Job Order No'
+          label="Job Order No"
           selectedItem={state.mf_vo_refno}
           onSelected={(text) => {
             if (text !== state.mf_vo_refno) {
-              onChange(text, 'mf_vo_refno');
+              onChange(text, "mf_vo_refno");
               setProduction([]);
               setErrors((prev) => {
                 return {
@@ -344,8 +352,8 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         />
         <TextInput
           mode="outlined"
-          label='Invoice No'
-          style={{ backgroundColor: 'white' }}
+          label="Invoice No"
+          style={{ backgroundColor: "white" }}
           value={state.invoice_no}
           onChangeText={(text) => {
             setErrors((prev) => {
@@ -354,96 +362,89 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
                 invoice_no: false,
               };
             });
-            onChange(text, 'invoice_no');
+            onChange(text, "invoice_no");
           }}
           error={errors.invoice_no}
         />
         <TextInput
           mode="outlined"
-          label='Invoice Entry Date'
+          label="Invoice Entry Date"
           disabled={true}
           value={state.invoice_entry_date}
-          style={{ backgroundColor: 'white' }}
+          style={{ backgroundColor: "white" }}
         />
         <DateTimePicker
-          label='Date of Invoice'
+          label="Date of Invoice"
           value={state.invoice_date}
-          type='date'
-          style={{ backgroundColor: 'white' }}
-          onChangeDate={(date) => onChange(date, 'invoice_date')}
-        />
-        <TextInput
-         mode="outlined"
-          label='Supplier Name'
-          disabled={true}
-          value={state.supplier_name || ''}
-          style={{ backgroundColor: 'white' }}
+          type="date"
+          style={{ backgroundColor: "white" }}
+          onChangeDate={(date) => onChange(date, "invoice_date")}
         />
         <TextInput
           mode="outlined"
-          label='Basic Amount'
+          label="Supplier Name"
           disabled={true}
-          value={state.basic_amount || ''}
-          style={{ backgroundColor: 'white' }}
+          value={state.supplier_name || ""}
+          style={{ backgroundColor: "white" }}
         />
-
         <TextInput
-         mode="outlined"
-          label='SGST(%)'
-          value={state.sgst || ''}
-          keyboardType='numeric'
-          onChangeText={(e) => Number(e) <= 100 && onChange(e, 'sgst')}
-          style={{ backgroundColor: 'white' }}
+          mode="outlined"
+          label="Basic Amount"
+          disabled={true}
+          value={state.basic_amount || ""}
+          style={{ backgroundColor: "white" }}
+        />
+        <TextInput
+          mode="outlined"
+          label="CGST(%)"
+          value={String(state.cgst) || ""}
+          keyboardType="numeric"
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, "cgst")}
+          style={{ backgroundColor: "white" }}
+          error={errors.cgst}
+        />
+        <TextInput
+          mode="outlined"
+          label="SGST(%)"
+          value={state.sgst || ""}
+          keyboardType="numeric"
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, "sgst")}
+          style={{ backgroundColor: "white" }}
           error={errors.sgst}
         />
         <TextInput
           mode="outlined"
-          label='IGST(%)'
-          value={state.igst || ''}
-          keyboardType='numeric'
-          onChangeText={(e) => Number(e) <= 100 && onChange(e, 'igst')}
-          style={{ backgroundColor: 'white' }}
+          label="IGST(%)"
+          value={state.igst || ""}
+          keyboardType="numeric"
+          onChangeText={(e) => Number(e) <= 100 && onChange(e, "igst")}
+          style={{ backgroundColor: "white" }}
           error={errors.igst}
         />
         <TextInput
           mode="outlined"
-          label='Transporation Charges'
-          style={{ backgroundColor: 'white' }}
+          label="Transporation Charges"
+          style={{ backgroundColor: "white" }}
           value={state.transport_charges}
           error={errors.transport_charges}
           onChangeText={(text) => {
             setErrors((prev) => {
               return { ...prev, transport_charges: false };
             });
-            onChange(text, 'transport_charges');
+            onChange(text, "transport_charges");
           }}
         />
-
-        <TextInput
-         mode="outlined"
-          label='Transporation Charges'
-          style={{ backgroundColor: 'white' }}
-          value={state.transport_charges}
-          error={errors.transport_charges}
-          onChangeText={(text) => {
-            setErrors((prev) => {
-              return { ...prev, transport_charges: false };
-            });
-            onChange(text, 'transport_charges');
-          }}
-        />
-
         {production.length > 0 && (
           <View style={styles.container}>
             <ScrollView horizontal={true}>
               <View>
-                <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+                <Table borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}>
                   <Row
                     data={[
-                      'Product Name \n » Brand',
-                      'Weight \n Per Piece',
-                      'Total.No. \n of Products',
-                      'No.of.Coil (Received)',
+                      "Product Name \n » Brand",
+                      "Weight \n Per Piece",
+                      "Total.No. \n of Products",
+                      "No.of.Coil (Received)",
                     ]}
                     widthArr={[85, 58, 58, 90]}
                     style={styles.header}
@@ -453,12 +454,12 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
 
                 <ScrollView style={styles.dataWrapper}>
                   <Table
-                    borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
+                    borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                   >
                     {production.map((item, index) => {
                       return (
                         <TableWrapper
-                          style={{ flexDirection: 'row' }}
+                          style={{ flexDirection: "row" }}
                           key={index}
                         >
                           <Col
@@ -491,10 +492,10 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
                                         length:
                                           parseInt(item.coils_received_nos) + 1,
                                       },
-                                      (_, i) => String(i + 1),
+                                      (_, i) => String(i + 1)
                                     ),
                                   ]}
-                                  label=''
+                                  label=""
                                   selectedItem={item.coils_received}
                                   onSelected={(selectedItem) =>
                                     setProduction((prev) =>
@@ -507,7 +508,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
                                             coils_received: selectedItem,
                                           };
                                         }
-                                      }),
+                                      })
                                     )
                                   }
                                 />
@@ -528,35 +529,35 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         )}
         {production.length > 0 && (
           <View style={{ padding: 5 }}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: "row" }}>
               <View style={{ flex: 1 }}>
                 <TextInput
                   mode="outlined"
-                  label='Slitting scrap (mm)'
+                  label="Slitting scrap (mm)"
                   disabled={true}
                   value={production[0].scrab_wastage}
-                  style={{ backgroundColor: 'white' }}
+                  style={{ backgroundColor: "white" }}
                 />
               </View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                 mode="outlined"
-                  label='Slitting scrap (Kg)'
+                  mode="outlined"
+                  label="Slitting scrap (Kg)"
                   disabled={true}
                   value={production[0].scrab_wastage_kg}
-                  style={{ backgroundColor: 'white' }}
+                  style={{ backgroundColor: "white" }}
                 />
               </View>
             </View>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: "row" }}>
               <View style={{ flex: 0.5 }}></View>
               <View style={{ flex: 1 }}>
                 <TextInput
                   mode="outlined"
-                  label='Total Weight'
+                  label="Total Weight"
                   disabled={true}
                   value={production[0].total_weight}
-                  style={{ backgroundColor: 'white' }}
+                  style={{ backgroundColor: "white" }}
                 />
               </View>
               <View style={{ flex: 0.5 }}></View>
@@ -564,8 +565,8 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           </View>
         )}
         <Button
-          mode='contained'
-          style={{ alignSelf: 'center', marginTop: 5 }}
+          mode="contained"
+          style={{ alignSelf: "center", marginTop: 5 }}
           onPress={ValidateData}
           disabled={isbuttonLoading}
         >
