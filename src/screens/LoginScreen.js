@@ -84,6 +84,7 @@ const LoginScreen = ({ route, navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
+          console.log('Logged In Data:', response.data.data);
           const user = {
             UserID: response.data.data.Sess_UserRefno,
             FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
@@ -106,6 +107,7 @@ const LoginScreen = ({ route, navigation }) => {
             Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
             Sess_empe_refno: response.data.data.Sess_empe_refno,
+            Sess_profile_address: response.data.data.Sess_profile_address,
           };
 
           StoreUserData(user, navigation);

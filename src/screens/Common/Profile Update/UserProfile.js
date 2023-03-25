@@ -115,6 +115,62 @@ const UserProfile = ({ route, navigation }) => {
 
   //#endregion
 
+  const GetUserDetails = (user_refno) => {
+    setIsButtonLoading(true);
+    let params = {
+      data: {
+        user_refno: user_refno,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          console.log('Logged In Data:', response.data.data);
+          const user = {
+            UserID: response.data.data.Sess_UserRefno,
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
+            RoleID: response.data.data.Sess_group_refno,
+            RoleName: response.data.data.Sess_Username,
+            Sess_FName: response.data.data.Sess_FName,
+            Sess_MobileNo: response.data.data.Sess_MobileNo,
+            Sess_Username: response.data.data.Sess_Username,
+            Sess_role_refno: response.data.data.Sess_role_refno,
+            Sess_group_refno: response.data.data.Sess_group_refno,
+            Sess_designation_refno: response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_if_create_brand: response.data.data.Sess_if_create_brand,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno: response.data.data.Sess_branch_refno,
+            Sess_company_refno: response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
+            Sess_empe_refno: response.data.data.Sess_empe_refno,
+            Sess_profile_address: response.data.data.Sess_profile_address,
+          };
+
+          StoreUserData(user, navigation);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const StoreUserData = async (user) => {
+    try {
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+      navigation.goBack();
+    } catch (error) { }
+  };
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -298,8 +354,7 @@ const UserProfile = ({ route, navigation }) => {
     let s = statesFullData.filter((el) => {
       return el.stateName === selectedItem;
     });
-
-    FetchCities(s[0].id);
+    FetchCities(s[0].stateID);
   };
   const onPincodeChanged = (text) => {
     setPincode(text);
@@ -330,10 +385,18 @@ const UserProfile = ({ route, navigation }) => {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
-          setTimeout(function () {
-            setIsButtonLoading(false);
-            navigation.goBack();
-          }, 500)
+
+          if (route.params.from == "gu_estimate") {
+            GetUserDetails(userID);
+          }
+          else {
+            setTimeout(function () {
+              setIsButtonLoading(false);
+              navigation.goBack();
+            }, 500)
+          }
+
+
         } else {
           setSnackbarColor(theme.colors.error);
           setSnackbarText(communication.UpdateError);

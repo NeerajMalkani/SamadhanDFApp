@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, ScrollView, View } from "react-native";
-import { ActivityIndicator, Button, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Button, Snackbar, Portal, Dialog, Paragraph } from "react-native-paper";
 import ImageViewer from "react-native-image-zoom-viewer";
 import Provider from "../../../api/Provider";
 import NoItems from "../../../components/NoItems";
@@ -9,6 +9,13 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../utils/apiconverter";
+import {
+  createNavigationContainerRef,
+  StackActions,
+  useFocusEffect,
+} from "@react-navigation/native";
+
+export const navigationRef = createNavigationContainerRef();
 
 const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   //#region Variables
@@ -22,14 +29,33 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
   const [imageToZoom, setImageToZoom] = React.useState([]);
   const [imageToZoomData, setImageToZoomData] = React.useState([]);
   const [user, setUser] = React.useState(null);
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
   //#endregion
 
   //#region Functions
+
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
+
+  const RedirectToProfile = () => {
+    hideDialog();
+    navigation.navigate("UserProfile", { from: "gu_estimate" });
+  }
+
+  const RedirectToHome = () => {
+    hideDialog();
+    navigation.navigate("HomeScreen");
+  }
+
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       setUser(JSON.parse(userData));
       FetchImageGalleryData(JSON.parse(userData).UserID, JSON.parse(userData).Sess_group_refno);
+
+      if (JSON.parse(userData).RoleID == 3 && JSON.parse(userData).Sess_profile_address == 0) {
+        showDialog();
+      }
     }
   };
 
@@ -68,6 +94,17 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
     GetUserID();
     navigation.setOptions({ headerTitle: route.params.headerTitle });
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshScreen = () => {
+        // Refresh the screen here
+        GetUserID();
+      };
+      refreshScreen();
+      return () => { };
+    }, [navigationRef])
+  );
 
   const CardImageClick = (imageToZoom, data) => {
     setImageToZoom([
@@ -134,9 +171,23 @@ const ImageGalleryWorkLocationScreen = ({ route, navigation }) => {
           >
             Go to Estimation
           </Button>
-          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => {}} />
+          <ImageViewer imageUrls={imageToZoom} backgroundColor="transparent" style={{ height: 1920 }} renderIndicator={() => { }} />
         </View>
       </Modal>
+      <Portal>
+        <Dialog visible={isDialogVisible} onDismiss={hideDialog} dismissable={false}>
+          <Dialog.Title>Profile Update</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>
+              Please update your profile to create estimate
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={RedirectToProfile}>Update Profile</Button>
+            <Button onPress={RedirectToHome}>Back To Home</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
