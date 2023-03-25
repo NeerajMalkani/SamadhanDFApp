@@ -627,7 +627,7 @@ class Provider {
     contractor_quotation_update: "contractor_quotation_update/",
     clientcreate: "clientcreate/",
     contractor_get_clientname_quotationform:
-      "contractor_get_clientname_quotationform",
+      "contractor_get_clientname_quotationform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -772,6 +772,7 @@ class Provider {
 
   async getdropdowndata(params, unload) {
     try {
+      console.log(params);
       const clients = await axios.post(
         `${BASE_URL_Contractor}/contractor_get_clientname_quotationform/`,
         params

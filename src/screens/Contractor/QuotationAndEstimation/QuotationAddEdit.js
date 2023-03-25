@@ -317,8 +317,8 @@ const QuotationAddEditTab = ({
       });
       isValid = false;
     }
-    if (isValid) {
-      setIsButtonLoading(true);
+    if (true || isValid) {
+      // setIsButtonLoading(true);
       setVisible(false);
       let params = {
         data: {
@@ -371,12 +371,12 @@ const QuotationAddEditTab = ({
               Provider.API_URLS.contractor_get_clientname_quotationform,
               params
             )
-              .then((response) => {
-                if (response.data && response.data.data) {
+              .then((rep) => {
+                if (rep.data && rep.data.data) {
                   setDropDownData((prev) => {
                     return {
                       ...prev,
-                      ...response.data.data,
+                      clients: rep.data.data,
                     };
                   });
                 }
@@ -475,6 +475,7 @@ const QuotationAddEditTab = ({
         send_to_client: true,
       });
       setTotal("");
+      setIsButtonLoading(false);
       GetUserID();
     }
   }, [index1, type]);
