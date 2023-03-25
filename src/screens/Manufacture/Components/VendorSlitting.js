@@ -127,10 +127,7 @@ function Slitting({ user, mf_po_no, mf_vo_refno }) {
                           data={[
                             parseInt(item.total) == 0
                               ? "0"
-                              : String(
-                                  parseFloat(item.total) /
-                                    parseFloat(item.width_mm_value)
-                                ),
+                              : item.no_of_qty,
                           ]}
                           height={60}
                           textStyle={styles.text}

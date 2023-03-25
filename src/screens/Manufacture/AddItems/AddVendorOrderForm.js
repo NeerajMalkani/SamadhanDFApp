@@ -151,7 +151,8 @@ function AddVendorOrderForm({ route, navigation }) {
       data.slitting_data.map((item, i) => {
         params.data.product_refno[i + 1] = item.product_refno;
         params.data.brand_refno[i + 1] = item.brand_refno;
-        params.data.no_of_qty[i + 1] = item.no_of_qty;
+        params.data.no_of_qty[i + 1] =
+          parseInt(item.total) == 0 ? "Select" : item.no_of_qty;
         params.data.width_mm_value[i + 1] = item.width_mm_value;
         params.data.total[i + 1] = item.total;
         params.data.length_mtr_value[i + 1] = item.length_mtr_value;
@@ -203,7 +204,8 @@ function AddVendorOrderForm({ route, navigation }) {
       data.slitting_data.map((item, i) => {
         params.data.product_refno[i + 1] = item.product_refno;
         params.data.brand_refno[i + 1] = item.brand_refno;
-        params.data.no_of_qty[i + 1] = item.no_of_qty;
+        params.data.no_of_qty[i + 1] =
+          parseInt(item.total) == 0 ? "Select" : item.no_of_qty;
         params.data.width_mm_value[i + 1] = item.width_mm_value;
         params.data.total[i + 1] = item.total;
         params.data.length_mtr_value[i + 1] = item.length_mtr_value;
@@ -213,7 +215,8 @@ function AddVendorOrderForm({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log(response.data);
+          console.log("response", response.data);
+          console.log("params", params);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -395,7 +398,7 @@ function AddVendorOrderForm({ route, navigation }) {
                   setData((prev) => {
                     return {
                       ...prev,
-                      mf_po_no: selectedItem === 'Select' ? '' : selectedItem,
+                      mf_po_no: selectedItem === "Select" ? "" : selectedItem,
                       otherdata: {},
                       coils_data: [],
                       slitting_data: [],
@@ -518,6 +521,7 @@ function AddVendorOrderForm({ route, navigation }) {
                           return {
                             ...item,
                             total: "0",
+                            no_of_qty: "Select",
                           };
                         }),
                       };
@@ -580,7 +584,7 @@ function AddVendorOrderForm({ route, navigation }) {
                                         "Select",
                                         ...Array.from(
                                           {
-                                            length: parseInt(item.no_of_qty),
+                                            length: 100,
                                           },
                                           (_, i) => String(i + 1)
                                         ),
@@ -589,10 +593,7 @@ function AddVendorOrderForm({ route, navigation }) {
                                       selectedItem={
                                         parseInt(item.total) == 0
                                           ? "Select"
-                                          : String(
-                                              parseFloat(item.total) /
-                                                parseFloat(item.width_mm_value)
-                                            )
+                                          : item.no_of_qty
                                       }
                                       onSelected={(selectedItem) => {
                                         if (selectedItem !== "Select") {
@@ -615,6 +616,7 @@ function AddVendorOrderForm({ route, navigation }) {
                                                               selectedItem
                                                             )
                                                         ),
+                                                        no_of_qty: selectedItem,
                                                       };
                                                     }
                                                   }
@@ -634,6 +636,7 @@ function AddVendorOrderForm({ route, navigation }) {
                                                       return {
                                                         ...current,
                                                         total: 0,
+                                                        no_of_qty: selectedItem,
                                                       };
                                                     }
                                                   }

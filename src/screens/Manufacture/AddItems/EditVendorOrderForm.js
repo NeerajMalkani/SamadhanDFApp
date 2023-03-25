@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
-import { ScrollView, View, StyleSheet } from 'react-native';
-import { Styles } from '../../../styles/styles';
-import Dropdown from '../../../components/Dropdown';
-import Provider from '../../../api/Provider';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Table, TableWrapper, Row, Col } from 'react-native-table-component';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import moment from 'moment/moment';
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { Styles } from "../../../styles/styles";
+import Dropdown from "../../../components/Dropdown";
+import Provider from "../../../api/Provider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Table, TableWrapper, Row, Col } from "react-native-table-component";
+import RBSheet from "react-native-raw-bottom-sheet";
+import moment from "moment/moment";
 import {
   Button,
   Card,
@@ -16,9 +16,9 @@ import {
   TextInput,
   Title,
   List,
-} from 'react-native-paper';
-import { communication } from '../../../utils/communication';
-import { theme } from '../../../theme/apptheme';
+} from "react-native-paper";
+import { communication } from "../../../utils/communication";
+import { theme } from "../../../theme/apptheme";
 
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -30,38 +30,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
   },
   header: { height: 80, backgroundColor: theme.colors.primary },
-  subheader: { height: 30, backgroundColor: 'white' },
-  text: { textAlign: 'center', fontWeight: '100' },
-  headertext: { textAlign: 'center', fontWeight: '800', color: 'white' },
+  subheader: { height: 30, backgroundColor: "white" },
+  text: { textAlign: "center", fontWeight: "100" },
+  headertext: { textAlign: "center", fontWeight: "800", color: "white" },
   dataWrapper: { marginTop: -1 },
-  row: { height: 50, backgroundColor: 'white' },
+  row: { height: 50, backgroundColor: "white" },
 });
 
 function EditVendorOrderForm({ route, navigation }) {
   const refRBSheet = useRef();
   const [purchaseFullData, setPurchaseFullData] = React.useState([]);
 
-  console.log('params', route.params.data);
+  console.log("params", route.params.data);
   const [data, setData] = useState({
-    mf_po_no: '',
+    mf_po_no: "",
     otherdata: {},
     coils_data: [],
     slitting_data: [],
-    actual_ss_mm: '',
-    total_weight: '',
-    ss_mm: '',
-    ss_kg: '',
+    actual_ss_mm: "",
+    total_weight: "",
+    ss_mm: "",
+    ss_kg: "",
   });
 
   const [error, setError] = useState({
     mf_po_no: false,
   });
 
-  const [total, setTotal] = useState('');
+  const [total, setTotal] = useState("");
   useEffect(() => {
     if (data.slitting_data.length > 0) {
       let x = parseFloat(0);
@@ -78,7 +78,7 @@ function EditVendorOrderForm({ route, navigation }) {
         return {
           ...prev,
           ss_mm: String(
-            parseFloat(parseFloat(prev.actual_ss_mm) - parseFloat(total)),
+            parseFloat(parseFloat(prev.actual_ss_mm) - parseFloat(total))
           ),
         };
       });
@@ -96,14 +96,14 @@ function EditVendorOrderForm({ route, navigation }) {
           ss_kg: String(
             (parseFloat(data.total_weight) /
               (parseFloat(data.otherdata.gpcoil_width_value) * 1000)) *
-              parseFloat(data.ss_mm),
+              parseFloat(data.ss_mm)
           ),
         };
       });
     }
   }, [data.total_weight, data.otherdata.gpcoil_width_value, data.ss_mm]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState('');
+  const [snackbarText, setSnackbarText] = React.useState("");
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
@@ -126,9 +126,9 @@ function EditVendorOrderForm({ route, navigation }) {
   };
 
   const update = () => {
-    if (route.params.type === 'edit') {
+    if (route.params.type === "edit") {
       let temp = purchaseFullData.find(
-        (item) => item.purchaseorderno === data.mf_po_no,
+        (item) => item.purchaseorderno === data.mf_po_no
       );
       const params = {
         data: {
@@ -156,15 +156,15 @@ function EditVendorOrderForm({ route, navigation }) {
         params.data.total[i + 1] = item.total;
         params.data.length_mtr_value[i + 1] = item.length_mtr_value;
       });
-      console.log('api', params);
+      console.log("api", params);
       Provider.createDFManufacturer(
         Provider.API_URLS.vendororderformupdate,
-        params,
+        params
       )
         .then((response) => {
-          console.log('resp', response.data);
+          console.log("resp", response.data);
           if (response.data && response.data.data.Updated == 1) {
-            route.params.fetchData('update');
+            route.params.fetchData("update");
             navigation.goBack();
           } else if (response.data.code === 304) {
             setSnackbarText(communication.AlreadyExists);
@@ -181,7 +181,7 @@ function EditVendorOrderForm({ route, navigation }) {
         .finally(() => setIsButtonLoading(false));
     } else {
       let temp = purchaseFullData.find(
-        (item) => item.purchaseorderno === data.mf_po_no,
+        (item) => item.purchaseorderno === data.mf_po_no
       );
       const params = {
         data: {
@@ -210,12 +210,12 @@ function EditVendorOrderForm({ route, navigation }) {
       });
       Provider.createDFManufacturer(
         Provider.API_URLS.vendororderformcreate,
-        params,
+        params
       )
         .then((response) => {
           console.log(response.data);
           if (response.data && response.data.data.Created == 1) {
-            route.params.fetchData('add');
+            route.params.fetchData("add");
             navigation.goBack();
           } else if (response.data.code === 304) {
             setSnackbarText(communication.AlreadyExists);
@@ -243,12 +243,12 @@ function EditVendorOrderForm({ route, navigation }) {
     };
     Provider.createDFManufacturer(
       Provider.API_URLS.get_purchaseorderno_vendororderform,
-      params,
+      params
     )
       .then((response) => {
-        if (response.data && response.data.code == '200') {
+        if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log('purchase order no', response.data.data);
+            console.log("purchase order no", response.data.data);
             setPurchaseFullData(() => {
               return response.data.data;
             });
@@ -262,14 +262,14 @@ function EditVendorOrderForm({ route, navigation }) {
             ...prev,
             mf_po_no: route.params?.data?.mf_po_no,
           };
-        }),
+        })
       );
   };
   useEffect(() => {
     console.log(data.mf_po_no);
-    if (data.mf_po_no !== '') {
+    if (data.mf_po_no !== "") {
       let temp = purchaseFullData.find(
-        (item) => item.purchaseorderno === data.mf_po_no,
+        (item) => item.purchaseorderno === data.mf_po_no
       );
       let params = {
         data: {
@@ -278,22 +278,23 @@ function EditVendorOrderForm({ route, navigation }) {
           Sess_branch_refno: Sess_branch_refno,
           mf_po_refno: temp ? temp.mf_po_refno : route.params.data.mf_po_refno,
           mf_vo_refno:
-            route.params.type == 'edit'
+            route.params.type == "edit"
               ? data.mf_po_no === route.params.data.mf_po_no
                 ? route.params.data.mf_vo_refno
-                : '0'
-              : '0',
+                : "0"
+              : "0",
         },
       };
 
+      console.log("paramsdata", params);
       Provider.createDFManufacturer(
         Provider.API_URLS.get_purchaseorderno_otherdata_vendororderform,
-        params,
+        params
       )
         .then((response) => {
-          if (response.data && response.data.code == '200') {
+          if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log('otherdata', response.data.data[0]);
+              console.log("otherdata", response.data.data[0]);
               setData((prev) => {
                 return {
                   ...prev,
@@ -301,8 +302,8 @@ function EditVendorOrderForm({ route, navigation }) {
                   actual_ss_mm: String(
                     parseFloat(
                       parseFloat(response.data.data[0].gpcoil_width_value) *
-                        1000,
-                    ),
+                        1000
+                    )
                   ),
                 };
               });
@@ -313,12 +314,12 @@ function EditVendorOrderForm({ route, navigation }) {
 
       Provider.createDFManufacturer(
         Provider.API_URLS.get_coildetails_vendororderform,
-        params,
+        params
       )
         .then((response) => {
-          if (response.data && response.data.code == '200') {
+          if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log('coilsdata', response.data.data);
+              console.log("coilsdata", response.data.data);
               let x = parseFloat(0);
               response.data.data.map((item) => {
                 x = parseFloat(item.weight) + x;
@@ -337,12 +338,12 @@ function EditVendorOrderForm({ route, navigation }) {
 
       Provider.createDFManufacturer(
         Provider.API_URLS.get_slittingdetails_vendororderform,
-        params,
+        params
       )
         .then((response) => {
-          if (response.data && response.data.code == '200') {
+          if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log('slittingdata', response.data.data);
+              console.log("slittingdata", response.data.data);
               setData((prev) => {
                 return {
                   ...prev,
@@ -358,7 +359,7 @@ function EditVendorOrderForm({ route, navigation }) {
 
   const GetUserID = async () => {
     try {
-      const userData = await AsyncStorage.getItem('user');
+      const userData = await AsyncStorage.getItem("user");
       if (userData !== null) {
         Sess_UserRefno = JSON.parse(userData).UserID;
         Sess_company_refno = JSON.parse(userData).Sess_company_refno;
@@ -382,16 +383,16 @@ function EditVendorOrderForm({ route, navigation }) {
     <View style={[Styles.flex1]}>
       <ScrollView
         style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]}
-        keyboardShouldPersistTaps='handled'
+        keyboardShouldPersistTaps="handled"
       >
         <View style={[Styles.padding16]}>
           <View style={[Styles.paddingTop16]}>
             <Dropdown
-              label='Purchase Order No'
+              label="Purchase Order No"
               data={
-                route.params.type === 'edit'
+                route.params.type === "edit"
                   ? [
-                      'Select',
+                      "Select",
                       ...new Set([
                         route.params.data.mf_po_no,
                         ...purchaseFullData.map((item) => item.purchaseorderno),
@@ -404,7 +405,7 @@ function EditVendorOrderForm({ route, navigation }) {
                   setData((prev) => {
                     return {
                       ...prev,
-                      mf_po_no: selectedItem === 'Select' ? '' : selectedItem,
+                      mf_po_no: selectedItem === "Select" ? "" : selectedItem,
                       otherdata: {},
                       coils_data: [],
                       slitting_data: [],
@@ -423,10 +424,10 @@ function EditVendorOrderForm({ route, navigation }) {
               style={[Styles.borderred]}
             />
           </View>
-          <HelperText type='error' visible={error.mf_po_no}>
+          <HelperText type="error" visible={error.mf_po_no}>
             {communication.InvalidServiceName}
           </HelperText>
-          {route.params.type == 'edit' && (
+          {route.params.type == "edit" && (
             <TextInput
               mode="outlined"
               label="Job Order No"
@@ -437,7 +438,7 @@ function EditVendorOrderForm({ route, navigation }) {
             />
           )}
           {data.otherdata?.order_date && (
-            <Button mode='contained' onPress={() => refRBSheet.current.open()}>
+            <Button mode="contained" onPress={() => refRBSheet.current.open()}>
               View Full Details
             </Button>
           )}
@@ -446,7 +447,7 @@ function EditVendorOrderForm({ route, navigation }) {
             <View style={{ marginTop: 10 }}>
               <Title
                 style={{
-                  textAlign: 'left',
+                  textAlign: "left",
                   fontSize: 15,
                   color: theme.colors.primary,
                 }}
@@ -457,10 +458,10 @@ function EditVendorOrderForm({ route, navigation }) {
                 <ScrollView horizontal={true}>
                   <View>
                     <Table
-                      borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
+                      borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                     >
                       <Row
-                        data={['Coils #', 'Weight (Kg)', 'Length (Mtr)']}
+                        data={["Coils #", "Weight (Kg)", "Length (Mtr)"]}
                         widthArr={[50, 100, 100]}
                         style={styles.header}
                         textStyle={styles.headertext}
@@ -469,12 +470,12 @@ function EditVendorOrderForm({ route, navigation }) {
 
                     <ScrollView style={styles.dataWrapper}>
                       <Table
-                        borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
+                        borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                       >
                         {data.coils_data.map((item, index) => {
                           return (
                             <TableWrapper
-                              style={{ flexDirection: 'row' }}
+                              style={{ flexDirection: "row" }}
                               key={index}
                             >
                               <Col
@@ -509,7 +510,7 @@ function EditVendorOrderForm({ route, navigation }) {
           <View style={{ marginTop: 10 }}>
             <Title
               style={{
-                textAlign: 'left',
+                textAlign: "left",
                 fontSize: 15,
                 color: theme.colors.primary,
               }}
@@ -527,6 +528,7 @@ function EditVendorOrderForm({ route, navigation }) {
                           return {
                             ...item,
                             total: "0",
+                            no_of_qty: "Select",
                           };
                         }),
                       };
@@ -541,15 +543,15 @@ function EditVendorOrderForm({ route, navigation }) {
               <ScrollView horizontal={true}>
                 <View>
                   <Table
-                    borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
+                    borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                   >
                     <Row
                       data={[
-                        'Sr.\nNo',
-                        'Product Name » \n Brand',
-                        'No.',
-                        'Raw \nMaterial \nwidth \n(MM)',
-                        'Total',
+                        "Sr.\nNo",
+                        "Product Name » \n Brand",
+                        "No.",
+                        "Raw \nMaterial \nwidth \n(MM)",
+                        "Total",
                       ]}
                       widthArr={[30, 150, 90, 100, 100]}
                       style={styles.header}
@@ -558,13 +560,13 @@ function EditVendorOrderForm({ route, navigation }) {
                   </Table>
                   <ScrollView style={styles.dataWrapper}>
                     <Table
-                      borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}
+                      borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}
                     >
                       {data.slitting_data.length > 0 ? (
                         data.slitting_data.map((item, index) => {
                           return (
                             <TableWrapper
-                              style={{ flexDirection: 'row' }}
+                              style={{ flexDirection: "row" }}
                               key={index}
                             >
                               <Col
@@ -589,19 +591,16 @@ function EditVendorOrderForm({ route, navigation }) {
                                         "Select",
                                         ...Array.from(
                                           {
-                                            length: parseInt(item.no_of_qty),
+                                            length: 100,
                                           },
-                                          (_, i) => String(i + 1),
+                                          (_, i) => String(i + 1)
                                         ),
                                       ]}
-                                      label=''
+                                      label=""
                                       selectedItem={
                                         parseInt(item.total) == 0
                                           ? "Select"
-                                          : String(
-                                              parseFloat(item.total) /
-                                                parseFloat(item.width_mm_value),
-                                            )
+                                          : item.no_of_qty
                                       }
                                       onSelected={(selectedItem) => {
                                         if (selectedItem !== "Select") {
@@ -624,6 +623,7 @@ function EditVendorOrderForm({ route, navigation }) {
                                                               selectedItem
                                                             )
                                                         ),
+                                                        no_of_qty: selectedItem,
                                                       };
                                                     }
                                                   }
@@ -643,6 +643,7 @@ function EditVendorOrderForm({ route, navigation }) {
                                                       return {
                                                         ...current,
                                                         total: 0,
+                                                        no_of_qty: selectedItem,
                                                       };
                                                     }
                                                   }
@@ -676,9 +677,9 @@ function EditVendorOrderForm({ route, navigation }) {
                       ) : (
                         <></>
                       )}
-                      <TableWrapper style={{ flexDirection: 'row' }}>
+                      <TableWrapper style={{ flexDirection: "row" }}>
                         <Col
-                          data={['Total (mm)']}
+                          data={["Total (mm)"]}
                           height={60}
                           textStyle={styles.text}
                           width={370}
@@ -700,7 +701,7 @@ function EditVendorOrderForm({ route, navigation }) {
           <TextInput
             mode="outlined"
             style={{ marginTop: 10 }}
-            label='Slitting Scrap (mm)'
+            label="Slitting Scrap (mm)"
             value={data.ss_mm}
             disabled={true}
             dense
@@ -708,15 +709,15 @@ function EditVendorOrderForm({ route, navigation }) {
           <TextInput
             mode="outlined"
             style={{ marginTop: 10 }}
-            label='Slitting Scrap (kg)'
+            label="Slitting Scrap (kg)"
             value={data.ss_kg}
             disabled={true}
             dense
           />
           <TextInput
-            mode='outlined'
+            mode="outlined"
             style={{ marginTop: 10 }}
-            label='Total Weight'
+            label="Total Weight"
             value={data.total_weight}
             disabled={true}
             dense
@@ -729,12 +730,12 @@ function EditVendorOrderForm({ route, navigation }) {
           Styles.width100per,
           Styles.marginTop32,
           Styles.padding16,
-          { position: 'absolute', bottom: 0, elevation: 3 },
+          { position: "absolute", bottom: 0, elevation: 3 },
         ]}
       >
         <Card.Content>
           <Button
-            mode='contained'
+            mode="contained"
             disabled={isButtonLoading}
             onPress={ValidateData}
           >
@@ -756,10 +757,10 @@ function EditVendorOrderForm({ route, navigation }) {
         closeOnPressMask={true}
         dragFromTopOnly={true}
         height={600}
-        animationType='fade'
+        animationType="fade"
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          draggableIcon: { backgroundColor: '#000' },
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
         }}
       >
         <View>
@@ -768,50 +769,50 @@ function EditVendorOrderForm({ route, navigation }) {
           </Title>
           <ScrollView>
             <List.Item
-              title='Order Date'
+              title="Order Date"
               description={data.otherdata.order_date}
             />
             <List.Item
-              title='Vendor Address'
+              title="Vendor Address"
               description={`${data.otherdata?.vendor_address?.user_company_name}, ${data.otherdata?.vendor_address?.user_address}, ${data.otherdata?.vendor_address?.user_districtname}, ${data.otherdata?.vendor_address?.user_statename}\nPhone No: ${data.otherdata?.vendor_address?.user_contact_person_mobile_no}.`}
             />
             <List.Item
-              title='Delivery / Factory Address ( MFG Unit )'
+              title="Delivery / Factory Address ( MFG Unit )"
               description={`${data.otherdata?.delivery_address?.delivery_company_name}, ${data.otherdata?.delivery_address?.delivery_address}, ${data.otherdata?.delivery_address?.delivery_location_name} - ${data.otherdata?.delivery_address?.delivery_pincode}, ${data.otherdata?.delivery_address?.user_statename}, GSTIN: ${data.otherdata?.delivery_address?.delivery_gst_no}`}
             />
             <List.Item
-              title='Manufacturer Brand'
+              title="Manufacturer Brand"
               description={data.otherdata.manufacturer_brand}
             />
             <List.Item
-              title='Total Weight of Coil (Kg)'
+              title="Total Weight of Coil (Kg)"
               description={data.otherdata.total_weight}
             />
             <List.Item
-              title='Average Thickness'
+              title="Average Thickness"
               description={data.otherdata.avg_thickness}
             />
             <List.Item
-              title='Thickness Of Raw Material (mm)'
+              title="Thickness Of Raw Material (mm)"
               description={data.otherdata.thickness_raw_material}
             />
             <List.Item
-              title='Width of GP Coil (Mtr)'
+              title="Width of GP Coil (Mtr)"
               description={data.otherdata.gpcoil_width_value}
             />
             <List.Item
-              title='Number of GP Coil'
+              title="Number of GP Coil"
               description={data.otherdata.no_gpcoil}
             />
             <List.Item
-              title='Total Length of Coil (Mtr)'
+              title="Total Length of Coil (Mtr)"
               description={data.otherdata.total_length}
             />
             <List.Item
-              title='Order Description'
+              title="Order Description"
               description={data.otherdata.order_description}
             />
-            <List.Item title='' description={''} />
+            <List.Item title="" description={""} />
           </ScrollView>
         </View>
       </RBSheet>
