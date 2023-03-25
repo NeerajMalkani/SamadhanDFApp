@@ -335,7 +335,7 @@ const QuotationAddEditTab = ({
           pincode: newclient.pincode,
           gst_no: newclient.gst_no,
           pan_no: newclient.pan_no,
-          client_role_refno: [8],
+          client_role_refno: ["8"],
           buyercategory_refno: "0",
           view_status: "1",
         },
@@ -822,6 +822,8 @@ const QuotationAddEditTab = ({
                     label="Client Name"
                     data={
                       dropdowndata?.clients?.length < 1
+                        ? []
+                        : dropdowndata?.clients[0]?.client_data == null
                         ? []
                         : Object.values(dropdowndata?.clients[0]?.client_data)
                     }

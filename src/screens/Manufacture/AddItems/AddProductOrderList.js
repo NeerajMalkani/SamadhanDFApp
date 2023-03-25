@@ -181,13 +181,13 @@ function AddProductOrderList({ route, navigation }) {
         }
       })
       .catch((e) => console.log(e));
-      console.log('asdasdf');
+    console.log("asdasdf");
     Provider.createDFManufacturer(
       Provider.API_URLS.get_widthofgpcoil_manufacturer_poform,
       params
     )
       .then((response) => {
-        console.log('width of gp coil:',  response.data.data);
+        console.log("width of gp coil:", response.data.data);
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
             console.log(response.data.data);
@@ -456,7 +456,7 @@ function AddProductOrderList({ route, navigation }) {
         weight: {},
         length: {},
         avg_thickness: {},
-        view_status: data.current ? "1" : "0",
+        view_status: data.checked ? "1" : "0",
       },
     };
     data.coil_details.map((item, i) => {
@@ -817,7 +817,7 @@ function AddProductOrderList({ route, navigation }) {
               ))}
           </View>
           <TextInput
-           mode="outlined"
+            mode="outlined"
             label="Total Weight"
             value={data.total_weight}
             editable={false}
@@ -826,7 +826,7 @@ function AddProductOrderList({ route, navigation }) {
             style={[{ backgroundColor: "white" }]}
           />
           <TextInput
-           mode="outlined"
+            mode="outlined"
             label="Total Length"
             value={data.total_length}
             editable={false}
@@ -836,7 +836,7 @@ function AddProductOrderList({ route, navigation }) {
           />
 
           <TextInput
-           mode="outlined"
+            mode="outlined"
             label="Rate per Unit"
             value={data.rate}
             keyboardType={"numeric"}
@@ -859,7 +859,7 @@ function AddProductOrderList({ route, navigation }) {
           </HelperText>
 
           <TextInput
-           mode="outlined"
+            mode="outlined"
             label="Amount"
             value={data.amount}
             editable={false}
