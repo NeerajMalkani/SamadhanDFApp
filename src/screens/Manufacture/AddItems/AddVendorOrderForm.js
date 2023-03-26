@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   header: { height: 80, backgroundColor: theme.colors.primary },
   subheader: { height: 30, backgroundColor: "white" },
-  text: { textAlign: "center", fontWeight: "100" },
+  text: { textAlign: "center", fontWeight: "400" },
   headertext: { textAlign: "center", fontWeight: "800", color: "white" },
   dataWrapper: { marginTop: -1 },
   row: { height: 50, backgroundColor: "white" },

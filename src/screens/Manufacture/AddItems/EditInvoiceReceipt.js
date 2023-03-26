@@ -34,10 +34,10 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     invoice_entry_date: route.params.data.invoice_entry_date,
     invoice_date: new Date(
       route.params.data.invoice_date.substring(6, 11) +
-        "/" +
-        route.params.data.invoice_date.substring(3, 5) +
-        "/" +
-        route.params.data.invoice_date.substring(0, 2)
+      "/" +
+      route.params.data.invoice_date.substring(3, 5) +
+      "/" +
+      route.params.data.invoice_date.substring(0, 2)
     ),
     transport_charges: route.params.data.transport_charges,
   });
@@ -311,49 +311,55 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           Styles.paddingVertical16,
         ]}
       >
-        <Dropdown
-          data={purchaseno.map((obj) => obj.purchaseorderno)}
-          label="Purchase Order No"
-          onSelected={(text) => {
-            if (text !== state.mf_po_refno) {
-              onChange(text, "mf_po_refno");
-              setState((state) => ({ ...state, mf_vo_refno: "" }));
-              setJobOrderNo([]);
-              setProduction([]);
-              setErrors((prev) => {
-                return {
-                  ...prev,
-                  mf_po_refno: false,
-                  mf_vo_refno: false,
-                };
-              });
-            }
-          }}
-          isError={errors.mf_po_refno}
-          selectedItem={state.mf_po_refno}
-        />
-        <Dropdown
-          data={joborderno?.map((obj) => obj.joborderno)}
-          label="Job Order No"
-          selectedItem={state.mf_vo_refno}
-          onSelected={(text) => {
-            if (text !== state.mf_vo_refno) {
-              onChange(text, "mf_vo_refno");
-              setProduction([]);
-              setErrors((prev) => {
-                return {
-                  ...prev,
-                  mf_vo_refno: false,
-                };
-              });
-            }
-          }}
-          isError={errors.mf_vo_refno}
-        />
+        <View style={[Styles.marginTop8]}>
+          <Dropdown
+            data={purchaseno.map((obj) => obj.purchaseorderno)}
+            label="Purchase Order No"
+            onSelected={(text) => {
+              if (text !== state.mf_po_refno) {
+                onChange(text, "mf_po_refno");
+                setState((state) => ({ ...state, mf_vo_refno: "" }));
+                setJobOrderNo([]);
+                setProduction([]);
+                setErrors((prev) => {
+                  return {
+                    ...prev,
+                    mf_po_refno: false,
+                    mf_vo_refno: false,
+                  };
+                });
+              }
+            }}
+            isError={errors.mf_po_refno}
+            selectedItem={state.mf_po_refno}
+          />
+        </View>
+
+        <View style={[Styles.marginTop16]}>
+          <Dropdown
+            data={joborderno?.map((obj) => obj.joborderno)}
+            label="Job Order No"
+            selectedItem={state.mf_vo_refno}
+            onSelected={(text) => {
+              if (text !== state.mf_vo_refno) {
+                onChange(text, "mf_vo_refno");
+                setProduction([]);
+                setErrors((prev) => {
+                  return {
+                    ...prev,
+                    mf_vo_refno: false,
+                  };
+                });
+              }
+            }}
+            isError={errors.mf_vo_refno}
+          />
+        </View>
+
         <TextInput
           mode="outlined"
           label="Invoice No"
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           value={state.invoice_no}
           onChangeText={(text) => {
             setErrors((prev) => {
@@ -371,7 +377,8 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           label="Invoice Entry Date"
           disabled={true}
           value={state.invoice_entry_date}
-          style={{ backgroundColor: "white" }}
+          
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
         />
         <DateTimePicker
           label="Date of Invoice"
@@ -385,14 +392,14 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           label="Supplier Name"
           disabled={true}
           value={state.supplier_name || ""}
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
         />
         <TextInput
           mode="outlined"
           label="Basic Amount"
           disabled={true}
           value={state.basic_amount || ""}
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
         />
         <TextInput
           mode="outlined"
@@ -400,7 +407,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           value={String(state.cgst) || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "cgst")}
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           error={errors.cgst}
         />
         <TextInput
@@ -409,7 +416,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           value={state.sgst || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "sgst")}
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           error={errors.sgst}
         />
         <TextInput
@@ -418,13 +425,13 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
           value={state.igst || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "igst")}
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           error={errors.igst}
         />
         <TextInput
           mode="outlined"
           label="Transporation Charges"
-          style={{ backgroundColor: "white" }}
+          style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           value={state.transport_charges}
           error={errors.transport_charges}
           onChangeText={(text) => {
