@@ -262,8 +262,8 @@ const AddClientScreen = ({ route, navigation }) => {
     const params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno,
-        Sess_branch_refno,
+        Sess_company_refno: Sess_company_refno.toString() ,
+        Sess_branch_refno: Sess_branch_refno.toString(),
         company_name: companyName,
         contact_person: contactName,
         contact_person_mobile_no: contactNumber,
@@ -279,10 +279,9 @@ const AddClientScreen = ({ route, navigation }) => {
         pan_no: panNumber,
         client_role_refno: arrServiceTypeRole,
         buyercategory_refno: '0',
-        view_status: checked,
+        view_status: checked ? "1" : "0",
       },
     };
-    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.ClientCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

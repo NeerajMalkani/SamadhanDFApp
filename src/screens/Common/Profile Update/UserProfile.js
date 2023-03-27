@@ -125,7 +125,6 @@ const UserProfile = ({ route, navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          console.log('Logged In Data:', response.data.data);
           const user = {
             UserID: response.data.data.Sess_UserRefno,
             FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,

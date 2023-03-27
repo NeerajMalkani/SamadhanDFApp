@@ -88,6 +88,9 @@ const PocketDiaryScreen = ({ route, navigation }) => {
   const [bankAmount, setBankAmount] = React.useState("");
   const [branchAmount, setBranchAmount] = React.useState("");
 
+  const [payableAmount, setPayableAmount] = React.useState("0");
+  const [receivableAmount, setReceivableAmount] = React.useState("0");
+
   //#endregion
 
   //#region Functions
@@ -183,6 +186,8 @@ const PocketDiaryScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           setPocketAmount(response.data.data[0].TotalCashinHand.toString());
+          setPayableAmount(response.data.data[0].ToatalPayableAmount.toString());
+          setReceivableAmount(response.data.data[0].ToatalReceivableAmount.toString());
         }
       })
       .catch((e) => { });
@@ -461,7 +466,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 ]}
               >
                 <Icon
-                  name="cash-minus"
+                  name="account-cash"
                   size={24}
                   color={theme.colors.textLight}
                 />
@@ -480,7 +485,34 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 >
                   Payable
                 </Text>
+                <View
+                  style={[
+                    Styles.width50per,
+                    Styles.height32,
+                    Styles.flexRow,
+                    Styles.flexAlignEnd,
+                    Styles.flexAlignStart,
+                    { position: "absolute", right: 14, top: 14 },
+                  ]}
+                >
+                  <Icon
+                    name="currency-inr"
+                    size={20}
+                    color={theme.colors.textLight}
+                  />
+                  <Text
+                    style={[
+                      Styles.fontSize16,
+                      Styles.textLeft,
+                      { color: "#fff", fontWeight: "bold" },
+                    ]}
+                  >
+                    {payableAmount}
+                  </Text>
+                </View>
               </TouchableOpacity>
+
+
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("ReceivableList");
@@ -495,7 +527,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 ]}
               >
                 <Icon
-                  name="cash-plus"
+                  name="account-cash"
                   size={24}
                   color={theme.colors.textLight}
                 />
@@ -514,7 +546,33 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 >
                   Receivable
                 </Text>
+                <View
+                  style={[
+                    Styles.width50per,
+                    Styles.height32,
+                    Styles.flexRow,
+                    Styles.flexAlignEnd,
+                    Styles.flexAlignStart,
+                    { position: "absolute", right: 14, top: 14 },
+                  ]}
+                >
+                  <Icon
+                    name="currency-inr"
+                    size={20}
+                    color={theme.colors.textLight}
+                  />
+                  <Text
+                    style={[
+                      Styles.fontSize16,
+                      Styles.textLeft,
+                      { color: "#fff", fontWeight: "bold" },
+                    ]}
+                  >
+                    {receivableAmount}
+                  </Text>
+                </View>
               </TouchableOpacity>
+              
             </View>
             <View
               style={[

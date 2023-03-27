@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   container: { marginTop: 10, backgroundColor: "#fff" },
   header: { height: 50, backgroundColor: theme.colors.primary },
   subheader: { height: 30, backgroundColor: "white" },
-  text: { textAlign: "center", fontWeight: "100" },
+  text: { textAlign: "center", fontWeight: "400" },
   headertext: { textAlign: "center", fontWeight: "800", color: "white" },
   dataWrapper: { marginTop: -1 },
   row: { height: 50, backgroundColor: "white" },
@@ -188,7 +188,7 @@ const QuotationAddEditTab = ({
               ...prev,
               client_name:
                 data.clients[0].client_data[
-                  response.data.data[0].client_user_refno
+                response.data.data[0].client_user_refno
                 ],
               project_name: response.data.data[0].project_name,
               contact_person: response.data.data[0].contact_person,
@@ -825,8 +825,8 @@ const QuotationAddEditTab = ({
                       dropdowndata?.clients?.length < 1
                         ? []
                         : dropdowndata?.clients[0]?.client_data == null
-                        ? []
-                        : Object.values(dropdowndata?.clients[0]?.client_data)
+                          ? []
+                          : Object.values(dropdowndata?.clients[0]?.client_data)
                     }
                     onSelected={(selectedItem, idx) => {
                       if (selectedItem !== data.client_name) {
@@ -844,7 +844,7 @@ const QuotationAddEditTab = ({
                         });
                         fetchClientData(
                           Object.keys(dropdowndata?.clients[0]?.client_data)[
-                            idx
+                          idx
                           ]
                         );
                       }
@@ -970,8 +970,9 @@ const QuotationAddEditTab = ({
                   <TextInput
                     mode="outlined"
                     dense
-                    label="Conatct Number"
+                    label="Contact Number"
                     value={data.contact_person_mobile_no}
+                    keyboardType={"number-pad"}
                     returnKeyType="next"
                     onChangeText={(text) => {
                       setData((prev) => {
@@ -1068,34 +1069,37 @@ const QuotationAddEditTab = ({
                       )?.state_name
                     }
                   />
-                  <Dropdown
-                    label="City"
-                    style={{ backgroundColor: "white", marginBottom: "3%" }}
-                    data={
-                      dropdowndata?.cities2?.length < 1
-                        ? []
-                        : dropdowndata.cities2.map((item) => item.district_name)
-                    }
-                    onSelected={(selectedItem, idx) => {
-                      if (
-                        dropdowndata.cities2[idx].district_refno !==
-                        data.district_refno
-                      ) {
-                        setData((prev) => {
-                          return {
-                            ...prev,
-                            district_refno:
-                              dropdowndata.cities2[idx].district_refno,
-                          };
-                        });
+                  <View style={[Styles.marginTop8]}>
+                    <Dropdown
+                      label="City"
+                      style={{ backgroundColor: "white", marginBottom: "3%" }}
+                      data={
+                        dropdowndata?.cities2?.length < 1
+                          ? []
+                          : dropdowndata.cities2.map((item) => item.district_name)
                       }
-                    }}
-                    selectedItem={
-                      dropdowndata.cities2.find(
-                        (item) => item.district_refno === data.district_refno
-                      )?.district_name
-                    }
-                  />
+                      onSelected={(selectedItem, idx) => {
+                        if (
+                          dropdowndata.cities2[idx].district_refno !==
+                          data.district_refno
+                        ) {
+                          setData((prev) => {
+                            return {
+                              ...prev,
+                              district_refno:
+                                dropdowndata.cities2[idx].district_refno,
+                            };
+                          });
+                        }
+                      }}
+                      selectedItem={
+                        dropdowndata.cities2.find(
+                          (item) => item.district_refno === data.district_refno
+                        )?.district_name
+                      }
+                    />
+                  </View>
+
                 </View>
               </View>
             </View>
@@ -1323,7 +1327,7 @@ const QuotationAddEditTab = ({
                                     dense
                                     value={String(
                                       parseFloat(item.qty) *
-                                        parseFloat(item.rate)
+                                      parseFloat(item.rate)
                                     )}
                                   />
                                 </View>,
@@ -1625,44 +1629,47 @@ const QuotationAddEditTab = ({
                         )?.state_name
                       }
                     />
-                    <DropDown2
-                      label="City"
-                      style={{ backgroundColor: "white", marginBottom: "3%" }}
-                      data={
-                        dropdowndata?.cities1?.length < 1
-                          ? []
-                          : dropdowndata.cities1.map(
+                    <View style={[Styles.marginTop8]}>
+                      <DropDown2
+                        label="City"
+                        style={{ backgroundColor: "white", marginBottom: "3%" }}
+                        data={
+                          dropdowndata?.cities1?.length < 1
+                            ? []
+                            : dropdowndata.cities1.map(
                               (item) => item.district_name
                             )
-                      }
-                      onSelected={(selectedItem, idx) => {
-                        if (
-                          dropdowndata.cities1[idx].district_refno !==
-                          newclient.district_refno
-                        ) {
-                          setNewClient((prev) => {
-                            return {
-                              ...prev,
-                              district_refno:
-                                dropdowndata.cities1[idx].district_refno,
-                            };
-                          });
-                          setNewClientErrors((prev) => {
-                            return {
-                              ...prev,
-                              district_refno: false,
-                            };
-                          });
                         }
-                      }}
-                      isError={newclienterrors.district_refno}
-                      selectedItem={
-                        dropdowndata.cities1.find(
-                          (item) =>
-                            item.district_refno === newclient.district_refno
-                        )?.district_name
-                      }
-                    />
+                        onSelected={(selectedItem, idx) => {
+                          if (
+                            dropdowndata.cities1[idx].district_refno !==
+                            newclient.district_refno
+                          ) {
+                            setNewClient((prev) => {
+                              return {
+                                ...prev,
+                                district_refno:
+                                  dropdowndata.cities1[idx].district_refno,
+                              };
+                            });
+                            setNewClientErrors((prev) => {
+                              return {
+                                ...prev,
+                                district_refno: false,
+                              };
+                            });
+                          }
+                        }}
+                        isError={newclienterrors.district_refno}
+                        selectedItem={
+                          dropdowndata.cities1.find(
+                            (item) =>
+                              item.district_refno === newclient.district_refno
+                          )?.district_name
+                        }
+                      />
+                    </View>
+
                     <TextInput
                       mode="outlined"
                       dense
@@ -1756,8 +1763,8 @@ const QuotationAddEditTab = ({
                         dropdowndata?.services?.length < 1
                           ? []
                           : dropdowndata.services.map(
-                              (item) => item.service_name
-                            )
+                            (item) => item.service_name
+                          )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1792,6 +1799,7 @@ const QuotationAddEditTab = ({
                         )?.service_name
                       }
                     />
+                    <View style={[Styles.marginTop8]}>
                     <DropDown2
                       label="Category Name"
                       style={{ backgroundColor: "white", marginBottom: "3%" }}
@@ -1799,8 +1807,8 @@ const QuotationAddEditTab = ({
                         dropdowndata?.categories?.length < 1
                           ? []
                           : dropdowndata.categories.map(
-                              (item) => item.category_name
-                            )
+                            (item) => item.category_name
+                          )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1827,6 +1835,8 @@ const QuotationAddEditTab = ({
                         )?.category_name
                       }
                     />
+                    </View>
+                    
                   </View>
                   <View style={styles.container}>
                     <ScrollView horizontal={true}>
@@ -1881,6 +1891,7 @@ const QuotationAddEditTab = ({
                                     <View style={{ padding: "6%" }}>
                                       <TextInput
                                         mode="outlined"
+                                        keyboardType="number-pad"
                                         onChangeText={(text) => {
                                           setProductList((prev) => {
                                             let temp = [...prev.list];
@@ -1933,12 +1944,12 @@ const QuotationAddEditTab = ({
                                         dense
                                         value={
                                           item.qty !== undefined &&
-                                          item.qty !== "" &&
-                                          item.rate !== ""
+                                            item.qty !== "" &&
+                                            item.rate !== ""
                                             ? String(
-                                                parseFloat(item.qty) *
-                                                  parseFloat(item.rate)
-                                              )
+                                              parseFloat(item.qty) *
+                                              parseFloat(item.rate)
+                                            )
                                             : ""
                                         }
                                       />

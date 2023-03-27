@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import FormData from "form-data";
 import { View, Dimensions, ScrollView, Image, Platform } from "react-native";
-import { ActivityIndicator,Card, HelperText, Snackbar, Subheading, Switch, TextInput,Button } from "react-native-paper";
+import { ActivityIndicator, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Button } from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -12,12 +12,14 @@ import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useFocusEffect, createNavigationContainerRef } from "@react-navigation/native";
 import { APIConverter } from "../../../utils/apiconverter";
 import DFButton from "../../../components/Button";
 
+export const navigationRef = createNavigationContainerRef();
+
 const windowWidth = Dimensions.get("window").width;
-let userID = 0;
+let userID = 0, sess_name = "", sess_mobile = "";
 
 const BasicDetailsScreen = ({ route, navigation }) => {
 
@@ -25,7 +27,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
-  const [companyID, setCompanyID] = useState("");
+  const [companyID, setCompanyID] = useState("0");
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -117,6 +119,8 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+
+  const [singleLoad, setSingleLoad] = React.useState(0);
   //#endregion
 
   //#region Functions
@@ -124,7 +128,11 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      FetchBasicDetails();
+      sess_name = JSON.parse(userData).Sess_FName;
+      sess_mobile = JSON.parse(userData).Sess_MobileNo;
+      if (singleLoad == 0) {
+        FetchBasicDetails();
+      }
     }
   };
   let tempStateName = "";
@@ -137,36 +145,46 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
+        setSingleLoad(1);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data);
-            setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
-            setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
-            setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
-            setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
-            setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
-            setPANNumber(response.data.data[0].pan ? response.data.data[0].pan : "");
-            setLocation(response.data.data[0].locationName ? response.data.data[0].locationName : "");
-            setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
-            setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
-            setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
-            tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
-            setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
-            setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
-            tempCityID = response.data.data[0].cityID === null ? "" : response.data.data[0].cityID;
-            setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
-            setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
-            setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
-            setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
-            setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
-            setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
-            setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
-            setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
-            setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
-            setIsSwitchOn(response.data.data[0].showBrand ? (response.data.data[0].showBrand == "1" ? true : false) : false);
-            setLogoImage(response.data.data[0].companyLogo);
-            setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
-            setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
+
+            if (response.data.data[0].recordcount != "0") {
+
+              response.data.data = APIConverter(response.data.data);
+              setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
+              setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
+              setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
+              setContactNumber(response.data.data[0].contactPersonNumber ? response.data.data[0].contactPersonNumber : "");
+              setGSTNumber(response.data.data[0].gstNumber ? response.data.data[0].gstNumber : "");
+              setPANNumber(response.data.data[0].pan ? response.data.data[0].pan : "");
+              setLocation(response.data.data[0].locationName ? response.data.data[0].locationName : "");
+              setAddress(response.data.data[0].addressLine ? response.data.data[0].addressLine : "");
+              setStateName(response.data.data[0].stateName === null ? "" : response.data.data[0].stateName);
+              setStateID(response.data.data[0].stateID === null ? "" : response.data.data[0].stateID);
+              tempStateName = response.data.data[0].stateName === null ? "" : response.data.data[0].stateName;
+              setCityName(response.data.data[0].cityName === null ? "" : response.data.data[0].cityName);
+              setCityID(response.data.data[0].cityID === null ? "" : response.data.data[0].cityID);
+              tempCityID = response.data.data[0].cityID === null ? "" : response.data.data[0].cityID;
+              setPincode(response.data.data[0].pincode === null || response.data.data[0].pincode === 0 ? "" : response.data.data[0].pincode.toString());
+              setAccountNo(response.data.data[0].accountNumber === null || response.data.data[0].accountNumber === 0 ? "" : response.data.data[0].accountNumber.toString());
+              setBankName(response.data.data[0].bankName ? response.data.data[0].bankName : "");
+              setBankBranchName(response.data.data[0].branchName ? response.data.data[0].branchName : "");
+              setIfscCode(response.data.data[0].ifscCode ? response.data.data[0].ifscCode : "");
+              setCNPrefix(response.data.data[0].companyNamePrefix ? response.data.data[0].companyNamePrefix : "");
+              setECPrefix(response.data.data[0].employeeCodePrefix ? response.data.data[0].employeeCodePrefix : "");
+              setPOPrefix(response.data.data[0].purchaseOrderPrefix ? response.data.data[0].purchaseOrderPrefix : "");
+              setSOPrefix(response.data.data[0].salesOrderPrefix ? response.data.data[0].salesOrderPrefix : "");
+              setIsSwitchOn(response.data.data[0].showBrand ? (response.data.data[0].showBrand == "1" ? true : false) : false);
+              setLogoImage(response.data.data[0].companyLogo);
+              setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
+              setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
+            }
+            else {
+              setContactName(sess_name);
+              setContactNumber(sess_mobile);
+            }
+
           }
           FetchStates(response.data.data[0].stateID);
           setIsLoading(false);
@@ -241,9 +259,20 @@ const BasicDetailsScreen = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
-  useEffect(() => {
-    GetUserID();
-  }, []);
+  // useEffect(() => {
+  //   GetUserID();
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshScreen = () => {
+        // Refresh the screen here
+        GetUserID();
+      };
+      refreshScreen();
+      return () => { };
+    }, [navigationRef])
+  );
 
   const onCompanyNameChanged = (text) => {
     setCompanyName(text);
@@ -391,6 +420,11 @@ const BasicDetailsScreen = ({ route, navigation }) => {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
+          setTimeout(function () {
+            setIsButtonLoading(false);
+            navigation.goBack();
+          }, 500)
+
         } else {
           setSnackbarColor(theme.colors.error);
           setSnackbarText(communication.UpdateError);
@@ -407,7 +441,27 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
+
+    if (companyName.trim() == "") {
+      isValid = false;
+      setCompanyNameInvalid(true);
+    }
+
+    if (contactName.trim() == "") {
+      isValid = false;
+      setContactNameInvalid(true);
+    }
+
+    if (contactNumber.trim() == "") {
+      isValid = false;
+      setContactNumberInvalid(true);
+    }
+
+    if (location.trim() == "") {
+      isValid = false;
+      setLocationInvalid(true);
+    }
 
     if (isValid) {
       setIsButtonLoading(true);
@@ -425,15 +479,16 @@ const BasicDetailsScreen = ({ route, navigation }) => {
             <View style={[Styles.padding16]}>
               <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
-                {communication.InvalidActivityName}
+                {communication.InvalidCompanyName}
               </HelperText>
               <TextInput ref={contactNameRef} mode="outlined" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
               <HelperText type="error" visible={contactNameInvalid}>
-                {communication.InvalidActivityName}
+                {communication.InvalidContactPerson}
               </HelperText>
-              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
-              <HelperText type="error" visible={contactNumberInvalid}>
-                {communication.InvalidActivityName}
+
+              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" editable={false} disabled={true} label="Contact Number" value={contactNumber} style={{ backgroundColor: "white" }} />
+              <HelperText type="error" visible={contactNameInvalid}>
+                {communication.InvalidContactPerson}
               </HelperText>
               <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
               <HelperText type="error" visible={gstNumberInvalid}>
@@ -443,9 +498,9 @@ const BasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={addressRef} mode="outlined"dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
+              <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={location} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onLocationChanged} style={{ backgroundColor: "white" }} error={locationInvalid} />
               <HelperText type="error" visible={locationInvalid}>
-                {communication.InvalidActivityName}
+                Please enter a valid location name
               </HelperText>
               <TextInput ref={locationRef} mode="outlined" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => pincodenRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
               <HelperText type="error" visible={addressInvalid}>
@@ -459,7 +514,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={errorCN}>
                 {communication.InvalidStateName}
               </HelperText>
-              <TextInput ref={pincodenRef} mode="outlined"dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
               <HelperText type="error" visible={pincodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
@@ -564,7 +619,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
             {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               Update
             </Button> */}
-             <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
+            <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
           </Card.Content>
         </View>
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
