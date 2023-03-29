@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -17,6 +18,7 @@ import {
   Subheading,
   Text,
   TextInput,
+  IconButton,
 } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import Dropdown from "../../../components/Dropdown";
@@ -25,6 +27,7 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
 import { useIsFocused } from "@react-navigation/native";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
 let userID = 0,
   Sess_group_refno = 0,
@@ -65,8 +68,20 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
 
   const [widthFeet, setWidthFeet] = React.useState("1");
   const [widthInches, setWidthInches] = React.useState("0");
+  const [totalArea, setTotalArea] = React.useState("");
   const [totalSqFt, setTotalSqft] = React.useState("1.0000");
   const refRBSheet = useRef();
+
+  const layout = useWindowDimensions();
+
+  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: "#FFF89A" }}
+    style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]} activeColor={"#F5CB44"} inactiveColor={"#F4F4F4"} />;
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "length", title: "Length / Width" },
+    { key: "total", title: "Total Area" },
+  ]);
   //#endregion
   const isFocused = useIsFocused();
   //#region Functions
@@ -517,26 +532,99 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
   };
 
   const onLengthFeetSelected = (selectedItem) => {
+    ResetTotalArea();
     setLengthFeet(selectedItem);
     CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches);
   };
 
   const onLengthInchesSelected = (selectedItem) => {
+    ResetTotalArea();
     setLengthInches(selectedItem);
     CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches);
   };
 
   const onWidthFeetSelected = (selectedItem) => {
+    ResetTotalArea();
     setWidthFeet(selectedItem);
     CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches);
   };
 
   const onWidthInchesSelected = (selectedItem) => {
+    ResetTotalArea();
     setWidthInches(selectedItem);
     CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem);
   };
 
+  const onTotalAreaChanged = (text) => {
+    ResetLengthWidth();
+    setTotalArea(text);
+    setTotalSqft(parseFloat(text).toFixed(4));
+  };
+
+  const ResetLengthWidth = () => {
+    setWidthFeet("1");
+    setLengthFeet("1");
+    setLengthInches("0");
+    setWidthInches("0");
+  };
+
+  const ResetTotalArea = () => {
+    setTotalArea("");
+  };
+
   //#endregion
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case "length":
+        return (
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+            <View style={[Styles.flexAlignSelfStart]}>
+              <IconButton icon="gesture-swipe-left" color={theme.colors.textfield} size={22} />
+            </View>
+            <View style={Styles.paddingHorizontal16}>
+              <Subheading>Length</Subheading>
+
+              <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+                  <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
+                </View>
+                <View style={[Styles.paddingStart8, Styles.flex5]}>
+                  <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
+                </View>
+              </View>
+              <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+                  <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
+                </View>
+                <View style={[Styles.paddingStart8 , Styles.flex5]}>
+                  <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
+                </View>
+              </View>
+            </View>
+          </View>
+        );
+      case "total":
+        return (
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+            <View style={[Styles.flexAlignSelfEnd]}>
+              <IconButton icon="gesture-swipe-right" color={theme.colors.textfield} size={22} />
+            </View>
+            <View style={Styles.paddingHorizontal16}>
+              <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+                <TextInput mode="outlined" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea}
+                  returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
+              </View>
+            </View>
+          </View>
+        );
+
+      default:
+        return <View />;
+    }
+  };
 
   return (
     <View style={[Styles.flex1]}>
@@ -657,63 +745,8 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
               </View>
             </View>
           )}
-          <View style={[Styles.paddingHorizontal16, Styles.paddingBottom16]}>
-            <Subheading style={[Styles.marginTop16]}>Length</Subheading>
-            <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
-              <View
-                style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}
-              >
-                <Dropdown
-                  label="Feet"
-                  data={CreateNumberDropdown(1, 50)}
-                  onSelected={onLengthFeetSelected}
-                  selectedItem={lengthFeet}
-                />
-              </View>
-              <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-              <View
-                style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}
-              >
-                <Dropdown
-                  label="Inches"
-                  data={CreateNumberDropdown(0, 11)}
-                  onSelected={onLengthInchesSelected}
-                  selectedItem={lengthInches}
-                />
-              </View>
-              <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-            </View>
-            <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
-            <View
-              style={[
-                Styles.flexRow,
-                Styles.flexAlignCenter,
-                Styles.marginBottom32,
-              ]}
-            >
-              <View
-                style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}
-              >
-                <Dropdown
-                  label="Feet"
-                  data={CreateNumberDropdown(1, 50)}
-                  onSelected={onWidthFeetSelected}
-                  selectedItem={widthFeet}
-                />
-              </View>
-              <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-              <View
-                style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}
-              >
-                <Dropdown
-                  label="Inches"
-                  data={CreateNumberDropdown(0, 11)}
-                  onSelected={onWidthInchesSelected}
-                  selectedItem={widthInches}
-                />
-              </View>
-              <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-            </View>
+          <View style={[Styles.height400, Styles.marginTop16, Styles.paddingHorizontal16, Styles.paddingBottom16]}>
+          <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
             <TextInput
               mode="outlined"
               label="Total (Sq.Ft.)"

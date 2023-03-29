@@ -9,7 +9,7 @@ import { Styles } from '../styles/styles';
 import Dropdown from "../components/Dropdown";
 
 
-const SMTabView = () => {
+const SMTabView = (props) => {
 
     const [lengthFeet, setLengthFeet] = React.useState("1");
     const [lengthInches, setLengthInches] = React.useState("0");
@@ -32,31 +32,36 @@ const SMTabView = () => {
     const onLengthFeetSelected = (selectedItem) => {
         setLengthFeet(selectedItem);
         ResetTotalArea();
-        CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches, "lw");// on another page
+        //CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches, "lw");// on another page
+        props.onChange(selectedItem, lengthInches, widthFeet, widthInches, "lw");
     };
 
     const onLengthInchesSelected = (selectedItem) => {
         setLengthInches(selectedItem);
         ResetTotalArea();
-        CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches, "lw");// on another page
+        //CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches, "lw");// on another page
+        props.onChange(lengthFeet, selectedItem, widthFeet, widthInches, "lw");
     };
 
     const onWidthFeetSelected = (selectedItem) => {
         setWidthFeet(selectedItem);
         ResetTotalArea();
-        CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches, "lw");// on another page
+        //CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches, "lw");// on another page
+        props.onChange(lengthFeet, lengthInches, selectedItem, widthInches, "lw");// on another page
     };
 
     const onWidthInchesSelected = (selectedItem) => {
         setWidthInches(selectedItem);
         ResetTotalArea();
-        CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem, "lw");// on another page
+        //CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem, "lw");// on another page
+        props.onChange(lengthFeet, lengthInches, widthFeet, selectedItem, "lw");// on another page
     };
 
     const onTotalAreaChanged = (text) => {
         ResetLengthWidth();
         setTotalArea(text);
-        CalculateSqFt(0, 0, 0, 0, "ta", text, true);// on another page
+        //CalculateSqFt(0, 0, 0, 0, "ta", text, true);// on another page
+        props.onChange(0, 0, 0, 0, "ta", text, true);// on another page
     };
 
     const ResetLengthWidth = () => {

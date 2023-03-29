@@ -24,6 +24,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 import ImageViewer from "react-native-image-zoom-viewer";
 import DropDownPicker from 'react-native-dropdown-picker';
 import DFButton from "../../../components/Button";
+import SMTabView from "../../../components/SMTabView";
 
 const MaterialCalculatorScreen = ({ route, navigation }) => {
   const scrollRef = useRef();
@@ -58,15 +59,15 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
 
-  const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet.toString() : "1");
-  const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches.toString() : "0");
+  // const [lengthFeet, setLengthFeet] = React.useState(route.params.type === "edit" ? route.params.data.lengthFeet.toString() : "1");
+  // const [lengthInches, setLengthInches] = React.useState(route.params.type === "edit" ? route.params.data.lengthInches.toString() : "0");
 
-  const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
-  const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
+  // const [widthFeet, setWidthFeet] = React.useState(route.params.type === "edit" ? route.params.data.widthFeet.toString() : "1");
+  // const [widthInches, setWidthInches] = React.useState(route.params.type === "edit" ? route.params.data.widthInches.toString() : "0");
 
   const [totalSqFt, setTotalSqft] = React.useState(route.params.type === "edit" ? (((parseInt(route.params.data.lengthFeet.toString()) * 12 + parseInt(route.params.data.lengthInches.toString())) * (parseInt(route.params.data.widthFeet.toString()) * 12 + parseInt(route.params.data.widthInches.toString()))) / 144).toFixed(4) : "1.0000");
 
-  const [totalArea, setTotalArea] = React.useState("");
+  //const [totalArea, setTotalArea] = React.useState("");
 
   const [errorPL, setPLError] = React.useState(false);
 
@@ -110,11 +111,11 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
   //#region Functions
 
-  const onTotalAreaChanged = (text) => {
-    ResetLengthWidth();
-    setTotalArea(text);
-    CalculateSqFt(0, 0, 0, 0, "ta", text, true);
-  };
+  // const onTotalAreaChanged = (text) => {
+  //   ResetLengthWidth();
+  //   setTotalArea(text);
+  //   CalculateSqFt(0, 0, 0, 0, "ta", text, true);
+  // };
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -125,70 +126,70 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: "#FFF89A" }} style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]} activeColor={"#F5CB44"} inactiveColor={"#F4F4F4"} />;
+  //const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: "#FFF89A" }} style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]} activeColor={"#F5CB44"} inactiveColor={"#F4F4F4"} />;
 
-  const layout = useWindowDimensions();
+  //const layout = useWindowDimensions();
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: "length", title: "Length / Width" },
-    { key: "total", title: "Total Area" },
-  ]);
+  //const [index, setIndex] = React.useState(0);
+  // const [routes] = React.useState([
+  //   { key: "length", title: "Length / Width" },
+  //   { key: "total", title: "Total Area" },
+  // ]);
 
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case "length":
-        return (
-          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
-            <View style={[Styles.flexAlignSelfStart]}>
-              <IconButton icon="gesture-swipe-left" color={theme.colors.textfield} size={22} />
-            </View>
-            <View style={Styles.paddingHorizontal16}>
-              <Subheading>Length</Subheading>
+  // const renderScene = ({ route }) => {
+  //   switch (route.key) {
+  //     case "length":
+  //       return (
+  //         <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+  //           <View style={[Styles.flexAlignSelfStart]}>
+  //             <IconButton icon="gesture-swipe-left" color={theme.colors.textfield} size={22} />
+  //           </View>
+  //           <View style={Styles.paddingHorizontal16}>
+  //             <Subheading>Length</Subheading>
 
-              <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
-                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-                  <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
-                </View>
-                <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-                <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-                  <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
-                </View>
-                <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-              </View>
-              <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
-              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
-                  <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
-                </View>
-                <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
-                <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
-                  <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
-                </View>
-                <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
-              </View>
-            </View>
-          </View>
-        );
-      case "total":
-        return (
-          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
-            <View style={[Styles.flexAlignSelfEnd]}>
-              <IconButton icon="gesture-swipe-right" color={theme.colors.textfield} size={22} />
-            </View>
-            <View style={Styles.paddingHorizontal16}>
-              <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
-              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
-                <TextInput mode="outlined" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
-              </View>
-            </View>
-          </View>
-        );
+  //             <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+  //               <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+  //                 <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onLengthFeetSelected} selectedItem={lengthFeet} />
+  //               </View>
+  //               <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+  //               <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+  //                 <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onLengthInchesSelected} selectedItem={lengthInches} />
+  //               </View>
+  //               <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
+  //             </View>
+  //             <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
+  //             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+  //               <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+  //                 <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
+  //               </View>
+  //               <Text style={[Styles.flex1, Styles.paddingStart4]}>ft</Text>
+  //               <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+  //                 <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
+  //               </View>
+  //               <Text style={[Styles.flex1_5, Styles.paddingStart4]}>inch</Text>
+  //             </View>
+  //           </View>
+  //         </View>
+  //       );
+  //     case "total":
+  //       return (
+  //         <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+  //           <View style={[Styles.flexAlignSelfEnd]}>
+  //             <IconButton icon="gesture-swipe-right" color={theme.colors.textfield} size={22} />
+  //           </View>
+  //           <View style={Styles.paddingHorizontal16}>
+  //             <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
+  //             <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+  //               <TextInput mode="outlined" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10} value={totalArea} returnKeyType="done" dense onChangeText={onTotalAreaChanged} style={[Styles.width50per, { backgroundColor: "white" }]} />
+  //             </View>
+  //           </View>
+  //         </View>
+  //       );
 
-      default:
-        return <View />;
-    }
-  };
+  //     default:
+  //       return <View />;
+  //   }
+  // };
 
   useEffect(() => {
     GetUserID();
@@ -642,29 +643,29 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     FetchDesignImage(id);
   };
 
-  const onLengthFeetSelected = (selectedItem) => {
-    setLengthFeet(selectedItem);
-    ResetTotalArea();
-    CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches, "lw");
-  };
+  // const onLengthFeetSelected = (selectedItem) => {
+  //   setLengthFeet(selectedItem);
+  //   ResetTotalArea();
+  //   CalculateSqFt(selectedItem, lengthInches, widthFeet, widthInches, "lw");
+  // };
 
-  const onLengthInchesSelected = (selectedItem) => {
-    setLengthInches(selectedItem);
-    ResetTotalArea();
-    CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches, "lw");
-  };
+  // const onLengthInchesSelected = (selectedItem) => {
+  //   setLengthInches(selectedItem);
+  //   ResetTotalArea();
+  //   CalculateSqFt(lengthFeet, selectedItem, widthFeet, widthInches, "lw");
+  // };
 
-  const onWidthFeetSelected = (selectedItem) => {
-    setWidthFeet(selectedItem);
-    ResetTotalArea();
-    CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches, "lw");
-  };
+  // const onWidthFeetSelected = (selectedItem) => {
+  //   setWidthFeet(selectedItem);
+  //   ResetTotalArea();
+  //   CalculateSqFt(lengthFeet, lengthInches, selectedItem, widthInches, "lw");
+  // };
 
-  const onWidthInchesSelected = (selectedItem) => {
-    setWidthInches(selectedItem);
-    ResetTotalArea();
-    CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem, "lw");
-  };
+  // const onWidthInchesSelected = (selectedItem) => {
+  //   setWidthInches(selectedItem);
+  //   ResetTotalArea();
+  //   CalculateSqFt(lengthFeet, lengthInches, widthFeet, selectedItem, "lw");
+  // };
 
   const onBrandNameSelected = (selectedItem, index) => {
     const selecedBrand = uniqueBrandsData[parseInt(index)];
@@ -840,16 +841,16 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     setTotalArea(text);
   };
 
-  const ResetTotalArea = () => {
-    setTotalArea("");
-  };
+  // const ResetTotalArea = () => {
+  //   setTotalArea("");
+  // };
 
-  const ResetLengthWidth = () => {
-    setWidthFeet("1");
-    setLengthFeet("1");
-    setLengthInches("0");
-    setWidthInches("0");
-  };
+  // const ResetLengthWidth = () => {
+  //   setWidthFeet("1");
+  //   setLengthFeet("1");
+  //   setLengthInches("0");
+  //   setWidthInches("0");
+  // };
 
   const FirstCalculationSqFt = (totArea, productData) => {
     if (productData.length > 0) {
@@ -914,6 +915,10 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
     } else {
       setTotalSqft(0);
     }
+  };
+
+  const handleDropdownChange = (lf, li, wf, wi, type, ta, txtChange) => {
+    CalculateSqFt(lf, li, wf, wi, type, ta, txtChange);
   };
 
   const autoScroll = () => {
@@ -1007,7 +1012,9 @@ const MaterialCalculatorScreen = ({ route, navigation }) => {
 
             /> */}
 
-            <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
+            <SMTabView onChange={handleDropdownChange} ></SMTabView>
+
+            {/* <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} /> */}
           </View>
           <TextInput mode="outlined" label="Total (Sq.Ft.)" style={[Styles.marginBottom16]} onChangeText={onTotalSqFtChange} value={totalSqFt} editable={false} />
           <DFButton mode="contained" onPress={GetMaterialDetails} title="View Materials" loader={isButtonLoading} />

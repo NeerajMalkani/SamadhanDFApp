@@ -1,5 +1,5 @@
-import { View, Text, ScrollView } from "react-native";
-import { Button, TextInput, HelperText, Snackbar } from "react-native-paper";
+import { View, Text, ScrollView, useWindowDimensions } from "react-native";
+import { Button, TextInput, HelperText, Snackbar, IconButton, Subheading } from "react-native-paper";
 import React, { useState, useEffect, useRef } from "react";
 import { Styles } from "../../styles/styles";
 import Dropdown from "../../components/Dropdown";
@@ -8,6 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme } from "../../theme/apptheme";
 import { PaperSelect } from "react-native-paper-select";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 let userID = null;
 
 const Form = ({ route, navigation }) => {
@@ -19,15 +20,17 @@ const Form = ({ route, navigation }) => {
     lengthinches: "",
     widthheightfoot: "",
     widthheightinches: "",
-
     contact_name: "",
     contact_mobile_no: "",
     property_address: "",
     state_refno: "",
     district_refno: "",
     pincode: "",
+    totalarea: "",
   });
+
   const [total, setTotal] = useState("");
+  const [invalidTotal, setInvalidTotal] = useState(false);
   const [states, setStates] = useState([]);
   const [district, setDistrict] = useState([]);
   const refs = {
@@ -39,6 +42,7 @@ const Form = ({ route, navigation }) => {
     widthinches: useRef(),
     contact_name: useRef(),
     contact_no: useRef(),
+    totalarea: useRef(),
   };
   const [errors, setErrors] = useState({
     service_refno: false,
@@ -53,7 +57,19 @@ const Form = ({ route, navigation }) => {
     state_refno: false,
     district_refno: false,
     pincode: false,
+    totalarea: false,
   });
+
+  const layout = useWindowDimensions();
+
+  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: "#FFF89A" }}
+    style={[Styles.borderTopRadius4, { backgroundColor: theme.colors.primary }]} activeColor={"#F5CB44"} inactiveColor={"#F4F4F4"} />;
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: "length", title: "Length / Width" },
+    { key: "total", title: "Total Area" },
+  ]);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarText, setSnackbarText] = useState("");
@@ -125,22 +141,16 @@ const Form = ({ route, navigation }) => {
       errors = true;
       setErrors((state) => ({ ...state, property_address: true }));
     }
-    if (state.lengthfoot === "") {
-      errors = true;
-      setErrors((state) => ({ ...state, lengthfoot: true }));
-    }
-    // if (state.lengthinches === "") {
+    // if (state.lengthfoot === "") {
     //   errors = true;
-    //   setErrors((state) => ({ ...state, lengthinches: true }));
+    //   setErrors((state) => ({ ...state, lengthfoot: true }));
     // }
-    if (state.widthheightfoot === "") {
+
+    if (total === "") {
       errors = true;
-      setErrors((state) => ({ ...state, widthheightfoot: true }));
+      setInvalidTotal(true);
     }
-    // if (state.widthheightinches === "") {
-    //   errors = true;
-    //   setErrors((state) => ({ ...state, widthheightinches: true }));
-    // }
+
     if (state.contact_name === "") {
       errors = true;
       setErrors((state) => ({ ...state, contact_name: true }));
@@ -232,9 +242,7 @@ const Form = ({ route, navigation }) => {
   useEffect(() => {
     if (
       state.lengthfoot !== "" &&
-      // state.lengthinches !== "" &&
       state.widthheightfoot !== "" &&
-      // state.widthheightinches !== "" &&
       changed
     ) {
       Provider.createDFCommon(Provider.API_URLS.getsqftcalculation, {
@@ -301,7 +309,7 @@ const Form = ({ route, navigation }) => {
       });
     }
     setLengthFeet(lengthFT);
-   
+
     Provider.createDFAdmin(Provider.API_URLS.getlengthinches)
       .then((res) => {
         setLengthInches(res.data.data);
@@ -325,6 +333,106 @@ const Form = ({ route, navigation }) => {
       .catch((error) => console.log(error));
   };
 
+  const CreateNumberDropdown = (startCount, endCount) => {
+    let arrNumbers = [];
+    for (var i = startCount; i <= endCount; i++) {
+      arrNumbers.push(i.toString());
+    }
+    return arrNumbers;
+  };
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case "length":
+        return (
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+            <View style={[Styles.flexAlignSelfStart]}>
+              <IconButton icon="gesture-swipe-left" color={theme.colors.textfield} size={22} />
+            </View>
+            <View style={Styles.paddingHorizontal16}>
+              <Subheading>Length</Subheading>
+
+              <View style={[Styles.flexRow, Styles.flexAlignCenter]}>
+                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+
+                  <Dropdown label="Feet" reference={refs.lengthfeet} isError={errors.lengthfoot} data={lengthFeet.map((item) => item.lengthfoot)}
+                    onSelected={(e) => {
+                      setChanged(true);
+                      onChange(e, "lengthfoot");
+                      onChange("", "totalarea");
+                    }}
+                    selectedItem={state.lengthfoot} />
+                </View>
+                <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+                  <Dropdown label="Inches" reference={refs.lengthinches} isError={errors.lengthinches}
+                    data={lengthInches.map((item) => item.lengthinches)}
+                    onSelected={(e) => {
+                      setChanged(true);
+                      onChange(e, "lengthinches");
+                      onChange("", "totalarea");
+                    }}
+                    selectedItem={state.lengthinches} />
+                </View>
+              </View>
+              <Subheading style={[Styles.marginTop32]}>Width / Height</Subheading>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+                <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
+
+                  <Dropdown label="Feet" reference={refs.widhtfeet} isError={errors.widthheightfoot}
+                    data={widthFeet.map((item) => item.widthheightfoot)}
+                    onSelected={(e) => {
+                      setChanged(true);
+                      onChange(e, "widthheightfoot");
+                      onChange("", "totalarea");
+                    }} selectedItem={state.widthheightfoot} />
+                </View>
+                <View style={[Styles.paddingStart8, Styles.paddingEnd0, Styles.flex5]}>
+
+                  <Dropdown label="Inches" reference={refs.widthinches} isError={errors.widthheightinches}
+                    data={widthInches.map((item) => item.widthheightinches)}
+                    onSelected={(e) => {
+                      setChanged(true);
+                      onChange(e, "widthheightinches");
+                      onChange("", "totalarea");
+                    }}
+                    selectedItem={state.widthheightinches} />
+                </View>
+              </View>
+            </View>
+          </View>
+        );
+      case "total":
+        return (
+          <View style={[Styles.height250, Styles.border1, Styles.borderBottomRadius4]}>
+            <View style={[Styles.flexAlignSelfEnd]}>
+              <IconButton icon="gesture-swipe-right" color={theme.colors.textfield} size={22} />
+            </View>
+            <View style={Styles.paddingHorizontal16}>
+              <Subheading style={[Styles.marginTop16]}>Add Total Area (Sq.Ft)</Subheading>
+              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom32]}>
+                <TextInput mode="outlined" keyboardType="number-pad" label="Total Sq.Ft" maxLength={10}
+                  value={state.totalarea}
+                  returnKeyType="done" dense
+                  onChangeText={(e) => {
+                    setChanged(true);
+                    setState((state) => ({ ...state, ["lengthfoot"]: "" }));
+                    setState((state) => ({ ...state, ["lengthinches"]: "" }));
+                    setState((state) => ({ ...state, ["widthheightfoot"]: "" }));
+                    setState((state) => ({ ...state, ["widthheightinches"]: "" }));
+                    onChange(e, "totalarea");
+                    setTotal(e);
+                  }}
+                  style={[Styles.width50per, { backgroundColor: "white" }]} />
+              </View>
+            </View>
+          </View>
+        );
+
+      default:
+        return <View />;
+    }
+  };
+
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
       <ScrollView style={[Styles.flex1]} keyboardShouldPersistTaps="handled">
@@ -344,7 +452,7 @@ const Form = ({ route, navigation }) => {
             disabled={true}
             value={route.params.workgiven.group_name}
             returnKeyType="next"
-            style={{ backgroundColor: "white" }}
+            style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           />
           {/* <MultiSelect /> */}
           {route.params.workgiven.group_refno !== 9 && (
@@ -371,6 +479,7 @@ const Form = ({ route, navigation }) => {
             />
           )}
 
+          <View style={[Styles.marginTop16]}>
           <Dropdown
             data={categories?.map((item) => {
               return item.propertycategory_name;
@@ -385,8 +494,10 @@ const Form = ({ route, navigation }) => {
           <HelperText type="error" visible={errors.propertycategory_refno}>
             Please Select a property category
           </HelperText>
+          </View>
+          
 
-          <View style={[Styles.width100per, Styles.flexRow]}>
+          {/* <View style={[Styles.width100per, Styles.flexRow]}>
             <View style={[Styles.width50per]}>
               <Dropdown
                 label="Length (in feet)"
@@ -454,26 +565,33 @@ const Form = ({ route, navigation }) => {
                 Please Select a width
               </HelperText>
             </View>
+          </View> */}
+          <View style={[Styles.height325]}>
+            <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
           </View>
+
           <TextInput
             mode="outlined"
             label="Total (Sq.ft)"
             disabled={true}
             returnKeyType="next"
-            isError={errors.contact_name}
+            isError={invalidTotal}
             value={total}
             ref={refs.totalfoot}
             helper
             onSubmitEditing={() => refs.contact_name.current.focus()}
             style={{ backgroundColor: "white" }}
           />
+          <HelperText type="error" visible={invalidTotal}>
+            Please select valid length/width OR enter area
+          </HelperText>
 
           <TextInput
             mode="outlined"
             label="Contact Name"
             returnKeyType="next"
             isError={errors.contact_mobile_no}
-            style={{ backgroundColor: "white" }}
+            style={[{ backgroundColor: "white" }]}
             ref={refs.contact_name}
             value={state.contact_name}
             error={errors.contact_name}
