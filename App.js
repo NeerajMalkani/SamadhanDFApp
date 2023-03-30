@@ -1414,7 +1414,7 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
+                  ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 2
                   ? UserProfile
                   : parseInt(userDetails[0].RoleID) === 5

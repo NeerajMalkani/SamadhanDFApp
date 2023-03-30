@@ -628,6 +628,12 @@ class Provider {
     clientcreate: "clientcreate/",
     contractor_get_clientname_quotationform:
       "contractor_get_clientname_quotationform/",
+    getservicename_dealerproductlist: "getservicename_dealerproductlist/",
+    filterservicerefno_dealerproductlist: "filterservicerefno_dealerproductlist/",
+    getcategoryname_dealerproductlist: "getcategoryname_dealerproductlist/",
+    getbrandname_dealerproductlist: "getbrandname_dealerproductlist/",
+    filtercategoryrefno_dealerproductlist: "filtercategoryrefno_dealerproductlist/",
+    filterbrandrefno_dealerproductlist: "filterbrandrefno_dealerproductlist/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -661,13 +667,13 @@ class Provider {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;

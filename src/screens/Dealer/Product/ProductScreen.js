@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
+import { FAB, List, Searchbar, Snackbar, Title, IconButton, Subheading } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -12,10 +12,14 @@ import { theme } from "../../../theme/apptheme";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { APIConverter } from "../../../utils/apiconverter";
+import Dropdown from "../../../components/Dropdown";
+import DFButton from "../../../components/Button";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let dealerID = 0,
-  ifBrandCreate = 0;
+  ifBrandCreate = 0,
+  Sess_CompanyAdmin_UserRefno = 0,
+  group_refno = 0;
 
 const DealerProductScreen = ({ navigation }) => {
   //#region Variables
@@ -42,6 +46,26 @@ const DealerProductScreen = ({ navigation }) => {
   const [approveStatus, setApproveStatus] = React.useState("");
 
   const refRBSheet = useRef();
+  const refRBSFilter = useRef();
+
+  const [filterServicesFullData, setFilterServicesFullData] = React.useState([]);
+  const [filterServicesData, setFilterServicesData] = React.useState([]);
+  const [filterServiceName, setFilterServiceName] = React.useState("");
+  const servicesDDRef = useRef({});
+
+  const [filterCategoriesFullData, setFilterCategoriesFullData] = React.useState([]);
+  const [filterCategoriesData, setFilterCategoriesData] = React.useState([]);
+  const [filterCategoriesName, setFilterCategoriesName] = React.useState("");
+  const categoriesDDRef = useRef({});
+
+  const [filterBrandFullData, setFilterBrandFullData] = React.useState([]);
+  const [filterBrandData, setFilterBrandData] = React.useState([]);
+  const [filterBrandName, setFilterBrandName] = React.useState("");
+  const brandDDRef = useRef({});
+
+  const [isFilterLoading, setIsFilterLoading] = React.useState(false);
+  const [isButtonClearFilterLoading, setIsButtonClearFilterLoading] = React.useState(false);
+  const [pageFilterEnable, setPageFilterEnable] = React.useState(true);
 
   //#endregion
 
@@ -86,12 +110,15 @@ const DealerProductScreen = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
+      group_refno = JSON.parse(userData).Sess_group_refno;
       ifBrandCreate = JSON.parse(userData).Sess_if_create_brand;
+      Sess_CompanyAdmin_UserRefno = JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       FetchData();
     }
   };
 
   const FetchData = (from) => {
+    setIsButtonClearFilterLoading(true);
     if (from === "add" || from === "update") {
       setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
       setSnackbarColor(theme.colors.success);
@@ -107,6 +134,70 @@ const DealerProductScreen = ({ navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.dealercompanyproductrefnocheck, params)
       .then((response) => {
+        setIsButtonClearFilterLoading(false);
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            const lisData = [...response.data.data];
+            lisData.map((k, i) => {
+              k.key = (parseInt(i) + 1).toString();
+            });
+            listData[1](response.data.data);
+            listSearchData[1](response.data.data);
+          }
+        } else {
+          listData[1]([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
+        }
+        setIsLoading(false);
+        setRefreshing(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
+
+  const FilterData = (filter, id) => {
+    setIsFilterLoading(true);
+    let api_path = "";
+    let params = null;
+    if (filter == "service") {
+      api_path = Provider.API_URLS.filterservicerefno_dealerproductlist;
+      params = {
+        data: {
+          Sess_UserRefno: dealerID,
+          filter_service_refno: id
+        },
+      };
+    }
+    else if (filter == "category") {
+      api_path = Provider.API_URLS.filtercategoryrefno_dealerproductlist;
+      params = {
+        data: {
+          Sess_UserRefno: dealerID,
+          filter_category_refno: id
+        },
+      };
+    }
+    else if (filter == "brand") {
+      api_path = Provider.API_URLS.filterbrandrefno_dealerproductlist;
+      params = {
+        data: {
+          Sess_UserRefno: dealerID,
+          filter_brand_refno: id
+        },
+      };
+    }
+
+    Provider.createDFCommon(api_path, params)
+      .then((response) => {
+        setIsFilterLoading(false);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -206,6 +297,106 @@ const DealerProductScreen = ({ navigation }) => {
       },
     });
   };
+
+  const FetchServicesFromActivity = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: dealerID,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.getservicename_dealerproductlist, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setFilterServicesFullData(response.data.data);
+            const services = response.data.data.map((data) => data.service_name);
+            setFilterServicesData(services);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchCategoriesFromServices = (serviceID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        Sess_group_refno: group_refno.toString(),
+        filter_service_refno: serviceID.toString()
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.getcategoryname_dealerproductlist, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setFilterCategoriesFullData(response.data.data);
+            const categories = response.data.data.map((data) => data.category_name);
+            setFilterCategoriesData(categories);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchBrandFromCategory = (categoryID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: dealerID,
+        Sess_if_create_brand: ifBrandCreate.toString(),
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno.toString(),
+        filter_category_refno: categoryID
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.getbrandname_dealerproductlist, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setFilterBrandFullData(response.data.data);
+            const brand = response.data.data.map((data) => data.brandname);
+            setFilterBrandData(brand);
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const onServiceNameSelected = (selectedItem) => {
+    let serviceID = filterServicesFullData.find((el) => {
+      return el.service_name === selectedItem;
+    }).service_refno;
+    setFilterServiceName(selectedItem);
+    categoriesDDRef.current.reset();
+    setFilterCategoriesData([]);
+    setFilterCategoriesName("");
+    setFilterBrandData([]);
+    setFilterBrandName("");
+    FetchCategoriesFromServices(serviceID);
+    FilterData("service", serviceID);
+  };
+
+  const onCategoriesNameSelected = (selectedItem) => {
+    let categoryID = filterCategoriesFullData.find((el) => {
+      return el.category_name === selectedItem;
+    }).category_refno;
+    setFilterCategoriesName(selectedItem);
+    brandDDRef.current.reset();
+    setFilterBrandData([]);
+    setFilterBrandName("");
+    FetchBrandFromCategory(categoryID);
+    FilterData("category", categoryID);
+  };
+
+  const onBrandNameSelected = (selectedItem) => {
+    let brandID = filterBrandFullData.find((el) => {
+      return el.brandname === selectedItem;
+    }).brandID;
+    setFilterBrandName(selectedItem);
+    FilterData("brand", brandID);
+  };
+
   //#endregion
 
   return (
@@ -217,7 +408,22 @@ const DealerProductScreen = ({ navigation }) => {
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+            <Searchbar editable={pageFilterEnable}
+              style={[Styles.margin16, Styles.flex1, pageFilterEnable ? Styles.backgroundColorFullWhite : Styles.backgroundColorGrey]}
+              placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
+            <IconButton icon="filter-check" onPress={() => {
+              setFilterServicesData([]);
+              setFilterServiceName("");
+              setFilterCategoriesData([]);
+              setFilterCategoriesName("");
+              setFilterBrandData([]);
+              setFilterBrandName("");
+              FetchServicesFromActivity();
+              refRBSFilter.current.open();
+            }} color={theme.colors.accent} size={32} />
+          </View>
+
           <SwipeListView
             previewDuration={1000}
             previewOpenValue={-72}
@@ -261,6 +467,37 @@ const DealerProductScreen = ({ navigation }) => {
             <List.Item title="Approve Status" description={approveStatus} />
             <List.Item title="Price" description={price} />
             <List.Item title="Description" description={description} />
+          </ScrollView>
+        </View>
+      </RBSheet>
+      <RBSheet ref={refRBSFilter} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={380} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+        <View style={[Styles.paddingHorizontal16, { paddingBottom: 64 }]}>
+          <ScrollView>
+            <Subheading style={[Styles.textSecondaryColor, Styles.fontSize12]}>Note: Change the values to filter products.</Subheading>
+            <View style={[Styles.marginTop8]}>
+              <Dropdown label="Service Name" data={filterServicesData} onSelected={onServiceNameSelected}
+                selectedItem={filterServiceName} reference={servicesDDRef} />
+            </View>
+            <View style={[Styles.marginTop16]}>
+              <Dropdown label="Category Name" data={filterCategoriesData} onSelected={onCategoriesNameSelected}
+                selectedItem={filterCategoriesName} reference={categoriesDDRef} />
+            </View>
+            <View style={[Styles.marginTop16]}>
+              <Dropdown label="Brand Name" data={filterBrandData} onSelected={onBrandNameSelected}
+                selectedItem={filterBrandName} reference={brandDDRef} />
+            </View>
+            <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
+              <DFButton mode="contained"
+                onPress={() => {
+                  FetchData();
+                }}
+                title="Clear Filter" loader={isButtonClearFilterLoading} />
+
+              {isFilterLoading &&
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+              }
+
+            </View>
           </ScrollView>
         </View>
       </RBSheet>
