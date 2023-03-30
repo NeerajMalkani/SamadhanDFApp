@@ -63,7 +63,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const [filePath, setFilePath] = React.useState(null);
   const [status, setStatus] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState(() => { });
+  const [text, setText] = React.useState(() => {});
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const listData = React.useState([]);
@@ -126,19 +126,20 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
         "attach_approved_proof",
         status == true
           ? {
-            name: designImage?.split(AWSImagePath)[1],
-            type: filePath?.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath?.uri
-                : filePath?.uri.replace("file://", ""),
-          }
+              name: designImage?.split(AWSImagePath)[1],
+              type: filePath?.type + "/*",
+              uri:
+                Platform.OS === "android"
+                  ? filePath?.uri
+                  : filePath?.uri.replace("file://", ""),
+            }
           : ""
       );
       const resp = await axios.post(
-        `${BASE_URL_Contractor}/${text == "Reject"
-          ? "contractor_scdesign_estimation_reject"
-          : "contractor_scdesign_estimation_selfapprove"
+        `${BASE_URL_Contractor}/${
+          text == "Reject"
+            ? "contractor_scdesign_estimation_reject"
+            : "contractor_scdesign_estimation_selfapprove"
         }/`,
         datas,
         {
@@ -251,7 +252,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
           fetch(2, "Sent Quotation to Client");
         } else {
           unload("Error while Sending Client");
-
         }
       })
       .catch((error) => {
@@ -292,7 +292,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
           Styles.paddingHorizontal16,
           Styles.flexJustifyCenter,
           {
-            height: 230,
+            height: 250,
             borderWidth: 1.3,
             marginBottom: 10,
             borderRadius: 8,
@@ -306,7 +306,73 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
             style={{ width: 50, height: 50 }}
           />
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Client Details :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Estimation No :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.cont_estimation_no}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Product :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.product_name}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Design No :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.design_no}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Total Sq.Ft. :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.totalfoot}
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Client Details :
@@ -341,7 +407,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
               {data.item.totalfoot}
             </Text>
           </View>
-        </View>
+        </View> */}
         <View
           style={{
             justifyContent: "space-between",
@@ -570,42 +636,45 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
                     {current.action_status_name?.includes(
                       "Cancel Quotation"
                     ) && (
-                        <Button
-                          onPress={() => {
-                            setText(`cancelQuotation`);
-                            showDialog();
-                          }}
-                          mode="outlined"
-                          style={[Styles.marginTop16, {
+                      <Button
+                        onPress={() => {
+                          setText(`cancelQuotation`);
+                          showDialog();
+                        }}
+                        mode="outlined"
+                        style={[
+                          Styles.marginTop16,
+                          {
                             borderColor: "red",
                             borderWidth: 1.2,
                             color: "red",
-                          }]}
-                        >
-                          <Text style={{ color: "red" }}>Cancel Quotation</Text>
-                        </Button>
-                      )}
+                          },
+                        ]}
+                      >
+                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                      </Button>
+                    )}
                     {current.action_status_name?.includes(
                       "Self & Final Approve"
                     ) && (
-                        <Button
-                          mode="outlined"
-                          style={{
-                            borderColor: "green",
-                            borderWidth: 1.2,
-                            color: "green",
-                          }}
-                          onPress={() => {
-                            refRBSheet.current.close();
-                            setText("Self & Final Approve");
-                            setPopupVisible(true);
-                          }}
-                        >
-                          <Text style={{ color: "green" }}>
-                            Self & Final Approve
-                          </Text>
-                        </Button>
-                      )}
+                      <Button
+                        mode="outlined"
+                        style={{
+                          borderColor: "green",
+                          borderWidth: 1.2,
+                          color: "green",
+                        }}
+                        onPress={() => {
+                          refRBSheet.current.close();
+                          setText("Self & Final Approve");
+                          setPopupVisible(true);
+                        }}
+                      >
+                        <Text style={{ color: "green" }}>
+                          Self & Final Approve
+                        </Text>
+                      </Button>
+                    )}
                   </>
                 )}
               </Card.Content>

@@ -65,21 +65,14 @@ const QuotationAddEditTab = ({
 }) => {
   //#region Variable
   const [isLoading, setIsLoading] = React.useState(true);
-
-  const projectNameRef = useRef({});
-
+  const [temp, setTemp] = React.useState({ fn: () => {}, unit: "" });
+  const [unitdialogue, setUnitDialogue] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(
     theme.colors.success
   );
-
-  const contactPersonRef = useRef({});
-
-  const stateRef = useRef({});
-
-  const cityRef = useRef({});
-
+  const dropdownRef = useRef({});
   // const [checked, setChecked] = React.useState(route.params.type === "edit" ? route.params.data.display : true);
   const [visible, setVisible] = React.useState(false);
   const [visible2, setVisible2] = React.useState(false);
@@ -188,7 +181,7 @@ const QuotationAddEditTab = ({
               ...prev,
               client_name:
                 data.clients[0].client_data[
-                response.data.data[0].client_user_refno
+                  response.data.data[0].client_user_refno
                 ],
               project_name: response.data.data[0].project_name,
               contact_person: response.data.data[0].contact_person,
@@ -317,8 +310,8 @@ const QuotationAddEditTab = ({
       });
       isValid = false;
     }
-    if (true || isValid) {
-      // setIsButtonLoading(true);
+    if (isValid) {
+      setIsButtonLoading(true);
       setVisible(false);
       let params = {
         data: {
@@ -587,7 +580,7 @@ const QuotationAddEditTab = ({
     data.product_details.map((item) => {
       temp = parseFloat(temp) + parseFloat(item.qty) * parseFloat(item.rate);
     });
-    setTotal(String(temp));
+    setTotal(String(temp.toFixed(2)));
   }, [data.product_details]);
 
   const AddQuotation = () => {
@@ -625,7 +618,7 @@ const QuotationAddEditTab = ({
       params.data.qty[idx] = item.qty;
       params.data.rate[idx] = item.rate;
       params.data.amount[idx] = String(
-        parseFloat(item.qty) * parseFloat(item.rate)
+        (parseFloat(item.qty) * parseFloat(item.rate)).toFixed(2)
       );
       params.data.remarks[idx] = item.remarks;
     });
@@ -689,7 +682,7 @@ const QuotationAddEditTab = ({
       params.data.qty[idx] = item.qty;
       params.data.rate[idx] = item.rate;
       params.data.amount[idx] = String(
-        parseFloat(item.qty) * parseFloat(item.rate)
+        (parseFloat(item.qty) * parseFloat(item.rate)).toFixed(2)
       );
       params.data.remarks[idx] = item.remarks;
     });
@@ -825,8 +818,8 @@ const QuotationAddEditTab = ({
                       dropdowndata?.clients?.length < 1
                         ? []
                         : dropdowndata?.clients[0]?.client_data == null
-                          ? []
-                          : Object.values(dropdowndata?.clients[0]?.client_data)
+                        ? []
+                        : Object.values(dropdowndata?.clients[0]?.client_data)
                     }
                     onSelected={(selectedItem, idx) => {
                       if (selectedItem !== data.client_name) {
@@ -844,7 +837,7 @@ const QuotationAddEditTab = ({
                         });
                         fetchClientData(
                           Object.keys(dropdowndata?.clients[0]?.client_data)[
-                          idx
+                            idx
                           ]
                         );
                       }
@@ -1076,7 +1069,9 @@ const QuotationAddEditTab = ({
                       data={
                         dropdowndata?.cities2?.length < 1
                           ? []
-                          : dropdowndata.cities2.map((item) => item.district_name)
+                          : dropdowndata.cities2.map(
+                              (item) => item.district_name
+                            )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1099,7 +1094,6 @@ const QuotationAddEditTab = ({
                       }
                     />
                   </View>
-
                 </View>
               </View>
             </View>
@@ -1138,34 +1132,67 @@ const QuotationAddEditTab = ({
                     )}
                     onSelected={(selectedItem, idx) => {
                       if (selectedItem !== data.unit) {
-                        setErrors((prev) => {
-                          return {
-                            ...prev,
-                            unit: false,
-                          };
-                        });
-                        setData((prev) => {
-                          return {
-                            ...prev,
-                            quot_unit_type_refno:
-                              dropdowndata.units[idx].quot_unit_type_refno,
-                            unit: dropdowndata.units[idx].quot_unit_type_name,
-                          };
-                        });
-                        setProductList({
-                          list: [],
-                          service_refno: "",
-                          category_refno: "",
-                        });
                         if (data.product_details.length > 0) {
-                          fetchProductDetails(
-                            dropdowndata.units[idx].quot_unit_type_refno
-                          );
+                          setTemp((prev) => {
+                            return {
+                              ...prev,
+                              fn: () => {
+                                console.log("her2");
+                                setErrors((prev) => {
+                                  return {
+                                    ...prev,
+                                    unit: false,
+                                  };
+                                });
+                                setData((prev) => {
+                                  return {
+                                    ...prev,
+                                    quot_unit_type_refno:
+                                      dropdowndata.units[idx]
+                                        .quot_unit_type_refno,
+                                    unit: dropdowndata.units[idx]
+                                      .quot_unit_type_name,
+                                  };
+                                });
+                                setProductList({
+                                  list: [],
+                                  service_refno: "",
+                                  category_refno: "",
+                                });
+                                fetchProductDetails(
+                                  dropdowndata.units[idx].quot_unit_type_refno
+                                );
+                              },
+                              unit: data.unit,
+                            };
+                          });
+                          setUnitDialogue(true);
+                        } else {
+                          setErrors((prev) => {
+                            return {
+                              ...prev,
+                              unit: false,
+                            };
+                          });
+                          setData((prev) => {
+                            return {
+                              ...prev,
+                              quot_unit_type_refno:
+                                dropdowndata.units[idx].quot_unit_type_refno,
+                              unit: dropdowndata.units[idx].quot_unit_type_name,
+                            };
+                          });
+                          setProductList({
+                            list: [],
+                            service_refno: "",
+                            category_refno: "",
+                          });
                         }
                       }
                     }}
                     isError={errors.unit}
                     selectedItem={data.unit}
+                    reference={dropdownRef}
                   />
                   <HelperText type="error" visible={errors.unit}>
                     {communication.InvalidSalesUnit}
@@ -1326,8 +1353,10 @@ const QuotationAddEditTab = ({
                                     mode="outlined"
                                     dense
                                     value={String(
-                                      parseFloat(item.qty) *
-                                      parseFloat(item.rate)
+                                      (
+                                        parseFloat(item.qty) *
+                                        parseFloat(item.rate)
+                                      ).toFixed(2)
                                     )}
                                   />
                                 </View>,
@@ -1399,7 +1428,7 @@ const QuotationAddEditTab = ({
                 </ScrollView>
               </View>
             </View>
-            <View style={[Styles.padding16]}>
+            {/* <View style={[Styles.padding16]}>
               <View
                 style={[
                   Styles.width100per,
@@ -1436,7 +1465,7 @@ const QuotationAddEditTab = ({
                 value={data.terms}
                 style={{ backgroundColor: "white" }}
               />
-            </View>
+            </View> */}
             {data.product_details.length > 0 && (
               <View>
                 <Checkbox.Item
@@ -1637,8 +1666,8 @@ const QuotationAddEditTab = ({
                           dropdowndata?.cities1?.length < 1
                             ? []
                             : dropdowndata.cities1.map(
-                              (item) => item.district_name
-                            )
+                                (item) => item.district_name
+                              )
                         }
                         onSelected={(selectedItem, idx) => {
                           if (
@@ -1763,8 +1792,8 @@ const QuotationAddEditTab = ({
                         dropdowndata?.services?.length < 1
                           ? []
                           : dropdowndata.services.map(
-                            (item) => item.service_name
-                          )
+                              (item) => item.service_name
+                            )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1800,43 +1829,42 @@ const QuotationAddEditTab = ({
                       }
                     />
                     <View style={[Styles.marginTop8]}>
-                    <DropDown2
-                      label="Category Name"
-                      style={{ backgroundColor: "white", marginBottom: "3%" }}
-                      data={
-                        dropdowndata?.categories?.length < 1
-                          ? []
-                          : dropdowndata.categories.map(
-                            (item) => item.category_name
-                          )
-                      }
-                      onSelected={(selectedItem, idx) => {
-                        if (
-                          dropdowndata.categories[idx].category_refno !==
-                          productlist.category_refno
-                        ) {
-                          setProductList((prev) => {
-                            return {
-                              ...prev,
-                              category_refno:
-                                dropdowndata.categories[idx].category_refno,
-                              list: [],
-                            };
-                          });
-                          fetchProductList(
-                            dropdowndata.categories[idx].category_refno
-                          );
+                      <DropDown2
+                        label="Category Name"
+                        style={{ backgroundColor: "white", marginBottom: "3%" }}
+                        data={
+                          dropdowndata?.categories?.length < 1
+                            ? []
+                            : dropdowndata.categories.map(
+                                (item) => item.category_name
+                              )
                         }
-                      }}
-                      selectedItem={
-                        dropdowndata.categories.find(
-                          (item) =>
-                            item.category_refno === productlist.category_refno
-                        )?.category_name
-                      }
-                    />
+                        onSelected={(selectedItem, idx) => {
+                          if (
+                            dropdowndata.categories[idx].category_refno !==
+                            productlist.category_refno
+                          ) {
+                            setProductList((prev) => {
+                              return {
+                                ...prev,
+                                category_refno:
+                                  dropdowndata.categories[idx].category_refno,
+                                list: [],
+                              };
+                            });
+                            fetchProductList(
+                              dropdowndata.categories[idx].category_refno
+                            );
+                          }
+                        }}
+                        selectedItem={
+                          dropdowndata.categories.find(
+                            (item) =>
+                              item.category_refno === productlist.category_refno
+                          )?.category_name
+                        }
+                      />
                     </View>
-                    
                   </View>
                   <View style={styles.container}>
                     <ScrollView horizontal={true}>
@@ -1944,12 +1972,14 @@ const QuotationAddEditTab = ({
                                         dense
                                         value={
                                           item.qty !== undefined &&
-                                            item.qty !== "" &&
-                                            item.rate !== ""
+                                          item.qty !== "" &&
+                                          item.rate !== ""
                                             ? String(
-                                              parseFloat(item.qty) *
-                                              parseFloat(item.rate)
-                                            )
+                                                (
+                                                  parseFloat(item.qty) *
+                                                  parseFloat(item.rate)
+                                                ).toFixed(2)
+                                              )
                                             : ""
                                         }
                                       />
@@ -2063,6 +2093,59 @@ const QuotationAddEditTab = ({
               </ScrollView>
             </Dialog>
           </Portal>
+
+          {/* Change unit */}
+          <Portal>
+            <Dialog
+              visible={unitdialogue}
+              onDismiss={() => setUnitDialogue(false)}
+              style={[Styles.borderRadius8]}
+            >
+              <Dialog.Title style={[Styles.fontSize16, Styles.textCenter]}>
+                Do you confirm to change the Unit Of Sales? If OK, then your
+                already added all products values automatically changed.
+              </Dialog.Title>
+              <Dialog.Content>
+                <View
+                  style={[
+                    Styles.flexRow,
+                    Styles.flexJustifyCenter,
+                    Styles.flexAlignCenter,
+                    Styles.marginTop16,
+                  ]}
+                ></View>
+                <View></View>
+                <Card.Content style={[Styles.marginTop16]}>
+                  <Button
+                    mode="contained"
+                    onPress={() => {
+                      temp.fn();
+                      setUnitDialogue(false);
+                    }}
+                  >
+                    Ok
+                  </Button>
+                </Card.Content>
+                <Card.Content style={[Styles.marginTop16]}>
+                  <Button
+                    mode="contained"
+                    onPress={() => {
+                      setData((prev) => {
+                        return {
+                          ...prev,
+                          unit: temp.unit,
+                        };
+                      });
+                      setUnitDialogue(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Card.Content>
+              </Dialog.Content>
+            </Dialog>
+          </Portal>
+          {console.log(data.unit)}
         </>
       )}
     </View>

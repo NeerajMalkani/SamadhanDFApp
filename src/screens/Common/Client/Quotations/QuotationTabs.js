@@ -304,6 +304,21 @@ const QuotationTabs = ({
                 description={current.estimation_status}
               />
             )}
+            {current?.message_button?.length > 0 &&
+              current.message_button.map((item) => {
+                return (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: item == "Under Progress" ? "green" : "red",
+                      fontSize: 20,
+                    }}
+                  >
+                    {item}
+                  </Text>
+                );
+              })}
+
             {current?.action_status_name?.map((item, index) => (
               <Card.Content style={[Styles.marginTop16]} key={index}>
                 <Button

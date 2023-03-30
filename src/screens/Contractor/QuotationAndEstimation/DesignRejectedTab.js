@@ -122,7 +122,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
           Styles.paddingStart16,
           Styles.flexJustifyCenter,
           {
-            height: 230,
+            height: 250,
             borderWidth: 1.3,
             marginBottom: 10,
             borderRadius: 8,
@@ -136,7 +136,73 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
             style={{ width: 50, height: 50 }}
           />
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Client Details :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Estimation No :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.cont_estimation_no}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Product :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.product_name}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Design No :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.design_no}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                Total Sq.Ft. :
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
+                {data.item.totalfoot}
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Client Details :
@@ -171,7 +237,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
               {data.item.totalfoot}
             </Text>
           </View>
-        </View>
+        </View> */}
         <View
           style={{
             justifyContent: "center",
