@@ -109,7 +109,7 @@ const AddClientScreen = ({ route, navigation }) => {
         route.params.data.serviceType &&
         route.params.data.serviceType.indexOf('8') !== -1
           ? true
-          : false,
+          : route.params.type == "client" ? true : false,
     },
   ]);
   const [serviceTypeInvalid, setServiceTypeInvalid] = useState(false);
