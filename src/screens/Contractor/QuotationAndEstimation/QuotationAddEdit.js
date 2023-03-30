@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
+// import RichTextBox from "./RichTextBox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Table, TableWrapper, Row, Col } from "react-native-table-component";
 import {
@@ -1428,7 +1429,7 @@ const QuotationAddEditTab = ({
                 </ScrollView>
               </View>
             </View>
-            {/* <View style={[Styles.padding16]}>
+            <View style={[Styles.padding16]}>
               <View
                 style={[
                   Styles.width100per,
@@ -1465,7 +1466,7 @@ const QuotationAddEditTab = ({
                 value={data.terms}
                 style={{ backgroundColor: "white" }}
               />
-            </View> */}
+            </View>
             {data.product_details.length > 0 && (
               <View>
                 <Checkbox.Item
