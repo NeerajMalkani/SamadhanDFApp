@@ -30,6 +30,7 @@ import { theme } from "../theme/apptheme";
 import {
   createNavigationContainerRef,
   StackActions,
+  useFocusEffect,
 } from "@react-navigation/native";
 import Provider from "../api/Provider";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -49,7 +50,8 @@ let roleID = 0,
   groupRefNo = 0,
   designID = 0,
   companyID = 0,
-  branchID = 0;
+  branchID = 0,
+  redirectToProfileFlag = 0;
 
 var _user_count = null;
 
@@ -89,11 +91,15 @@ const HomeScreen = ({ route, navigation }) => {
   const [errorRole, setErrorRole] = React.useState(false);
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
+  const [isProfileDialogVisible, setIsProfileDialogVisible] = React.useState(false);
+
   const [availableRawMaterialKg, setAvailableRawMaterialKg] = React.useState("");
   const [availableRawMaterialNo, setAvailableRawMaterialNo] = React.useState("");
   const [productionDoneKg, setProductionDoneKg] = React.useState("");
   const [productionDoneNo, setProductionDoneNo] = React.useState("");
   const [scrapWastage, setScrapWastage] = React.useState("");
+
+  const [singleLoad, setSingleLoad] = React.useState(0);
 
   //#endregion
 
@@ -282,13 +288,27 @@ const HomeScreen = ({ route, navigation }) => {
       });
   };
 
-  React.useEffect(() => {
-    GetUserData();
-  }, []);
+  // React.useEffect(() => {
+  //   GetUserData();
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshScreen = () => {
+        // Refresh the screen here
+        if (singleLoad == 0) {
+          GetUserData();
+        }
+      };
+      refreshScreen();
+      return () => { };
+    }, [navigationRef])
+  );
 
   const GetUserData = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
+      setSingleLoad(1);
       const userDataParsed = JSON.parse(userData);
       roleID = userDataParsed.RoleID;
       userID = userDataParsed.UserID;
@@ -296,6 +316,14 @@ const HomeScreen = ({ route, navigation }) => {
       designID = userDataParsed.Sess_designation_refno;
       companyID = userDataParsed.Sess_company_refno;
       branchID = userDataParsed.Sess_branch_refno;
+
+      if ((userDataParsed.RoleID == 4 || userDataParsed.RoleID == 5 || userDataParsed.RoleID == 9) && userDataParsed.Sess_company_refno == 0) {
+        redirectToProfileFlag = 1;
+      }
+      else {
+        redirectToProfileFlag = 0;
+      }
+
       let roleName = "";
       switch (roleID) {
         case "1":
@@ -340,14 +368,22 @@ const HomeScreen = ({ route, navigation }) => {
   const showDialog = () => setIsDialogVisible(true);
   const hideDialog = () => setIsDialogVisible(false);
 
+  const showProfileDialog = () => setIsProfileDialogVisible(true);
+  const hideProfileDialog = () => setIsProfileDialogVisible(false);
+
   const SingleCardClick = (headerTitle, categoryID, data) => {
-    navigation.navigate("ImageGalleryWorkLocationScreen", {
-      headerTitle: headerTitle,
-      categoryID: categoryID,
-      data: data,
-      from: "home",
-      isContractor: userRoleName === "Contractor" ? true : false,
-    });
+    if (redirectToProfileFlag == 1) {
+      showProfileDialog();
+    }
+    else {
+      navigation.navigate("ImageGalleryWorkLocationScreen", {
+        headerTitle: headerTitle,
+        categoryID: categoryID,
+        data: data,
+        from: "home",
+        isContractor: userRoleName === "Contractor" ? true : false,
+      });
+    }
   };
 
   const onRoleSelected = (role) => {
@@ -367,6 +403,11 @@ const HomeScreen = ({ route, navigation }) => {
     await AsyncStorage.setItem("user", JSON.stringify(user));
     route.params.setUserFunc();
   };
+
+  const RedirectToProfile = () => {
+    hideProfileDialog();
+    navigation.navigate("UserProfile", { from: "adm_profile" });
+  }
 
   const UpdateUserRole = () => {
     hideDialog();
@@ -576,7 +617,7 @@ const HomeScreen = ({ route, navigation }) => {
         />
         <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150 }]}>
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>
-            {route.params.userDetails[0].FullName}
+            {route.params.userDetails[0].FullName == "" ? route.params.userDetails[0].Sess_FName : route.params.userDetails[0].FullName}
           </Title>
           <Text style={[Styles.textColorDarkSecondary, { marginTop: -4 }]}>
             {userRoleName}
@@ -2273,8 +2314,14 @@ const HomeScreen = ({ route, navigation }) => {
 
                   {/* Design Your Dream */}
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("DesignYourDreamCategories")
+                    onPress={() => {
+                      if (redirectToProfileFlag == 1) {
+                        showProfileDialog();
+                      }
+                      else {
+                        navigation.navigate("DesignYourDreamCategories")
+                      }
+                    }
                     }
                   >
                     <View
@@ -2512,8 +2559,14 @@ const HomeScreen = ({ route, navigation }) => {
                     <>
                       <TouchableOpacity
                         onPress={() => {
-                          navigation.navigate("LookingForAJobJobGroup");
-                          // navigation.navigate("JobListingEmployee");
+
+                          if (redirectToProfileFlag == 1) {
+                            showProfileDialog();
+                          }
+                          else {
+                            navigation.navigate("LookingForAJobJobGroup");
+                          }
+
                         }}
                         style={[
                           Styles.padding0,
@@ -2647,8 +2700,8 @@ const HomeScreen = ({ route, navigation }) => {
                   </View>
                   {/* QR Code End */}
 
-                   {/* Switch Role */}
-                   {userRoleID === "3" ? (
+                  {/* Switch Role */}
+                  {userRoleID === "3" ? (
                     <View style={[Styles.marginTop16]}>
                       <View
                         style={[
@@ -2750,6 +2803,20 @@ const HomeScreen = ({ route, navigation }) => {
           />
         </View>
       </Modal>
+      <Portal>
+        <Dialog visible={isProfileDialogVisible} dismissable={false}>
+          <Dialog.Title>Profile Update</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>
+              Please update your profile to continue further
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={RedirectToProfile}>Update Profile</Button>
+            <Button onPress={hideProfileDialog}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };

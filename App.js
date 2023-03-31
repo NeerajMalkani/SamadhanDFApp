@@ -1414,7 +1414,7 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? BasicDetailsScreen
+                  ? UserProfile
                   : parseInt(userDetails[0].RoleID) === 2
                   ? UserProfile
                   : parseInt(userDetails[0].RoleID) === 5
@@ -1934,6 +1934,7 @@ export default function App() {
                 name="UserProfile"
                 component={UserProfile}
                 options={{
+                  headerShown:false,
                   headerTitle: "Basic Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],

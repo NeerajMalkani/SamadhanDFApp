@@ -19,7 +19,7 @@ import DFButton from "../../../components/Button";
 export const navigationRef = createNavigationContainerRef();
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0, sess_name = "", sess_mobile = "";
+let userID = 0, sess_name = "", sess_mobile = "", Sess_company_refno = 0;
 
 const BasicDetailsScreen = ({ route, navigation }) => {
 
@@ -127,9 +127,12 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
+      console.log('start');
       userID = JSON.parse(userData).UserID;
       sess_name = JSON.parse(userData).Sess_FName;
       sess_mobile = JSON.parse(userData).Sess_MobileNo;
+      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+      console.log('singleLoad', singleLoad);
       if (singleLoad == 0) {
         FetchBasicDetails();
       }
@@ -145,12 +148,13 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
+        console.log('resp:', response.data.data);
         setSingleLoad(1);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
             if (response.data.data[0].recordcount != "0") {
-
+              console.log('data response:', response.data.dat);
               response.data.data = APIConverter(response.data.data);
               setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
               setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
@@ -370,7 +374,74 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     }
   };
 
+  const GetUserDetails = (user_refno) => {
+    setIsButtonLoading(true);
+    let params = {
+      data: {
+        user_refno: user_refno,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.UserFromRefNo, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          const user = {
+            UserID: response.data.data.Sess_UserRefno,
+            FullName: response.data.data.Sess_FName === "" ? response.data.data.Sess_Username : response.data.data.Sess_FName,
+            RoleID: response.data.data.Sess_group_refno,
+            RoleName: response.data.data.Sess_Username,
+            Sess_FName: response.data.data.Sess_FName,
+            Sess_MobileNo: response.data.data.Sess_MobileNo,
+            Sess_Username: response.data.data.Sess_Username,
+            Sess_role_refno: response.data.data.Sess_role_refno,
+            Sess_group_refno: response.data.data.Sess_group_refno,
+            Sess_designation_refno: response.data.data.Sess_designation_refno,
+            Sess_locationtype_refno: response.data.data.Sess_locationtype_refno,
+            Sess_group_refno_extra_1: response.data.data.Sess_group_refno_extra_1,
+            Sess_if_create_brand: response.data.data.Sess_if_create_brand,
+            Sess_User_All_GroupRefnos: response.data.data.Sess_User_All_GroupRefnos,
+            Sess_branch_refno: response.data.data.Sess_branch_refno,
+            Sess_company_refno: response.data.data.Sess_company_refno,
+            Sess_CompanyAdmin_UserRefno: response.data.data.Sess_CompanyAdmin_UserRefno,
+            Sess_CompanyAdmin_group_refno: response.data.data.Sess_CompanyAdmin_group_refno,
+            Sess_RegionalOffice_Branch_Refno: response.data.data.Sess_RegionalOffice_Branch_Refno,
+            Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
+            Sess_empe_refno: response.data.data.Sess_empe_refno,
+            Sess_profile_address: response.data.data.Sess_profile_address,
+          };
+
+          StoreUserData(user, navigation);
+        } else {
+          setSnackbarText(communication.InvalidUserNotExists);
+          setIsSnackbarVisible(true);
+        }
+        setIsButtonLoading(false);
+      })
+      .catch((e) => {
+        setSnackbarText(e.message);
+        setIsSnackbarVisible(true);
+        setIsButtonLoading(false);
+      });
+  };
+
+  const StoreUserData = async (user) => {
+    try {
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+      navigation.goBack();
+    } catch (error) { }
+  };
+
   const InsertData = () => {
+    //Sess_company_refno
+    let path = "";
+
+    if (Sess_company_refno == 0) {
+      path = Provider.API_URLS.dealercompanybasicdetailscreate
+    }
+    else {
+      path = Provider.API_URLS.DealerCompanyBasicDetailsUpdate
+
+    }
+
     const datas = new FormData();
     const stateData = statesFullData.find((el) => {
       return el.stateName == stateName;
@@ -380,7 +451,6 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     });
     const params = {
       Sess_UserRefno: userID,
-      company_refno: companyID,
       company_name: companyName,
       firstname: contactName,
       mobile_no: contactNumber,
@@ -402,6 +472,11 @@ const BasicDetailsScreen = ({ route, navigation }) => {
       po_prefix: poPrefix,
       so_prefix: soPrefix,
     };
+
+    if (Sess_company_refno != 0) {
+      params.company_refno = companyID;
+    }
+
     datas.append("data", JSON.stringify(params));
     datas.append(
       "company_logo",
@@ -413,17 +488,27 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         }
         : ""
     );
-    Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
+    console.log('insert params', datas);
+    Provider.createDFCommonWithHeader(path, datas)
       .then((response) => {
+        console.log('update response:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
-          setTimeout(function () {
-            setIsButtonLoading(false);
-            navigation.goBack();
-          }, 500)
+
+          if (route.params && route.params.from == "adm_profile") {
+            GetUserDetails(userID);
+          }
+          else {
+            setTimeout(function () {
+              setIsButtonLoading(false);
+              navigation.goBack();
+            }, 500)
+          }
+
+
 
         } else {
           setSnackbarColor(theme.colors.error);
@@ -619,7 +704,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
             {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
               Update
             </Button> */}
-            <DFButton mode="contained" onPress={ValidateData} title="Update" loader={isButtonLoading} />
+            <DFButton mode="contained" onPress={ValidateData} title={Sess_company_refno == 0 ? "Submit" : "Update"} loader={isButtonLoading} />
           </Card.Content>
         </View>
         <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>

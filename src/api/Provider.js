@@ -634,6 +634,7 @@ class Provider {
     getbrandname_dealerproductlist: "getbrandname_dealerproductlist/",
     filtercategoryrefno_dealerproductlist: "filtercategoryrefno_dealerproductlist/",
     filterbrandrefno_dealerproductlist: "filterbrandrefno_dealerproductlist/",
+    dealercompanybasicdetailscreate:"dealercompanybasicdetailscreate/",
   };
 
   createDFPocketDairy(resource, params) {
