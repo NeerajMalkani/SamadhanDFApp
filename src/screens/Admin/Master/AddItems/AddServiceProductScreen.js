@@ -231,6 +231,10 @@ const AddServiceProductScreen = ({ route, navigation }) => {
             setProductsData(products);
           }
         }
+        else {
+          setSnackbarText("No product found");
+          setSnackbarVisible(true);
+        }
       })
       .catch((e) => { });
   };
@@ -406,8 +410,16 @@ const AddServiceProductScreen = ({ route, navigation }) => {
       .then((response) => {
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData(route.params.type === "edit" ? "update" : "add");
-          navigation.goBack();
+
+          if (response.data.data.Created == 1) {
+            route.params.fetchData(route.params.type === "edit" ? "update" : "add");
+            navigation.goBack();
+          }
+          else {
+            setSnackbarText(response.data.message);
+            setSnackbarVisible(true);
+          }
+
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);

@@ -304,7 +304,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={errorSN}>
             {communication.InvalidServiceName}
           </HelperText>
-          <TextInput mode="outlined"label="Category Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
+          <TextInput mode="outlined" label="Category Name" value={name} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onNameChanged} style={{ backgroundColor: "white" }} error={error} />
           <HelperText type="error" visible={error}>
             {communication.InvalidCategoryName}
           </HelperText>
