@@ -83,7 +83,7 @@ function Coil({ user, mf_po_no, width }) {
                 <DataTable.Cell
                   style={[{ flex: 1, justifyContent: "center" }]}
                 >
-                  {index}
+                  {index + 1}
                 </DataTable.Cell>
                 <DataTable.Cell
                   style={[
