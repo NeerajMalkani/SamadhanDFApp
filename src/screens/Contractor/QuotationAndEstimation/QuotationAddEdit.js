@@ -66,7 +66,10 @@ const QuotationAddEditTab = ({
 }) => {
   //#region Variable
   const [isLoading, setIsLoading] = React.useState(true);
-  const [temp, setTemp] = React.useState({ fn: () => {}, unit: "" });
+  const [temp, setTemp] = React.useState({
+    fn: () => {},
+    unit: { unit: "", quot_type_refno: "" },
+  });
   const [unitdialogue, setUnitDialogue] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -1138,23 +1141,6 @@ const QuotationAddEditTab = ({
                             return {
                               ...prev,
                               fn: () => {
-                                console.log("her2");
-                                setErrors((prev) => {
-                                  return {
-                                    ...prev,
-                                    unit: false,
-                                  };
-                                });
-                                setData((prev) => {
-                                  return {
-                                    ...prev,
-                                    quot_unit_type_refno:
-                                      dropdowndata.units[idx]
-                                        .quot_unit_type_refno,
-                                    unit: dropdowndata.units[idx]
-                                      .quot_unit_type_name,
-                                  };
-                                });
                                 setProductList({
                                   list: [],
                                   service_refno: "",
@@ -1164,7 +1150,24 @@ const QuotationAddEditTab = ({
                                   dropdowndata.units[idx].quot_unit_type_refno
                                 );
                               },
-                              unit: data.unit,
+                              unit: {
+                                unit: data.unit,
+                                quot_unit_type_refno: data.quot_unit_type_refno,
+                              },
+                            };
+                          });
+                          setErrors((prev) => {
+                            return {
+                              ...prev,
+                              unit: false,
+                            };
+                          });
+                          setData((prev) => {
+                            return {
+                              ...prev,
+                              quot_unit_type_refno:
+                                dropdowndata.units[idx].quot_unit_type_refno,
+                              unit: dropdowndata.units[idx].quot_unit_type_name,
                             };
                           });
                           setUnitDialogue(true);
@@ -1467,6 +1470,7 @@ const QuotationAddEditTab = ({
                 style={{ backgroundColor: "white" }}
               />
             </View>
+            {/* <RichTextBox /> */}
             {data.product_details.length > 0 && (
               <View>
                 <Checkbox.Item
@@ -2134,7 +2138,8 @@ const QuotationAddEditTab = ({
                       setData((prev) => {
                         return {
                           ...prev,
-                          unit: temp.unit,
+                          unit: temp.unit.unit,
+                          quot_unit_type_refno: temp.unit.quot_type_refno,
                         };
                       });
                       setUnitDialogue(false);
