@@ -106,9 +106,10 @@ function ProductforProduction({ navigation }) {
         ]}
       >
         <List.Item
-          title={data.item.supplier_company_name}
+          title={data.item.invoice_no}
           titleStyle={{ fontSize: 18 }}
-          description={data.item.invoice_entry_date}
+          description={`Purchase Order No: ${data.item.mf_po_no}\nJob Order No: ${data.item.mf_vo_no}`}
+          
           onPress={async () => {
             console.log(data.item);
             setSelectedItem(data.item);
@@ -200,7 +201,7 @@ function ProductforProduction({ navigation }) {
         }}
       >
         <View style={[Styles.flex1]}>
-          <Title style={[Styles.paddingHorizontal16]}>Invoice Details</Title>
+          <Title style={[Styles.paddingHorizontal16]}>{selectedItem.invoice_no}</Title>
           <ScrollView style={[Styles.flex1]}>
             <List.Item
               title="Purchase Order No."

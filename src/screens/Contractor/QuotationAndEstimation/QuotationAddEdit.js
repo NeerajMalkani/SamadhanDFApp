@@ -66,10 +66,12 @@ const QuotationAddEditTab = ({
 }) => {
   //#region Variable
   const [isLoading, setIsLoading] = React.useState(true);
+
   const [temp, setTemp] = React.useState({
     fn: () => {},
     unit: { unit: "", quot_type_refno: "" },
   });
+
   const [unitdialogue, setUnitDialogue] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -185,7 +187,7 @@ const QuotationAddEditTab = ({
               ...prev,
               client_name:
                 data.clients[0].client_data[
-                  response.data.data[0].client_user_refno
+                response.data.data[0].client_user_refno
                 ],
               project_name: response.data.data[0].project_name,
               contact_person: response.data.data[0].contact_person,
@@ -822,8 +824,8 @@ const QuotationAddEditTab = ({
                       dropdowndata?.clients?.length < 1
                         ? []
                         : dropdowndata?.clients[0]?.client_data == null
-                        ? []
-                        : Object.values(dropdowndata?.clients[0]?.client_data)
+                          ? []
+                          : Object.values(dropdowndata?.clients[0]?.client_data)
                     }
                     onSelected={(selectedItem, idx) => {
                       if (selectedItem !== data.client_name) {
@@ -841,7 +843,7 @@ const QuotationAddEditTab = ({
                         });
                         fetchClientData(
                           Object.keys(dropdowndata?.clients[0]?.client_data)[
-                            idx
+                          idx
                           ]
                         );
                       }
@@ -1074,8 +1076,8 @@ const QuotationAddEditTab = ({
                         dropdowndata?.cities2?.length < 1
                           ? []
                           : dropdowndata.cities2.map(
-                              (item) => item.district_name
-                            )
+                            (item) => item.district_name
+                          )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1671,8 +1673,8 @@ const QuotationAddEditTab = ({
                           dropdowndata?.cities1?.length < 1
                             ? []
                             : dropdowndata.cities1.map(
-                                (item) => item.district_name
-                              )
+                              (item) => item.district_name
+                            )
                         }
                         onSelected={(selectedItem, idx) => {
                           if (
@@ -1797,8 +1799,8 @@ const QuotationAddEditTab = ({
                         dropdowndata?.services?.length < 1
                           ? []
                           : dropdowndata.services.map(
-                              (item) => item.service_name
-                            )
+                            (item) => item.service_name
+                          )
                       }
                       onSelected={(selectedItem, idx) => {
                         if (
@@ -1841,8 +1843,8 @@ const QuotationAddEditTab = ({
                           dropdowndata?.categories?.length < 1
                             ? []
                             : dropdowndata.categories.map(
-                                (item) => item.category_name
-                              )
+                              (item) => item.category_name
+                            )
                         }
                         onSelected={(selectedItem, idx) => {
                           if (
@@ -1977,14 +1979,14 @@ const QuotationAddEditTab = ({
                                         dense
                                         value={
                                           item.qty !== undefined &&
-                                          item.qty !== "" &&
-                                          item.rate !== ""
+                                            item.qty !== "" &&
+                                            item.rate !== ""
                                             ? String(
-                                                (
-                                                  parseFloat(item.qty) *
-                                                  parseFloat(item.rate)
-                                                ).toFixed(2)
-                                              )
+                                              (
+                                                parseFloat(item.qty) *
+                                                parseFloat(item.rate)
+                                              ).toFixed(2)
+                                            )
                                             : ""
                                         }
                                       />
@@ -2067,6 +2069,12 @@ const QuotationAddEditTab = ({
                                                 };
                                               });
                                             }
+                                          }
+                                          else {
+                                            console.log('no rate');
+                                            setSnackbarText("Please enter quantity and rate.");
+                                            setSnackbarColor(theme.colors.error);
+                                            setSnackbarVisible(true);
                                           }
                                         }}
                                       />

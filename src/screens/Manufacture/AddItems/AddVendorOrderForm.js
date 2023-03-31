@@ -472,7 +472,7 @@ function AddVendorOrderForm({ route, navigation }) {
                               key={index}
                             >
                               <Col
-                                data={[index]}
+                                data={[index + 1]}
                                 height={40}
                                 textStyle={styles.text}
                                 width={50}
@@ -510,7 +510,7 @@ function AddVendorOrderForm({ route, navigation }) {
             >
               Slitting Details
             </Title>
-            {data.slitting_data.length > 0 && (
+            {/* {data.slitting_data.length > 0 && (
               <View>
                 <Button
                   onPress={() => {
@@ -531,7 +531,7 @@ function AddVendorOrderForm({ route, navigation }) {
                   Reset Slitting Details
                 </Button>
               </View>
-            )}
+            )} */}
             <View style={styles.container}>
               <ScrollView horizontal={true}>
                 <View>

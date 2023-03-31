@@ -666,6 +666,7 @@ function EditProductionStatus({ route, navigation }) {
               mode="outlined"
               label="Total Products (Achieved)"
               value={data.total_achieved_products}
+              keyboardType="number-pad"
               returnKeyType="next"
               onChangeText={(selectedItem) => {
                 if (selectedItem !== data.total_achieved_products) {
@@ -724,6 +725,7 @@ function EditProductionStatus({ route, navigation }) {
              mode="outlined"
               label="Scrap Kg (Production)"
               value={data.scrap_wastage}
+              keyboardType="number-pad"
               returnKeyType="next"
               onChangeText={(selectedItem) => {
                 if (selectedItem !== data.scrap_wastage) {

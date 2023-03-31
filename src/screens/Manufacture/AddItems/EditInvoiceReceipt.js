@@ -430,10 +430,11 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         />
         <TextInput
           mode="outlined"
-          label="Transporation Charges"
+          label="Transportation Charges"
           style={[Styles.marginTop16,{ backgroundColor: "white" }]}
           value={state.transport_charges}
           error={errors.transport_charges}
+          keyboardType="number-pad"
           onChangeText={(text) => {
             setErrors((prev) => {
               return { ...prev, transport_charges: false };

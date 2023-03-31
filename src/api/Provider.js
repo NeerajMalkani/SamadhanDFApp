@@ -716,7 +716,6 @@ class Provider {
   }
 
   async getEmployeebasicDetails(params, unload) {
-    console.log(params);
     try {
       const empdata = await axios.post(
         `${BASE_URL}/getemployeepaydata/`,
@@ -765,7 +764,6 @@ class Provider {
         `${BASE_URL_Contractor}/appuser_rejected_enquiry_list/`,
         params
       );
-      console.log(params);
       return {
         newEnq: newEnq.data.data ? newEnq.data.data : [],
         acceptedEnq: acceptedEnq.data.data ? acceptedEnq.data.data : [],
@@ -779,7 +777,6 @@ class Provider {
 
   async getdropdowndata(params, unload) {
     try {
-      console.log(params);
       const clients = await axios.post(
         `${BASE_URL_Contractor}/contractor_get_clientname_quotationform/`,
         params
@@ -922,7 +919,6 @@ class Provider {
   }
 
   async getpurchaseorderlist(params, unload, error) {
-    console.log(params);
     try {
       const orderdata = await axios.post(
         `${BASE_URL_Manufacturer}/mfporefnocheck/`,
@@ -950,7 +946,6 @@ class Provider {
   }
 
   async getbrandvalueconversion(params, unload) {
-    console.log(params);
     try {
       const servicename = await axios.post(
         `${BASE_}/apimanufacturer/spawu7S4urax/tYjD/getservicenamebrandconversionform/`,

@@ -74,7 +74,6 @@ function ProductionOrderList({ navigation }) {
           setSnackbarVisible(true);
         }
       );
-      
       listData[1](data.order);
       listSearchData[1](data.order);
       setReference(data);
@@ -139,19 +138,14 @@ function ProductionOrderList({ navigation }) {
       >
         <List.Item
           title={
-            data.item?.supplier_user_refno
-              ? reference?.supplier?.find(
-                (item) =>
-                  item.client_user_refno === data.item.supplier_user_refno
-              ).company_name
-              : ""
+            data.item.mf_po_no
           }
           titleStyle={{ fontSize: 18 }}
           description={`Vendor Name: ${data.item?.vendor_user_refno
               ? reference?.vendor?.find(
                 (item) =>
                   item.client_user_refno === data.item.vendor_user_refno
-              ).client_name
+              ).company_name
               : ""
             }\nService Name: ${NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
             } `}
@@ -328,7 +322,7 @@ function ProductionOrderList({ navigation }) {
               description={current.total_weight}
             />
             <List.Item
-              title="Total Weight"
+              title="Total Length"
               description={current.total_length}
             />
             <List.Item

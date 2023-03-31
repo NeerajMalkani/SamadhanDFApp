@@ -598,6 +598,7 @@ function AddProduction({ route, navigation }) {
             label="Product length in Mtrs"
             value={data.length_mtr_value}
             returnKeyType="next"
+            keyboardType="number-pad"
             onChangeText={(text) => {
               setError((prev) => {
                 return {
@@ -762,6 +763,7 @@ function AddProduction({ route, navigation }) {
           <TextInput
             mode="outlined"
             label="Slitting width in mm"
+            keyboardType="number-pad"
             value={data.width_mm_value}
             returnKeyType="next"
             onChangeText={(text) => {

@@ -601,6 +601,7 @@ function EditProductForProduction({ route, navigation }) {
           <TextInput
            mode="outlined"
             label="Product length in Mtrs"
+            keyboardType="number-pad"
             value={data.length_mtr_value}
             returnKeyType="next"
             onChangeText={(text) => {
@@ -766,8 +767,9 @@ function EditProductForProduction({ route, navigation }) {
           </View>
           <TextInput
             mode="outlined"
-            label="Raw material width in mm"
+            label="Slitting width in mm"
             value={data.width_mm_value}
+            keyboardType="number-pad"
             returnKeyType="next"
             onChangeText={(text) => {
               setError((prev) => {

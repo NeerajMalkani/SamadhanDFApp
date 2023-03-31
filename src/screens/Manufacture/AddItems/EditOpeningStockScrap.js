@@ -177,6 +177,7 @@ const EditStockScrap = ({ route, navigation }) => {
            mode="outlined"
             label="Total Opening Stock Scrap (kg)"
             value={name}
+            keyboardType="number-pad"
             returnKeyType="next"
             onSubmitEditing={() => ref_input2.current.focus()}
             onChangeText={onNameChanged}

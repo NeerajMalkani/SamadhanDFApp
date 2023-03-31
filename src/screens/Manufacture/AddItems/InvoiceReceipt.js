@@ -399,6 +399,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
         <TextInput
           mode="outlined"
           label='Transporation Charges'
+          keyboardType="number-pad"
           style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
           value={state.transport_charges}
           error={errors.transport_charges}

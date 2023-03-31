@@ -664,6 +664,7 @@ function AddProductionStatus({ route, navigation }) {
             <TextInput
               mode="outlined"
               label="Total Products (Achieved)"
+              keyboardType="number-pad"
               value={data.total_achieved_products}
               returnKeyType="next"
               onChangeText={(selectedItem) => {
@@ -724,6 +725,7 @@ function AddProductionStatus({ route, navigation }) {
               label="Scrap Kg (Production)"
               value={data.scrap_wastage}
               returnKeyType="next"
+              keyboardType="number-pad"
               onChangeText={(selectedItem) => {
                 if (selectedItem !== data.scrap_wastage) {
                   setData((prev) => {

@@ -552,6 +552,7 @@ function EditStockList({ route, navigation }) {
             label="Total Products"
             value={data.total_products}
             returnKeyType="next"
+            keyboardType="number-pad"
             onChangeText={(selectedItem) => {
               if (selectedItem !== data.total_products) {
                 setData((prev) => {
@@ -576,6 +577,7 @@ function EditStockList({ route, navigation }) {
             label="Weight Per Piece"
             value={data.opstock_weightper_piece}
             returnKeyType="next"
+            keyboardType="number-pad"
             onChangeText={(selectedItem) => {
               if (selectedItem !== data.opstock_weightper_piece) {
                 setData((prev) => {
