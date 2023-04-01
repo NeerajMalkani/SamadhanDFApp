@@ -284,7 +284,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                 <HelperText type="error" visible={accountHolderNameInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+                <TextInput ref={accountNoRef} mode="outlined" keyboardType={"number-pad"} dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
                 <HelperText type="error" visible={accountNoInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>
@@ -330,7 +330,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                 <HelperText type="error" visible={cardTypeInvalid}>
                     Please select card Type
                 </HelperText>
-                <TextInput ref={openingBalanceRef} mode="outlined"dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
+                <TextInput ref={openingBalanceRef} mode="outlined" keyboardType={"number-pad"} dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
                 <HelperText type="error" visible={openingBalanceInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>

@@ -861,6 +861,7 @@ function AddProductOrderList({ route, navigation }) {
           <TextInput
             mode="outlined"
             label="Amount"
+            keyboardType={"number-pad"}
             value={data.amount}
             editable={false}
             returnKeyType="next"

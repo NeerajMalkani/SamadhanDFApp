@@ -1176,6 +1176,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 mode="outlined"
                 dense
                 label="Aadhar No"
+                keyboardType={"number-pad"}
                 value={aadharNo}
                 returnKeyType="next"
                 onSubmitEditing={() => aadharNoRef.current.focus()}
@@ -1450,6 +1451,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 mode="outlined"
                 dense
                 label="Account Number"
+                keyboardType={"number-pad"}
                 value={accountNo}
                 returnKeyType="next"
                 onSubmitEditing={() => bankNameRef.current.focus()}

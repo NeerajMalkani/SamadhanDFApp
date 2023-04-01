@@ -300,7 +300,7 @@ const AddGMyBankScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={cardTypeInvalid}>
             Please select Card Type
           </HelperText>
-          <TextInput mode="outlined" label="Opening Balance" value={openingBalance} onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceError} />
+          <TextInput mode="outlined" keyboardType={"number-pad"} label="Opening Balance" value={openingBalance} onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceError} />
           <HelperText type="error" visible={openingBalanceError}>
             {communication.InvalidOpeningBalance}
           </HelperText>

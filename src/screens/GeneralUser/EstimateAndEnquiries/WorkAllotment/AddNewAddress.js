@@ -348,6 +348,7 @@ function AddNewAddress({ route, navigation }) {
 
           <TextInput
             mode="outlined"
+            keyboardType={"number-pad"}
             label="Contact Mobile No."
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}
@@ -435,6 +436,7 @@ function AddNewAddress({ route, navigation }) {
 
           <TextInput
             mode="outlined"
+            keyboardType={"number-pad"}
             label="Pincode"
             name="pincode"
             value={data.pincode}

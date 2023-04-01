@@ -1575,6 +1575,7 @@ const QuotationAddEditTab = ({
                     <TextInput
                       mode="outlined"
                       dense
+                      keyboardType={"number-pad"}
                       label="Contact Mobile No"
                       value={newclient.contact_person_mobile_no}
                       returnKeyType="next"

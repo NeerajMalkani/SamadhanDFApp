@@ -469,7 +469,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="outlined" keyboardType={"number-pad"} dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>

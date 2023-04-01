@@ -372,7 +372,7 @@ const [searchQuery, setSearchQuery] = React.useState("");
             <View style={[Styles.width100per,Styles.borderBottom2,Styles.borderBottom2, Styles.marginBottom8]}>
                     <Text style={[Styles.fontSize20,Styles.fontBold,Styles.marginBottom4,Styles.blueFontColor]}>Search Employee</Text>
                 </View>
-              <TextInput ref={aadharNoRef} mode="outlined" dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
+              <TextInput ref={aadharNoRef} mode="outlined" keyboardType={"number-pad"} dense label="Employee Aadhar No" value={aadharNo} returnKeyType="next" onSubmitEditing={() => aadharNoRef.current.focus()} onChangeText={onAadharNoChanged} style={{ backgroundColor: "white" }} error={aadharNoInvalid} />
               <HelperText type="error" visible={aadharNoInvalid}>
                 {communication.InvalidAadharNo}
               </HelperText>
