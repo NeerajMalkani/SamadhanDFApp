@@ -51,7 +51,8 @@ let roleID = 0,
   designID = 0,
   companyID = 0,
   branchID = 0,
-  redirectToProfileFlag = 0;
+  redirectToProfileFlag = 0,
+  profileAddressFlag = 0;
 
 var _user_count = null;
 
@@ -324,6 +325,15 @@ const HomeScreen = ({ route, navigation }) => {
         redirectToProfileFlag = 0;
       }
 
+      if (userDataParsed.RoleID == 3 && userDataParsed.Sess_profile_address == 0) {
+        profileAddressFlag = 1;
+      }
+      else {
+        profileAddressFlag = 0;
+      }
+
+
+
       let roleName = "";
       switch (roleID) {
         case "1":
@@ -392,10 +402,16 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const ValidateSwitchRole = () => {
-    if (roleName.length === 0) {
-      setErrorRole(true);
-    } else {
-      showDialog();
+
+    if (profileAddressFlag == 1) {
+      showProfileDialog();
+    }
+    else {
+      if (roleName.length === 0) {
+        setErrorRole(true);
+      } else {
+        showDialog();
+      }
     }
   };
 

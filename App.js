@@ -51,7 +51,6 @@ import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
 import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
 import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
 import FeedbackScreen from "./src/screens/FeedbackScreen";
-import UserProfileScreen from "./src/screens/UserProfile";
 import BasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
 import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
 import JobOrderForm from "./src/screens/Manufacture/JobOrderForm";
@@ -420,20 +419,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -1319,7 +1318,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
       return unsubscribe;
     }, [navigation]);
 
@@ -1414,14 +1413,16 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfileScreen
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 9
+                          ? BasicDetailsScreen
+                          : parseInt(userDetails[0].RoleID) === 6
+                            ? UserProfile
+                            : UserProfile
               }
               options={{
                 unmountOnBlur: true,
@@ -1934,7 +1935,7 @@ export default function App() {
                 name="UserProfile"
                 component={UserProfile}
                 options={{
-                  headerShown:false,
+                  headerShown: false,
                   headerTitle: "Basic Details",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
@@ -1947,7 +1948,13 @@ export default function App() {
                 component={RateCardSetUp}
                 options={{ headerShown: false }}
               />
-              <Stack.Screen name="AddRateCard" component={AddRateCard} />
+              <Stack.Screen name="AddRateCard" component={AddRateCard} options={{
+                headerTitle: "Add Rate Card",
+                headerStyle: [Styles.primaryBgColor, Styles.height64],
+                headerTitleStyle: { color: theme.colors.textLight },
+                headerTintColor: theme.colors.textLight,
+                headerBackTitleVisible: false,
+              }} />
               <Stack.Screen
                 name="ArchitectRateCardSetup"
                 component={ArchitectRateCardSetup}

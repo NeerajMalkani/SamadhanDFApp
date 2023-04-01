@@ -634,7 +634,10 @@ class Provider {
     getbrandname_dealerproductlist: "getbrandname_dealerproductlist/",
     filtercategoryrefno_dealerproductlist: "filtercategoryrefno_dealerproductlist/",
     filterbrandrefno_dealerproductlist: "filterbrandrefno_dealerproductlist/",
-    dealercompanybasicdetailscreate:"dealercompanybasicdetailscreate/",
+    dealercompanybasicdetailscreate: "dealercompanybasicdetailscreate/",
+    ratecard_contractorproductrefnocheck: "ratecard_contractorproductrefnocheck/",
+    getapilist: "getapilist/",
+    getapitaskreport: "getapitaskreport/",
   };
 
   createDFPocketDairy(resource, params) {

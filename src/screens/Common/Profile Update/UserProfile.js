@@ -192,7 +192,6 @@ const UserProfile = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.getuserprofile, params)
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             if (response.data.data[0] != null) {
@@ -385,7 +384,7 @@ const UserProfile = ({ route, navigation }) => {
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
 
-          if (route.params.from == "gu_estimate") {
+          if (route.params && route.params.from == "gu_estimate" || route.params && route.params.from == "adm_profile" ) {
             GetUserDetails(userID);
           }
           else {
@@ -413,7 +412,32 @@ const UserProfile = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
+
+    if (contactName.trim() == "") {
+      isValid = false;
+      setContactNameInvalid(true);
+    }
+
+    if (contactNumber.trim() == "" && contactNumber.trim().length != 10) {
+      isValid = false;
+      setContactNumberInvalid(true);
+    }
+
+    if (address.trim() == "") {
+      isValid = false;
+      setAddressInvalid(true);
+    }
+
+    if (stateName.trim() == "") {
+      isValid = false;
+      setSNError(true);
+    }
+
+    if (cityName.trim() == "") {
+      isValid = false;
+      setCNError(true);
+    }
 
     if (isValid) {
       if (filePath !== null) {
@@ -552,23 +576,27 @@ const UserProfile = ({ route, navigation }) => {
                 </HelperText>
                 <TextInput ref={contactNameRef} mode="outlined" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
                 <HelperText type="error" visible={contactNameInvalid}>
-                  {communication.InvalidActivityName}
+                  {communication.InvalidContactPerson}
                 </HelperText>
-                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" 
+                value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} 
+                onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
                 <HelperText type="error" visible={contactNumberInvalid}>
-                  {communication.InvalidActivityName}
+                  {communication.InvalidMobileNumber}
                 </HelperText>
-                <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={address} returnKeyType="next" onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
+                <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={address} returnKeyType="next" 
+                onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} 
+                error={addressInvalid} />
                 <HelperText type="error" visible={addressInvalid}>
-                  {communication.InvalidActivityName}
+                  {communication.InvalidAddress}
                 </HelperText>
                 <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
                 <HelperText type="error" visible={errorSN}>
-                  {communication.InvalidStateName}
+                  select a valid state
                 </HelperText>
                 <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
                 <HelperText type="error" visible={errorCN}>
-                  {communication.InvalidStateName}
+                  select a valid city
                 </HelperText>
                 <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
                 <HelperText type="error" visible={pincodeInvalid}>

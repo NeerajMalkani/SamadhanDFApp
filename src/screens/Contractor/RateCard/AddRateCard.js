@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { View, Text, HelperText, ScrollView } from "react-native";
-import { TextInput, Checkbox, Card, Button, Portal, Dialog, Paragraph } from "react-native-paper";
+import { TextInput, Checkbox, Card, Button, Portal, Dialog, Paragraph, Snackbar } from "react-native-paper";
 import DropDown from "react-native-paper-dropdown";
 import { communication } from "../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,6 +10,7 @@ import Provider from "../../../api/Provider";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import { APIConverter } from "../../../utils/apiconverter";
+import DFButton from "../../../components/Button";
 
 let s_ID = 0,
   c_ID = 0,
@@ -98,7 +99,7 @@ const AddRateCard = ({ route, navigation }) => {
   const [convertedUnitValue, setconvertedUnitValue] = React.useState("");
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
-
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   useEffect(() => {
     GetUserID();
@@ -130,14 +131,12 @@ const AddRateCard = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             response.data.data = APIConverter(response.data.data);
             setServicesFullData(response.data.data);
-
             const serviceName = response.data.data.map((data) => data.serviceName);
             setServicesData(serviceName);
 
-            if (s_ID > 0) {
+            if (s_ID != null && s_ID > 0) {
               let b = response.data.data.filter((el) => {
                 return el.id === s_ID;
               });
@@ -247,10 +246,21 @@ const AddRateCard = ({ route, navigation }) => {
           if (response.data.data) {
 
             response.data.data = APIConverter(response.data.data);
+            //console.log('Unit Data:', response.data.data);
             setUnitFullData(response.data.data);
             const units = response.data.data.map((data) => data.displayUnit);
             setUnitsData(units);
-            if (u_ID != null) {
+
+            response.data.data.map((data) => {
+
+              if (data.Selected_unit_refno == data.unitOfSalesID) {
+                setUnitName(data.displayUnit);
+              }
+
+            });
+
+            if (u_ID != null && u_ID != 0) {
+
               let b = response.data.data.filter((el) => {
                 return el.unitId === u_ID;
               });
@@ -277,15 +287,19 @@ const AddRateCard = ({ route, navigation }) => {
           if (response.data.data) {
 
             response.data.data = APIConverter(response.data.data, false, "ratecard");
+
             setRUM(response.data.data[0].rateWithMaterials);
             setRUWM(response.data.data[0].rateWithoutMaterials);
+
             setARUM(response.data.data[0].withMaterialAlternateRate.toString());
             setARUWM(response.data.data[0].withoutMaterialAlternateRate.toString());
+
             setShortSpec(response.data.data[0].shortSpecification);
             setSpec(response.data.data[0].specification);
 
             setactualUnitName(response.data.data[0].actualUnitName);
             setconvertedUnitName(response.data.data[0].convertUnitName);
+
             setactualUnitValue(response.data.data[0].actualUnitValue);
             setconvertedUnitValue(response.data.data[0].convertUnitValue);
 
@@ -305,14 +319,13 @@ const AddRateCard = ({ route, navigation }) => {
       }
     };
 
-
     Provider.createDFContractor(Provider.API_URLS.getmaterialratedata_unitofsaleonchange_ratecardform, params)
       .then((response) => {
         setPrevUnitName(unitName);
         hideDialog();
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
+            console.log('change unit rate', response.data.data);
             response.data.data = APIConverter(response.data.data, false, "ratecard");
             setsno(response.data.data[0].sno);
 
@@ -355,11 +368,10 @@ const AddRateCard = ({ route, navigation }) => {
         contractor_product_refno: RateCardID
       }
     };
-    Provider.createDFContractor(Provider.API_URLS.contractorproductrefnocheck, params)
+    Provider.createDFContractor(Provider.API_URLS.ratecard_contractorproductrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-
             response.data.data = APIConverter(response.data.data, true, "ratecard");
 
             s_ID = response.data.data[0].serviceID;
@@ -386,7 +398,7 @@ const AddRateCard = ({ route, navigation }) => {
             setconvertedUnitValue(response.data.data[0].convertUnitValue);
 
             setShortSpec(response.data.data[0].shortSpecification);
-            //setSpec(response.data.data[0].specification);
+            setSpec(response.data.data[0].specification);
 
             setChecked(response.data.data[0].display);
 
@@ -452,7 +464,6 @@ const AddRateCard = ({ route, navigation }) => {
     setProductsName(selectedItem);
     let productID = 0;
     unitDDRef.current.reset();
-
 
     let p = productsFullData.find((el) => {
       return el.productName === selectedItem;
@@ -541,6 +552,14 @@ const AddRateCard = ({ route, navigation }) => {
 
   };
 
+  const onShortSpecChanged = (text) => {
+    setShortSpec(text);
+  };
+
+  const onSpecChanged = (text) => {
+    setSpec(text);
+  };
+
   const ValidateData = () => {
     let isValid = true;
 
@@ -600,6 +619,7 @@ const AddRateCard = ({ route, navigation }) => {
   };
 
   const InsertData = () => {
+    setIsButtonLoading(true);
     let x = unitFullData.filter((el) => {
       return el.unitName === unitName;
     });
@@ -634,9 +654,18 @@ const AddRateCard = ({ route, navigation }) => {
     };
     Provider.createDFContractor(Provider.API_URLS.ratecardcreate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
-          navigation.goBack();
+
+          if (response.data.data.Created == 1) {
+            route.params.fetchData("add");
+            navigation.goBack();
+          }
+          else {
+            setSnackbarColor(theme.colors.error);
+            setSnackbarText(response.data.message);
+            setSnackbarVisible(true);
+          }
         } else if (response.data.code === 304) {
           setSnackbarText(communication.ExistsError);
           setSnackbarVisible(true);
@@ -646,6 +675,7 @@ const AddRateCard = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -655,6 +685,7 @@ const AddRateCard = ({ route, navigation }) => {
 
 
   const UpdateData = () => {
+    setIsButtonLoading(true);
     const params = {
       data: {
         Sess_UserRefno: userID,
@@ -683,6 +714,7 @@ const AddRateCard = ({ route, navigation }) => {
     };
     Provider.createDFContractor(Provider.API_URLS.ratecardupdate, params)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -695,6 +727,7 @@ const AddRateCard = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -704,36 +737,58 @@ const AddRateCard = ({ route, navigation }) => {
   const design = (
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
-        <View style={[Styles.padding16, Styles.backgroundColorWhite]}>
+        <View style={[Styles.padding16, Styles.backgroundColorFullWhite]}>
+
+
           <Dropdown label="Service Name" data={servicesData} onSelected={onServiceNameSelected} isError={errorSN} selectedItem={serviceName} reference={servicesDDRef} />
 
-          <Dropdown label="Category Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
+          <View style={[Styles.marginTop16]}>
+            <Dropdown label="Category Name" data={categoriesData} onSelected={onCategoriesNameSelected} isError={errorCN} selectedItem={categoriesName} reference={categoriesDDRef} />
+          </View>
+
 
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
             <TextInput value={hsn} style={[Styles.width48per]} label="HSN / SAC Code" disabled />
             <TextInput value={gst} style={[Styles.width48per]} label="GST Rate (%)" disabled />
           </View>
-
+          <View style={[Styles.marginTop16]}>
             <Dropdown label="Service Product Name" data={productsData} onSelected={onProductsNameSelected} isError={errorPN} selectedItem={productsName} reference={productsDDRef} />
-
-          <Dropdown label="Unit Name" data={unitsData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
-
-          <View style={[Styles.marginTop16, { backgroundColor: "#f2f2f2" }, Styles.bordergray, Styles.borderRadius4]}>
+          </View>
+          <View style={[Styles.marginTop16]}>
+            <Dropdown label="Unit Name" data={unitsData} onSelected={onUnitNameSelected} isError={errorUN} selectedItem={unitName} reference={unitDDRef} />
+          </View>
+          <View style={[Styles.marginTop16, Styles.bordergray, Styles.borderRadius4, Styles.paddingHorizontal8, Styles.paddingBottom8]}>
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>With Material</Text>
-            <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
-              <TextInput mode="outlined" value={rum} keyboardType="decimal-pad" onEndEditing={onRUMChanged} error={errorRUM} style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              <TextInput mode="outlined" value={arum} error={errorRUWM} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
+            <View style={[Styles.flexRow, Styles.width100per, Styles.marginTop16, Styles.flexSpaceBetween]}>
+              <View style={[Styles.width48per]}>
+                <Text style={[Styles.fontSize10, Styles.textSecondaryColor, Styles.textRight]} >{actualUnitName}</Text>
+              </View>
+              <View style={[Styles.width48per]}>
+                <Text style={[Styles.fontSize10, Styles.textSecondaryColor, Styles.textRight]} >{convertedUnitName}</Text>
+              </View>
+            </View>
+            <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+              <TextInput mode="outlined" value={rum} keyboardType="decimal-pad" onEndEditing={onRUMChanged} error={errorRUM} style={[Styles.width48per, Styles.backgroundColorFullWhite]} label="Rate / Unit" />
+              <TextInput mode="outlined" value={arum} error={errorRUWM} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alt. Rate / Unit" />
             </View>
           </View>
-          <View style={[Styles.marginTop16, { backgroundColor: "#f2f2f2" }, Styles.bordergray, Styles.borderRadius4]}>
+          <View style={[Styles.marginTop16, Styles.bordergray, Styles.borderRadius4, Styles.paddingHorizontal8, Styles.paddingBottom8]}>
             <Text style={[Styles.fontSize16, Styles.padding4, Styles.textCenter]}>Without Material</Text>
-            <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
-              <TextInput mode="outlined" value={ruwm} onEndEditing={onRUWMChanged} keyboardType="decimal-pad" style={[Styles.width48per, Styles.backgroundColorWhite]} label="Rate / Unit" />
-              <TextInput mode="outlined" value={aruwm} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alternate Rate / Unit" />
+            <View style={[Styles.flexRow, Styles.width100per, Styles.marginTop16, Styles.flexSpaceBetween]}>
+              <View style={[Styles.width48per]}>
+                <Text style={[Styles.fontSize10, Styles.textSecondaryColor, Styles.textRight]} >{actualUnitName}</Text>
+              </View>
+              <View style={[Styles.width48per]}>
+                <Text style={[Styles.fontSize10, Styles.textSecondaryColor, Styles.textRight]} >{convertedUnitName}</Text>
+              </View>
+            </View>
+            <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
+              <TextInput mode="outlined" value={ruwm} onEndEditing={onRUWMChanged} keyboardType="decimal-pad" style={[Styles.width48per, Styles.backgroundColorFullWhite]} label="Rate / Unit" />
+              <TextInput mode="outlined" value={aruwm} style={[Styles.width48per, Styles.backgroundColorWhite]} disabled label="Alt. Rate / Unit" />
             </View>
           </View>
-          <TextInput mode="outlined" multiline value={shortSpec} label="Short Specification" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
-          <TextInput mode="outlined" multiline value={spec} label="Specification of Service Provider" style={[Styles.backgroundColorWhite, Styles.marginTop16]} />
+          <TextInput mode="outlined" multiline value={shortSpec} onChangeText={onShortSpecChanged} label="Short Specification" style={[Styles.backgroundColorFullWhite, Styles.marginTop16]} />
+          <TextInput mode="outlined" multiline value={spec} onChangeText={onSpecChanged} label="Specification of Service Provider" style={[Styles.backgroundColorFullWhite, Styles.marginTop16]} />
 
           <Checkbox.Item
             label="Display"
@@ -748,9 +803,11 @@ const AddRateCard = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          <Button mode="contained" onPress={ValidateData}>
+          {/* <Button mode="contained" onPress={ValidateData}>
             Submit
-          </Button>
+          </Button> */}
+
+          <DFButton mode="contained" onPress={ValidateData} title="SUBMIT" loader={isButtonLoading} />
         </Card.Content>
       </View>
       <Portal>
@@ -771,6 +828,9 @@ const AddRateCard = ({ route, navigation }) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: theme.colors.error }}>
+        {snackbarText}
+      </Snackbar>
     </View>
   );
   return design;
