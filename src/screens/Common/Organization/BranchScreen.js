@@ -206,7 +206,7 @@ const BranchListScreen = ({ navigation }) => {
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
-            previewOpenValue={-160}
+            previewOpenValue={-80}
             previewRowKey="1"
             previewOpenDelay={1000}
             refreshControl={
@@ -221,9 +221,9 @@ const BranchListScreen = ({ navigation }) => {
             data={listSearchData[0]}
             useFlatList={true}
             disableRightSwipe={true}
-            rightOpenValue={-160}
+            rightOpenValue={-80}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("edit", data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
           />
         </View>
       ) : (

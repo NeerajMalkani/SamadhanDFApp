@@ -62,12 +62,12 @@ const AddMyPersonalBank = ({ route, navigation }) => {
     const [cardType, setCardType] = useState([
         {
             title: "Debit Card",
-            isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("1") ? true : false,
+            isChecked: false,
             id: "1",
         },
         {
             title: "Credit Card",
-            isChecked: route.params.type === "edit" && route.params.data.cardType && route.params.data.cardType.toString().includes("2") ? true : false,
+            isChecked: false,
             id: "2",
         },
     ]);
@@ -86,10 +86,9 @@ const AddMyPersonalBank = ({ route, navigation }) => {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
             userID = JSON.parse(userData).UserID;
-          
+
             if (route.params.type === "edit") {
                 FetchCardType(route.params.data.cardtypeID);
-
             }
             else {
                 FetchCardType();
@@ -133,7 +132,6 @@ const AddMyPersonalBank = ({ route, navigation }) => {
     }, []);
 
     const FetchCardType = (selectedCards) => {
-       
         let params = {
             data: {
                 Sess_UserRefno: userID
@@ -144,14 +142,12 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                 if (response.data && response.data.code === 200) {
                     if (response.data.data) {
                         const cardType = [];
-
                         response.data.data.map((data) => {
                             let selected = false;
                             if (selectedCards !== null) {
-                                if (selectedCards.includes(data.cardtype_refno.toString())) {
+                                if (selectedCards.includes(data.cardtype_refno)) {
                                     selected = true;
                                 }
-
                             }
                             cardType.push(
                                 {
@@ -170,7 +166,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
     };
 
     const ValidateSubmitButton = () => {
-        
+
         let isValid = true;
         if (accountHolderName.length === 0) {
             setAccountNoInvalid(true);
@@ -212,7 +208,7 @@ const AddMyPersonalBank = ({ route, navigation }) => {
         };
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankcreate, params)
             .then((response) => {
-               
+
                 if (response.data && response.data.code === 200) {
                     route.params.fetchData("add");
                     navigation.goBack();

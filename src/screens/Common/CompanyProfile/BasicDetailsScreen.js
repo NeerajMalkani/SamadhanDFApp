@@ -155,7 +155,6 @@ const BasicDetailsScreen = ({ route, navigation }) => {
           if (response.data.data) {
 
             if (response.data.data[0].recordcount != "0") {
-              console.log('data response:', response.data.data);
               response.data.data = APIConverter(response.data.data, null, "basicDetails");
               
               setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");

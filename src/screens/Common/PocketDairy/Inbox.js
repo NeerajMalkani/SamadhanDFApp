@@ -918,7 +918,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {
       isValid = false;

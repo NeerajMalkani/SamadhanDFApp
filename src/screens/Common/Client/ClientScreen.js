@@ -16,7 +16,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
-  Sess_group_refno = 0;
+  Sess_group_refno = 0, companyID = 0, branchID = 0;
 const ClientScreen = ({ navigation }) => {
   //#region Variables
 
@@ -38,6 +38,7 @@ const ClientScreen = ({ navigation }) => {
   const [pincode, setPincode] = React.useState("");
   const [gstNumber, setGstNumber] = React.useState("");
   const [pan, setPan] = React.useState("");
+  const [serviceProviderRole, setServiceProviderRole] = React.useState("");
   const [addedBy, setAddedBy] = React.useState(false);
   const [display, setDisplay] = React.useState(false);
 
@@ -50,6 +51,8 @@ const ClientScreen = ({ navigation }) => {
     if (userData !== null) {
       const userDataParsed = JSON.parse(userData);
       userID = userDataParsed.UserID;
+      companyID = userDataParsed.Sess_company_refno;
+      branchID = userDataParsed.Sess_branch_refno;
       Sess_group_refno = userDataParsed.Sess_group_refno;
       FetchData();
     }
@@ -64,12 +67,15 @@ const ClientScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        Sess_branch_refno: branchID,
         Sess_group_refno: Sess_group_refno,
         client_user_refno: "all",
       },
     };
     Provider.createDFCommon(Provider.API_URLS.MyClientUserRefNoCheck, params)
       .then((response) => {
+        console.log('res', response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -163,6 +169,7 @@ const ClientScreen = ({ navigation }) => {
             setPincode(data.item.pincode);
             setGstNumber(data.item.gstNumber);
             setPan(data.item.pan);
+            setServiceProviderRole(data.item.client_role_refno ? data.item.client_role_refno.join(", ") : "");
             setAddedBy(data.item.createbyID);
             setDisplay(data.item.display);
           }}
@@ -242,6 +249,7 @@ const ClientScreen = ({ navigation }) => {
             <List.Item title="Pincode" description={pincode} />
             <List.Item title="GST" description={gstNumber} />
             <List.Item title="PAN" description={pan} />
+            <List.Item title="Service Provider Role" description={serviceProviderRole} />
             <List.Item title="Created Or Added" description={addedBy == 0 ? "Add" : "Create"} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>

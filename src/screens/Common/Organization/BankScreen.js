@@ -19,9 +19,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
     companyID = 0,
-   
     groupID = 0;
-
 
 const BankListScreen = ({ navigation }) => {
 
@@ -132,7 +130,6 @@ const BankListScreen = ({ navigation }) => {
                     title={data.item.bankName}
                     titleStyle={{ fontSize: 18 }}
                     description={`Bank Branch: ${NullOrEmpty(data.item.branchName) ? "" : data.item.branchName}\nCompany Branch: ${NullOrEmpty(data.item.companyBranchName) ? "" : data.item.companyBranchName} `}
-                    // description={"Branch: " + (data.item.companyBranchName ? "Yes" : "No")}
                     onPress={() => {
                         refRBSheet.current.open();
                         setCompanyBranchName(data.item.companyBranchName);
@@ -153,7 +150,6 @@ const BankListScreen = ({ navigation }) => {
             </View>
         );
     };
-
 
     const AddCallback = () => {
         navigation.navigate("AddBankScreen", { type: "add", fetchData: FetchData });
@@ -182,10 +178,7 @@ const BankListScreen = ({ navigation }) => {
         });
     };
 
-
-
     //#endregion
-
 
     return (
         <View style={[Styles.flex1]}>

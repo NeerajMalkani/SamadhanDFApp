@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { Card, Checkbox, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { Card, Checkbox, HelperText, Snackbar, TextInput,Subheading } from "react-native-paper";
 import Provider from "../../../api/Provider";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
@@ -38,26 +38,26 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   // Entry Type changes
-  // const [entryTypeName, setEntryTypeName] = useState([
-  //   {
-  //     title: "Self",
-  //     isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("1") ? true : false,
-  //     id: "1",
-  //   },
-  //   {
-  //     title: "Company",
-  //     isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("2") ? true : false,
-  //     id: "2",
-  //   },
-  // ]);
-  // const [entryTypeInvalid, setEntryTypeInvalid] = useState(false);
+  const [entryTypeName, setEntryTypeName] = useState([
+    {
+      title: "Self",
+      isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("1") ? true : false,
+      id: "1",
+    },
+    {
+      title: "Company",
+      isChecked: route.params.type === "edit" && route.params.data.entryType && route.params.data.entryType.toString().includes("2") ? true : false,
+      id: "2",
+    },
+  ]);
+  const [entryTypeInvalid, setEntryTypeInvalid] = useState(false);
   // Entry Type changes
 
   //#endregion
 
 
   useEffect(() => {
-    // let isEdit = route.params.type === "edit" ? true : false;
+    //let isEdit = route.params.type === "edit" ? true : false;
     GetUserID();
   }, []);
 
@@ -70,6 +70,7 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
       groupID = JSON.parse(userData).Sess_group_refno;
     }
 
+    FetchEntryType(route.params.type === "edit" ? true : false);
     FetchTransactionType();
 
     if (route.params.type === "edit") {
@@ -78,48 +79,44 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
   };
 
   // Entry Type changes
-  // const FetchEntryType = (edit) => {
-  //   console.log('start entry');
-  //   let params = {
-  //     data: {
-  //       Sess_UserRefno: userID,
-  //       Sess_group_refno: groupID
-  //     },
-  //   };
-  //   console.log('params', params);
-  //   Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
-  //     .then((response) => {
-  //       console.log('data', response.data.data);
-  //       if (response.data && response.data.code === 200) {
-  //         if (response.data.data) {
-  //           response.data.data = APIConverter(response.data.data);
+  const FetchEntryType = (edit) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_group_refno: groupID
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
+      .then((response) => {
+        
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            const entryType = [];
+            response.data.data.map((data, i) => {
+              let checked = false;
+              if (edit && route.params.data.entryTypeName.includes(data.pck_entrytype_name)) {
+                checked = true;
+              }
+              entryType.push({
+                title: data.pck_entrytype_name,
+                isChecked: checked,
+                id: data.pck_entrytype_refno,
+              });
+            });
+            setEntryTypeName(entryType);
+          }
+        }
 
-  //           const entryType = [];
-  //           response.data.data.map((data, i) => {
-  //             let checked = false;
-  //             if (edit && route.params.data.entryType.includes(data.entryType)) {
-  //               checked = true;
-  //             }
-
-  //             entryType.push({
-  //               title: data.transTypeName,
-  //               isChecked: checked,
-  //               id: data.transtypeID,
-  //             });
-  //           });
-  //           setEntryTypeName(entryType);
-  //         }
-  //       }
-
-  //     })
-  //     .catch((e) => {
-  //       //setIsLoading(false);
-  //       setSnackbarText(e.message);
-  //       setSnackbarColor(theme.colors.error);
-  //       setSnackbarVisible(true);
-  //       setRefreshing(false);
-  //     });
-  // };
+      })
+      .catch((e) => {
+        //setIsLoading(false);
+        setSnackbarText(e.message);
+        setSnackbarColor(theme.colors.error);
+        setSnackbarVisible(true);
+        setRefreshing(false);
+      });
+  };
   // Entry Type changes
 
 
@@ -225,13 +222,19 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
   };
 
   const InsertActivityName = () => {
+    let et = [];
+    entryTypeName.map((k, i) => {
+      if (k.isChecked) {
+        et.push(k.id.toString());
+      }
+    });
     let params = {
       data: {
         Sess_UserRefno: userID,
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;
         }).transtypeID,
-
+        pck_entrytype_refno: et,
         pck_category_refno: categoryFullData.find((el) => {
           return el.categoryName === categoryName;
         }).pckCategoryID,
@@ -265,6 +268,13 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
   };
 
   const UpdateActivityName = () => {
+    let et = [];
+    
+    entryTypeName.map((k, i) => {
+      if (k.isChecked) {
+        et.push(k.id.toString());
+      }
+    });
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -272,6 +282,7 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;
         }).transtypeID,
+        pck_entrytype_refno: et,
         pck_category_refno: categoryFullData.find((el) => {
           return el.categoryName === categoryName;
         }).pckCategoryID,
@@ -337,7 +348,7 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding16]}>
           {/* Entry Type changes */}
-          {/* <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Entry Type</Subheading>
+          <Subheading style={{ paddingTop: 24, fontWeight: "bold" }}>Entry Type</Subheading>
           <View style={[Styles.flexRow]}>
             {entryTypeName.map((k, i) => {
               return (
@@ -363,7 +374,7 @@ const AddSubCategoryNameScreen = ({ route, navigation }) => {
                 </View>
               );
             })}
-          </View> */}
+          </View>
           {/* Entry Type changes */}
 
           <Dropdown label="Transaction Type" data={transactionTypeData} onSelected={onTransactionTypeName} isError={errorTTN} selectedItem={transactionTypeName} />

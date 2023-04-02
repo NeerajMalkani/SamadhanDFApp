@@ -268,6 +268,7 @@ const AddBankScreen = ({ route, navigation }) => {
             .then((response) => {
                 setIsButtonLoading(false);
                 if (response.data && response.data.code === 200) {
+                    console.log('step 1');
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {

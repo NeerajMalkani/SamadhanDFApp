@@ -103,6 +103,7 @@ const AddEmployee = ({ route, navigation }) => {
 
     Provider.createDFCommon(Provider.API_URLS.employeecreate, params)
       .then((response) => {
+        console.log('resp', response.data);
         if (
           response.data &&
           response.data.code === 200 &&
@@ -112,7 +113,7 @@ const AddEmployee = ({ route, navigation }) => {
           navigation.navigate("EmployeeListScreen");
         } else {
           setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
+          setSnackbarText(response.data.message);
           setSnackbarVisible(true);
         }
       })

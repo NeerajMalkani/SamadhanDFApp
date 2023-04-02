@@ -166,6 +166,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_group_refno:groupID,
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;
         }).transtypeID,
@@ -206,6 +207,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_group_refno:groupID,
         pck_sub_category_refno: route.params.data.subcategoryID,
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;

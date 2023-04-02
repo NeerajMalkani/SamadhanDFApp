@@ -1004,6 +1004,16 @@ export default function App() {
                 name="GMyContactsScreen"
                 component={GMyContactsScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="BankListScreen"
+                component={BankListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyPersonalBankScreen"
+                component={MyPersonalBankScreen}
+              />
             </Drawer.Navigator>
           );
         case 9:
@@ -1095,6 +1105,11 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="VerifyCompanyExpense"
                 component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="MyPersonalBankScreen"
+                component={MyPersonalBankScreen}
               />
             </Drawer.Navigator>
           );

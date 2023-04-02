@@ -9,7 +9,7 @@ import { theme } from "../../../../theme/apptheme";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { communication } from "../../../../utils/communication";
 
-let dealerID = 0;
+let dealerID = 0, groupID = 0;
 const AddDealerBrandSetupScreen = ({ route, navigation }) => {
   //#region Variables
 
@@ -81,6 +81,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       dealerID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
       FetchServices();
       FetchBrands();
       if (route.params.type === "edit") {
@@ -98,11 +99,12 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: dealerID,
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.ServiceNamePopupMaterialSetup, params)
+    Provider.createDFCommon(Provider.API_URLS.ServiceNameDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+
             setServicesFullData(response.data.data);
             if (route.params.type === "edit") {
               FetchCategoriesFromServices(route.params.data.serviceName, response.data.data);
@@ -135,22 +137,23 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const FetchCategoriesFromServices = (selectedItem, servicesDataParam) => {
     let params = {
       data: {
         Sess_UserRefno: dealerID,
+        Sess_group_refno: groupID,
         service_refno: servicesDataParam
           ? servicesDataParam.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id
+            return el.serviceName === selectedItem;
+          }).id
           : servicesFullData.find((el) => {
-              return el.serviceName === selectedItem;
-            }).id,
+            return el.serviceName === selectedItem;
+          }).id,
       },
     };
-    Provider.createDFAdmin(Provider.API_URLS.CategoryNamePopupMaterialSetup, params)
+    Provider.createDFCommon(Provider.API_URLS.CategoryNameDealerBrandSetup, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -165,7 +168,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const FetchCategoryDataFromCategory = (selectedItem, categoriesDataParam) => {
     let params = {
@@ -173,11 +176,11 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: "2",
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.CategoryDataServiceProduct, params)
@@ -190,7 +193,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const FetchBrands = () => {
     let params = {
@@ -209,7 +212,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const FetchUnitsFromCategory = (selectedItem, categoriesDataParam) => {
     let params = {
@@ -217,11 +220,11 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         Sess_UserRefno: dealerID,
         category_refno: categoriesDataParam
           ? categoriesDataParam.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id
+            return el.categoryName === selectedItem;
+          }).id
           : categoriesFullData.find((el) => {
-              return el.categoryName === selectedItem;
-            }).id,
+            return el.categoryName === selectedItem;
+          }).id,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.UnitOfSaleDealerBrandSetup, params)
@@ -235,7 +238,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const FetchBuyerCategories = () => {
     let params = {
@@ -252,7 +255,7 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -356,12 +359,21 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         discount_perc: objDiscountPerc,
       },
     };
+    console.log('input params:', params);
     Provider.createDFCommon(Provider.API_URLS.DealerBrandSetupCreate, params)
       .then((response) => {
+        console.log('output data:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
-          navigation.goBack();
+          if (response.data.data.Created == 1) {
+            route.params.fetchData("add");
+            navigation.goBack();
+          }
+          else {
+            setSnackbarText(response.data.message);
+            setSnackbarVisible(true);
+          }
+
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);

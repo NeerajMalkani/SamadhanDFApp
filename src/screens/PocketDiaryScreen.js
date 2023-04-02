@@ -335,7 +335,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
             Sess_RegionalOffice_Branch_Refno:
               response.data.data.Sess_RegionalOffice_Branch_Refno,
             Sess_menu_refno_list: response.data.data.Sess_menu_refno_list,
-            Sess_empe_refno:response.data.data.Sess_empe_refno,
+            Sess_empe_refno: response.data.data.Sess_empe_refno,
             Sess_profile_address: response.data.data.Sess_profile_address,
           };
 
@@ -394,7 +394,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
           ]}
           source={require("../../assets/defaultIcon.png")}
         />
-        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150}]}>
+        <View style={[Styles.flexColumn, Styles.flexGrow, { maxWidth: 150 }]}>
           <Title style={[Styles.textColorDark, { marginTop: -4 }]}>
             {route.params.userDetails[0].FullName}
           </Title>
@@ -572,7 +572,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </Text>
                 </View>
               </TouchableOpacity>
-              
+
             </View>
             <View
               style={[
@@ -700,7 +700,7 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </TouchableOpacity>
             </View>
-            {(roleID == 4 || roleID == 5  || roleID == 9) && (
+            {(roleID == 4 || roleID == 5 || roleID == 9) && (
               <>
                 <View
                   style={[
@@ -1012,6 +1012,33 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
               </View>
+              {(roleID != 3) && (
+              <View style={[Styles.paddingTop16]}>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("MyPersonalBankScreen");
+                  }}
+                  style={[
+                    Styles.borderRadius8,
+                    Styles.homeBox,
+                    Styles.flexColumn,
+                    Styles.flexJustifyCenter,
+                    Styles.flexAlignCenter,
+                    Styles.paddingHorizontal12,
+                    { width: 150, height: 72 },
+                  ]}
+                >
+                  <Icon
+                    name="archive-arrow-down"
+                    size={22}
+                    color={theme.colors.pocketDiaryIcons}
+                  />
+                  <Text style={[Styles.buttonIconLabel]}>My Personal Bank</Text>
+                </TouchableOpacity>
+
+              </View>
+              )}
             </View>
           </View>
         </View>

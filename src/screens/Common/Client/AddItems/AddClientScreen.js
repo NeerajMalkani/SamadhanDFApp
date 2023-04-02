@@ -16,6 +16,7 @@ import { theme } from '../../../../theme/apptheme';
 import { communication } from '../../../../utils/communication';
 import { APIConverter } from '../../../../utils/apiconverter';
 import DFButton from '../../../../components/Button';
+import RadioGroup from "react-native-radio-buttons-group";
 
 let userID = 0;
 let Sess_company_refno = 0;
@@ -88,8 +89,8 @@ const AddClientScreen = ({ route, navigation }) => {
       title: 'Vendor',
       isChecked:
         route.params.type === 'edit' &&
-        route.params.data.serviceType &&
-        route.params.data.serviceType.indexOf('14') !== -1
+          route.params.data.serviceType &&
+          route.params.data.serviceType.indexOf('14') !== -1
           ? true
           : false,
     },
@@ -97,8 +98,8 @@ const AddClientScreen = ({ route, navigation }) => {
       title: 'Supplier',
       isChecked:
         route.params.type === 'edit' &&
-        route.params.data.serviceType &&
-        route.params.data.serviceType.indexOf('13') !== -1
+          route.params.data.serviceType &&
+          route.params.data.serviceType.indexOf('13') !== -1
           ? true
           : false,
     },
@@ -106,12 +107,45 @@ const AddClientScreen = ({ route, navigation }) => {
       title: 'Client',
       isChecked:
         route.params.type === 'edit' &&
-        route.params.data.serviceType &&
-        route.params.data.serviceType.indexOf('8') !== -1
+          route.params.data.serviceType &&
+          route.params.data.serviceType.indexOf('8') !== -1
           ? true
           : route.params.type == "client" ? true : false,
     },
   ]);
+
+  const [buyerTypeID, setBuyerTypeID] = useState(0);
+  const [BTRadioButtons, setBTRadioButtons] = useState([
+    {
+      id: "1", // acts as primary key, should be unique and non-empty string
+      label: "PREMIUM",
+      selected: false,
+      value: "1",
+    },
+    {
+      id: "2",
+      label: "GOLD",
+      selected: false,
+      value: "2",
+    },
+    {
+      id: "3",
+      label: "SILVER",
+      selected: false,
+      value: "3",
+    },
+  ]);
+
+  function onPressBTRadioButton(radioButtonsArray) {
+    setBTRadioButtons(radioButtonsArray);
+    setIsBuyerCategoryError(false);
+    radioButtonsArray.map((r) => {
+      if (r.selected === true) {
+        setBuyerTypeID(r.value);
+      }
+    });
+  }
+
   const [serviceTypeInvalid, setServiceTypeInvalid] = useState(false);
 
   const [checked, setChecked] = React.useState(
@@ -122,6 +156,10 @@ const AddClientScreen = ({ route, navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState('');
 
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [isDealer, setIsDealer] = React.useState(false);
+  const [isBT, setIsBT] = React.useState(false);
+  const [isServiceProvideOnlyClient, setIsServiceProvideOnlyClient] = React.useState(false);
+  const [isBuyerCategoryError, setIsBuyerCategoryError] = React.useState(false);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem('user');
@@ -129,12 +167,63 @@ const AddClientScreen = ({ route, navigation }) => {
       userID = JSON.parse(userData).UserID;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
       Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+
+      if (JSON.parse(userData).Sess_group_refno == 4) {
+        setIsDealer(true);
+        FetchBuyerCategory();
+      }
+      else {
+        setIsDealer(false);
+      }
+
     }
   };
 
-  const FetchStates = () => {
-    Provider.createDFAdmin(Provider.API_URLS.GetStateEWayBillForm)
+  const FetchBuyerCategory = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+      },
+    };
+    Provider.createDFCommon(Provider.API_URLS.BuyerCategoryDiscountDealerBrandSetup, params)
       .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            console.log('resp:', response.data.data);
+
+            let buyerCat = [];
+            const states = response.data.data.map((data) => {
+              buyerCat.push({
+                id: data.buyercategory_refno,
+                label: data.buyercategory_name,
+                selected: false,
+                value: data.buyercategory_refno,
+              });
+
+            });
+
+            setBTRadioButtons(buyerCat);
+
+            // if (route.params.type === 'edit') {
+            //   FetchCities(route.params.data.stateName, response.data.data);
+            // }
+          }
+          else {
+            setIsBT(true);
+          }
+        }
+        else {
+          setIsBT(true);
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchStates = () => {
+    console.log('call state');
+    Provider.createDFCommon(Provider.API_URLS.GetStateDetails)
+      .then((response) => {
+        console.log('asasd', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -147,7 +236,7 @@ const AddClientScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCities = (stateName, stateData) => {
@@ -156,11 +245,11 @@ const AddClientScreen = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         state_refno: stateData
           ? stateData.find((el) => {
-              return el.stateName === stateName;
-            }).stateID
+            return el.stateName === stateName;
+          }).stateID
           : statesFullData.find((el) => {
-              return el.stateName === stateName;
-            }).stateID,
+            return el.stateName === stateName;
+          }).stateID,
       },
     };
     Provider.createDFCommon(
@@ -177,7 +266,7 @@ const AddClientScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -262,7 +351,7 @@ const AddClientScreen = ({ route, navigation }) => {
     const params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno: Sess_company_refno.toString() ,
+        Sess_company_refno: Sess_company_refno.toString(),
         Sess_branch_refno: Sess_branch_refno.toString(),
         company_name: companyName,
         contact_person: contactName,
@@ -278,7 +367,7 @@ const AddClientScreen = ({ route, navigation }) => {
         gst_no: gstNumber,
         pan_no: panNumber,
         client_role_refno: arrServiceTypeRole,
-        buyercategory_refno: '0',
+        buyercategory_refno: buyerTypeID,
         view_status: checked ? "1" : "0",
       },
     };
@@ -340,15 +429,15 @@ const AddClientScreen = ({ route, navigation }) => {
         pincode: pincode,
         gst_no: gstNumber,
         pan_no: panNumber,
-        client_role_refno: arrServiceTypeRole.join(','),
-        buyercategory_refno: '0',
+        client_role_refno: arrServiceTypeRole,
+        buyercategory_refno: buyerTypeID,
         view_status: checked,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.ClientUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          route.params.fetchData('add');
+          route.params.fetchData('update');
           navigation.goBack();
         } else {
           setSnackbarText(communication.UpdateError);
@@ -391,6 +480,16 @@ const AddClientScreen = ({ route, navigation }) => {
     if (cityName.length === 0 || !objCity) {
       setCNError(true);
       isValid = false;
+    }
+
+    console.log('isDealer', isDealer);
+    console.log('isServiceProvideOnlyClient', isServiceProvideOnlyClient);
+    if (isDealer && isServiceProvideOnlyClient) {
+      if (buyerTypeID == 0) {
+        isValid = false;
+        setIsBuyerCategoryError(true);
+      }
+
     }
 
     const objServiceTypeRoles = serviceTypeRoles.find((el) => {
@@ -573,9 +672,19 @@ const AddClientScreen = ({ route, navigation }) => {
                     status={k.isChecked ? 'checked' : 'unchecked'}
                     onPress={() => {
                       let temp = serviceTypeRoles.map((u) => {
+
                         if (k.title === u.title) {
+
+                          if (u.title.toLowerCase() == "client" && !u.isChecked) {
+                            setIsServiceProvideOnlyClient(true);
+                          }
+                          else {
+                            setIsServiceProvideOnlyClient(false);
+                          }
+
                           return { ...u, isChecked: !u.isChecked };
                         }
+
                         return u;
                       });
                       setServiceTypeInvalid(false);
@@ -589,6 +698,38 @@ const AddClientScreen = ({ route, navigation }) => {
           <HelperText type='error' visible={serviceTypeInvalid}>
             {communication.InvalidServiceTypeRole}
           </HelperText>
+
+          {isDealer && isServiceProvideOnlyClient &&
+            <>
+              <Subheading style={{ paddingTop: 8, fontWeight: 'bold' }}>
+                Select Customer / Buyer Type
+              </Subheading>
+
+              {!isBT ? (
+                <View>
+                  <RadioGroup
+                    containerStyle={[Styles.marginTop16]}
+                    layout="row"
+                    radioButtons={BTRadioButtons}
+                    onPress={onPressBTRadioButton}
+                    isError
+                  />
+                  <HelperText type='error' visible={isBuyerCategoryError}>
+                    Please select buyer category
+                  </HelperText>
+                </View>
+
+              ) : (
+
+                <Subheading style={[Styles.errorColor]}>Please Create Buyer Category</Subheading>
+              )
+
+              }
+
+            </>
+          }
+
+
           <View style={{ width: 160 }}>
             <Checkbox.Item
               label='Display'

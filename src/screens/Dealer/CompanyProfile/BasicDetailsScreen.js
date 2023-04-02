@@ -407,7 +407,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
 
     if (isValid) {
       InsertData();

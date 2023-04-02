@@ -91,28 +91,32 @@ const ApiMaster = ({ navigation }) => {
     Provider.createDFAdmin(Provider.API_URLS.getapitaskreport, params)
       .then((response) => {
         setRbloader(false);
-        //console.log('response:', response.data.data);
+        //console.log(response.data.data);
+        // console.log('MY Android:', response.data.data.Android);
+        // console.log('MY IOS:', response.data.data.IOS);
+        // console.log('MY Web:', response.data.data.Web);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            //apiDetails[1](response.data.data);
+            dataAndroid[1](response.data.data.Android);
+            dataIOS[1](response.data.data.IOS);
+            dataWeb[1](response.data.data.Web);
 
-            const objectArray = Object.entries(response.data.data);
-            //console.log('array', objectArray);
+            // const objectArray = Object.entries(response.data.data);
+            // //console.log('array', objectArray);
 
-            if (objectArray.length > 0) {
+            // if (objectArray.length > 0) {
 
-              objectArray.map(([key, value]) => {
-                console.log('key: ', key);
-              });
+            //   objectArray.map(([key, value]) => {
+            //     console.log('key: ', key);
+            //   });
 
-            }
+            // }
 
           }
         } else {
-
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          dataAndroid[1]([]);
+          dataIOS[1]([]);
+          dataWeb[1]([]);
         }
         setRbloader(false);
         setRefreshing(false);
@@ -214,83 +218,271 @@ const ApiMaster = ({ navigation }) => {
               <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
                 <ActivityIndicator size="large" color={theme.colors.primary} />
               </View>
-            ) : apiDetails[0] != null ? (
-              <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-                {apiDetails.map((data, index) => (
-                  <Text>{data[index]}</Text>
-
-                  // <View style={[Styles.padding16]}>
-                  //   <DataTable
-                  //     style={[
-                  //       Styles.backgroundSecondaryColor,
-                  //       Styles.borderRadius4,
-                  //       Styles.flexJustifyCenter,
-                  //       Styles.bordergray,
-                  //       Styles.fontBold,
-                  //     ]}
-                  //   >
-                  //     <DataTable.Header>
-                  //       <DataTable.Title
-                  //         style={[{ flex: 1, justifyContent: "center" }]}
-                  //       >
-                  //         Collected
-                  //       </DataTable.Title>
-                  //       <DataTable.Title
-                  //         style={[
-                  //           Styles.borderLeft1,
-                  //           { flex: 1, justifyContent: "center" },
-                  //         ]}
-                  //         numeric
-                  //       >
-                  //         Paid
-                  //       </DataTable.Title>
-                  //       <DataTable.Title
-                  //         style={[
-                  //           Styles.borderLeft1,
-                  //           { flex: 1, justifyContent: "center" },
-                  //         ]}
-                  //         numeric
-                  //       >
-                  //         Balance
-                  //       </DataTable.Title>
-                  //     </DataTable.Header>
-
-                  //     <DataTable.Row style={[Styles.backgroundColor]}>
-                  //       <DataTable.Cell
-                  //         style={[{ flex: 1, justifyContent: "center" }]}
-                  //       >
-                  //         {collectedAmount}
-                  //       </DataTable.Cell>
-                  //       <DataTable.Cell
-                  //         style={[
-                  //           Styles.borderLeft1,
-                  //           { flex: 1, justifyContent: "center" },
-                  //         ]}
-                  //       >
-                  //         {paidAmount}
-                  //       </DataTable.Cell>
-                  //       <DataTable.Cell
-                  //         style={[
-                  //           Styles.borderLeft1,
-                  //           { flex: 1, justifyContent: "center" },
-                  //         ]}
-                  //       >
-                  //         {balanceAmount}
-                  //       </DataTable.Cell>
-                  //     </DataTable.Row>
-                  //   </DataTable>
-                  // </View>
-
-
-                ))}
-              </View>
             ) : (
-              <NoItems icon="format-list-bulleted" text="No records found" />
+              <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor, Styles.marginBottom64]}>
+
+                {dataAndroid != null &&
+                  <>
+
+                    <View style={[Styles.padding16]}>
+                      <DataTable
+                        style={[
+                          Styles.backgroundSecondaryColor,
+                          Styles.borderRadius4,
+                          Styles.flexJustifyCenter,
+                          Styles.bordergray,
+                          Styles.fontBold,
+                        ]}
+                      >
+                        <DataTable.Header style={[Styles.backgroundGreen]}>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                            textStyle={{ color: "white" }}
+                          >
+                            Android
+                          </DataTable.Title>
+
+
+                        </DataTable.Header>
+
+                        <DataTable.Header>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                          >
+                            Date
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Type
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Status
+                          </DataTable.Title>
+                        </DataTable.Header>
+
+                        {
+                          dataAndroid != null && dataAndroid[0] != undefined && dataAndroid[0].map((data, index) => (
+
+                            <DataTable.Row style={[Styles.backgroundColor]}>
+                              <DataTable.Cell
+                                style={[{ flex: 1, justifyContent: "center" }]}
+                              >
+                                {data.entry_date}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_name}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_status_name}
+                              </DataTable.Cell>
+                            </DataTable.Row>
+
+                          ))
+                        }
+
+                      </DataTable>
+                    </View>
+
+                  </>
+                }
+
+                {dataIOS != null &&
+                  <>
+
+                    <View style={[Styles.padding16, Styles.marginTop16]}>
+                      <DataTable
+                        style={[
+                          Styles.backgroundSecondaryColor,
+                          Styles.borderRadius4,
+                          Styles.flexJustifyCenter,
+                          Styles.bordergray,
+                          Styles.fontBold,
+                        ]}
+                      >
+                        <DataTable.Header style={[Styles.backgroundColorFullWhite]}>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                          >
+                            IOS
+                          </DataTable.Title>
+
+
+                        </DataTable.Header>
+
+                        <DataTable.Header>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                          >
+                            Date
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Type
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Status
+                          </DataTable.Title>
+                        </DataTable.Header>
+
+                        {
+                          dataIOS != null && dataIOS[0] != undefined && dataIOS[0].map((data, index) => (
+
+                            <DataTable.Row style={[Styles.backgroundColor]}>
+                              <DataTable.Cell
+                                style={[{ flex: 1, justifyContent: "center" }]}
+                              >
+                                {data.entry_date}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_name}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_status_name}
+                              </DataTable.Cell>
+                            </DataTable.Row>
+
+                          ))
+                        }
+
+                      </DataTable>
+                    </View>
+
+                  </>
+                }
+
+                {dataWeb != null &&
+                  <>
+
+                    <View style={[Styles.padding16, Styles.marginTop16]}>
+                      <DataTable
+                        style={[
+                          Styles.backgroundSecondaryColor,
+                          Styles.borderRadius4,
+                          Styles.flexJustifyCenter,
+                          Styles.bordergray,
+                          Styles.fontBold,
+                        ]}
+                      >
+                        <DataTable.Header style={[Styles.backgroundColorYelow]}>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                          >
+                            Website
+                          </DataTable.Title>
+
+
+                        </DataTable.Header>
+
+                        <DataTable.Header>
+                          <DataTable.Title
+                            style={[{ flex: 1, justifyContent: "center" }]}
+                          >
+                            Date
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Type
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={[
+                              Styles.borderLeft1,
+                              { flex: 1, justifyContent: "center" },
+                            ]}
+                            numeric
+                          >
+                            Work Status
+                          </DataTable.Title>
+                        </DataTable.Header>
+
+                        {
+                          dataWeb != null && dataWeb[0] != undefined && dataWeb[0].map((data, index) => (
+
+                            <DataTable.Row style={[Styles.backgroundColor]}>
+                              <DataTable.Cell
+                                style={[{ flex: 1, justifyContent: "center" }]}
+                              >
+                                {data.entry_date}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_name}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={[
+                                  Styles.borderLeft1,
+                                  { flex: 1, justifyContent: "center" },
+                                ]}
+                              >
+                                {data.work_status_name}
+                              </DataTable.Cell>
+                            </DataTable.Row>
+
+                          ))
+                        }
+
+                      </DataTable>
+                    </View>
+
+                  </>
+                }
+
+              </View >
             )}
-          </ScrollView>
-        </View>
-      </RBSheet>
-    </View>
+          </ScrollView >
+        </View >
+      </RBSheet >
+    </View >
   );
 };
 

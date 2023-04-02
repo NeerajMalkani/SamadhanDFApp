@@ -69,6 +69,7 @@ const MyPersonalBankScreen = ({ navigation }) => {
         };
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankrefnocheck, params)
             .then((response) => {
+                console.log('resp', response.data);
                 if (response.data && response.data.code === 200) {
                    
                     if (response.data.data) {
@@ -83,9 +84,6 @@ const MyPersonalBankScreen = ({ navigation }) => {
                     }
                 } else {
                     listData[1]([]);
-                    setSnackbarText("No data found");
-                    setSnackbarColor(theme.colors.error);
-                    setSnackbarVisible(true);
                 }
                 setIsLoading(false);
                 setRefreshing(false);
@@ -98,10 +96,6 @@ const MyPersonalBankScreen = ({ navigation }) => {
                 setRefreshing(false);
             });
     };
-
-    useEffect(() => {
-        FetchData();
-    }, []);
 
     const onChangeSearch = (query) => {
         setSearchQuery(query);
@@ -171,12 +165,11 @@ const MyPersonalBankScreen = ({ navigation }) => {
         });
     };
 
-
     //#endregion
 
     return (
         <View style={[Styles.flex1]}>
-            <Header navigation={navigation} title="My Personal Bank List" />
+            <Header navigation={navigation} title="My Personal Bank" />
             {isLoading ? (
                 <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
