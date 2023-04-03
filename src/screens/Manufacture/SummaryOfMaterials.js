@@ -90,7 +90,6 @@ function SummaryOfMaterials({ navigation }) {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data[0]);
             let temp = [];
             Object.entries(response.data.data).map(([key, value], index) => {
               if (!isNaN(key)) {

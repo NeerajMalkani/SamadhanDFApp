@@ -129,7 +129,6 @@ const JobListing = ({ route, navigation }) => {
       },
     })
       .then((res) => {
-        console.log(res.data);
         if (res.data.data) setDistricts(res.data.data);
       })
       .catch((error) => console.log(error));

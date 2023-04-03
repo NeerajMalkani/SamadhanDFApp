@@ -146,7 +146,6 @@ function AddProductOrderList({ route, navigation }) {
       };
     });
   };
-  // console.log(route.params.data);
   const FetchServiceNames = () => {
     const params = {
       data: {
@@ -181,16 +180,13 @@ function AddProductOrderList({ route, navigation }) {
         }
       })
       .catch((e) => console.log(e));
-    console.log("asdasdf");
     Provider.createDFManufacturer(
       Provider.API_URLS.get_widthofgpcoil_manufacturer_poform,
       params
     )
       .then((response) => {
-        console.log("width of gp coil:", response.data.data);
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setWidthFullData(() => {
               return response.data.data;
             });

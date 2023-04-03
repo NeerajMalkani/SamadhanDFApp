@@ -602,7 +602,9 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={pincodeInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." value={gstNumber} keyboardType="number-pad" returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+                <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." 
+                value={gstNumber} returnKeyType="next" 
+                onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
                 <HelperText type="error" visible={gstNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>

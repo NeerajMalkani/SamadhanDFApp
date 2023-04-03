@@ -359,10 +359,8 @@ const AddDealerBrandSetupScreen = ({ route, navigation }) => {
         discount_perc: objDiscountPerc,
       },
     };
-    console.log('input params:', params);
     Provider.createDFCommon(Provider.API_URLS.DealerBrandSetupCreate, params)
       .then((response) => {
-        console.log('output data:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           if (response.data.data.Created == 1) {

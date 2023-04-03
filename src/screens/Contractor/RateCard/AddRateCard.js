@@ -325,7 +325,6 @@ const AddRateCard = ({ route, navigation }) => {
         hideDialog();
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('change unit rate', response.data.data);
             response.data.data = APIConverter(response.data.data, false, "ratecard");
             setsno(response.data.data[0].sno);
 

@@ -57,7 +57,6 @@ const ContractorEstimation = ({ route, navigation }) => {
   //#region Functions
 
   const GetUserID = async () => {
-    console.log('load page');
     const userData = await AsyncStorage.getItem('user');
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
@@ -118,12 +117,10 @@ const ContractorEstimation = ({ route, navigation }) => {
             } else {
               setShowBrandCategory(false);
             }
-            console.log('step 4');
             setEstimationData(response.data.data);
             setIsLoading(false);
           }
         } else {
-          console.log('step 1');
           setEstimationData([]);
           setSnackbarText('No data found');
           setSnackbarColor(theme.colors.error);
@@ -132,7 +129,6 @@ const ContractorEstimation = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
-        console.log('step 2');
         setEstimationData([]);
         setSnackbarText('No data found');
         setSnackbarColor(theme.colors.error);
@@ -166,8 +162,6 @@ const ContractorEstimation = ({ route, navigation }) => {
       params,
     )
       .then((response) => {
-        //console.log("params", params);
-        //console.log("resp", response.data);
         if (response.data && response.data.code === 200) {
           if (route.params.isContractor) {
             if (response.data.data.Updated == 1) {
@@ -212,7 +206,6 @@ const ContractorEstimation = ({ route, navigation }) => {
             //console.log("params", params);
             //console.log("response", response.data.data);
             setBrandData(response.data.data);
-            console.log('step 3');
             setEstimationData((prev) => {
               return [
                 {
@@ -283,37 +276,7 @@ const ContractorEstimation = ({ route, navigation }) => {
   };
 
   const resetBrandSelection = () => {
-    console.log('reset call');
     setCategoryWiseBrandData([]);
-    console.log('step 1');
-    let brandFullData = categoryWiseBrandFullData;
-    console.log(brandFullData);
-
-    const objectArray = Object.entries(brandFullData);
-    console.log(objectArray.length);
-
-    if (objectArray.length > 0) {
-      let brandCategory = [];
-      objectArray.map(([key, value]) => {
-        console.log('key wise data', brandFullData[key]);
-      });
-
-      // const onlyCatName = brandCategory.map((el) => el.categoryNameDisplay);
-      // //console.log('onlyCatName', onlyCatName);
-      // setShowBrandCategory(true);
-      // setBrandCategoryData(onlyCatName);
-      // setBrandCategoryFullData(brandCategory);
-    }
-
-    // for (var k = 0; k < brandFullData.length; k++) {
-
-    //   // for (var i = 0; i < brandFullData[k][selectedBrandCategoryID].length; i++) {
-    //   //   brandFullData[selectedBrandCategoryID][i].isChecked = false;
-    //   // }
-    //   console.log('kkkkkkkk:', brandFullData[k]);
-    // }
-
-    //setCategoryWiseBrandFullData(brandFullData);
   };
 
   const SetCategoryBrand = (category) => {

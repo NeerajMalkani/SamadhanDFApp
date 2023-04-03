@@ -146,7 +146,6 @@ function EditProductOrderList({ route, navigation }) {
       };
     });
   };
-  // console.log(route.params.data);
   const FetchServiceNames = () => {
     const params = {
       data: {

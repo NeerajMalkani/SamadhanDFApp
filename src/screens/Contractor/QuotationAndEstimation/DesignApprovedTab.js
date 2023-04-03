@@ -359,7 +359,6 @@ const DesignApprovedTab = ({ response, navigation, fetch, set, unload }) => {
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
-              console.log(current);
               setCurrent(data.item);
             }}
             style={{

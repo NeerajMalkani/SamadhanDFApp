@@ -118,7 +118,6 @@ function AddProductionStatus({ route, navigation }) {
       params
     )
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.data.Created == 1) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -226,7 +225,6 @@ function AddProductionStatus({ route, navigation }) {
             setFullData((prev) => {
               return { ...prev, mf_vo_no: response.data.data };
             });
-            console.log(route.params.data);
             setData((prev) => {
               return {
                 ...prev,

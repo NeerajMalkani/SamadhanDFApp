@@ -103,14 +103,12 @@ function AddProduction({ route, navigation }) {
         view_status: data.checked ? "1" : "0",
       },
     };
-    console.log(params);
 
     Provider.createDFManufacturer(
       Provider.API_URLS.productforproductioncreate,
       params
     )
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.data.Created == 1) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -237,7 +235,6 @@ function AddProduction({ route, navigation }) {
                 service: response.data.data,
               };
             });
-            console.log("thick", response.data.data);
             let filter = response.data.data.find(
               (item) =>
                 item.thick_service_refno ===
@@ -256,7 +253,6 @@ function AddProduction({ route, navigation }) {
   };
 
   useEffect(() => {
-    console.log("data.service_name");
     if (data.service_name !== "") {
       let params = {
         data: {
@@ -266,13 +262,11 @@ function AddProduction({ route, navigation }) {
           ).service_refno,
         },
       };
-      console.log(params);
       Provider.createDFManufacturer(
         Provider.API_URLS.get_categoryname_productforproductionform,
         params
       )
         .then((response) => {
-          console.log("resp2", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setCategoryFullData(response.data.data);
@@ -310,7 +304,6 @@ function AddProduction({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log("thick2", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setThicknessFullData((prev) => {
@@ -348,13 +341,11 @@ function AddProduction({ route, navigation }) {
           ).thick_category_refno,
         },
       };
-      console.log("thick3pp", params);
       Provider.createDFManufacturer(
         Provider.API_URLS.get_productname_II_productforproductionform,
         params
       )
         .then((response) => {
-          console.log("thick3", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setThicknessFullData((prev) => {
@@ -378,7 +369,6 @@ function AddProduction({ route, navigation }) {
   }, [data.thick_category_name]);
 
   useEffect(() => {
-    console.log(data.category_name);
     if (data.category_name !== "") {
       let params = {
         data: {
@@ -414,7 +404,6 @@ function AddProduction({ route, navigation }) {
   }, [data.category_name]);
 
   useEffect(() => {
-    console.log(data.brand_name);
     if (data.brand_name !== "") {
       let params = {
         data: {

@@ -206,7 +206,6 @@ const JobSeekerForm = ({ route, navigation }) => {
       data: { Sess_UserRefno: userID, empe_refno },
     })
       .then((res) => {
-        console.log(res.data);
         let cities = [];
         try {
           if (res.data.data && res.data.data[0]) {

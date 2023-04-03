@@ -83,7 +83,6 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    // console.log(route.params.data);
     if (route.params.type === "edit") {
       const params = {
         data: {

@@ -213,7 +213,6 @@ const AddMyPersonalBank = ({ route, navigation }) => {
                     route.params.fetchData("add");
                     navigation.goBack();
                 } else if (response.data.code === 304) {
-                    // console.log(response.data.code);
                     setSnackbarText(communication.AlreadyExists);
                     setSnackbarVisible(true);
                 } else {

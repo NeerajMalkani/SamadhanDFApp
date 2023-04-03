@@ -178,7 +178,6 @@ const QuotationAddEditTab = ({
       params
     )
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.data) {
           fetchClientData(response.data.data[0].client_user_refno);
           fetchDistrictData(response.data.data[0].state_refno, "dropdown2");
@@ -341,8 +340,6 @@ const QuotationAddEditTab = ({
       };
       Provider.createDFCommon(Provider.API_URLS.clientcreate, params)
         .then((response) => {
-          console.log(response.data);
-          console.log("params", params);
           if (response.data && response.data.data.Created == 1) {
             setNewClient((prev) => {
               return {
@@ -635,8 +632,6 @@ const QuotationAddEditTab = ({
       params
     )
       .then((response) => {
-        console.log("params", params);
-        console.log("response", response.data);
         if (response.data && response.data.data.Created == 1) {
           data.send_to_client
             ? fetch(2, "Quotation Created & Sent Successfully!")
@@ -699,8 +694,6 @@ const QuotationAddEditTab = ({
       params
     )
       .then((response) => {
-        console.log("params", params);
-        console.log("response", response.data);
         if (response.data && response.data.data.Updated == 1) {
           data.send_to_client
             ? fetch(2, "Quotation Updated & Sent Successfully!")
@@ -2072,7 +2065,6 @@ const QuotationAddEditTab = ({
                                             }
                                           }
                                           else {
-                                            console.log('no rate');
                                             setSnackbarText("Please enter quantity and rate.");
                                             setSnackbarColor(theme.colors.error);
                                             setSnackbarVisible(true);

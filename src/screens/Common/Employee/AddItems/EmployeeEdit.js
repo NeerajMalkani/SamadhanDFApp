@@ -1297,6 +1297,7 @@ console.log('image path', employee_data.profile_photo_url);
                 dense
                 label="Emergency Contact No"
                 value={emergencyContactNo}
+                keyboardType="number-pad"
                 returnKeyType="next"
                 onSubmitEditing={() => emergencyContactNoRef.current.focus()}
                 onChangeText={onEmergencyContactNoChanged}

@@ -65,10 +65,8 @@ function ProductforProduction({ navigation }) {
         mfpp_refno: "all",
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(Provider.API_URLS.mfpprefnocheck, params)
       .then((response) => {
-        console.log(response.data.data[0]);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             listData[1](response.data.data);
@@ -152,7 +150,6 @@ function ProductforProduction({ navigation }) {
           // } `}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
             setServiceName(data.item.service_name);
             setCategoryName(data.item.category_name);
             setproductName(data.item.product_name);

@@ -188,7 +188,6 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
     };
     Provider.createDFAdmin(Provider.API_URLS.pckcategorynamecreate_appadmin, params)
       .then((response) => {
-        console.log("insert response", response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");

@@ -78,7 +78,6 @@ function JobOrderform({ navigation }) {
         to_date: date.end_date,
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_searchresult_joborderform_report,
       params
@@ -156,7 +155,6 @@ function JobOrderform({ navigation }) {
           )}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
             setCurrent(data.item);
           }}
         />

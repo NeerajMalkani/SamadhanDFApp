@@ -204,7 +204,6 @@ const Form = ({ route, navigation }) => {
         params
       )
         .then((res) => {
-          console.log(res.data);
           if (res.data.data) {
             setState({
               service_refno: [],

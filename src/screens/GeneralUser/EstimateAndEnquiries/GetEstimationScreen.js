@@ -73,7 +73,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
         Provider.API_URLS.contractor_getsc_estimationdetail,
         body,
       ).then((response) => {
-        console.log("Estimation Data:", response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             // FetchEstimationMaterialSetupData();
@@ -94,7 +93,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
     } else
       Provider.createDFCommon(Provider.API_URLS.getsc_estimationdetail, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.code === 200) {
             if (response.data.data) {
               FetchEstimationMaterialSetupData();
@@ -178,7 +176,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
         params,
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.code === 200) {
             if (route.params.isContractor) {
               if (route.params.fetchData) {
@@ -217,7 +214,6 @@ const GetEstimationScreen = ({ route, navigation }) => {
 
     Provider.createDFCommon(Provider.API_URLS.sc_estimationsendenquiry, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (route.params.isContractor) {
             if (route.params.fetchData) {
