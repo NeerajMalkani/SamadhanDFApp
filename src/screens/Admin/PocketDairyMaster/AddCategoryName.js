@@ -130,7 +130,6 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log('data', response.data.data);
             const entryType = [];
             response.data.data.map((data, i) => {
               let checked = false;

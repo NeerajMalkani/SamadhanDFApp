@@ -67,15 +67,11 @@ const WidthOfGpCoil = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);

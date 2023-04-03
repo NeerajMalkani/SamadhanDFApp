@@ -83,9 +83,6 @@ const PendingUserScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);

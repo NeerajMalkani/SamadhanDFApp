@@ -175,7 +175,6 @@ const AddClientScreen = ({ route, navigation }) => {
       else {
         setIsDealer(false);
       }
-
     }
   };
 
@@ -189,14 +188,13 @@ const AddClientScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('resp:', response.data.data);
 
             let buyerCat = [];
-            const states = response.data.data.map((data) => {
+            response.data.data.map((data) => {
               buyerCat.push({
                 id: data.buyercategory_refno,
                 label: data.buyercategory_name,
-                selected: false,
+                selected: (route.params.type === 'edit' && route.params.data.buyerCategoryName != "" && route.params.data.buyerCategoryName == data.buyercategory_name) ? true : false,
                 value: data.buyercategory_refno,
               });
 
@@ -204,9 +202,14 @@ const AddClientScreen = ({ route, navigation }) => {
 
             setBTRadioButtons(buyerCat);
 
-            // if (route.params.type === 'edit') {
-            //   FetchCities(route.params.data.stateName, response.data.data);
-            // }
+            if (route.params.type === 'edit') {
+              
+              if (route.params.data.serviceType.includes("8")) {
+                setIsServiceProvideOnlyClient(true);
+                setIsBT(false);
+              }
+
+            }
           }
           else {
             setIsBT(true);
@@ -220,10 +223,8 @@ const AddClientScreen = ({ route, navigation }) => {
   };
 
   const FetchStates = () => {
-    console.log('call state');
     Provider.createDFCommon(Provider.API_URLS.GetStateDetails)
       .then((response) => {
-        console.log('asasd', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -385,7 +386,6 @@ const AddClientScreen = ({ route, navigation }) => {
             navigation.goBack();
           }
         } else {
-          console.log(response.data);
           setSnackbarText(communication.InsertError);
           setSnackbarVisible(true);
         }
@@ -482,8 +482,6 @@ const AddClientScreen = ({ route, navigation }) => {
       isValid = false;
     }
 
-    console.log('isDealer', isDealer);
-    console.log('isServiceProvideOnlyClient', isServiceProvideOnlyClient);
     if (isDealer && isServiceProvideOnlyClient) {
       if (buyerTypeID == 0) {
         isValid = false;

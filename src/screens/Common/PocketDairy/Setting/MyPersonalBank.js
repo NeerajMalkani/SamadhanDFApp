@@ -69,7 +69,6 @@ const MyPersonalBankScreen = ({ navigation }) => {
         };
         Provider.createDFPocketDairy(Provider.API_URLS.pckmypersonalbankrefnocheck, params)
             .then((response) => {
-                console.log('resp', response.data);
                 if (response.data && response.data.code === 200) {
                    
                     if (response.data.data) {
@@ -143,7 +142,6 @@ const MyPersonalBankScreen = ({ navigation }) => {
     };
 
     const EditCallback = (data, rowMap) => {
-        console.log(data.item);
         rowMap[data.item.key].closeRow();
         navigation.navigate("AddMyPersonalBank", {
             type: "edit",

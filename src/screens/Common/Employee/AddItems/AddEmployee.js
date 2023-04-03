@@ -103,7 +103,6 @@ const AddEmployee = ({ route, navigation }) => {
 
     Provider.createDFCommon(Provider.API_URLS.employeecreate, params)
       .then((response) => {
-        console.log('resp', response.data);
         if (
           response.data &&
           response.data.code === 200 &&

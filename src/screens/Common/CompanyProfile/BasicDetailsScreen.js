@@ -500,10 +500,8 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         }
         : ""
     );
-    console.log('insert params', datas);
     Provider.createDFCommonWithHeader(path, datas)
       .then((response) => {
-        console.log('update response:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);

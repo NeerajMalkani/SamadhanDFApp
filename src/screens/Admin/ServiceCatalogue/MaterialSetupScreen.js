@@ -50,7 +50,6 @@ const MaterialSetupScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log('data:', response.data.data);
             response.data.data = APIConverter(response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
@@ -61,9 +60,6 @@ const MaterialSetupScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);

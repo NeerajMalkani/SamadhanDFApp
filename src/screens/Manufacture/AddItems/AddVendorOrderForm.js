@@ -288,7 +288,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("otherdata", response.data.data[0]);
               setData((prev) => {
                 return {
                   ...prev,
@@ -313,7 +312,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("coilsdata", response.data.data);
               let x = parseFloat(0);
               response.data.data.map((item) => {
                 x = parseFloat(item.weight) + x;
@@ -337,7 +335,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("slittingdata", response.data.data);
               setData((prev) => {
                 return {
                   ...prev,

@@ -211,7 +211,6 @@ function EditProductOrderList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setZincFullData(() => {
               return response.data.data;
             });
@@ -238,7 +237,6 @@ function EditProductOrderList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setCoilnumFullData(() => {
               return response.data.data;
             });
@@ -282,7 +280,6 @@ function EditProductOrderList({ route, navigation }) {
   };
 
   useEffect(() => {
-    console.log(data.service_name);
     if (data.service_name !== "") {
       let params = {
         data: {
@@ -320,7 +317,6 @@ function EditProductOrderList({ route, navigation }) {
   }, [data.service_name]);
 
   useEffect(() => {
-    console.log(data.category_name);
     if (data.category_name !== "") {
       let params = {
         data: {
@@ -359,7 +355,6 @@ function EditProductOrderList({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log("res", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setBrandFullData(response.data.data);
@@ -402,7 +397,6 @@ function EditProductOrderList({ route, navigation }) {
   }, []);
   const [isbuttonLoading, setIsButtonLoading] = useState(false);
   const update = () => {
-    console.log(widthFullData);
 
     let params = {
       data: {
@@ -455,7 +449,6 @@ function EditProductOrderList({ route, navigation }) {
       params
     )
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.data.Updated == 1) {
           route.params.fetchData("update");
           navigation.goBack();

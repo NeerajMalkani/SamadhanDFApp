@@ -79,7 +79,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
         Sess_UserRefno: Sess_UserRefno,
       },
     };
-    console.log(route.params.data);
     Provider.createDFManufacturer(
       Provider.API_URLS.getservicenamebrandconversionform,
       params
@@ -87,7 +86,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setServiceFullD(() => {
               return response.data.data;
             });
@@ -99,7 +97,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
                 : filter[0]
             );
           }
-          console.log("params", route.params.data);
         }
       })
       .catch((e) => console.log(e));
@@ -124,7 +121,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    console.log(serviceName);
     if (serviceName !== "") {
       let params = {
         data: {
@@ -157,7 +153,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
   }, [serviceName]);
 
   useEffect(() => {
-    console.log(categoriesName);
     if (categoriesName !== "") {
       let params = {
         data: {
@@ -174,7 +169,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log(response.data.data);
               setBrandFullD(response.data.data);
               let filter = response.data.data.map((item) => item.brand_name);
               setBrandArray(filter);
@@ -246,13 +240,11 @@ const AddBrandConversationValue = ({ route, navigation }) => {
           view_status: checked ? "1" : "0",
         },
       };
-      console.log(params);
       Provider.createDFManufacturer(
         Provider.API_URLS.brandconversionupdate,
         params
       )
         .then((response) => {
-          console.log(response.data);
           setIsButtonLoading(false);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
@@ -294,7 +286,6 @@ const AddBrandConversationValue = ({ route, navigation }) => {
         params
       )
         .then((response) => {
-          console.log(response.data);
           setIsButtonLoading(false);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");

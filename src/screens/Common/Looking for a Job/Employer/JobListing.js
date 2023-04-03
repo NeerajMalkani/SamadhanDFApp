@@ -158,13 +158,11 @@ const JobListing = ({ route, navigation }) => {
             ).district_refno,
       Sess_UserRefno: userID,
     };
-    console.log(params);
     Provider.createDFCommon(Provider.API_URLS.employer_job_search, {
       data: params,
     })
       .then((res) => {
         setIsButtonLoading(false);
-        console.log(res.data);
         if (res.data.data) {
           setJobs(res.data.data);
         } else {

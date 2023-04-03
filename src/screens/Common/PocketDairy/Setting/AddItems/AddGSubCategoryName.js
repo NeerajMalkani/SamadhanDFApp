@@ -107,7 +107,6 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: transactionType.toString()
       },
     };
-    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {

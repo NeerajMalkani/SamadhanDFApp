@@ -48,7 +48,6 @@ const CategoryNameScreen = ({ navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            //console.log("grid data", response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -58,9 +57,6 @@ const CategoryNameScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -115,7 +111,6 @@ const CategoryNameScreen = ({ navigation }) => {
   };
 
   const EditCallback = (data, rowMap) => {
-    console.log("edit data", data.item);
     rowMap[data.item.key].closeRow();
     navigation.navigate("AddCategoryNameScreen", {
       type: "edit",

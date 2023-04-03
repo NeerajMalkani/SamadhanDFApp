@@ -89,7 +89,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
         },
       },
     ).then((res) => {
-      console.log('other', res.data.data[0]);
       setState((state) => ({ ...state, ...res.data.data[0] }));
     });
 
@@ -105,7 +104,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
       },
     )
       .then((res) => {
-        console.log(res.data.data);
         if (res.data.code == '200' && res.data.data) {
           setJobOrderNo(res.data.data);
         }
@@ -166,7 +164,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
       params,
     )
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.data.Created == 1) {
           route.params.fetchData('add');
           navigation.goBack();
@@ -237,7 +234,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
     }
   };
   const fetchProduction = (mf_vo_refno) => {
-    console.log(mf_vo_refno);
     let params = {
       data: {
         Sess_UserRefno: user.UserID,
@@ -250,7 +246,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
         mf_vo_invoice_refno: '0',
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform,
       params,
@@ -500,7 +495,6 @@ const InvoiceReceipt = ({ route, navigation }) => {
             </ScrollView>
           </View>
         )}
-        {console.log(production[0])}
         {production.length > 0 && (
           <View style={{ padding: 5 }}>
             <View style={{ flexDirection: 'row' }}>

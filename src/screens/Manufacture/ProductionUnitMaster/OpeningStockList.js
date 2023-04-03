@@ -69,7 +69,6 @@ const OpeningStockList = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }

@@ -39,6 +39,7 @@ const ClientScreen = ({ navigation }) => {
   const [gstNumber, setGstNumber] = React.useState("");
   const [pan, setPan] = React.useState("");
   const [serviceProviderRole, setServiceProviderRole] = React.useState("");
+  const [buyerCategoryName, setBuyerCategoryName] = React.useState("");
   const [addedBy, setAddedBy] = React.useState(false);
   const [display, setDisplay] = React.useState(false);
 
@@ -75,10 +76,10 @@ const ClientScreen = ({ navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.MyClientUserRefNoCheck, params)
       .then((response) => {
-        console.log('res', response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log('resp', response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -88,9 +89,6 @@ const ClientScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -145,6 +143,7 @@ const ClientScreen = ({ navigation }) => {
         gstNumber: data.item.gstNumber,
         pan: data.item.pan,
         serviceType: data.item.client_role_refno,
+        buyerCategoryName: data.item.buyerCategoryName,
         addedBy: data.item.createbyID == 0 ? true : false,
         display: data.item.display,
       },
@@ -169,9 +168,10 @@ const ClientScreen = ({ navigation }) => {
             setPincode(data.item.pincode);
             setGstNumber(data.item.gstNumber);
             setPan(data.item.pan);
-            setServiceProviderRole(data.item.client_role_refno ? data.item.client_role_refno.join(", ") : "");
+            setServiceProviderRole(data.item.client_role_name ? data.item.client_role_name.join(", ") : "");
             setAddedBy(data.item.createbyID);
             setDisplay(data.item.display);
+            setBuyerCategoryName(data.item.buyerCategoryName);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -250,6 +250,11 @@ const ClientScreen = ({ navigation }) => {
             <List.Item title="GST" description={gstNumber} />
             <List.Item title="PAN" description={pan} />
             <List.Item title="Service Provider Role" description={serviceProviderRole} />
+            {buyerCategoryName != "" &&
+              <>
+                <List.Item title="Buyer Category" description={buyerCategoryName} />
+              </>
+            }
             <List.Item title="Created Or Added" description={addedBy == 0 ? "Add" : "Create"} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>

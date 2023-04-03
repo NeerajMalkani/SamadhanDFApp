@@ -30,7 +30,6 @@ function Coil({ dataparams, id, data, setData, errors, setErrors }) {
         params
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data.data) {
             setData((prev) => {
               return {

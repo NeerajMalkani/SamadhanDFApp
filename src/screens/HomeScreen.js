@@ -179,9 +179,6 @@ const HomeScreen = ({ route, navigation }) => {
           }
         } else {
           setImageGalleryData([]);
-          // setSnackbarText("No data found");
-          // setSnackbarColor(theme.colors.error);
-          // setIsSnackbarVisible(true);
         }
         setIsLoading(false);
       })
@@ -227,10 +224,7 @@ const HomeScreen = ({ route, navigation }) => {
             setCatalogueImages(sliderImageData);
             setCatalogueImagesZoom(sliderImageZoomData);
           }
-        } else {
-          // setSnackbarText("No data found");
-          // setIsSnackbarVisible(true);
-        }
+        } 
         setIsLoading(false);
       })
       .catch((e) => {

@@ -330,7 +330,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   // };
   const FetchBasicDetails = async () => {
-    console.log('call api');
     try {
       let params = {
         data: {

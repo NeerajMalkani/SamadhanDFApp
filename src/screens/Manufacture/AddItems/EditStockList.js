@@ -198,7 +198,6 @@ function EditStockList({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -244,7 +243,6 @@ function EditStockList({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -279,7 +277,6 @@ function EditStockList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log(response.data.data);
             setServiceFullData(() => {
               return response.data.data;
             });
@@ -299,7 +296,6 @@ function EditStockList({ route, navigation }) {
       .catch((e) => console.log(e));
   };
   useEffect(() => {
-    console.log(data.service_name);
     if (data.service_name !== "") {
       let params = {
         data: {
@@ -314,7 +310,6 @@ function EditStockList({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log("resp", response.data);
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
               setCategoryFullData(response.data.data);
@@ -338,7 +333,6 @@ function EditStockList({ route, navigation }) {
   }, [data.service_name]);
 
   useEffect(() => {
-    console.log(data.category_name);
     if (data.category_name !== "") {
       let params = {
         data: {
@@ -375,7 +369,6 @@ function EditStockList({ route, navigation }) {
   }, [data.category_name]);
 
   useEffect(() => {
-    console.log(data.brand_name);
     if (data.brand_name !== "") {
       let params = {
         data: {

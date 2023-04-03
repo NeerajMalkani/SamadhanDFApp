@@ -183,7 +183,6 @@ const Enquiry_tab = ({
             onPress={() => {
               refRBSheet.current.open();
               setCurrent(data.item);
-              console.log(data.item);
             }}
             style={{
               width: "80%",
@@ -201,7 +200,6 @@ const Enquiry_tab = ({
   const submit = () => {
     hideDialog();
     set(true);
-    console.log(current);
     if (text == "Accept" || text == "Reject") {
       const params = {
         data: {
@@ -217,7 +215,6 @@ const Enquiry_tab = ({
         params
       )
         .then((response) => {
-          console.log(response.data.data);
           if (response.data && response.data.data) {
             if (response.data.data.Updated == 1) {
               fetch(
@@ -238,7 +235,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Finally Take Project") {
-      console.log(3);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -253,7 +249,6 @@ const Enquiry_tab = ({
         params
       )
         .then((response) => {
-          console.log(response.data.data);
           if (response.data && response.data.data) {
             if (response.data.data.Updated == 1) {
               fetch(1, `${text} Successfully!`);
@@ -269,7 +264,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel My Quotation") {
-      console.log(4);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -297,7 +291,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel & Re-Quotation" && type == "approved") {
-      console.log(5);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -325,7 +318,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Remove My List" && type == "approved") {
-      console.log(6);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -353,7 +345,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Remove My List" && type == "rejected") {
-      console.log(7);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -381,7 +372,6 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel & Re-Quotation" && type == "rejected") {
-      console.log(8);
       const params = {
         data: {
           Sess_UserRefno: userID,

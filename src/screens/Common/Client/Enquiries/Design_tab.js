@@ -198,8 +198,6 @@ const Design_tab = ({
       params
     )
       .then((response) => {
-        console.log("resp", response.data);
-        console.log("params", params);
         if (response.data && response.data.data) {
           if (response.data.data.Updated == 1) {
             fetch(

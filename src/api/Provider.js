@@ -1014,7 +1014,6 @@ class Provider {
   }
 
   checkServerActive() {
-    console.log("start");
     // axios.get(onePixelImage)
     //   .then(response => {
     //     console.log(response);
@@ -1030,8 +1029,6 @@ class Provider {
     axios
       .get(onePixelImage, { timeout: timeoutLimit })
       .then((response) => {
-        console.log("success");
-        console.log(response.data);
         // Handle successful response
       })
       .catch((error) => {

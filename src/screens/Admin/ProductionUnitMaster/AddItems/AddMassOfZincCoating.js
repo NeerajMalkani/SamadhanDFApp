@@ -95,7 +95,6 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
       };
       Provider.createDFManufacturer(Provider.API_URLS.gsmnameupdate, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -125,7 +124,6 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
       };
       Provider.createDFManufacturer(Provider.API_URLS.gsmnamecreate, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();

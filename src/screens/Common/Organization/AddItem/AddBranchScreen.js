@@ -534,7 +534,6 @@ const BranchEditScreen = ({ route, navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.AddBranch, params)
       .then((response) => {
         setIsButtonLoading(false);
-        console.log('insert response', response.data);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
