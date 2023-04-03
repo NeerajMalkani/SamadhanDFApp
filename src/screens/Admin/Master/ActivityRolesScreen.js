@@ -10,6 +10,7 @@ import NoItems from '../../../components/NoItems';
 import { Styles } from '../../../styles/styles';
 import { theme } from '../../../theme/apptheme';
 import { APIConverter } from '../../../utils/apiconverter';
+import MyFAB from '../../../components/MyFAB';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -190,11 +191,7 @@ const ActivityRolesScreen = ({ navigation }) => {
         />
       )}
       <FAB
-        style={[
-          Styles.margin16,
-          Styles.primaryBgColor,
-          { position: 'absolute', right: 16, bottom: 16 },
-        ]}
+        style={[Styles.fabStyle]}
         icon='plus'
         onPress={AddCallback}
       />

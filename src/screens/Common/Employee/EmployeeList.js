@@ -400,6 +400,7 @@ const EmployeeListScreen = ({ navigation }) => {
             onPress: AddEmployee,
           },
         ]}
+        style={{ right: 24, bottom: 24 }}
         onStateChange={onStateChange}
         onPress={() => {
           if (open) {

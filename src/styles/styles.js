@@ -1146,6 +1146,13 @@ export const Styles = StyleSheet.create({
     backgroundColor: theme.colors.textLight,
     elevation: 5
   },
+  fabStyle: {
+    margin: 16,
+    backgroundColor: theme.colors.primary,
+    position: 'absolute',
+    right: 24,
+    bottom: 24,
+  },
 
 
 

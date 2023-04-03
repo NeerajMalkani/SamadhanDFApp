@@ -244,7 +244,7 @@ const DealerBrandSetupScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      {!shouldShow ? null : <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />}
+      {!shouldShow ? null : <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>

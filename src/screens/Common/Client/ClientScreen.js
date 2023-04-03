@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import { APIConverter } from "../../../utils/apiconverter";
+import styles from "react-native-inset-shadow/src/styles";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
@@ -233,6 +234,7 @@ const ClientScreen = ({ navigation }) => {
             // do something if the speed dial is open
           }
         }}
+        style={{ right: 24, bottom: 24 }}
       />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
