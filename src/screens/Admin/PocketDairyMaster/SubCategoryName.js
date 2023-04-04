@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView } from "react-native";
 import { FAB, List, Searchbar, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
@@ -11,6 +12,8 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { APIConverter } from "../../../utils/apiconverter";
+
+let userID = 0, groupID = 0;
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
@@ -45,7 +48,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         pck_sub_category_refno: "all",
       },
     };
@@ -77,8 +80,19 @@ const SubCategoryNameScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+
+      FetchData();
+    }
+
+  };
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -130,14 +144,14 @@ const SubCategoryNameScreen = ({ navigation }) => {
       fetchData: FetchData,
       data: {
         id: data.item.id,
-        transtypeID:data.item.transtypeID,
-        entryTypeName:data.item.entrytype_name,
-        transactionTypeName:data.item.transactionTypeName,
-        categoryName:data.item.categoryName,
-        pckCategoryID:data.item.pckCategoryID,
-        subCategoryName:data.item.subCategoryName,
-        subcategoryID:data.item.subcategoryID,
-        notes:data.item.notes,
+        transtypeID: data.item.transtypeID,
+        entryTypeName: data.item.entrytype_name,
+        transactionTypeName: data.item.transactionTypeName,
+        categoryName: data.item.categoryName,
+        pckCategoryID: data.item.pckCategoryID,
+        subCategoryName: data.item.subCategoryName,
+        subcategoryID: data.item.subcategoryID,
+        notes: data.item.notes,
         display: data.item.display,
       },
     });
@@ -165,7 +179,21 @@ const SubCategoryNameScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            //renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+
+            renderHiddenItem={(data, rowMap) => {
+
+              if (data.item.createbyID == "2") {
+                return null;
+              }
+              else {
+                return RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+
+            }}
+
+            
+
           />
         </View>
       ) : (

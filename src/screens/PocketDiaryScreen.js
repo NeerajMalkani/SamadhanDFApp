@@ -41,6 +41,7 @@ import { APIConverter } from "../utils/apiconverter";
 import { Hidden } from "@material-ui/core";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { projectFixedDesignations, projectFixedLocationTypes, projectLoginTypes } from "../utils/credentials";
 
 export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
@@ -949,7 +950,13 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate("GCategoryNameScreen");
+                      if (roleID == projectLoginTypes.DEF_GENERALUSER_GROUP_REFNO) {
+                        navigation.navigate("GCategoryNameScreen");
+                      }
+                      else {
+                        navigation.navigate("CategoryNameScreen");
+                      }
+
                     }}
                     style={[
                       Styles.borderRadius8,
@@ -970,7 +977,12 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate("GSubCategoryNameScreen");
+                      if (roleID == projectLoginTypes.DEF_GENERALUSER_GROUP_REFNO) {
+                        navigation.navigate("GSubCategoryNameScreen");
+                      }
+                      else {
+                        navigation.navigate("SubCategoryNameScreen");
+                      }
                     }}
                     style={[
                       Styles.borderRadius8,
@@ -1013,31 +1025,31 @@ const PocketDiaryScreen = ({ route, navigation }) => {
                 </View>
               </View>
               {(roleID != 3) && (
-              <View style={[Styles.paddingTop16]}>
+                <View style={[Styles.paddingTop16]}>
 
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("MyPersonalBankScreen");
-                  }}
-                  style={[
-                    Styles.borderRadius8,
-                    Styles.homeBox,
-                    Styles.flexColumn,
-                    Styles.flexJustifyCenter,
-                    Styles.flexAlignCenter,
-                    Styles.paddingHorizontal12,
-                    { width: 150, height: 72 },
-                  ]}
-                >
-                  <Icon
-                    name="archive-arrow-down"
-                    size={22}
-                    color={theme.colors.pocketDiaryIcons}
-                  />
-                  <Text style={[Styles.buttonIconLabel]}>My Personal Bank</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("MyPersonalBankScreen");
+                    }}
+                    style={[
+                      Styles.borderRadius8,
+                      Styles.homeBox,
+                      Styles.flexColumn,
+                      Styles.flexJustifyCenter,
+                      Styles.flexAlignCenter,
+                      Styles.paddingHorizontal12,
+                      { width: 150, height: 72 },
+                    ]}
+                  >
+                    <Icon
+                      name="archive-arrow-down"
+                      size={22}
+                      color={theme.colors.pocketDiaryIcons}
+                    />
+                    <Text style={[Styles.buttonIconLabel]}>My Personal Bank</Text>
+                  </TouchableOpacity>
 
-              </View>
+                </View>
               )}
             </View>
           </View>

@@ -31,6 +31,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
   const [subCategoryName, setSubCategoryName] = React.useState("");
   const [notes, setNotes] = React.useState("");
   const [display, setDisplay] = React.useState(false);
+  const [createdBy, setCreateBy] = React.useState("");
   const refRBSheet = useRef();
 
 
@@ -122,7 +123,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
             setSubCategoryName(data.item.subCategoryName);
             setNotes(data.item.notes);
             setDisplay(data.item.display);
-
+            setCreateBy(data.item.createbyID == "2" ? "Created By Admin" : "Created By You");
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -206,6 +207,7 @@ const GSubCategoryNameScreen = ({ navigation }) => {
             <List.Item title="Transaction Type" description={transactionTypeName} />
             <List.Item title="Category" description={categoryName} />
             <List.Item title="Notes" description={notes} />
+            <List.Item title="Created By " description={createdBy} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>
         </View>

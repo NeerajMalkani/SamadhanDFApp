@@ -121,10 +121,18 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
+        console.log('resp:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
-          route.params.fetchData("add");
-          navigation.goBack();
+          if(response.data.data.Created == 1) {
+            route.params.fetchData("add");
+            navigation.goBack();
+          }
+          else {
+            setSnackbarText(response.data.message);
+            setSnackbarVisible(true);
+          }
+          
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);

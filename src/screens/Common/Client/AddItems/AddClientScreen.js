@@ -203,7 +203,7 @@ const AddClientScreen = ({ route, navigation }) => {
             setBTRadioButtons(buyerCat);
 
             if (route.params.type === 'edit') {
-              
+
               if (route.params.data.serviceType.includes("8")) {
                 setIsServiceProvideOnlyClient(true);
                 setIsBT(false);
@@ -670,19 +670,17 @@ const AddClientScreen = ({ route, navigation }) => {
                     status={k.isChecked ? 'checked' : 'unchecked'}
                     onPress={() => {
                       let temp = serviceTypeRoles.map((u) => {
-
                         if (k.title === u.title) {
-
-                          if (u.title.toLowerCase() == "client" && !u.isChecked) {
+                          if (k.title === u.title && u.title.toLowerCase() == "client" && !u.isChecked) {
                             setIsServiceProvideOnlyClient(true);
                           }
                           else {
-                            setIsServiceProvideOnlyClient(false);
+                            if (k.title === u.title && u.title.toLowerCase() == "client" && u.isChecked) {
+                              setIsServiceProvideOnlyClient(false);
+                            }
                           }
-
                           return { ...u, isChecked: !u.isChecked };
                         }
-
                         return u;
                       });
                       setServiceTypeInvalid(false);

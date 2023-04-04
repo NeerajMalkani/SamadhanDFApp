@@ -10,7 +10,9 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { APIConverter } from "../../../utils/apiconverter";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+let userID = 0, groupID = 0;
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 
 const CategoryNameScreen = ({ navigation }) => {
@@ -38,13 +40,12 @@ const CategoryNameScreen = ({ navigation }) => {
     }
     let params = {
       data: {
-        Sess_UserRefno: "2",
+        Sess_UserRefno: userID,
         pck_category_refno: "all",
       },
     };
     Provider.createDFAdmin(Provider.API_URLS.pckcategoryrefnocheck_appadmin, params)
       .then((response) => {
-        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
@@ -71,8 +72,17 @@ const CategoryNameScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    FetchData();
+    GetUserID();
   }, []);
+
+  const GetUserID = async () => {
+    const userData = await AsyncStorage.getItem("user");
+    if (userData !== null) {
+      userID = JSON.parse(userData).UserID;
+      groupID = JSON.parse(userData).Sess_group_refno;
+      FetchData();
+    }
+  };
 
   const onChangeSearch = (query) => {
     setSearchQuery(query);
@@ -149,7 +159,16 @@ const CategoryNameScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => {
+
+              if (data.item.createbyID == "2") {
+                return null;
+              }
+              else {
+                return RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+
+            }}
           />
         </View>
       ) : (

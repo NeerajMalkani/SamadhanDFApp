@@ -894,6 +894,16 @@ export default function App() {
                 name='PocketTransactionScreen'
                 component={PocketTransactionScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CategoryNameScreen"
+                component={CategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="SubCategoryNameScreen"
+                component={SubCategoryNameScreen}
+              />
             </Drawer.Navigator>
           );
         case 4:
@@ -1022,6 +1032,16 @@ export default function App() {
                 name='MyPersonalBankScreen'
                 component={MyPersonalBankScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CategoryNameScreen"
+                component={CategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true, headerBackTitleVisible: false }}
+                name="SubCategoryNameScreen"
+                component={SubCategoryNameScreen}
+              />
             </Drawer.Navigator>
           );
         case 9:
@@ -1123,6 +1143,16 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name='MyPersonalBankScreen'
                 component={MyPersonalBankScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="CategoryNameScreen"
+                component={CategoryNameScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true, headerBackTitleVisible: false }}
+                name="SubCategoryNameScreen"
+                component={SubCategoryNameScreen}
               />
             </Drawer.Navigator>
           );
@@ -2360,7 +2390,12 @@ export default function App() {
                 name='CategoryNameScreen'
                 component={CategoryNameScreen}
                 options={{
+<<<<<<< Updated upstream
                   headerTitle: 'Category',
+=======
+                  headerShown: false,
+                  headerTitle: "Category",
+>>>>>>> Stashed changes
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2404,7 +2439,12 @@ export default function App() {
                 name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
                 options={{
+<<<<<<< Updated upstream
                   headerTitle: 'Sub Category',
+=======
+                  headerShown: false,
+                  headerTitle: "Sub Category",
+>>>>>>> Stashed changes
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
