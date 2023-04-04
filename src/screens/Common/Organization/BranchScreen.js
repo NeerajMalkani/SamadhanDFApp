@@ -98,9 +98,6 @@ const BranchListScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -206,7 +203,7 @@ const BranchListScreen = ({ navigation }) => {
           <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
           <SwipeListView
             previewDuration={1000}
-            previewOpenValue={-160}
+            previewOpenValue={-80}
             previewRowKey="1"
             previewOpenDelay={1000}
             refreshControl={
@@ -221,16 +218,16 @@ const BranchListScreen = ({ navigation }) => {
             data={listSearchData[0]}
             useFlatList={true}
             disableRightSwipe={true}
-            rightOpenValue={-160}
+            rightOpenValue={-80}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("edit", data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
           />
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
 
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}

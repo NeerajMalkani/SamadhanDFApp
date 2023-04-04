@@ -130,7 +130,6 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
-            console.log('data', response.data.data);
             const entryType = [];
             response.data.data.map((data, i) => {
               let checked = false;
@@ -170,12 +169,12 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
     let tt = [], et = [];
     transactionTypeName.map((k, i) => {
       if (k.isChecked) {
-        tt.push(k.id);
+        tt.push(k.id.toString());
       }
     });
     entryTypeName.map((k, i) => {
       if (k.isChecked) {
-        et.push(k.id);
+        et.push(k.id.toString());
       }
     });
     let params = {
@@ -187,10 +186,8 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     };
-    console.log(params);
     Provider.createDFAdmin(Provider.API_URLS.pckcategorynamecreate_appadmin, params)
       .then((response) => {
-        console.log("insert response", response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
@@ -215,12 +212,12 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
     let tt = [], et = [];
     transactionTypeName.map((k, i) => {
       if (k.isChecked) {
-        tt.push(k.id);
+        tt.push(k.id.toString());
       }
     });
     entryTypeName.map((k, i) => {
       if (k.isChecked) {
-        et.push(k.id);
+        et.push(k.id.toString());
       }
     });
     let params = {

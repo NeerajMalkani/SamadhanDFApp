@@ -61,7 +61,6 @@ function ProductforProduction({ navigation }) {
       },
     })
       .then((res) => {
-        console.log('res data:', res.data.data);
         if (res.data.data) {
           setOrders(res.data.data);
         }
@@ -83,7 +82,6 @@ function ProductforProduction({ navigation }) {
     Provider.createDFManufacturer(
       Provider.API_URLS.get_orderproductioncalculation_vendororder_invoiceform, params)
       .then((res) => {
-        console.log("rb sheet data:", res.data.data);
         setOtherData(res.data.data);
       });
   };
@@ -111,7 +109,6 @@ function ProductforProduction({ navigation }) {
           description={`Purchase Order No: ${data.item.mf_po_no}\nJob Order No: ${data.item.mf_vo_no}`}
           
           onPress={async () => {
-            console.log(data.item);
             setSelectedItem(data.item);
             await fetchOrderData();
             refRBSheet.current.open();

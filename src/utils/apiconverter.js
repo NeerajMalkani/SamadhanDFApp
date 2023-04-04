@@ -48,6 +48,10 @@ export const APIConverter = (response, convertIDs, type) => {
       renameKey(obj, "pck_sub_category_refno", "id");
     }
 
+    if (type == "basicDetails") {
+      renameKey(obj, "quotation_no_prefix", "quotationPrefix");
+    }
+
     if (convertIDs) {
       renameKey(obj, "category_refno", "categoryID");
       renameKey(obj, "service_refno", "serviceID");

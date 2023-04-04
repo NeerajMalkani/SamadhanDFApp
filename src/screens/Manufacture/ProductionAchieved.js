@@ -78,7 +78,6 @@ function ProductionAchieved({ navigation }) {
           .mf_vo_refno,
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_searchresult_productionachieved_report,
       params
@@ -86,7 +85,6 @@ function ProductionAchieved({ navigation }) {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data["0"]);
             const data = [];
             Object.entries(response.data.data)?.map(([key, value]) => {
               if (!isNaN(key)) {
@@ -132,7 +130,6 @@ function ProductionAchieved({ navigation }) {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             setDropDownFullData(response.data.data);
           }
         } else {
@@ -194,7 +191,6 @@ function ProductionAchieved({ navigation }) {
           )}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
             setCurrent(data.item);
           }}
         />

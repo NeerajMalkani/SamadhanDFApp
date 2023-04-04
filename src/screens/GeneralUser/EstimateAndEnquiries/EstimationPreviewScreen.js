@@ -104,7 +104,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     }
   };
 
-  console.log(selectedData.client_data);
   const FetchImageGalleryProductDetail = () => {
     let params = {
       data: {
@@ -116,7 +115,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
         designgallery_refno: route.params.data.id,
       },
     };
-    console.log(params);
     Provider.createDFContractor(Provider.API_URLS.Getgotoestimation, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -223,7 +221,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setOtherClients(response.data.data);
@@ -332,13 +329,11 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
           ),
         },
       };
-      console.log('estimation params:', params);
       Provider.createDFContractor(
         Provider.API_URLS.contractor_createquote,
         params
       )
         .then((response) => {
-          console.log(response.data.data);
           if (response.data && response.data.code === 200) {
             if (from === "add") {
               if (route.params.from === "home") {
@@ -447,7 +442,6 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.ClientAdd, params)
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.code === 200) {
           refRBSheet.current.close();
           FetchImageGalleryProductDetail();

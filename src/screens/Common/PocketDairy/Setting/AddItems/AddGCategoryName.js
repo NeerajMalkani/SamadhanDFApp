@@ -7,7 +7,7 @@ import { theme } from "../../../../../theme/apptheme";
 import { APIConverter } from "../../../../../utils/apiconverter";
 import { communication } from "../../../../../utils/communication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-let userID = 0;
+let userID = 0, Sess_group_refno=0;
 
 const AddGCategoryNameScreen = ({ route, navigation }) => {
   //#region Variables
@@ -36,6 +36,7 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
       let isEdit = route.params.type === "edit" ? true : false;
       FetchTransactionType(isEdit);
     }
@@ -112,12 +113,12 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_group_refno:Sess_group_refno,
         category_name: categoryName,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
       },
     };
-    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynamecreate_user, params)
       .then((response) => {
         setIsButtonLoading(false);
@@ -153,11 +154,11 @@ const AddGCategoryNameScreen = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         pck_category_refno: route.params.data.pckCategoryID,
         category_name: categoryName,
+        Sess_group_refno:Sess_group_refno,
         pck_transtype_refno: tt,
         view_status: checked ? "1" : "0",
       },
     };
-    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.pckcategorynameupdate_user, params)
       .then((response) => {
         setIsButtonLoading(false);

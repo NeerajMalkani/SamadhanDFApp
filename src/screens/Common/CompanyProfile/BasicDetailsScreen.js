@@ -19,7 +19,7 @@ import DFButton from "../../../components/Button";
 export const navigationRef = createNavigationContainerRef();
 
 const windowWidth = Dimensions.get("window").width;
-let userID = 0, sess_name = "", sess_mobile = "", Sess_company_refno = 0;
+let userID = 0, sess_name = "", sess_mobile = "", Sess_company_refno = 0, userRole = 0;
 
 const BasicDetailsScreen = ({ route, navigation }) => {
 
@@ -95,6 +95,9 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   const [cnPrefixInvalid, setCNPrefixInvalid] = useState("");
   const cnPrefixRef = useRef({});
 
+  const [qbPrefix, setQBPrefix] = useState("");
+  const qbPrefixRef = useRef({});
+
   const [ecPrefix, setECPrefix] = useState("");
   const [ecPrefixInvalid, setECPrefixInvalid] = useState("");
   const ecPrefixRef = useRef({});
@@ -127,12 +130,11 @@ const BasicDetailsScreen = ({ route, navigation }) => {
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
-      console.log('start');
       userID = JSON.parse(userData).UserID;
+      userRole = JSON.parse(userData).Sess_group_refno;
       sess_name = JSON.parse(userData).Sess_FName;
       sess_mobile = JSON.parse(userData).Sess_MobileNo;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
-      console.log('singleLoad', singleLoad);
       if (singleLoad == 0) {
         FetchBasicDetails();
       }
@@ -148,14 +150,13 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     };
     Provider.createDFCommon(Provider.API_URLS.GetDealerCompanyBasicDetails, params)
       .then((response) => {
-        console.log('resp:', response.data.data);
         setSingleLoad(1);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
 
             if (response.data.data[0].recordcount != "0") {
-              console.log('data response:', response.data.dat);
-              response.data.data = APIConverter(response.data.data);
+              response.data.data = APIConverter(response.data.data, null, "basicDetails");
+              
               setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
               setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
               setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
@@ -183,6 +184,9 @@ const BasicDetailsScreen = ({ route, navigation }) => {
               setLogoImage(response.data.data[0].companyLogo);
               setImage(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : AWSImagePath + "placeholder-image.png");
               setFilePath(response.data.data[0].companyLogo ? response.data.data[0].companyLogo : null);
+              if (userRole != 4) {
+                setQBPrefix(response.data.data[0].quotationPrefix ? response.data.data[0].quotationPrefix : "");
+              }
             }
             else {
               setContactName(sess_name);
@@ -343,6 +347,9 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     setCNPrefix(text);
     setCNPrefixInvalid(false);
   };
+  const onQBPChanged = (text) => {
+    setQBPrefix(text);
+  };
   const onECPChanged = (text) => {
     setECPrefix(text);
     setECPrefixInvalid(false);
@@ -439,7 +446,6 @@ const BasicDetailsScreen = ({ route, navigation }) => {
     }
     else {
       path = Provider.API_URLS.DealerCompanyBasicDetailsUpdate
-
     }
 
     const datas = new FormData();
@@ -467,11 +473,17 @@ const BasicDetailsScreen = ({ route, navigation }) => {
       ifsc_code: ifscCode,
       if_create_brand: isSwitchOn ? 1 : 0,
       company_name_prefix: cnPrefix,
-      quotation_no_prefix: "",
       employee_code_prefix: ecPrefix,
       po_prefix: poPrefix,
       so_prefix: soPrefix,
     };
+
+    if (userRole != 4) {
+      params.quotation_no_prefix = qbPrefix;
+    }
+    else {
+      params.quotation_no_prefix = "";
+    }
 
     if (Sess_company_refno != 0) {
       params.company_refno = companyID;
@@ -488,10 +500,8 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         }
         : ""
     );
-    console.log('insert params', datas);
     Provider.createDFCommonWithHeader(path, datas)
       .then((response) => {
-        console.log('update response:', response.data);
         setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           setSnackbarColor(theme.colors.success);
@@ -633,14 +643,26 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom16]}>
-                <Subheading style={[Styles.flexGrow]}>Create Brand & Product</Subheading>
-                <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} />
-              </View>
+              {userRole && userRole == 4 &&
+                <>
+                  <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.marginBottom16]}>
+                    <Subheading style={[Styles.flexGrow]}>Create Brand & Product</Subheading>
+                    <Switch value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} />
+                  </View>
+                </>
+              }
+
               <TextInput ref={cnPrefixRef} mode="outlined" dense label="Company Name Prefix" value={cnPrefix} returnKeyType="next" onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onCNPChanged} style={{ backgroundColor: "white" }} error={cnPrefixInvalid} />
               <HelperText type="error" visible={cnPrefixInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
+              {userRole && userRole != 4 &&
+                <>
+                  <TextInput ref={qbPrefixRef} mode="outlined" dense label="Quotation / Budget No Prefix" value={qbPrefix} returnKeyType="next"
+                    onSubmitEditing={() => ecPrefixRef.current.focus()} onChangeText={onQBPChanged} style={[Styles.marginBottom16, { backgroundColor: "white" }]} />
+
+                </>
+              }
               <TextInput ref={ecPrefixRef} mode="outlined" dense label="Employee Code Prefix" value={ecPrefix} returnKeyType="next" onSubmitEditing={() => poPrefixRef.current.focus()} onChangeText={onECPChanged} style={{ backgroundColor: "white" }} error={ecPrefixInvalid} />
               <HelperText type="error" visible={ecPrefixInvalid}>
                 {communication.InvalidActivityName}

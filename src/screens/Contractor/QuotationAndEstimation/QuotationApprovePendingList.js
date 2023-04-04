@@ -156,7 +156,6 @@ const QuotationApprovePendingList = ({
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log(resp.data);
       if (
         resp.data &&
         (resp.data.data.Rejected == "1" ||
@@ -214,7 +213,6 @@ const QuotationApprovePendingList = ({
       params
     )
       .then((response) => {
-        // console.log("response:", JSON.stringify(response.data));
         if (response.data && response.data.data) {
           listData[1](response.data.data);
           listSearchData[1](response.data.data);
@@ -314,7 +312,6 @@ const QuotationApprovePendingList = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
-              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{

@@ -335,7 +335,7 @@ const AddBankDetails = ({ route, navigation }) => {
                 <HelperText type="error" visible={cardTypeInvalid}>
                     Please select card Type
                 </HelperText>
-                <TextInput ref={openingBalanceRef} mode="outlined" dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
+                <TextInput ref={openingBalanceRef} mode="outlined" keyboardType={"number-pad"} dense label="Opening Balance" value={openingBalance} returnKeyType="done" onChangeText={onOpeningBalanceChanged} style={{ backgroundColor: "white" }} error={openingBalanceInvalid} />
                 <HelperText type="error" visible={openingBalanceInvalid}>
                     {communication.InvalidActivityName}
                 </HelperText>

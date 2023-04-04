@@ -369,6 +369,7 @@ const SearchEmployee = ({ route, navigation }) => {
           <Autocomplete
             value={aadharNo}
             label="Employee Aadhar No"
+            keyboardType={"number-pad"}
             data={aadhar}
             menuStyle={{ backgroundColor: "white" }}
             onChange={onAadharNoChanged}
@@ -408,6 +409,7 @@ const SearchEmployee = ({ route, navigation }) => {
           <Autocomplete
             value={mobileNo}
             label="Mobile No"
+            keyboardType={"number-pad"}
             data={numbers}
             menuStyle={{ backgroundColor: "white" }}
             onChange={onMobileNoChanged}

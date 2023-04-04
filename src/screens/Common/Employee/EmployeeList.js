@@ -125,9 +125,6 @@ const EmployeeListScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -403,6 +400,7 @@ const EmployeeListScreen = ({ navigation }) => {
             onPress: AddEmployee,
           },
         ]}
+        style={{ right: 24, bottom: 24 }}
         onStateChange={onStateChange}
         onPress={() => {
           if (open) {

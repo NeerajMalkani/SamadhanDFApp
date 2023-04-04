@@ -13,10 +13,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import { APIConverter } from "../../../utils/apiconverter";
+import styles from "react-native-inset-shadow/src/styles";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
-  Sess_group_refno = 0;
+  Sess_group_refno = 0, companyID = 0, branchID = 0;
 const ClientScreen = ({ navigation }) => {
   //#region Variables
 
@@ -38,6 +39,8 @@ const ClientScreen = ({ navigation }) => {
   const [pincode, setPincode] = React.useState("");
   const [gstNumber, setGstNumber] = React.useState("");
   const [pan, setPan] = React.useState("");
+  const [serviceProviderRole, setServiceProviderRole] = React.useState("");
+  const [buyerCategoryName, setBuyerCategoryName] = React.useState("");
   const [addedBy, setAddedBy] = React.useState(false);
   const [display, setDisplay] = React.useState(false);
 
@@ -50,6 +53,8 @@ const ClientScreen = ({ navigation }) => {
     if (userData !== null) {
       const userDataParsed = JSON.parse(userData);
       userID = userDataParsed.UserID;
+      companyID = userDataParsed.Sess_company_refno;
+      branchID = userDataParsed.Sess_branch_refno;
       Sess_group_refno = userDataParsed.Sess_group_refno;
       FetchData();
     }
@@ -64,6 +69,8 @@ const ClientScreen = ({ navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        Sess_branch_refno: branchID,
         Sess_group_refno: Sess_group_refno,
         client_user_refno: "all",
       },
@@ -73,6 +80,7 @@ const ClientScreen = ({ navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
+            //console.log('resp', response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -82,9 +90,6 @@ const ClientScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -139,6 +144,7 @@ const ClientScreen = ({ navigation }) => {
         gstNumber: data.item.gstNumber,
         pan: data.item.pan,
         serviceType: data.item.client_role_refno,
+        buyerCategoryName: data.item.buyerCategoryName,
         addedBy: data.item.createbyID == 0 ? true : false,
         display: data.item.display,
       },
@@ -163,8 +169,10 @@ const ClientScreen = ({ navigation }) => {
             setPincode(data.item.pincode);
             setGstNumber(data.item.gstNumber);
             setPan(data.item.pan);
+            setServiceProviderRole(data.item.client_role_name ? data.item.client_role_name.join(", ") : "");
             setAddedBy(data.item.createbyID);
             setDisplay(data.item.display);
+            setBuyerCategoryName(data.item.buyerCategoryName);
           }}
           left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
           right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
@@ -226,6 +234,7 @@ const ClientScreen = ({ navigation }) => {
             // do something if the speed dial is open
           }
         }}
+        style={{ right: 24, bottom: 24 }}
       />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
@@ -242,6 +251,12 @@ const ClientScreen = ({ navigation }) => {
             <List.Item title="Pincode" description={pincode} />
             <List.Item title="GST" description={gstNumber} />
             <List.Item title="PAN" description={pan} />
+            <List.Item title="Service Provider Role" description={serviceProviderRole} />
+            {buyerCategoryName != "" &&
+              <>
+                <List.Item title="Buyer Category" description={buyerCategoryName} />
+              </>
+            }
             <List.Item title="Created Or Added" description={addedBy == 0 ? "Add" : "Create"} />
             <List.Item title="Display" description={display ? "Yes" : "No"} />
           </ScrollView>

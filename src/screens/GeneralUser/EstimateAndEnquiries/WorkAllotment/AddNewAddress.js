@@ -149,7 +149,6 @@ function AddNewAddress({ route, navigation }) {
       };
       Provider.createDFCommon(Provider.API_URLS.deliveryaddress_update, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -212,7 +211,6 @@ function AddNewAddress({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log("states", response.data.data[0]);
             setFullData((prev) => {
               return {
                 ...prev,
@@ -236,7 +234,6 @@ function AddNewAddress({ route, navigation }) {
       .catch((e) => console.log(e));
   };
   useEffect(() => {
-    console.log(data.state_name);
     if (data.state_name !== "") {
       let params = {
         data: {
@@ -253,7 +250,6 @@ function AddNewAddress({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("districts", response.data.data[0]);
               setFullData((prev) => {
                 return {
                   ...prev,
@@ -348,6 +344,7 @@ function AddNewAddress({ route, navigation }) {
 
           <TextInput
             mode="outlined"
+            keyboardType={"number-pad"}
             label="Contact Mobile No."
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}
@@ -435,6 +432,7 @@ function AddNewAddress({ route, navigation }) {
 
           <TextInput
             mode="outlined"
+            keyboardType={"number-pad"}
             label="Pincode"
             name="pincode"
             value={data.pincode}

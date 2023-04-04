@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
-import { Modal } from 'react-native-paper';
+import { Button, Modal, TextInput } from 'react-native-paper';
 import { Styles } from '../../../../styles/styles';
 import Dropdown from '../../../../components/Dropdown';
 import { Table, TableWrapper, Row, Col } from 'react-native-table-component';
@@ -28,6 +28,7 @@ const ProductModal = ({
   Sess_UserRefno,
   quot_type_refno,
   quot_unit_type_refno,
+  setTable,
 }) => {
   const [state, setState] = useState({
     service_refno: '0',
@@ -61,28 +62,34 @@ const ProductModal = ({
     });
   };
 
+  const updateProduct = (i, name, value) => {
+    setProducts((state) => {
+      state[i][name] = value;
+      return [...state];
+    });
+  };
+  const add = (index) => {
+    setTable((state) => {
+      return [...state, products[index]];
+    });
+    setProducts((state) => {
+      state = state.filter((item, i) => i !== index);
+      return [...state];
+    });
+  };
   useEffect(() => {
     if (open) {
       fetchServices();
     }
   }, [open]);
-  const fetchProducts = () => {
-    console.log({
-      data: {
-        Sess_UserRefno,
-        service_refno: state.service_refno,
-        category_refno: state.category_refno,
-        quot_type_refno,
-        quot_unit_type_refno,
-      },
-    });
+  const fetchProducts = (service_refno, category_refno) => {
     Provider.createDFArchitect(
       Provider.API_URLS.architect_getproductlist_popup_budgetform,
       {
         data: {
           Sess_UserRefno,
-          service_refno: state.service_refno,
-          category_refno: state.category_refno,
+          service_refno: service_refno,
+          category_refno: category_refno,
           quot_type_refno,
           quot_unit_type_refno,
         },
@@ -91,7 +98,7 @@ const ProductModal = ({
       if (res.data.data) setProducts(res.data.data);
     });
   };
-  console.log(products);
+
   return (
     <Modal
       visible={open}
@@ -139,7 +146,10 @@ const ProductModal = ({
             category_refno: categories.find((item) => item.category_name === e)
               .category_refno,
           }));
-          fetchProducts();
+          fetchProducts(
+            state.service_refno,
+            categories.find((item) => item.category_name === e).category_refno,
+          );
         }}
         data={categories.map((obj) => obj.category_name)}
         style={{ backgroundColor: 'white', marginBottom: '3%' }}
@@ -158,12 +168,12 @@ const ProductModal = ({
                   'Product Name',
                   'Unit',
                   'Quantity',
-                  'Amount',
                   'Rate',
+                  'Amount',
                   'Remarks',
                   'Action',
                 ]}
-                widthArr={[100, 80, 80, 80, 120, 140, 190]}
+                widthArr={[150, 100, 100, 100, 100, 140, 120]}
                 style={styles.header}
                 textStyle={styles.headertext}
               />
@@ -174,7 +184,116 @@ const ProductModal = ({
                   borderWidth: 1,
                   borderColor: '#C1C0B9',
                 }}
-              ></Table>
+              >
+                <TableWrapper style={{ flexDirection: 'row' }}>
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={150}
+                    data={[...products.map((obj) => obj.product_name)]}
+                  />
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={100}
+                    data={[...products.map((obj) => obj.unit_name)]}
+                  />
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={100}
+                    data={[
+                      ...products.map((obj, index) => (
+                        <View key={index} style={{ padding: 10 }}>
+                          <TextInput
+                            mode='outlined'
+                            onChangeText={(e) =>
+                              updateProduct(index, 'quantity', e)
+                            }
+                            key={index}
+                            keyboardType='numeric'
+                          />
+                        </View>
+                      )),
+                    ]}
+                  />
+
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={100}
+                    data={[
+                      ...products.map((obj, index) => (
+                        <View key={index} style={{ padding: 10 }}>
+                          <TextInput
+                            mode='outlined'
+                            onChangeText={(e) =>
+                              updateProduct(index, 'rate', e)
+                            }
+                            value={obj.rate}
+                            key={index}
+                            keyboardType='numeric'
+                          />
+                        </View>
+                      )),
+                    ]}
+                  />
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={100}
+                    data={[
+                      ...products.map((obj, index) => (
+                        <View key={index} style={{ padding: 10 }}>
+                          <TextInput
+                            mode='outlined'
+                            value={String(
+                              Number(obj.quantity) * Number(obj.rate) ||
+                                0 * Number(obj.rate),
+                            )}
+                            disabled={true}
+                            key={index}
+                            keyboardType='numeric'
+                          />
+                        </View>
+                      )),
+                    ]}
+                  />
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={140}
+                    data={[
+                      ...products.map((obj, index) => (
+                        <View key={index} style={{ padding: 10 }}>
+                          <TextInput
+                            mode='outlined'
+                            onChangeText={(e) =>
+                              updateProduct(index, 'remarks', e)
+                            }
+                            key={index}
+                          />
+                        </View>
+                      )),
+                    ]}
+                  />
+                  <Col
+                    height={80}
+                    textStyle={styles.text}
+                    width={120}
+                    data={[
+                      ...products.map((obj, index) => (
+                        <View key={index} style={{ padding: 10 }}>
+                          <Button mode='contained' onPress={() => add(index)}>
+                            {' '}
+                            Add
+                          </Button>
+                        </View>
+                      )),
+                    ]}
+                  />
+                </TableWrapper>
+              </Table>
             </ScrollView>
           </View>
         </ScrollView>

@@ -14,7 +14,7 @@ import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../../components/NoItems";
 
 import DFButton from "../../../../components/Button";
-let userID = 0;
+let userID = 0, companyID = 0, branchID=0;
 const SearchClientScreen = ({ route, navigation }) => {
   const [mobileNo, setMobileNo] = useState("");
   const [mobileNoInvalid, setMobileNoInvalid] = useState("");
@@ -37,6 +37,8 @@ const SearchClientScreen = ({ route, navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
+      companyID = JSON.parse(userData).Sess_company_refno;
+      branchID = JSON.parse(userData).Sess_branch_refno;
     }
   };
 
@@ -87,13 +89,14 @@ const SearchClientScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
         mobile_no_s: mobileNo,
         company_name_s: companyName,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
-        setIsButtonLoading(false);
+        
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             const lisData = [...response.data.data];
@@ -102,6 +105,7 @@ const SearchClientScreen = ({ route, navigation }) => {
             });
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
+            setIsButtonLoading(false);
           }
         } else {
           listData[1]([]);
@@ -119,6 +123,8 @@ const SearchClientScreen = ({ route, navigation }) => {
     const params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_company_refno:companyID,
+        Sess_branch_refno: branchID,
         client_user_refno: ID,
       },
     };
@@ -159,7 +165,7 @@ const SearchClientScreen = ({ route, navigation }) => {
     <View style={[Styles.flex1]}>
       <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 0 }]} keyboardShouldPersistTaps="handled">
         <View style={[Styles.paddingHorizontal16, Styles.paddingTop16]}>
-          <TextInput ref={companyNameRef} mode="outlined"dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+          <TextInput ref={companyNameRef} mode="outlined" dense label="Name / Company Name" value={companyName} returnKeyType="next" onSubmitEditing={() => mobileNoRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
           <HelperText type="error" visible={companyNameInvalid}>
             {communication.InvalidCompanyClient}
           </HelperText>
@@ -181,7 +187,10 @@ const SearchClientScreen = ({ route, navigation }) => {
               </View>
             ) : listData[0].length > 0 ? (
               <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-                <SwipeListView previewDuration={700} previewOpenValue={-72} previewRowKey="1" previewOpenDelay={0} data={listSearchData[0]} useFlatList={true} disableRightSwipe={true} rightOpenValue={-72} renderItem={(data) => RenderItems(data)} renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("plus", data, rowMap, [EditCallback])} />
+                <SwipeListView previewDuration={700} previewOpenValue={-72} previewRowKey="1" previewOpenDelay={0} 
+                data={listSearchData[0]} useFlatList={true} disableRightSwipe={true} rightOpenValue={-72} 
+                renderItem={(data) => RenderItems(data)} 
+                renderHiddenItem={(data, rowMap) => RenderHiddenItemGeneric("plus", data, rowMap, [EditCallback])} />
               </View>
             ) : (
               <NoItems icon="format-list-bulleted" text="No clients found." />

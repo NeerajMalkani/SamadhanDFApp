@@ -250,7 +250,6 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
             onPress={() => {
               refRBSheet.current.open();
               setCurrent(data.item);
-              console.log(data.item);
             }}
             style={{
               width: "80%",

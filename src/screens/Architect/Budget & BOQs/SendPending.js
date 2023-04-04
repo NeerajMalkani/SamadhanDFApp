@@ -11,7 +11,6 @@ import Provider from '../../../api/Provider';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const RenderItems = (data) => {
-  console.log(data.item);
   return (
     <View
       style={[
@@ -113,6 +112,7 @@ const SendPending = ({ index }) => {
       Provider.API_URLS.architect_budget_send_pendng_list,
       { data: { Sess_UserRefno, Sess_company_refno, Sess_branch_refno } },
     ).then((res) => {
+      console.log(res.data);
       if (res.data.data) {
         setData(res.data.data);
       }

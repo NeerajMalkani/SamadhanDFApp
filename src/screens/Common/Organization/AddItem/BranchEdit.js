@@ -482,7 +482,7 @@ const BranchEditScreen = ({ route, navigation }) => {
                 {communication.InvalidAssignBranchAdmin}
               </HelperText>
 
-              <TextInput ref={contactPersonNoRef} mode="outlined" dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
+              <TextInput ref={contactPersonNoRef} mode="outlined" keyboardType={"number-pad"} dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
               <HelperText type="error" visible={contactPersonNoInvalid}>
                 {communication.InvalidContactPersonNo}
               </HelperText>
@@ -534,7 +534,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="outlined" dekeyboardType={"number-pad"} nse label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
               {/* <HelperText type="error" visible={accountNoInvalid}>
                 {communication.InvalidActivityName}
               </HelperText> */}

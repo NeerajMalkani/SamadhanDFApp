@@ -162,8 +162,6 @@ const JobSeekerForm = ({ route, navigation }) => {
       )
         .then((response) => {
           setIsButtonLoading(false);
-          console.log(formdata);
-          console.log(response.data);
           if (response.data.data) {
             setSnackbar(true);
             setSnackbarText('Applied Successfully');
@@ -208,7 +206,6 @@ const JobSeekerForm = ({ route, navigation }) => {
       data: { Sess_UserRefno: userID, empe_refno },
     })
       .then((res) => {
-        console.log(res.data);
         let cities = [];
         try {
           if (res.data.data && res.data.data[0]) {

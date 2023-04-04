@@ -19,9 +19,7 @@ import { APIConverter } from "../../../utils/apiconverter";
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
     companyID = 0,
-   
     groupID = 0;
-
 
 const BankListScreen = ({ navigation }) => {
 
@@ -92,9 +90,6 @@ const BankListScreen = ({ navigation }) => {
               }
             } else {
               listData[1]([]);
-              setSnackbarText("No data found");
-              setSnackbarColor(theme.colors.error);
-              setSnackbarVisible(true);
             }
             setIsLoading(false);
             setRefreshing(false);
@@ -132,7 +127,6 @@ const BankListScreen = ({ navigation }) => {
                     title={data.item.bankName}
                     titleStyle={{ fontSize: 18 }}
                     description={`Bank Branch: ${NullOrEmpty(data.item.branchName) ? "" : data.item.branchName}\nCompany Branch: ${NullOrEmpty(data.item.companyBranchName) ? "" : data.item.companyBranchName} `}
-                    // description={"Branch: " + (data.item.companyBranchName ? "Yes" : "No")}
                     onPress={() => {
                         refRBSheet.current.open();
                         setCompanyBranchName(data.item.companyBranchName);
@@ -153,7 +147,6 @@ const BankListScreen = ({ navigation }) => {
             </View>
         );
     };
-
 
     const AddCallback = () => {
         navigation.navigate("AddBankScreen", { type: "add", fetchData: FetchData });
@@ -182,10 +175,7 @@ const BankListScreen = ({ navigation }) => {
         });
     };
 
-
-
     //#endregion
-
 
     return (
         <View style={[Styles.flex1]}>
@@ -221,7 +211,7 @@ const BankListScreen = ({ navigation }) => {
             ) : (
                 <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
             )}
-            <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
             <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
                 {snackbarText}
             </Snackbar>

@@ -332,7 +332,7 @@ const ClientEditScreen = ({ route, navigation }) => {
     };
 
     const ValidateData = () => {
-        const isValid = true;
+        let isValid = true;
 
         if (NullOrEmpty(companyName.trim())) {
             isValid = false;

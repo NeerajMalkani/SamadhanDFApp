@@ -68,7 +68,6 @@ function ProductionStatus({ navigation }) {
         shiftproduction_refno: "all",
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.shiftproductionrefnocheck_prodS,
       params
@@ -156,7 +155,6 @@ function ProductionStatus({ navigation }) {
           } `}
           onPress={() => {
             refRBSheet.current.open();
-            console.log(data.item);
             setCurrent(data.item);
           }}
           left={() => (

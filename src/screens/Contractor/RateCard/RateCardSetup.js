@@ -88,12 +88,12 @@ const RateCardSetup = ({ navigation }) => {
         contractor_product_refno: "all"
       }
     };
-    Provider.createDFContractor(Provider.API_URLS.contractorproductrefnocheck, params)
+    Provider.createDFContractor(Provider.API_URLS.ratecard_contractorproductrefnocheck, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, false, "ratecard");
-            //console.log(response.data.data);
+            //console.log('rate card dta: ', response.data.data);
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
@@ -103,9 +103,7 @@ const RateCardSetup = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
+          
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -215,7 +213,6 @@ const RateCardSetup = ({ navigation }) => {
           titleStyle={{ fontSize: 18 }}
           description={`Service Name: ${NullOrEmpty(data.item.serviceName) ? "" : data.item.serviceName}\nCategory Name: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName} `}
           onPress={() => {
-
             refRBSheet.current.open();
 
             setServiceName(data.item.serviceName);
@@ -223,14 +220,14 @@ const RateCardSetup = ({ navigation }) => {
             setProductName(data.item.productName);
             //setServiceProductName(data.item.serviceProductName);
 
-            //setSpecification(data.item.specification);
+            setSpecification(data.item.specification);
             setShortSpecification(data.item.shortSpecification);
             setUnit(data.item.actualUnitName);
 
             setRateWithMaterials(data.item.rateWithMaterials);
             setRateWithoutMaterials(data.item.rateWithoutMaterials);
 
-            setAltRateWithMaterials(data.item.rateWithMaterials);
+            setAltRateWithMaterials(data.item.with_material_rate_alternate_rate);
             setAltRateWithoutMaterials(data.item.without_material_rate_alternate_rate);
 
             setAltRateWithMaterialsUnit(data.item.with_material_rate_alternate_unit);
@@ -287,7 +284,7 @@ const RateCardSetup = ({ navigation }) => {
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
 
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
 
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
@@ -337,7 +334,7 @@ const RateCardSetup = ({ navigation }) => {
               </DataTable>
             </View>
             <List.Item title="Short Specification" description={shortSpecification} />
-            {/* <List.Item title="Specification" description={specification} /> */}
+            <List.Item title="Specification" description={specification} />
             <List.Item title="Display" description={display} />
             {/* <List.Item title="Verify Status" description={NullOrEmpty(action) ? "" : verifyStatus ? "Verified":"Not Verified"} /> */}
           </ScrollView>

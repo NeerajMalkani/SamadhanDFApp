@@ -155,7 +155,6 @@ const QuotationTabs = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
-              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{

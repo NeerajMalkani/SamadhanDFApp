@@ -119,7 +119,6 @@ function EditProductionStatus({ route, navigation }) {
       params
     )
       .then((response) => {
-        console.log(response.data);
         if (response.data && response.data.data.Updated == 1) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -227,7 +226,6 @@ function EditProductionStatus({ route, navigation }) {
             setFullData((prev) => {
               return { ...prev, mf_vo_no: response.data.data };
             });
-            console.log(route.params.data);
             setData((prev) => {
               return {
                 ...prev,

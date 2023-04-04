@@ -25,6 +25,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
   const [snackbarText, setSnackbarText] = React.useState("");
   const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
 
+  const [entryTypeName, setEntryTypeName] = React.useState("");
   const [transactionTypeName, setTransactionTypeName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [subCategoryName, setSubCategoryName] = React.useState("");
@@ -62,9 +63,6 @@ const SubCategoryNameScreen = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -105,6 +103,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
           description={`Transaction Type: ${data.item.transactionTypeName}\nCategory: ${data.item.categoryName}`}
           onPress={() => {
             refRBSheet.current.open();
+            setEntryTypeName(data.item.entrytype_name);
             setTransactionTypeName(data.item.transactionTypeName);
             setCategoryName(data.item.categoryName);
             setSubCategoryName(data.item.subCategoryName);
@@ -132,6 +131,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
       data: {
         id: data.item.id,
         transtypeID:data.item.transtypeID,
+        entryTypeName:data.item.entrytype_name,
         transactionTypeName:data.item.transactionTypeName,
         categoryName:data.item.categoryName,
         pckCategoryID:data.item.pckCategoryID,
@@ -171,7 +171,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
       )}
-      <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
       </Snackbar>
@@ -180,6 +180,7 @@ const SubCategoryNameScreen = ({ navigation }) => {
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{subCategoryName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>
+            <List.Item title="Entry Type" description={entryTypeName} />
             <List.Item title="Transaction Type" description={transactionTypeName} />
             <List.Item title="Category" description={categoryName} />
             <List.Item title="Notes" description={notes} />

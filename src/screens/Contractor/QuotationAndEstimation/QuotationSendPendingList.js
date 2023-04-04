@@ -203,7 +203,6 @@ const QuotationSendPendingList = ({
       params
     )
       .then((response) => {
-        // console.log("response:", JSON.stringify(response.data));
         if (response.data && response.data.data) {
           listData[1](response.data.data);
           listSearchData[1](response.data.data);
@@ -303,7 +302,6 @@ const QuotationSendPendingList = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
-              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{

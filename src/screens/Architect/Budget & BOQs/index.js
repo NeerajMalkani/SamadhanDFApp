@@ -1,4 +1,6 @@
-import { View, Text, ScrollView, Dimensions } from 'react-native';
+import { View } from 'react-native';
+import { Snackbar } from 'react-native-paper';
+
 import React from 'react';
 import { TabBar, TabView } from 'react-native-tab-view';
 import { Styles } from '../../../styles/styles';
@@ -8,7 +10,6 @@ import SendPending from './SendPending';
 import ApprovePending from './ApprovePending';
 import Approved from './Approved';
 import { theme } from '../../../theme/apptheme';
-const windowWidth = Dimensions.get('window').width;
 
 const renderTabBar = (props) => (
   <TabBar
@@ -24,6 +25,16 @@ const renderTabBar = (props) => (
 );
 
 const BudgetBOQ = ({ navigation, route }) => {
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarText, setSnackbarText] = React.useState('');
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success,
+  );
+  const unload = (msg, color = theme.colors.success) => {
+    setSnackbarText(msg);
+    setSnackbarColor(color);
+    setSnackbarVisible(true);
+  };
   const routes = [
     { key: 'add-update', title: 'Create Budget' },
     { key: 'send-pending', title: 'Budget Send Pending List' },
@@ -34,13 +45,25 @@ const BudgetBOQ = ({ navigation, route }) => {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'add-update':
-        return <AddUpdate index={index} />;
+        return (
+          <AddUpdate index={index} navigation={navigation} unload={unload} />
+        );
       case 'send-pending':
-        return <SendPending index={index} />;
+        return (
+          <SendPending index={index} navigation={navigation} unload={unload} />
+        );
       case 'approved-pending':
-        return <ApprovePending index={index} />;
+        return (
+          <ApprovePending
+            index={index}
+            navigation={navigation}
+            unload={unload}
+          />
+        );
       case 'approved':
-        return <Approved index={index} />;
+        return (
+          <Approved index={index} navigation={navigation} unload={unload} />
+        );
     }
   };
 
@@ -53,6 +76,14 @@ const BudgetBOQ = ({ navigation, route }) => {
         renderScene={renderScene}
         onIndexChange={setIndex}
       />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
+        {snackbarText}
+      </Snackbar>
     </View>
   );
 };

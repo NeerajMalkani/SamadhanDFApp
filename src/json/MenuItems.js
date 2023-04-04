@@ -287,12 +287,14 @@ export const MenuItemsGeneralUser = [
         index: 11,
         navigation: 'GMyContactsScreen',
       },
+
       {
         title: 'My Bank',
         type: 'accordian',
         index: 11,
         navigation: 'GMyBankScreen',
       },
+
       {
         title: 'Budget Setup',
         type: 'accordian',
@@ -451,6 +453,17 @@ export const MenuItemsDealer = [
         type: 'accordian',
         index: 41,
         navigation: 'BranchListScreen',
+      },
+      {
+        title: 'Add Designation',
+        type: 'accordian',
+        index: 41,
+      },
+      {
+        title: 'Add Bank',
+        type: 'accordian',
+        index: 31,
+        navigation: 'BankListScreen',
       },
       {
         title: 'Add Designation',
@@ -897,6 +910,18 @@ export const MenuItemsArchitect = [
       {
         title: 'Add Designation',
         type: 'accordian',
+        index: 31,
+      },
+      {
+        title: 'Add Bank',
+        type: 'accordian',
+        index: 31,
+        navigation: 'BankListScreen',
+      },
+      {
+        title: 'Add Designation',
+        type: 'accordian',
+
         index: 32,
         navigation: 'CommonDesignationScreen',
       },
@@ -1068,6 +1093,18 @@ export const MenuItemsManufacture = [
       {
         title: 'Add Designation',
         type: 'accordian',
+        index: 31,
+      },
+      {
+        title: 'Add Bank',
+        type: 'accordian',
+        index: 31,
+        navigation: 'BankListScreen',
+      },
+      {
+        title: 'Add Designation',
+        type: 'accordian',
+
         index: 32,
         navigation: 'CommonDesignationScreen',
       },

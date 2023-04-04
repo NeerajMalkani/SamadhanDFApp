@@ -88,13 +88,11 @@ const BrandConversionValue = ({ navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
       },
     };
-    console.log(params);
     Provider.createDFManufacturer(
       Provider.API_URLS.get_brandconversionvalue_list,
       params
     )
       .then((response) => {
-        console.log(response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             listData[1](response.data.data);

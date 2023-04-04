@@ -918,7 +918,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {
       isValid = false;
@@ -1028,7 +1028,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             ) : (
               <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
             )}
-            <FAB style={[Styles.margin16, Styles.primaryBgColor, { position: "absolute", right: 16, bottom: 16 }]} icon="plus" onPress={AddCallback} />
+            <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
             <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
               {snackbarText}
             </Snackbar>

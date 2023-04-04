@@ -51,7 +51,6 @@ import HomeScreen, { navigationRef } from './src/screens/HomeScreen';
 import PocketDiaryScreen from './src/screens/PocketDiaryScreen';
 import PocketDiaryScreenOne from './src/screens/PocketDiary/PocketDiaryScreenOne';
 import FeedbackScreen from './src/screens/FeedbackScreen';
-import UserProfileScreen from './src/screens/UserProfile';
 import BasicDetailsScreen from './src/screens/Common/CompanyProfile/BasicDetailsScreen';
 import MyServicesScreen from './src/screens/Common/CompanyProfile/MyServicesScreen';
 import JobOrderForm from './src/screens/Manufacture/JobOrderForm';
@@ -123,7 +122,6 @@ import SearchEmployee from './src/screens/Common/Employee/AddItems/SearchEmploye
 import AddEmployee from './src/screens/Common/Employee/AddItems/AddEmployee';
 import SendRateCard from './src/screens/Contractor/RateCard/SendRateCard/sendRateCard';
 import AddSendRateCard from './src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard';
-
 import BudgetSetup from './src/screens/Common/PocketDairy/Setting/BudgetSetup';
 import AddBudgetSetup from './src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup';
 import AddExpensesList from './src/screens/Common/PocketDairy/AddExpensesList';
@@ -1007,6 +1005,16 @@ export default function App() {
                 name='GMyContactsScreen'
                 component={GMyContactsScreen}
               />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name='BankListScreen'
+                component={BankListScreen}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name='MyPersonalBankScreen'
+                component={MyPersonalBankScreen}
+              />
             </Drawer.Navigator>
           );
         case 9:
@@ -1103,6 +1111,11 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name='VerifyCompanyExpense'
                 component={VerifyCompanyExpense}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name='MyPersonalBankScreen'
+                component={MyPersonalBankScreen}
               />
             </Drawer.Navigator>
           );
@@ -1327,6 +1340,7 @@ export default function App() {
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {});
+
       return unsubscribe;
     }, [navigation]);
 
@@ -1426,9 +1440,11 @@ export default function App() {
                   ? UserProfile
                   : parseInt(userDetails[0].RoleID) === 5
                   ? BasicDetailsScreen
+                  : parseInt(userDetails[0].RoleID) === 9
+                  ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 6
                   ? UserProfile
-                  : UserProfileScreen
+                  : UserProfile
               }
               options={{
                 unmountOnBlur: true,
@@ -1942,7 +1958,9 @@ export default function App() {
                 component={UserProfile}
                 options={{
                   headerShown: false,
+
                   headerTitle: 'Basic Details',
+
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1954,7 +1972,19 @@ export default function App() {
                 component={RateCardSetUp}
                 options={{ headerShown: false }}
               />
-              <Stack.Screen name='AddRateCard' component={AddRateCard} />
+
+              <Stack.Screen
+                name='AddRateCard'
+                component={AddRateCard}
+                options={{
+                  headerTitle: 'Add Rate Card',
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  headerBackTitleVisible: false,
+                }}
+              />
+
               <Stack.Screen
                 name='ArchitectRateCardSetup'
                 component={ArchitectRateCardSetup}

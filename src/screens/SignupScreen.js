@@ -1,4 +1,4 @@
-import { Headline, TextInput, HelperText, Button, Snackbar } from "react-native-paper";
+import { Headline, TextInput, HelperText, Button, Snackbar, Subheading } from "react-native-paper";
 import { ScrollView, View, Keyboard } from "react-native";
 import { Styles } from "../styles/styles";
 import React from "react";
@@ -230,7 +230,8 @@ const SignupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={isOTPInvalid}>
             {communication.InvalidOTP}
           </HelperText>
-          <TextInput mode="flat" dense secureTextEntry={true} label="Enter Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
+          <Subheading style={{fontWeight:"bold"}}>Set Up Password</Subheading>
+          <TextInput mode="flat" dense secureTextEntry={true} label="Create Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
           </HelperText>

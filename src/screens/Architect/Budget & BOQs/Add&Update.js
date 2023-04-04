@@ -13,11 +13,14 @@ import { Table, TableWrapper, Row, Col } from 'react-native-table-component';
 
 import Dropdown from '../../../components/Dropdown';
 import { theme } from '../../../theme/apptheme';
-import Provider from '../../../api/Provider';
+import Provider, { BASE_URL_Architect } from '../../../api/Provider';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProductModal from './components/ProductModal';
+import { useRef } from 'react';
+import ClientRBSheet from './components/ClientRBSheet';
+import * as ImagePicker from 'expo-image-picker';
 function getKeyByValue(object, value) {
   return Object.keys(object).find((key) => object[key] === value);
 }
@@ -40,8 +43,9 @@ let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 let Sess_group_refno = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
 
-const AddUpdate = ({ index }) => {
+const AddUpdate = ({ index, unload, navigation }) => {
   const [state, setState] = useState({
     client_user_refno: '0',
     project_name: '',
@@ -53,18 +57,29 @@ const AddUpdate = ({ index }) => {
     district_refno: '0',
     quot_unit_type_refno: '0',
     quot_type_refno: '0',
-    product_refno: [],
-    unit_refno: [],
-    qty: [],
-    rate: [],
-    amount: [],
-    remarks: [],
-    image_pattern: [],
-    short_desc: [],
-    specification: [],
+
     terms_condition: '',
     client_send_status: '1',
   });
+  const chooseFile = async (index) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setTable((state) => {
+        state[index].image_pattern = result;
+        return state;
+      });
+    }
+  };
+  const refRBSheet = useRef();
+
+  const [table, setTable] = useState([]);
+
   const handleChange = (text, name) =>
     setState((state) => ({ ...state, [name]: text }));
   const [open, setOpen] = useState(false);
@@ -83,6 +98,140 @@ const AddUpdate = ({ index }) => {
       setClients([]);
     }
   }, [index]);
+
+  const addBudget = async () => {
+    const formData = new FormData();
+    formData.append('Sess_UserRefno', Sess_UserRefno);
+    formData.append('Sess_company_refno', Sess_company_refno);
+    formData.append('Sess_branch_refno', Sess_branch_refno);
+    formData.append('Sess_CompanyAdmin_UserRefno', Sess_CompanyAdmin_UserRefno);
+    Object.keys(state).map((obj) => {
+      formData.append(obj, state[obj]);
+    });
+    formData.append(
+      'product_refno',
+      table.map((obj) => obj.product_refno),
+    );
+    formData.append(
+      'unit_refno',
+      table.map((obj) => obj.unit_refno),
+    );
+    formData.append(
+      'qty',
+      table.map((obj) => obj.quantity),
+    );
+    formData.append(
+      'remarks',
+      table.map((obj) => obj.remarks || ''),
+    );
+    formData.append(
+      'image_pattern',
+      table.map((obj) => ({
+        name: 'appimage1212.jpg',
+        type: obj.type + '/*',
+        uri: obj.uri,
+      })),
+    );
+    formData.append(
+      'short_desc',
+      table.map((obj) => obj.short_desc || ''),
+    );
+    formData.append(
+      'specification',
+      table.map((obj) => obj.specification || ''),
+    );
+    console.log({
+      data: {
+        ...state,
+        state_refno: states.find(
+          (item) => item.state_name === state.state_refno,
+        ).state_refno,
+        district_refno: districts.find(
+          (item) => item.district_name === state.district_refno,
+        ).disctrict_refno,
+        quot_unit_type_name: units.find(
+          (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
+        ).quot_unit_type_refno,
+        Sess_CompanyAdmin_UserRefno,
+        Sess_UserRefno,
+        Sess_branch_refno,
+        Sess_company_refno,
+        product_refno: table.map((obj) => obj.product_refno),
+        unit_refno: table.map((obj) => obj.unit_refno),
+        quantity: table.map((obj) => obj.qty),
+        rate: table.map((obj) => obj.rate),
+        amount: table.map((obj) => obj.amount),
+        remarks: table.map((obj) => obj.remarks),
+        short_desc: table.map((obj) => obj.short_desc),
+        specification: table.map((obj) => obj.specification),
+        image_pattern: table.map((obj) => {
+          return obj.image_pattern;
+        }),
+      },
+    });
+    Provider.createDFArchitect(Provider.API_URLS.architect_budget_create, {
+      data: {
+        ...state,
+        state_refno: states.find(
+          (item) => item.state_name === state.state_refno,
+        ).state_refno,
+        district_refno: districts.find(
+          (item) => item.district_name === state.district_refno,
+        ).disctrict_refno,
+        quot_unit_type_name: units.find(
+          (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
+        ).quot_unit_type_refno,
+        Sess_CompanyAdmin_UserRefno,
+        Sess_UserRefno,
+        Sess_branch_refno,
+        Sess_company_refno,
+        product_refno: table.map((obj) => obj.product_refno),
+        unit_refno: table.map((obj) => obj.unit_refno),
+        quantity: table.map((obj) => obj.qty),
+        rate: table.map((obj) => obj.rate),
+        amount: table.map((obj) => obj.amount),
+        remarks: table.map((obj) => obj.remarks),
+        short_desc: table.map((obj) => obj.short_desc),
+        specification: table.map((obj) => obj.specification),
+        image_pattern: table.map((obj) => {
+          return obj.image_pattern;
+        }),
+      },
+    })
+      .then((res) => {
+        console.log('res', res.data);
+        // setState({
+        //   client_user_refno: '0',
+        //   project_name: '',
+        //   contact_person: '',
+        //   contact_mobile_no: '',
+        //   project_Desc: '',
+        //   project_address: '',
+        //   state_refno: '0',
+        //   district_refno: '0',
+        //   quot_unit_type_refno: '0',
+        //   quot_type_refno: '0',
+
+        //   terms_condition: '',
+        //   client_send_status: '1',
+        // });
+        // setClientDetails({
+        //   client_contact_name: '',
+        //   client_contact_number: '',
+        // });
+        // setTable([]);
+        unload('Budget Created Successfully', theme.colors.success);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const updateProduct = (i, name, value) => {
+    setTable((state) => {
+      state[i][name] = value;
+      return [...state];
+    });
+  };
   const getUserData = async () => {
     const userData = await AsyncStorage.getItem('user');
     if (userData !== null) {
@@ -90,6 +239,8 @@ const AddUpdate = ({ index }) => {
       Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
       Sess_group_refno = JSON.parse(userData).Sess_group_refno;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       fetchClients();
       fetchUnits();
       fetchState();
@@ -166,11 +317,25 @@ const AddUpdate = ({ index }) => {
       })
       .catch((error) => console.log(error));
   };
+  const remove = (index) => {
+    setTable((state) => {
+      state = state.filter((item, i) => index !== i);
+      return state;
+    });
+  };
 
   return (
     <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
+      <ClientRBSheet
+        refRBSheet={refRBSheet}
+        userID={Sess_UserRefno}
+        Sess_company_refno={Sess_company_refno}
+        unload={unload}
+        fetchClients={fetchClients}
+      />
       <Portal>
         <ProductModal
+          setTable={setTable}
           Sess_UserRefno={Sess_UserRefno}
           quot_type_refno={state.quot_type_refno}
           quot_unit_type_refno={
@@ -195,34 +360,42 @@ const AddUpdate = ({ index }) => {
         >
           Client Details
         </Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Dropdown
-            label='Client Name'
-            data={Object.values(clients)}
-            onSelected={(e) => {
-              setState((state) => ({ ...state, client_user_refno: e }));
-              fetchClientData(getKeyByValue(clients, e));
-            }}
-            style={{
-              backgroundColor: 'white',
-              marginBottom: '3%',
-              width: '90%',
-            }}
-          />
-          <IconButton
-            icon='plus'
-            style={[Styles.primaryBgColor]}
-            color='white'
-          />
-        </View>
 
+        <Dropdown
+          label='Client Name'
+          data={Object.values(clients || {})}
+          onSelected={(e) => {
+            setState((state) => ({ ...state, client_user_refno: e }));
+            fetchClientData(getKeyByValue(clients, e));
+          }}
+          style={{
+            backgroundColor: 'white',
+            marginBottom: '3%',
+          }}
+        />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button
+            onPress={() => {
+              navigation.navigate('AddClientScreen', {
+                type: 'client',
+                fetchData: fetchClients,
+              });
+            }}
+            mode='contained'
+          >
+            Add Client
+          </Button>
+          <Button onPress={() => refRBSheet.current.open()}>
+            Search Client
+          </Button>
+        </View>
         <TextInput
           label='Client Contact Name'
           disabled={true}
           mode='outlined'
           value={clientDetails.client_contact_name}
           returnKeyType='next'
-          style={{ backgroundColor: 'white', marginBottom: '3%' }}
+          style={{ backgroundColor: 'white', marginVertical: '3%' }}
         />
         <TextInput
           label='Client Contact Number'
@@ -246,32 +419,35 @@ const AddUpdate = ({ index }) => {
         <TextInput
           label='Project Name'
           mode='outlined'
-          value={state.project_name}
-          onChangeText={(e) => handleChange('project_name', e)}
+          defaultValue={state.project_name}
+          onChangeText={(e) => handleChange(e, 'project_name')}
           returnKeyType='next'
           style={{ backgroundColor: 'white', marginBottom: '3%' }}
         />
         <TextInput
           label='Contact Person'
           mode='outlined'
-          value={state.contact_person}
-          onChangeText={(e) => handleChange('contact_person', e)}
+          defaultValue={state.contact_person}
+          onChangeText={(e) => {
+            if (e.length < 11) handleChange(e, 'contact_person');
+          }}
           returnKeyType='next'
           style={{ backgroundColor: 'white', marginBottom: '3%' }}
         />
         <TextInput
           label='Contact Number'
           mode='outlined'
-          value={state.contact_mobile_no}
-          onChangeText={(e) => handleChange('contact_mobile_no', e)}
+          keyboardType='phone-pad'
+          defaultValue={state.contact_mobile_no}
+          onChangeText={(e) => handleChange(e, 'contact_mobile_no')}
           returnKeyType='next'
           style={{ backgroundColor: 'white', marginBottom: '3%' }}
         />
         <TextInput
           label='Project Description'
           mode='outlined'
-          value={state.project_desc}
-          onChangeText={(e) => handleChange('project_desc', e)}
+          defaultValue={state.project_desc}
+          onChangeText={(e) => handleChange(e, 'project_desc')}
           returnKeyType='next'
           multiline={true}
           style={{ backgroundColor: 'white', marginBottom: '3%' }}
@@ -279,8 +455,8 @@ const AddUpdate = ({ index }) => {
         <TextInput
           label='Project Site Address'
           mode='outlined'
-          value={state.project_address}
-          onChangeText={(e) => handleChange('project_address', e)}
+          defaultValue={state.project_address}
+          onChangeText={(e) => handleChange(e, 'project_address')}
           multiline={true}
           returnKeyType='next'
           style={{ backgroundColor: 'white', marginBottom: '3%' }}
@@ -350,6 +526,7 @@ const AddUpdate = ({ index }) => {
           mode='contained'
           onPress={() => {
             if (state.quot_unit_type_refno === '0') {
+              unload('Please select a unit first', theme.colors.error);
               return;
             }
             setOpen(true);
@@ -385,11 +562,12 @@ const AddUpdate = ({ index }) => {
                     'Unit',
                     'Quantity',
                     'Rate',
+                    'Amount',
                     'Remarks',
                     'Image Pattern Show',
                     'Action',
                   ]}
-                  widthArr={[100, 80, 80, 80, 120, 140, 190]}
+                  widthArr={[150, 100, 100, 100, 100, 140, 120, 120]}
                   style={styles.header}
                   textStyle={styles.headertext}
                 />
@@ -400,7 +578,137 @@ const AddUpdate = ({ index }) => {
                     borderWidth: 1,
                     borderColor: '#C1C0B9',
                   }}
-                ></Table>
+                >
+                  <TableWrapper style={{ flexDirection: 'row' }}>
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={150}
+                      data={[...table.map((obj) => obj.product_name)]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={100}
+                      data={[...table.map((obj) => obj.unit_name)]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={100}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <TextInput
+                              mode='outlined'
+                              onChangeText={(e) =>
+                                updateProduct(index, 'quantity', e)
+                              }
+                              value={obj.quantity}
+                              key={index}
+                              keyboardType='numeric'
+                            />
+                          </View>
+                        )),
+                      ]}
+                    />
+
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={100}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <TextInput
+                              mode='outlined'
+                              onChangeText={(e) =>
+                                updateProduct(index, 'rate', e)
+                              }
+                              value={obj.rate}
+                              key={index}
+                              keyboardType='numeric'
+                            />
+                          </View>
+                        )),
+                      ]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={100}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <TextInput
+                              mode='outlined'
+                              value={String(
+                                Number(obj.quantity) * Number(obj.rate) ||
+                                  0 * Number(obj.rate),
+                              )}
+                              disabled={true}
+                              key={index}
+                              keyboardType='numeric'
+                            />
+                          </View>
+                        )),
+                      ]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={140}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <TextInput
+                              mode='outlined'
+                              value={obj.remarks}
+                              onChangeText={(e) =>
+                                updateProduct(index, 'remarks', e)
+                              }
+                              key={index}
+                            />
+                          </View>
+                        )),
+                      ]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={120}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <Button
+                              mode='contained'
+                              onPress={async () => await chooseFile(index)}
+                            >
+                              Add Image
+                            </Button>
+                          </View>
+                        )),
+                      ]}
+                    />
+                    <Col
+                      height={80}
+                      textStyle={styles.text}
+                      width={120}
+                      data={[
+                        ...table.map((obj, index) => (
+                          <View key={index} style={{ padding: 10 }}>
+                            <Button
+                              mode='contained'
+                              onPress={() => remove(index)}
+                            >
+                              Remove
+                            </Button>
+                          </View>
+                        )),
+                      ]}
+                    />
+                  </TableWrapper>
+                </Table>
               </ScrollView>
               <Table
                 borderStyle={{
@@ -409,8 +717,16 @@ const AddUpdate = ({ index }) => {
                 }}
               >
                 <Row
-                  data={['Sub Total', 'total']}
-                  widthArr={[260, 530]}
+                  data={[
+                    'Sub Total',
+                    table.reduce(
+                      (a, obj) =>
+                        a + Number(obj.quantity) * Number(obj.rate) ||
+                        0 * Number(obj.rate),
+                      0,
+                    ),
+                  ]}
+                  widthArr={[450, 480]}
                   style={styles.row}
                   textStyle={{ paddingHorizontal: 25 }}
                 />
@@ -436,10 +752,27 @@ const AddUpdate = ({ index }) => {
           mode='outlined'
           multiline={true}
           numberOfLines={5}
-          value={state.terms_condition}
-          onChangeText={(e) => handleChange('terms_condition', e)}
+          defaultValue={state.terms_condition}
+          onChangeText={(e) => handleChange(e, 'terms_condition')}
         />
-        <Button mode='contained' style={{ marginTop: '5%' }}>
+        <Checkbox.Item
+          label='Send to Client'
+          color={theme.colors.primary}
+          position='leading'
+          onPress={() =>
+            setState((state) => ({
+              ...state,
+              client_send_status: state.client_send_status === '0' ? '1' : '0',
+            }))
+          }
+          labelStyle={{ textAlign: 'left' }}
+          status={state.client_send_status === '1' ? 'checked' : 'unchecked'}
+        />
+        <Button
+          onPress={() => addBudget()}
+          mode='contained'
+          style={{ marginTop: '5%' }}
+        >
           Submit
         </Button>
       </View>

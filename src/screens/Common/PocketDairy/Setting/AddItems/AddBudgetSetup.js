@@ -307,7 +307,7 @@ const AddBudgetSetup = ({ route, navigation }) => {
           </HelperText>
 
          
-          <TextInput mode="outlined" label=" Budget Amount" value={budgetAmount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onBudgetAmount} style={{ backgroundColor: "white" }} error={notesError} />
+          <TextInput mode="outlined"  keyboardType={"number-pad"} label="Budget Amount" value={budgetAmount} returnKeyType="next" onSubmitEditing={() => ref_input2.current.focus()} onChangeText={onBudgetAmount} style={{ backgroundColor: "white" }} error={notesError} />
           <HelperText type="error" visible={budgetAmountError}>
             {communication.InvalidBudgetAmount}
           </HelperText>

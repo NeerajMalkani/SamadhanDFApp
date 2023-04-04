@@ -64,7 +64,7 @@ export const communication = {
   InvalidCompanyName: "Enter a valid Name / Company Name",
   InvalidContactPerson: "Enter a valid Contact Person",
   InvalidContactMobileNo: "Enter a valid Contact Mobile No",
-  InvalidAddress: "Enter a valid Address 1",
+  InvalidAddress: "Enter a valid Address",
   InvalidState: "Enter a valid State",
   InvalidCity: "Enter a valid City",
   InvalidPincode: "Enter a valid Pincode",

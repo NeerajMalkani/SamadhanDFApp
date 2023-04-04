@@ -73,9 +73,6 @@ const ABrandConversationValue = ({ navigation }) => {
           }
         } else {
           listData[1]([]);
-          setSnackbarText("No data found");
-          setSnackbarColor(theme.colors.error);
-          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -174,7 +171,6 @@ const ABrandConversationValue = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
-    console.log(data.item);
     navigation.navigate("AddBrandConversationValue", {
       type: "edit",
       fetchData: FetchData,

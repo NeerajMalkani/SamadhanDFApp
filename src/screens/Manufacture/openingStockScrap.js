@@ -65,16 +65,13 @@ function OpeningStockScrap({ navigation }) {
         shiftproduction_refno: "all",
       },
     };
-    console.log("params", params);
     Provider.createDFManufacturer(
       Provider.API_URLS.shiftproductionrefnocheck,
       params
     )
       .then((response) => {
-        console.log("myd", response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }

@@ -149,7 +149,6 @@ function UpdateExistingAddress({ route, navigation }) {
       };
       Provider.createDFCommon(Provider.API_URLS.deliveryaddress_update, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -187,7 +186,6 @@ function UpdateExistingAddress({ route, navigation }) {
       };
       Provider.createDFCommon(Provider.API_URLS.newdeliveryaddress_add, params)
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -212,7 +210,6 @@ function UpdateExistingAddress({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log("states", response.data.data[0]);
             setFullData((prev) => {
               return {
                 ...prev,
@@ -236,7 +233,6 @@ function UpdateExistingAddress({ route, navigation }) {
       .catch((e) => console.log(e));
   };
   useEffect(() => {
-    console.log(data.state_name);
     if (data.state_name !== "") {
       let params = {
         data: {
@@ -253,7 +249,6 @@ function UpdateExistingAddress({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("districts", response.data.data[0]);
               setFullData((prev) => {
                 return {
                   ...prev,
@@ -348,6 +343,7 @@ function UpdateExistingAddress({ route, navigation }) {
 
           <TextInput
             mode="outlined"
+            keyboardType={"number-pad"}
             label="Contact Mobile No."
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}

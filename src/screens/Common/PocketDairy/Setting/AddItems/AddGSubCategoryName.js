@@ -107,7 +107,6 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
         pck_transtype_refno: transactionType.toString()
       },
     };
-    console.log(params);
     Provider.createDFPocketDairy(Provider.API_URLS.getpckcategoryname_pcksubcategoryform_user, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -166,6 +165,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_group_refno:groupID,
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;
         }).transtypeID,
@@ -206,6 +206,7 @@ const AddGSubCategoryNameScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
+        Sess_group_refno:groupID,
         pck_sub_category_refno: route.params.data.subcategoryID,
         pck_transtype_refno: transactionTypeFullData.find((el) => {
           return el.transTypeName === transactionTypeName;

@@ -83,7 +83,6 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
   };
 
   const UpdateData = () => {
-    // console.log(route.params.data);
     if (route.params.type === "edit") {
       const params = {
         data: {
@@ -102,7 +101,6 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
         params
       )
         .then((response) => {
-          console.log(response.data);
           setIsButtonLoading(false);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
@@ -138,7 +136,6 @@ const AddWidthOfGpCoil = ({ route, navigation }) => {
         params
       )
         .then((response) => {
-          console.log("data", response.data);
           setIsButtonLoading(false);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");

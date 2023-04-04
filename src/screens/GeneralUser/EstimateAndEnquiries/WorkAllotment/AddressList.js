@@ -108,9 +108,6 @@ function AddressList({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log("addresses", response.data.data);
-            console.log("params", params);
-            console.log("routeparams", route.params?.data);
             setAddressList(response.data.data);
             setSelectedItem(response.data?.data[0]);
           }

@@ -112,7 +112,7 @@ const AddEmployee = ({ route, navigation }) => {
           navigation.navigate("EmployeeListScreen");
         } else {
           setSnackbarColor(theme.colors.error);
-          setSnackbarText(communication.UpdateError);
+          setSnackbarText(response.data.message);
           setSnackbarVisible(true);
         }
       })

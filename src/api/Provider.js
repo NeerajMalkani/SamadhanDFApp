@@ -8,7 +8,7 @@ const BASE_URL_OLD = 'https://api.starselector.com/api';
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
-const BASE_URL_Architect = `${BASE_}/apiarchitect/spawu7S4urax/tYjD`;
+export const BASE_URL_Architect = `${BASE_}/apiarchitect/spawu7S4urax/tYjD`;
 const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
 export const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
@@ -482,7 +482,7 @@ class Provider {
     pckdashboard_cashinpocket_details: 'pckdashboard_cashinpocket_details/',
     pckdashboard_cashinpocket_gridlist: 'pckdashboard_cashinpocket_gridlist/',
     get_pckpaymentgroup: 'get_pckpaymentgroup/',
-
+    architect_budget_create: 'architect_budget_create/',
     pck_companysource_cash_verify_gridlist:
       'pck_companysource_cash_verify_gridlist/',
     pck_companysource_bank_verify_gridlist:
@@ -653,6 +653,22 @@ class Provider {
       'architect_getcategoryname_popup_budgetform/',
     architect_getproductlist_popup_budgetform:
       'architect_getproductlist_popup_budgetform/',
+
+    contractor_get_clientname_quotationform:
+      'contractor_get_clientname_quotationform/',
+    getservicename_dealerproductlist: 'getservicename_dealerproductlist/',
+    filterservicerefno_dealerproductlist:
+      'filterservicerefno_dealerproductlist/',
+    getcategoryname_dealerproductlist: 'getcategoryname_dealerproductlist/',
+    getbrandname_dealerproductlist: 'getbrandname_dealerproductlist/',
+    filtercategoryrefno_dealerproductlist:
+      'filtercategoryrefno_dealerproductlist/',
+    filterbrandrefno_dealerproductlist: 'filterbrandrefno_dealerproductlist/',
+    dealercompanybasicdetailscreate: 'dealercompanybasicdetailscreate/',
+    ratecard_contractorproductrefnocheck:
+      'ratecard_contractorproductrefnocheck/',
+    getapilist: 'getapilist/',
+    getapitaskreport: 'getapitaskreport/',
   };
 
   createDFPocketDairy(resource, params) {
@@ -1037,7 +1053,6 @@ class Provider {
   }
 
   checkServerActive() {
-    console.log('start');
     // axios.get(onePixelImage)
     //   .then(response => {
     //     console.log(response);
@@ -1053,8 +1068,6 @@ class Provider {
     axios
       .get(onePixelImage, { timeout: timeoutLimit })
       .then((response) => {
-        console.log('success');
-        console.log(response.data);
         // Handle successful response
       })
       .catch((error) => {

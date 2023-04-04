@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
 });
 
 const EditInvoiceReceipt = ({ route, navigation }) => {
-  console.log("data", route.params.data);
   const [state, setState] = useState({
     mf_po_refno: "",
     mf_vo_refno: "",
@@ -77,7 +76,6 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     ).then((res) => {
       if (res.data.data) {
         setPurchaseNo(res.data.data);
-        console.log("data2", route.params.data);
         setState((prev) => {
           return {
             ...prev,
@@ -104,7 +102,6 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
       }
     ).then((res) => {
       if (res.data.data) {
-        console.log(res.data.data);
         setState((state) => ({ ...state, ...res.data.data[0] }));
       }
     });
@@ -278,7 +275,6 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
     )
       .then((res) => {
         if (res.data.code == "200" && res.data.data) {
-          console.log(res.data.data);
           setProduction(res.data.data);
         }
       })

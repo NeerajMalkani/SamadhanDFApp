@@ -616,7 +616,7 @@ const BranchEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    const isValid = true;
+    let isValid = true;
 
     if (isValid) {
       if (companyName.trim() === "") {
@@ -669,18 +669,29 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()} editable={false} selectTextOnFocus={false} style={{ backgroundColor: "#cdcdcd" }} error={companyNameInvalid} />
+              <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name"
+                value={companyName} returnKeyType="next" onSubmitEditing={() => companyNameRef.current.focus()}
+                editable={false} selectTextOnFocus={false} style={[Styles.backgroundSecondaryColor]}
+                error={companyNameInvalid} />
               <HelperText type="error" visible={companyNameInvalid}>
                 {communication.InvalidCompanyName}
               </HelperText>
 
               <Dropdown label="Branch Type" data={branchTypeData} onSelected={onBranchTypeSelected} isError={errorBT} selectedItem={branchTypeName} />
               {showRO &&
-                <Dropdown label="Select Regional Office" data={regionalOfficeData} onSelected={onRegionalOfficeSelected} isError={errorRO} selectedItem={regionalOfficeName} />
-              }
-              <Dropdown label="Assign Branch Admin" data={assignBranchAdminData} onSelected={onBranchAdminSelected} isError={errorBA} selectedItem={assignBranchAdminName} />
+                <View style={[Styles.marginTop16]}>
+                  <Dropdown label="Select Regional Office" data={regionalOfficeData} onSelected={onRegionalOfficeSelected} isError={errorRO} selectedItem={regionalOfficeName} />
+                </View>
 
-              <TextInput ref={contactPersonNoRef} mode="outlined" dense label="Conatct Person No" keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false} selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()} style={{ backgroundColor: "#cdcdcd" }} error={contactPersonNoInvalid} />
+              }
+              <View style={[Styles.marginTop16]}>
+                <Dropdown label="Assign Branch Admin" data={assignBranchAdminData} onSelected={onBranchAdminSelected} isError={errorBA} selectedItem={assignBranchAdminName} />
+              </View>
+
+              <TextInput ref={contactPersonNoRef} mode="outlined" dense label="Conatct Person No"
+                keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false}
+                selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()}
+                style={[Styles.backgroundSecondaryColor]} error={contactPersonNoInvalid} />
 
               <TextInput ref={gstNoRef} mode="outlined" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
               <HelperText type="error" visible={gstNoInvalid}>
@@ -714,11 +725,12 @@ const BranchEditScreen = ({ route, navigation }) => {
               </HelperText>
 
               <TextInput ref={addressRef} mode="outlined" dense label="Address" value={address} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} error={addressInvalid} />
-
+              <View style={[Styles.marginTop16]}>
               <Dropdown label="State" data={statesData} onSelected={onStateNameSelected} isError={errorSN} selectedItem={stateName} />
-
+              </View>
+              <View style={[Styles.marginTop16]}>
               <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
-
+              </View>
               <TextInput ref={pincodeRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
             </View>
           </ScrollView>
@@ -727,7 +739,7 @@ const BranchEditScreen = ({ route, navigation }) => {
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <View style={[Styles.padding16]}>
-              <TextInput ref={accountNoRef} mode="outlined" dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
+              <TextInput ref={accountNoRef} mode="outlined" keyboardType={"number-pad"} dense label="Account Number" value={accountNo} returnKeyType="next" onSubmitEditing={() => bankNameRef.current.focus()} onChangeText={onAccountNoChanged} style={{ backgroundColor: "white" }} error={accountNoInvalid} />
 
               <TextInput ref={bankNameRef} mode="outlined" dense label="Bank Name" value={bankName} returnKeyType="next" onSubmitEditing={() => bankBranchNameRef.current.focus()} onChangeText={onBankNameChanged} style={{ backgroundColor: "white" }} error={bankNameInvalid} />
 

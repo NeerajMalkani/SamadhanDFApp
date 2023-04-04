@@ -312,9 +312,7 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            
             response.data.data = APIConverter(response.data.data);
-            console.log(response.data.data);
             setSpecification(response.data.data[0].designtype_specification);
             setDesignImage(response.data.data[0].designImage);
           }

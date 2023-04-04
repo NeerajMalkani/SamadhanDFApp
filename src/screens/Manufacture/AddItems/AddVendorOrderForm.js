@@ -45,7 +45,6 @@ function AddVendorOrderForm({ route, navigation }) {
   const refRBSheet = useRef();
   const [purchaseFullData, setPurchaseFullData] = React.useState([]);
 
-  //   console.log("params", route.params.data);
   const [data, setData] = useState({
     mf_po_no: "",
     otherdata: {},
@@ -215,8 +214,6 @@ function AddVendorOrderForm({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log("response", response.data);
-          console.log("params", params);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -261,7 +258,6 @@ function AddVendorOrderForm({ route, navigation }) {
       .catch((e) => console.log(e));
   };
   useEffect(() => {
-    console.log(data.mf_po_no);
     if (data.mf_po_no !== "") {
       let temp = purchaseFullData.find(
         (item) => item.purchaseorderno === data.mf_po_no
@@ -288,7 +284,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("otherdata", response.data.data[0]);
               setData((prev) => {
                 return {
                   ...prev,
@@ -313,7 +308,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("coilsdata", response.data.data);
               let x = parseFloat(0);
               response.data.data.map((item) => {
                 x = parseFloat(item.weight) + x;
@@ -337,7 +331,6 @@ function AddVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("slittingdata", response.data.data);
               setData((prev) => {
                 return {
                   ...prev,

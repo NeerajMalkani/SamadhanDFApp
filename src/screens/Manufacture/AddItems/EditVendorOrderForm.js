@@ -45,7 +45,6 @@ function EditVendorOrderForm({ route, navigation }) {
   const refRBSheet = useRef();
   const [purchaseFullData, setPurchaseFullData] = React.useState([]);
 
-  console.log("params", route.params.data);
   const [data, setData] = useState({
     mf_po_no: "",
     otherdata: {},
@@ -156,13 +155,11 @@ function EditVendorOrderForm({ route, navigation }) {
         params.data.total[i + 1] = item.total;
         params.data.length_mtr_value[i + 1] = item.length_mtr_value;
       });
-      console.log("api", params);
       Provider.createDFManufacturer(
         Provider.API_URLS.vendororderformupdate,
         params
       )
         .then((response) => {
-          console.log("resp", response.data);
           if (response.data && response.data.data.Updated == 1) {
             route.params.fetchData("update");
             navigation.goBack();
@@ -213,7 +210,6 @@ function EditVendorOrderForm({ route, navigation }) {
         params
       )
         .then((response) => {
-          console.log(response.data);
           if (response.data && response.data.data.Created == 1) {
             route.params.fetchData("add");
             navigation.goBack();
@@ -248,7 +244,6 @@ function EditVendorOrderForm({ route, navigation }) {
       .then((response) => {
         if (response.data && response.data.code == "200") {
           if (response.data.data) {
-            console.log("purchase order no", response.data.data);
             setPurchaseFullData(() => {
               return response.data.data;
             });
@@ -266,7 +261,6 @@ function EditVendorOrderForm({ route, navigation }) {
       );
   };
   useEffect(() => {
-    console.log(data.mf_po_no);
     if (data.mf_po_no !== "") {
       let temp = purchaseFullData.find(
         (item) => item.purchaseorderno === data.mf_po_no
@@ -286,7 +280,6 @@ function EditVendorOrderForm({ route, navigation }) {
         },
       };
 
-      console.log("paramsdata", params);
       Provider.createDFManufacturer(
         Provider.API_URLS.get_purchaseorderno_otherdata_vendororderform,
         params
@@ -294,7 +287,6 @@ function EditVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("otherdata", response.data.data[0]);
               setData((prev) => {
                 return {
                   ...prev,
@@ -319,7 +311,6 @@ function EditVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("coilsdata", response.data.data);
               let x = parseFloat(0);
               response.data.data.map((item) => {
                 x = parseFloat(item.weight) + x;
@@ -343,7 +334,6 @@ function EditVendorOrderForm({ route, navigation }) {
         .then((response) => {
           if (response.data && response.data.code == "200") {
             if (response.data.data) {
-              console.log("slittingdata", response.data.data);
               setData((prev) => {
                 return {
                   ...prev,
