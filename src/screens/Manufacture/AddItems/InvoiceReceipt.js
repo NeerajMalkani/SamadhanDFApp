@@ -273,7 +273,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
           Styles.paddingVertical16,
         ]}
       >
-        <View style={[Styles.marginTop8]} >
+        <View style={[Styles.marginTop8]}>
           <Dropdown
             data={purchaseno.map((obj) => obj.purchaseorderno)}
             label='Purchase Order No'
@@ -325,9 +325,9 @@ const InvoiceReceipt = ({ route, navigation }) => {
         </View>
 
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='Invoice No'
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
           value={state.invoice_no}
           onChangeText={(text) => {
             setErrors((prev) => {
@@ -341,11 +341,11 @@ const InvoiceReceipt = ({ route, navigation }) => {
           error={errors.invoice_no}
         />
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='Invoice Entry Date'
           disabled={true}
           value={state.invoice_entry_date}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
         />
         <DateTimePicker
           label='Date of Invoice'
@@ -355,52 +355,52 @@ const InvoiceReceipt = ({ route, navigation }) => {
           onChangeDate={(date) => onChange(date, 'invoice_date')}
         />
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='Supplier Name'
           disabled={true}
           value={state.supplier_name || ''}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
         />
         <TextInput
           mode='outlined'
           label='Basic Amount'
           disabled={true}
           value={state.basic_amount || ''}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
         />
 
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='CGST(%)'
           value={state.cgst || ''}
           keyboardType='numeric'
           onChangeText={(e) => Number(e) <= 100 && onChange(e, 'cgst')}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
           error={errors.cgst}
         />
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='SGST(%)'
           value={state.sgst || ''}
           keyboardType='numeric'
           onChangeText={(e) => Number(e) <= 100 && onChange(e, 'sgst')}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
           error={errors.sgst}
         />
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='IGST(%)'
           value={state.igst || ''}
           keyboardType='numeric'
           onChangeText={(e) => Number(e) <= 100 && onChange(e, 'igst')}
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
           error={errors.igst}
         />
         <TextInput
-          mode="outlined"
+          mode='outlined'
           label='Transporation Charges'
-          keyboardType="number-pad"
-          style={[Styles.marginTop16,{ backgroundColor: 'white' }]}
+          keyboardType='number-pad'
+          style={[Styles.marginTop16, { backgroundColor: 'white' }]}
           value={state.transport_charges}
           error={errors.transport_charges}
           onChangeText={(text) => {
@@ -506,7 +506,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="outlined"
+                  mode='outlined'
                   label='Slitting scrap (mm)'
                   disabled={true}
                   value={production[0].scrab_wastage}
@@ -515,7 +515,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
               </View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="outlined"
+                  mode='outlined'
                   label='Slitting scrap (Kg)'
                   disabled={true}
                   value={production[0].scrab_wastage_kg}
@@ -527,7 +527,7 @@ const InvoiceReceipt = ({ route, navigation }) => {
               <View style={{ flex: 0.5 }}></View>
               <View style={{ flex: 1 }}>
                 <TextInput
-                  mode="outlined"
+                  mode='outlined'
                   label='Total Weight'
                   disabled={true}
                   value={production[0].total_weight}
