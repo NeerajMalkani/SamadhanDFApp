@@ -43,6 +43,7 @@ import { APIConverter } from "../utils/apiconverter";
 import { Hidden } from "@material-ui/core";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { projectFixedDesignations, projectFixedLocationTypes, projectLoginTypes } from "../utils/credentials";
 
 export const navigationRef = createNavigationContainerRef();
 let roleID = 0,
@@ -50,7 +51,9 @@ let roleID = 0,
   groupRefNo = 0,
   designID = 0,
   companyID = 0,
+  companyAdminGroupID = 0,
   branchID = 0,
+  locationType = 0,
   redirectToProfileFlag = 0,
   profileAddressFlag = 0;
 
@@ -224,7 +227,7 @@ const HomeScreen = ({ route, navigation }) => {
             setCatalogueImages(sliderImageData);
             setCatalogueImagesZoom(sliderImageZoomData);
           }
-        } 
+        }
         setIsLoading(false);
       })
       .catch((e) => {
@@ -309,10 +312,12 @@ const HomeScreen = ({ route, navigation }) => {
       userID = userDataParsed.UserID;
       groupRefNo = userDataParsed.Sess_group_refno;
       designID = userDataParsed.Sess_designation_refno;
+      companyAdminGroupID = userDataParsed.Sess_CompanyAdmin_group_refno;
+      locationType = userDataParsed.Sess_locationtype_refno;
       companyID = userDataParsed.Sess_company_refno;
       branchID = userDataParsed.Sess_branch_refno;
 
-      if ((userDataParsed.RoleID == 4 || userDataParsed.RoleID == 5 || userDataParsed.RoleID == 9) && userDataParsed.Sess_company_refno == 0) {
+      if ((userDataParsed.RoleID == projectLoginTypes.DEF_DEALER_GROUP_REFNO || userDataParsed.RoleID == projectLoginTypes.DEF_CONTRACTOR_GROUP_REFNO || userDataParsed.RoleID == projectLoginTypes.DEF_ARCHITECTCONSULTANT_GROUP_REFNO) && userDataParsed.Sess_company_refno == 0) {
         redirectToProfileFlag = 1;
       }
       else {
@@ -1573,7 +1578,8 @@ const HomeScreen = ({ route, navigation }) => {
               </View>
 
             </View>
-          ) : userRoleID === "7" ? (
+          ) : userRoleID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO && designID == projectFixedDesignations.DEF_BRANCHADMIN_DESIGNATION_REFNO
+            && companyAdminGroupID == 4 && locationType == projectFixedLocationTypes.DEF_PRODUCTIONUNIT_REFNO ? (
             <View>
               <View
                 style={[
@@ -2205,6 +2211,262 @@ const HomeScreen = ({ route, navigation }) => {
                 </View>
               </View>
             </View>
+          ) : userRoleID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO && designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO
+            && companyAdminGroupID == 4 && locationType == projectFixedLocationTypes.DEF_REGIONALOFFICE_REFNO ? (
+            <View>
+              <View
+                style={[
+                  Styles.paddingTop16,
+                  Styles.paddingHorizontal16,
+                  Styles.paddingBottom24,
+
+                ]}
+              >
+
+              </View>
+              <View
+                style={[
+                  Styles.width100per,
+                  Styles.boxTopElevation,
+                  Styles.borderTopRadius24,
+                  Styles.paddingTop12,
+                  Styles.paddingBottom16,
+                ]}
+              >
+                <View style={[Styles.paddingHorizontal16]}>
+                  <View
+                    style={[
+                      Styles.horizontalArrowLineBG,
+                      Styles.flexAlignSelfCenter,
+                      Styles.borderRadius16,
+                      Styles.marginBottom16,
+                      { width: "20%", height: 6 },
+                    ]}
+                  ></View>
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>
+                      Activity
+                    </Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("BrandConversionValue");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 100, height: 108 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.productionIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Log In
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("OpeningStockList");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 100, height: 108 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.productionIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel, Styles.textCenter]}>
+                          Mark Availability
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("OpeningStockScrap");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          Styles.paddingHorizontal12,
+                          { width: 100, height: 108 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.productionIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Log Out
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View style={[Styles.paddingTop16]}>
+                    <Text style={[Styles.HomeTitle]}>Employee Activity</Text>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("EmployeeListScreen");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Customer List
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("PostNewDesignScreen");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Daily Activity List
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={[
+                        Styles.marginTop16,
+                        Styles.flexRow,
+                        Styles.flexSpaceBetween,
+                      ]}
+                    >
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   navigation.navigate("MaterialSetupScreen");
+                        // }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 156, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>
+                          Activity Report
+                        </Text>
+                      </TouchableOpacity>
+
+                    </View>
+                  </View>
+
+                  {/* QR Code Start */}
+                  <View
+                    style={[
+                      Styles.marginTop16,
+                      Styles.borderRadius8,
+                      Styles.homeBox,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={onShare}
+                      style={[
+                        Styles.padding0,
+                        Styles.width100per,
+                        Styles.height150,
+                        Styles.flexRow,
+                        Styles.borderRadius8,
+                      ]}
+                    >
+                      <View
+                        style={[
+                          Styles.width100per,
+                          Styles.height150,
+                          Styles.flexRow,
+                          Styles.borderRadius8,
+                          { elevation: 4 },
+                        ]}
+                      >
+                        <ImageBackground
+                          source={require("../../assets/QR-code-bg-2.jpg")}
+                          resizeMode="cover"
+                          style={[{ flex: 1, justifyContent: "center" }]}
+                          imageStyle={{ borderRadius: 8 }}
+                        >
+                          <Text
+                            style={[
+                              Styles.positionAbsolute,
+                              Styles.marginTop8,
+                              Styles.marginStart16,
+                              Styles.fontSize18,
+                              Styles.textColorWhite,
+                              Styles.fontBold,
+                              { top: 8 },
+                            ]}
+                          >
+                            Scan QR OR Click Here To Share
+                          </Text>
+                        </ImageBackground>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  {/* QR Code End */}
+                </View>
+              </View>
+            </View>
           ) :
             (
               <View>
@@ -2382,7 +2644,7 @@ const HomeScreen = ({ route, navigation }) => {
                   {/* Material Calculator */}
                   <TouchableOpacity
                     onPress={() => {
-                      if (roleID == 2) {
+                      if (userRoleID == 2) {
                         navigation.navigate("MaterialSetupScreen", {
                           type: "add",
                         });

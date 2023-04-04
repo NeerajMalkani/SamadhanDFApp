@@ -29,6 +29,7 @@ import {
   MenuItemsManufacture,
   MenuItemsProjectSupervisor,
   MenuItemsClient,
+  MenuItemsMarketingExecutive,
 } from "./src/json/MenuItems";
 import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
 import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
@@ -231,7 +232,12 @@ export default function App() {
           menuItems = [...MenuItemsArchitect];
           break;
         case 7:
-          menuItems = [...MenuItemsManufacture];
+          if (ud.Sess_designation_refno == 11) {
+            menuItems = [...MenuItemsMarketingExecutive];
+          }
+          else {
+            menuItems = [...MenuItemsManufacture];
+          }
           break;
         case 8:
           menuItems = [...MenuItemsClient];
