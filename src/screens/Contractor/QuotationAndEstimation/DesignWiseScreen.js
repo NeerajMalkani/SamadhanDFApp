@@ -1,18 +1,18 @@
-import React, { useEffect } from "react";
-import { Dimensions, ScrollView, View } from "react-native";
-import { ActivityIndicator, Snackbar } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Header from "../../../components/Header";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
-import { TabBar, TabView } from "react-native-tab-view";
-import Provider from "../../../api/Provider";
-import DesignGalleryTab from "./DesignGalleryTab";
-import DesignPendingTab from "./DesignPendingTab";
-import DesignApprovedTab from "./DesignApprovedTab";
-import DesignRejectedTab from "./DesignRejectedTab";
+import React, { useEffect } from 'react';
+import { Dimensions, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Snackbar } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Header from '../../../components/Header';
+import { Styles } from '../../../styles/styles';
+import { theme } from '../../../theme/apptheme';
+import { TabBar, TabView } from 'react-native-tab-view';
+import Provider from '../../../api/Provider';
+import DesignGalleryTab from './DesignGalleryTab';
+import DesignPendingTab from './DesignPendingTab';
+import DesignApprovedTab from './DesignApprovedTab';
+import DesignRejectedTab from './DesignRejectedTab';
 
-const windowWidth = Dimensions.get("window").width;
+const windowWidth = Dimensions.get('window').width;
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
@@ -30,9 +30,9 @@ const DesignWiseScreen = ({ navigation }) => {
   const rejectedData = React.useState([]);
   const rejectedSearchData = React.useState([]);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
+  const [snackbarText, setSnackbarText] = React.useState('');
   const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
+    theme.colors.success,
   );
   const unload = (msg) => {
     setIsLoading(false);
@@ -41,7 +41,7 @@ const DesignWiseScreen = ({ navigation }) => {
     setSnackbarVisible(true);
   };
   const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem("user");
+    const userData = await AsyncStorage.getItem('user');
     if (userData !== null) {
       Sess_UserRefno = JSON.parse(userData).UserID;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
@@ -63,7 +63,7 @@ const DesignWiseScreen = ({ navigation }) => {
     };
     try {
       const data = await Provider.getcontractordesignwise(params, () =>
-        setIsLoading(false)
+        setIsLoading(false),
       );
       setDesignGalleryData(data.gallery);
       setResponse(data.response);
@@ -90,7 +90,7 @@ const DesignWiseScreen = ({ navigation }) => {
 
   const renderScene = ({ route }) => {
     switch (route.key) {
-      case "designGallery":
+      case 'designGallery':
         return (
           <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
             <DesignGalleryTab
@@ -100,10 +100,10 @@ const DesignWiseScreen = ({ navigation }) => {
             />
           </ScrollView>
         );
-      case "pending":
+      case 'pending':
         return (
           <DesignPendingTab
-            type={"pending"}
+            type={'pending'}
             response={response}
             set={setIsLoading}
             unload={unload}
@@ -111,20 +111,20 @@ const DesignWiseScreen = ({ navigation }) => {
             navigation={navigation}
           />
         );
-      case "approved":
+      case 'approved':
         return (
           <DesignApprovedTab
-            type={"approved"}
+            type={'approved'}
             response={response}
             set={setIsLoading}
             unload={unload}
             fetch={FetchData}
           />
         );
-      case "rejected":
+      case 'rejected':
         return (
           <DesignRejectedTab
-            type={"rejected"}
+            type={'rejected'}
             set={setIsLoading}
             unload={unload}
             fetch={FetchData}
@@ -146,16 +146,16 @@ const DesignWiseScreen = ({ navigation }) => {
     />
   );
   const [routes] = React.useState([
-    { key: "designGallery", title: "Design" },
-    { key: "pending", title: "Pending" },
-    { key: "approved", title: "Approved" },
-    { key: "rejected", title: "Rejected" },
+    { key: 'designGallery', title: 'Design' },
+    { key: 'pending', title: 'Pending' },
+    { key: 'approved', title: 'Approved' },
+    { key: 'rejected', title: 'Rejected' },
   ]);
   //#endregion
 
   return (
     <View style={[Styles.flex1, Styles.backgroundColor]}>
-      <Header navigation={navigation} title="Design Wise" />
+      <Header navigation={navigation} title='Design Wise' />
       {isLoading ? (
         <View
           style={[
@@ -164,7 +164,7 @@ const DesignWiseScreen = ({ navigation }) => {
             Styles.flexAlignCenter,
           ]}
         >
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size='large' color={theme.colors.primary} />
         </View>
       ) : (
         <TabView
