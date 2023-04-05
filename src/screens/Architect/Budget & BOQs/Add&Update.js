@@ -164,9 +164,11 @@ const AddUpdate = ({ index, unload, navigation }) => {
         remarks: table.map((obj) => obj.remarks || ''),
         short_desc: table.map((obj) => obj.short_desc),
         specification: table.map((obj) => obj.specification),
-        image_pattern: table.map((obj) => {
-          return obj.image_pattern;
-        }),
+        image_pattern: table.map((obj) => ({
+          name: 'appimage1212.jpg',
+          type: obj.image_pattern.type + '/*',
+          uri: obj.image_pattern.uri,
+        })),
       },
     });
     Provider.createDFArchitectWithHeader(
