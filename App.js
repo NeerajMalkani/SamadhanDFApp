@@ -2390,12 +2390,9 @@ export default function App() {
                 name='CategoryNameScreen'
                 component={CategoryNameScreen}
                 options={{
-<<<<<<< Updated upstream
-                  headerTitle: 'Category',
-=======
+
                   headerShown: false,
                   headerTitle: "Category",
->>>>>>> Stashed changes
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2439,12 +2436,9 @@ export default function App() {
                 name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
                 options={{
-<<<<<<< Updated upstream
-                  headerTitle: 'Sub Category',
-=======
+
                   headerShown: false,
                   headerTitle: "Sub Category",
->>>>>>> Stashed changes
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
