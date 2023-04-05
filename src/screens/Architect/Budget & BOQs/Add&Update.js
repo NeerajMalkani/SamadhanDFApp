@@ -140,7 +140,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
       'specification',
       table.map((obj) => obj.specification || ''),
     );
-    console.log({
+    console.log('formdata', {
       data: {
         ...state,
         state_refno: states.find(
@@ -148,7 +148,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
         ).state_refno,
         district_refno: districts.find(
           (item) => item.district_name === state.district_refno,
-        ).disctrict_refno,
+        ).district_refno,
         quot_unit_type_name: units.find(
           (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
         ).quot_unit_type_refno,
@@ -158,10 +158,10 @@ const AddUpdate = ({ index, unload, navigation }) => {
         Sess_company_refno,
         product_refno: table.map((obj) => obj.product_refno),
         unit_refno: table.map((obj) => obj.unit_refno),
-        quantity: table.map((obj) => obj.qty),
+        qty: table.map((obj) => obj.quantity),
         rate: table.map((obj) => obj.rate),
-        amount: table.map((obj) => obj.amount),
-        remarks: table.map((obj) => obj.remarks),
+        amount: table.map((obj) => Number(obj.quantity) * Number(obj.rate)),
+        remarks: table.map((obj) => obj.remarks || ''),
         short_desc: table.map((obj) => obj.short_desc),
         specification: table.map((obj) => obj.specification),
         image_pattern: table.map((obj) => {
@@ -180,7 +180,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
           district_refno: districts.find(
             (item) => item.district_name === state.district_refno,
           ).district_refno,
-          quot_unit_type_name: units.find(
+          quot_unit_type_refno: units.find(
             (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
           ).quot_unit_type_refno,
           Sess_CompanyAdmin_UserRefno,
@@ -326,7 +326,6 @@ const AddUpdate = ({ index, unload, navigation }) => {
       return state;
     });
   };
-
   return (
     <ScrollView style={[Styles.flex1, Styles.backgroundColor]}>
       <ClientRBSheet
@@ -472,6 +471,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
               state_refno: e,
               district_refno: 0,
             }));
+
             fetchDistricts(
               states.find((item) => item.state_name === e).state_refno,
             );
@@ -484,7 +484,6 @@ const AddUpdate = ({ index, unload, navigation }) => {
           onSelected={(e) => {
             setState((state) => ({
               ...state,
-
               district_refno: e,
             }));
           }}

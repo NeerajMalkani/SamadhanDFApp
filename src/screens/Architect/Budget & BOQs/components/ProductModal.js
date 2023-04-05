@@ -43,6 +43,7 @@ const ProductModal = ({
       { data: { Sess_UserRefno } },
     )
       .then((res) => {
+        console.log(res.data);
         setServices(res.data.data);
       })
       .catch((error) => console.log(error));
@@ -61,6 +62,7 @@ const ProductModal = ({
       if (res.data.data) setCategories(res.data.data);
     });
   };
+  console.log(services);
 
   const updateProduct = (i, name, value) => {
     setProducts((state) => {
