@@ -169,7 +169,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
         }),
       },
     });
-    Provider.createDFArchitect(Provider.API_URLS.architect_budget_create, {
+    Provider.createDFArchitectWithHeader(Provider.API_URLS.architect_budget_create, {
       data: {
         ...state,
         state_refno: states.find(

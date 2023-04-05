@@ -356,7 +356,7 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
               );
             })}
           </View>
-          <HelperText type="error" visible={entryTypeInvalid}>
+          <HelperText type="error" visible={transactionTypeNameInvalid}>
             Please select Transaction Type
           </HelperText>
 

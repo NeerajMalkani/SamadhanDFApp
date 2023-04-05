@@ -1024,6 +1024,18 @@ class Provider {
     }
   }
 
+  createDFArchitectWithHeader(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Architect}/${resource}`, params, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    } else {
+      return axios.post(`${BASE_URL_Architect}/${resource}`, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+  }
+
   createDFContractor(resource, params) {
     return axios.post(`${BASE_URL_Contractor}/${resource}`, params);
   }
