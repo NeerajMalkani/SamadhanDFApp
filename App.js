@@ -30,108 +30,108 @@ import {
   MenuItemsProjectSupervisor,
   MenuItemsClient,
   MenuItemsMarketingExecutive,
-} from "./src/json/MenuItems";
-import ActivityRolesScreen from "./src/screens/Admin/Master/ActivityRolesScreen";
-import ServicesScreen from "./src/screens/Admin/Master/ServicesScreen";
-import UnitOfSalesScreen from "./src/screens/Admin/Master/UnitOfSalesScreen";
-import AddActivityRolesScreen from "./src/screens/Admin/Master/AddItems/AddActivityRolesScreen";
-import AddServicesScreen from "./src/screens/Admin/Master/AddItems/AddServicesScreen";
-import AddUnitOfSalesScreen from "./src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen";
-import CategoryScreen from "./src/screens/Admin/Master/CategoryScreen";
-import ProductionAchieved from "./src/screens/Manufacture/ProductionAchieved";
-import AddCategoryScreen from "./src/screens/Admin/Master/AddItems/AddCategoryScreen";
-import ImageGalleryScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryScreen";
-import YourEstimationsScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/YourEstimationsScreen";
-import React, { useEffect, useState } from "react";
-import SummaryOfMaterials from "./src/screens/Manufacture/SummaryOfMaterials";
-import LoginScreen from "./src/screens/LoginScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import SignupScreen from "./src/screens/SignupScreen";
-import ForgotPassword from "./src/screens/ForgotPassword";
-import HomeScreen, { navigationRef } from "./src/screens/HomeScreen";
-import PocketDiaryScreen from "./src/screens/PocketDiaryScreen";
-import PocketDiaryScreenOne from "./src/screens/PocketDiary/PocketDiaryScreenOne";
-import FeedbackScreen from "./src/screens/FeedbackScreen";
-import BasicDetailsScreen from "./src/screens/Common/CompanyProfile/BasicDetailsScreen";
-import MyServicesScreen from "./src/screens/Common/CompanyProfile/MyServicesScreen";
-import JobOrderForm from "./src/screens/Manufacture/JobOrderForm";
-import AddProductScreen from "./src/screens/Admin/Master/AddItems/AddProductScreen";
-import ProductScreen from "./src/screens/Admin/Master/ProductScreen";
-import DepartmentScreen from "./src/screens/Admin/Master/DepartmentScreen";
-import AddDepartmentScreen from "./src/screens/Admin/Master/AddItems/AddDepartmentScreen";
-import AddDesignationScreen from "./src/screens/Admin/Master/AddItems/AddDesignationScreen";
-import DesignationScreen from "./src/screens/Admin/Master/DesignationScreen";
-import ServiceProductScreen from "./src/screens/Admin/Master/ServiceProductScreen";
-import AddServiceProductScreen from "./src/screens/Admin/Master/AddItems/AddServiceProductScreen";
-import EWayBillScreen from "./src/screens/Admin/Master/EWayBillScreen";
-import AddEWayBillScreen from "./src/screens/Admin/Master/AddItems/AddEWayBillScreen";
-import LocationTypeScreen from "./src/screens/Admin/Master/LocationTypeScreen";
-import AddLocationTypeScreen from "./src/screens/Admin/Master/AddItems/AddLocationTypeScreen";
-import WorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/WorkFloorScreen";
-import AddWorkFloorScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkFloorScreen";
-import WorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/WorkLocationScreen";
-import AddWorkLocationScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddWorkLocationScreen";
-import DesignTypeScreen from "./src/screens/Admin/ServiceCatalogue/DesignTypeScreen";
-import AddDesignTypeScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddDesignTypeScreen";
-import PostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/PostNewDesignScreen";
-import AddPostNewDesignScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen";
-import DealerPresentationScreen from "./src/screens/Dealer/CompanyProfile/PresentationScreen";
-import DealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/BuyerCategoryScreen";
-import AddDealerBuyerCategoryScreen from "./src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen";
-import DealerBrandMasterScreen from "./src/screens/Dealer/Brand/BrandMasterScreen";
-import AddDealerBrandMasterScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen";
-import DealerBrandSetupScreen from "./src/screens/Dealer/Brand/BrandSetupScreen";
-import AddDealerBrandSetupScreen from "./src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen";
-import DealerProductScreen from "./src/screens/Dealer/Product/ProductScreen";
-import AddDealerProductScreen from "./src/screens/Dealer/Product/AddItem/AddProductScreen";
-import MaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/MaterialSetupScreen";
-import AddMaterialSetupScreen from "./src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen";
-import AddMyServicesScreen from "./src/screens/Common/CompanyProfile/AddItem/AddMyServicesScreen";
-import ImageGalleryWorkLocationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen";
-import EstimationPreviewScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen";
-import GetEstimationScreen from "./src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen";
-import ContractorEstimation from "./src/screens/Contractor/QuotationAndEstimation/ContractorEstimation";
-import MaterialCalculatorScreen from "./src/screens/Common/MaterialCalculator/MaterialCalculatorScreen";
-import CommonDepartmentScreen from "./src/screens/Common/Organization/DepartmentScreen";
-import AddCommonDepartmentScreen from "./src/screens/Common/Organization/AddItem/AddDepartmentScreen";
-import CommonDesignationScreen from "./src/screens/Common/Organization/DesignationScreen";
-import AddCommonDesignationScreen from "./src/screens/Common/Organization/AddItem/AddDesignationScreen";
-import PhoneContacts from "./src/screens/Common/PocketDairy/Setting/AddItems/PhoneContacts";
-import DesignWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen";
-import QuotationWiseScreen from "./src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen";
-import ClientScreen from "./src/screens/Common/Client/ClientScreen";
-import ClientEditScreen from "./src/screens/Common/Client/AddItems/ClientEdit";
-import ApprovedUserScreen from "./src/screens/Admin/Users/ApprovedUserScreen";
-import DeclinedUserScreen from "./src/screens/Admin/Users/DeclinedUserScreen";
-import PendingUserScreen from "./src/screens/Admin/Users/PendingUserScreen";
-import SearchNAdd from "./src/screens/Common/Employee/AddItems/SearchNAdd";
-import EmployeeListScreen from "./src/screens/Common/Employee/EmployeeList";
-import EmployeeEditScreen from "./src/screens/Common/Employee/AddItems/EmployeeEdit";
-import BranchListScreen from "./src/screens/Common/Organization/BranchScreen";
-import BranchEditScreen from "./src/screens/Common/Organization/AddItem/AddBranchScreen";
-import EnquiryWise from "./src/screens/Contractor/Enquiries/Enquiry_Wise";
-import DesignWise from "./src/screens/Common/Client/Enquiries/DesignWise";
-import QuotationWise from "./src/screens/Common/Client/Quotations/QuotationWise";
-import UserProfile from "./src/screens/Common/Profile Update/UserProfile";
-import RateCardSetUp from "./src/screens/Contractor/RateCard/RateCardSetup";
-import AddRateCard from "./src/screens/Contractor/RateCard/AddRateCard";
-import ArchitectRateCardSetup from "./src/screens/Architect/ArchitectRateCardSetup";
-import Demo from "./src/screens/GeneralUser/Demo";
-import SearchClientScreen from "./src/screens/Common/Client/AddItems/SearchClientScreen";
-import AddClientScreen from "./src/screens/Common/Client/AddItems/AddClientScreen";
-import SearchEmployee from "./src/screens/Common/Employee/AddItems/SearchEmployee";
-import AddEmployee from "./src/screens/Common/Employee/AddItems/AddEmployee";
-import SendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/sendRateCard";
-import AddSendRateCard from "./src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard";
+} from './src/json/MenuItems';
+import ActivityRolesScreen from './src/screens/Admin/Master/ActivityRolesScreen';
+import ServicesScreen from './src/screens/Admin/Master/ServicesScreen';
+import UnitOfSalesScreen from './src/screens/Admin/Master/UnitOfSalesScreen';
+import AddActivityRolesScreen from './src/screens/Admin/Master/AddItems/AddActivityRolesScreen';
+import AddServicesScreen from './src/screens/Admin/Master/AddItems/AddServicesScreen';
+import AddUnitOfSalesScreen from './src/screens/Admin/Master/AddItems/AddUnitOfSalesScreen';
+import CategoryScreen from './src/screens/Admin/Master/CategoryScreen';
+import ProductionAchieved from './src/screens/Manufacture/ProductionAchieved';
+import AddCategoryScreen from './src/screens/Admin/Master/AddItems/AddCategoryScreen';
+import ImageGalleryScreen from './src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryScreen';
+import YourEstimationsScreen from './src/screens/GeneralUser/EstimateAndEnquiries/YourEstimationsScreen';
+import React, { useEffect, useState } from 'react';
+import SummaryOfMaterials from './src/screens/Manufacture/SummaryOfMaterials';
+import LoginScreen from './src/screens/LoginScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SignupScreen from './src/screens/SignupScreen';
+import ForgotPassword from './src/screens/ForgotPassword';
+import HomeScreen, { navigationRef } from './src/screens/HomeScreen';
+import PocketDiaryScreen from './src/screens/PocketDiaryScreen';
+import PocketDiaryScreenOne from './src/screens/PocketDiary/PocketDiaryScreenOne';
+import FeedbackScreen from './src/screens/FeedbackScreen';
+import BasicDetailsScreen from './src/screens/Common/CompanyProfile/BasicDetailsScreen';
+import MyServicesScreen from './src/screens/Common/CompanyProfile/MyServicesScreen';
+import JobOrderForm from './src/screens/Manufacture/JobOrderForm';
+import AddProductScreen from './src/screens/Admin/Master/AddItems/AddProductScreen';
+import ProductScreen from './src/screens/Admin/Master/ProductScreen';
+import DepartmentScreen from './src/screens/Admin/Master/DepartmentScreen';
+import AddDepartmentScreen from './src/screens/Admin/Master/AddItems/AddDepartmentScreen';
+import AddDesignationScreen from './src/screens/Admin/Master/AddItems/AddDesignationScreen';
+import DesignationScreen from './src/screens/Admin/Master/DesignationScreen';
+import ServiceProductScreen from './src/screens/Admin/Master/ServiceProductScreen';
+import AddServiceProductScreen from './src/screens/Admin/Master/AddItems/AddServiceProductScreen';
+import EWayBillScreen from './src/screens/Admin/Master/EWayBillScreen';
+import AddEWayBillScreen from './src/screens/Admin/Master/AddItems/AddEWayBillScreen';
+import LocationTypeScreen from './src/screens/Admin/Master/LocationTypeScreen';
+import AddLocationTypeScreen from './src/screens/Admin/Master/AddItems/AddLocationTypeScreen';
+import WorkFloorScreen from './src/screens/Admin/ServiceCatalogue/WorkFloorScreen';
+import AddWorkFloorScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddWorkFloorScreen';
+import WorkLocationScreen from './src/screens/Admin/ServiceCatalogue/WorkLocationScreen';
+import AddWorkLocationScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddWorkLocationScreen';
+import DesignTypeScreen from './src/screens/Admin/ServiceCatalogue/DesignTypeScreen';
+import AddDesignTypeScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddDesignTypeScreen';
+import PostNewDesignScreen from './src/screens/Admin/ServiceCatalogue/PostNewDesignScreen';
+import AddPostNewDesignScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddPostNewDesignScreen';
+import DealerPresentationScreen from './src/screens/Dealer/CompanyProfile/PresentationScreen';
+import DealerBuyerCategoryScreen from './src/screens/Dealer/Brand/BuyerCategoryScreen';
+import AddDealerBuyerCategoryScreen from './src/screens/Dealer/Brand/AddItem/AddBuyerCategoryScreen';
+import DealerBrandMasterScreen from './src/screens/Dealer/Brand/BrandMasterScreen';
+import AddDealerBrandMasterScreen from './src/screens/Dealer/Brand/AddItem/AddBrandMasterScreen';
+import DealerBrandSetupScreen from './src/screens/Dealer/Brand/BrandSetupScreen';
+import AddDealerBrandSetupScreen from './src/screens/Dealer/Brand/AddItem/AddBrandSetupScreen';
+import DealerProductScreen from './src/screens/Dealer/Product/ProductScreen';
+import AddDealerProductScreen from './src/screens/Dealer/Product/AddItem/AddProductScreen';
+import MaterialSetupScreen from './src/screens/Admin/ServiceCatalogue/MaterialSetupScreen';
+import AddMaterialSetupScreen from './src/screens/Admin/ServiceCatalogue/AddItems/AddMaterialSetupScreen';
+import AddMyServicesScreen from './src/screens/Common/CompanyProfile/AddItem/AddMyServicesScreen';
+import ImageGalleryWorkLocationScreen from './src/screens/GeneralUser/EstimateAndEnquiries/ImageGalleryWorkLocationScreen';
+import EstimationPreviewScreen from './src/screens/GeneralUser/EstimateAndEnquiries/EstimationPreviewScreen';
+import GetEstimationScreen from './src/screens/GeneralUser/EstimateAndEnquiries/GetEstimationScreen';
+import ContractorEstimation from './src/screens/Contractor/QuotationAndEstimation/ContractorEstimation';
+import MaterialCalculatorScreen from './src/screens/Common/MaterialCalculator/MaterialCalculatorScreen';
+import CommonDepartmentScreen from './src/screens/Common/Organization/DepartmentScreen';
+import AddCommonDepartmentScreen from './src/screens/Common/Organization/AddItem/AddDepartmentScreen';
+import CommonDesignationScreen from './src/screens/Common/Organization/DesignationScreen';
+import AddCommonDesignationScreen from './src/screens/Common/Organization/AddItem/AddDesignationScreen';
+import PhoneContacts from './src/screens/Common/PocketDairy/Setting/AddItems/PhoneContacts';
+import DesignWiseScreen from './src/screens/Contractor/QuotationAndEstimation/DesignWiseScreen';
+import QuotationWiseScreen from './src/screens/Contractor/QuotationAndEstimation/QuotationWiseScreen';
+import ClientScreen from './src/screens/Common/Client/ClientScreen';
+import ClientEditScreen from './src/screens/Common/Client/AddItems/ClientEdit';
+import ApprovedUserScreen from './src/screens/Admin/Users/ApprovedUserScreen';
+import DeclinedUserScreen from './src/screens/Admin/Users/DeclinedUserScreen';
+import PendingUserScreen from './src/screens/Admin/Users/PendingUserScreen';
+import SearchNAdd from './src/screens/Common/Employee/AddItems/SearchNAdd';
+import EmployeeListScreen from './src/screens/Common/Employee/EmployeeList';
+import EmployeeEditScreen from './src/screens/Common/Employee/AddItems/EmployeeEdit';
+import BranchListScreen from './src/screens/Common/Organization/BranchScreen';
+import BranchEditScreen from './src/screens/Common/Organization/AddItem/AddBranchScreen';
+import EnquiryWise from './src/screens/Contractor/Enquiries/Enquiry_Wise';
+import DesignWise from './src/screens/Common/Client/Enquiries/DesignWise';
+import QuotationWise from './src/screens/Common/Client/Quotations/QuotationWise';
+import UserProfile from './src/screens/Common/Profile Update/UserProfile';
+import RateCardSetUp from './src/screens/Contractor/RateCard/RateCardSetup';
+import AddRateCard from './src/screens/Contractor/RateCard/AddRateCard';
+import ArchitectRateCardSetup from './src/screens/Architect/ArchitectRateCardSetup';
+import Demo from './src/screens/GeneralUser/Demo';
+import SearchClientScreen from './src/screens/Common/Client/AddItems/SearchClientScreen';
+import AddClientScreen from './src/screens/Common/Client/AddItems/AddClientScreen';
+import SearchEmployee from './src/screens/Common/Employee/AddItems/SearchEmployee';
+import AddEmployee from './src/screens/Common/Employee/AddItems/AddEmployee';
+import SendRateCard from './src/screens/Contractor/RateCard/SendRateCard/sendRateCard';
+import AddSendRateCard from './src/screens/Contractor/RateCard/SendRateCard/AddSendRateCard';
 
-import BudgetSetup from "./src/screens/Common/PocketDairy/Setting/BudgetSetup";
-import AddBudgetSetup from "./src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup";
-import AddExpensesList from "./src/screens/Common/PocketDairy/AddExpensesList";
-import AddExpenses from "./src/screens/Common/PocketDairy/AddItems/AddExpenses";
-import AddSourceList from "./src/screens/Common/PocketDairy/AddSourceList";
-import VerifyCompanySource from "./src/screens/Common/PocketDairy/VerifyCompanySource";
-import VerifyCompanyExpense from "./src/screens/Common/PocketDairy/VerifyCompanyExpense";
-import AddSource from "./src/screens/Common/PocketDairy/AddItems/AddSource";
+import BudgetSetup from './src/screens/Common/PocketDairy/Setting/BudgetSetup';
+import AddBudgetSetup from './src/screens/Common/PocketDairy/Setting/AddItems/AddBudgetSetup';
+import AddExpensesList from './src/screens/Common/PocketDairy/AddExpensesList';
+import AddExpenses from './src/screens/Common/PocketDairy/AddItems/AddExpenses';
+import AddSourceList from './src/screens/Common/PocketDairy/AddSourceList';
+import VerifyCompanySource from './src/screens/Common/PocketDairy/VerifyCompanySource';
+import VerifyCompanyExpense from './src/screens/Common/PocketDairy/VerifyCompanyExpense';
+import AddSource from './src/screens/Common/PocketDairy/AddItems/AddSource';
 //import Inbox from "./src/screens/GeneralUser/PocketDairy/Inbox";
 import BrandConversionValue from './src/screens/Manufacture/ProductionUnitMaster/BrandConversionValue';
 import OpeningStockList from './src/screens/Manufacture/ProductionUnitMaster/OpeningStockList';
@@ -236,8 +236,7 @@ export default function App() {
         case 7:
           if (ud.Sess_designation_refno == 11) {
             menuItems = [...MenuItemsMarketingExecutive];
-          }
-          else {
+          } else {
             menuItems = [...MenuItemsManufacture];
           }
           break;
@@ -896,12 +895,12 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name="CategoryNameScreen"
+                name='CategoryNameScreen'
                 component={CategoryNameScreen}
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name="SubCategoryNameScreen"
+                name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
               />
             </Drawer.Navigator>
@@ -1034,12 +1033,16 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name="CategoryNameScreen"
+                name='CategoryNameScreen'
                 component={CategoryNameScreen}
               />
               <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true, headerBackTitleVisible: false }}
-                name="SubCategoryNameScreen"
+                options={{
+                  headerShown: false,
+                  unmountOnBlur: true,
+                  headerBackTitleVisible: false,
+                }}
+                name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
               />
             </Drawer.Navigator>
@@ -1146,12 +1149,16 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
-                name="CategoryNameScreen"
+                name='CategoryNameScreen'
                 component={CategoryNameScreen}
               />
               <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true, headerBackTitleVisible: false }}
-                name="SubCategoryNameScreen"
+                options={{
+                  headerShown: false,
+                  unmountOnBlur: true,
+                  headerBackTitleVisible: false,
+                }}
+                name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
               />
             </Drawer.Navigator>
@@ -2390,9 +2397,8 @@ export default function App() {
                 name='CategoryNameScreen'
                 component={CategoryNameScreen}
                 options={{
-
                   headerShown: false,
-                  headerTitle: "Category",
+                  headerTitle: 'Category',
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -2436,9 +2442,8 @@ export default function App() {
                 name='SubCategoryNameScreen'
                 component={SubCategoryNameScreen}
                 options={{
-
                   headerShown: false,
-                  headerTitle: "Sub Category",
+                  headerTitle: 'Sub Category',
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

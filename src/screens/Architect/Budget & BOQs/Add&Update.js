@@ -169,35 +169,38 @@ const AddUpdate = ({ index, unload, navigation }) => {
         }),
       },
     });
-    Provider.createDFArchitectWithHeader(Provider.API_URLS.architect_budget_create, {
-      data: {
-        ...state,
-        state_refno: states.find(
-          (item) => item.state_name === state.state_refno,
-        ).state_refno,
-        district_refno: districts.find(
-          (item) => item.district_name === state.district_refno,
-        ).disctrict_refno,
-        quot_unit_type_name: units.find(
-          (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
-        ).quot_unit_type_refno,
-        Sess_CompanyAdmin_UserRefno,
-        Sess_UserRefno,
-        Sess_branch_refno,
-        Sess_company_refno,
-        product_refno: table.map((obj) => obj.product_refno),
-        unit_refno: table.map((obj) => obj.unit_refno),
-        quantity: table.map((obj) => obj.qty),
-        rate: table.map((obj) => obj.rate),
-        amount: table.map((obj) => obj.amount),
-        remarks: table.map((obj) => obj.remarks),
-        short_desc: table.map((obj) => obj.short_desc),
-        specification: table.map((obj) => obj.specification),
-        image_pattern: table.map((obj) => {
-          return obj.image_pattern;
-        }),
+    Provider.createDFArchitectWithHeader(
+      Provider.API_URLS.architect_budget_create,
+      {
+        data: {
+          ...state,
+          state_refno: states.find(
+            (item) => item.state_name === state.state_refno,
+          ).state_refno,
+          district_refno: districts.find(
+            (item) => item.district_name === state.district_refno,
+          ).district_refno,
+          quot_unit_type_name: units.find(
+            (item) => item.quot_unit_type_name === state.quot_unit_type_refno,
+          ).quot_unit_type_refno,
+          Sess_CompanyAdmin_UserRefno,
+          Sess_UserRefno,
+          Sess_branch_refno,
+          Sess_company_refno,
+          product_refno: table.map((obj) => obj.product_refno),
+          unit_refno: table.map((obj) => obj.unit_refno),
+          qty: table.map((obj) => obj.quantity),
+          rate: table.map((obj) => obj.rate),
+          amount: table.map((obj) => Number(obj.quantity) * Number(obj.rate)),
+          remarks: table.map((obj) => obj.remarks || ''),
+          short_desc: table.map((obj) => obj.short_desc),
+          specification: table.map((obj) => obj.specification),
+          image_pattern: table.map((obj) => {
+            return obj.image_pattern;
+          }),
+        },
       },
-    })
+    )
       .then((res) => {
         console.log('res', res.data);
         // setState({
