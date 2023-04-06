@@ -341,10 +341,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           Sess_designation_refno: Sess_designation_refno,
         },
       };
-      const data = await Provider.getEmployeebasicDetails(params, () => 
+      const data = await Provider.getEmployeebasicDetails(params, () =>
         setIsLoading(false)
       );
-      
+
       if (data.empbasicdata) {
         let employee_data = data.empbasicdata[0];
         let reporting_data = {};
@@ -512,7 +512,6 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           setSalary(
             !NullOrEmpty(bankDetails_data.salary) ? bankDetails_data.salary : 0
           );
-console.log('image path', employee_data.profile_photo_url);
           setLogoImage(employee_data.profile_photo_url);
           setImage(
             employee_data.profile_photo_url
@@ -1343,24 +1342,26 @@ console.log('image path', employee_data.profile_photo_url);
                 reference={branchRef}
               />
 
-              <Dropdown
-                label="Department"
-                data={departmentData}
-                onSelected={onDepartmentChanged}
-                isError={errorDepartment}
-                selectedItem={departmentName}
-                reference={departmentRef}
-              />
-
-              <Dropdown
-                label="Designation"
-                data={designationData}
-                onSelected={onDesignationChanged}
-                isError={errorDesignation}
-                selectedItem={designationName}
-                reference={designationRef}
-              />
-
+              <View style={[Styles.marginTop16]}>
+                <Dropdown
+                  label="Department"
+                  data={departmentData}
+                  onSelected={onDepartmentChanged}
+                  isError={errorDepartment}
+                  selectedItem={departmentName}
+                  reference={departmentRef}
+                />
+              </View>
+              <View style={[Styles.marginTop16]}>
+                <Dropdown
+                  label="Designation"
+                  data={designationData}
+                  onSelected={onDesignationChanged}
+                  isError={errorDesignation}
+                  selectedItem={designationName}
+                  reference={designationRef}
+                />
+              </View>
               <View style={Styles.marginTop16}>
                 <Text>Employee Type</Text>
               </View>
