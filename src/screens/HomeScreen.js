@@ -1312,7 +1312,28 @@ const HomeScreen = ({ route, navigation }) => {
                         />
                         <Text style={[Styles.buttonIconLabel]}>E-Way Bill</Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("SetupScreen");
+                        }}
+                        style={[
+                          Styles.borderRadius8,
+                          Styles.homeBox,
+                          Styles.flexColumn,
+                          Styles.flexJustifyCenter,
+                          Styles.flexAlignCenter,
+                          { width: 100, height: 72 },
+                        ]}
+                      >
+                        <Icon
+                          name="archive-arrow-down"
+                          size={22}
+                          color={theme.colors.masterIcons}
+                        />
+                        <Text style={[Styles.buttonIconLabel]}>Setup</Text>
+                      </TouchableOpacity>
                     </View>
+
                   </View>
                   <View style={[Styles.paddingTop16]}>
                     <Text style={[Styles.HomeTitle]}>

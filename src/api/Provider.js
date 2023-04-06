@@ -669,6 +669,8 @@ class Provider {
       'ratecard_contractorproductrefnocheck/',
     getapilist: 'getapilist/',
     getapitaskreport: 'getapitaskreport/',
+    setupoptionidcheck:"setupoptionidcheck/",
+    setupupdate:"setupupdate/",
   };
 
   createDFPocketDairy(resource, params) {

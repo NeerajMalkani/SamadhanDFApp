@@ -211,7 +211,7 @@ function ProductionOrderList({ navigation }) {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData[0] != null && listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
           <Searchbar
             style={[Styles.margin16]}

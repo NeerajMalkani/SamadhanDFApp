@@ -467,7 +467,6 @@ function EditProductionStatus({ route, navigation }) {
               }}
               isError={errors.mf_vo_no}
               selectedItem={data.mf_vo_no}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.mf_vo_no}>
@@ -497,7 +496,6 @@ function EditProductionStatus({ route, navigation }) {
               }}
               isError={errors.productname}
               selectedItem={data.productname}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.productname}>
@@ -636,7 +634,6 @@ function EditProductionStatus({ route, navigation }) {
               }}
               isError={errors.shift_name}
               selectedItem={data.shift_name}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.shift_name}>
@@ -711,7 +708,6 @@ function EditProductionStatus({ route, navigation }) {
               }}
               isError={errors.no_of_coil_used}
               selectedItem={data.no_of_coil_used}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.no_of_coil_used}>
@@ -769,7 +765,6 @@ function EditProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.supervisor_name}
                 selectedItem={data.supervisor_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.supervisor_name}>
@@ -800,7 +795,6 @@ function EditProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.mastry_name}
                 selectedItem={data.mastry_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.mastry_name}>
@@ -831,7 +825,6 @@ function EditProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.helper_name}
                 selectedItem={data.helper_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.helper_name}>

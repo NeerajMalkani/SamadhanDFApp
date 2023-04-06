@@ -223,7 +223,7 @@ function ProductionAchieved({ navigation }) {
                   }
                 }}
                 selectedItem={dropDown}
-                style={[Styles.borderred, { backgroundColor: "white" }]}
+                style={[{ backgroundColor: "white" }]}
               />
             </View>
             <View style={{ flex: 1, padding: 5, justifyContent: "center" }}>

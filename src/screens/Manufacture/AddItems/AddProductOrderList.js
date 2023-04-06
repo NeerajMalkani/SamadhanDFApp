@@ -64,16 +64,16 @@ function AddProductOrderList({ route, navigation }) {
     vendor_name:
       route.params.type == "edit"
         ? route.params.data?.vendor?.find(
-            (item) =>
-              item.client_user_refno === route.params.data.vendor_user_refno
-          )?.client_name
+          (item) =>
+            item.client_user_refno === route.params.data.vendor_user_refno
+        )?.client_name
         : "",
     supplier_name:
       route.params.type == "edit"
         ? route.params.data?.supplier?.find(
-            (item) =>
-              item.client_user_refno === route.params.data.supplier_user_refno
-          )?.client_name
+          (item) =>
+            item.client_user_refno === route.params.data.supplier_user_refno
+        )?.client_name
         : "",
     rate: route.params.type === "edit" ? route.params.data.rate : "",
     amount: route.params.type === "edit" ? route.params.data.amount : "",
@@ -613,7 +613,6 @@ function AddProductOrderList({ route, navigation }) {
               }}
               isError={errors.service_name}
               selectedItem={data.service_name}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.service_name}>
@@ -639,7 +638,6 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.category_name}
             selectedItem={data.category_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={errors.category_name}>
             {communication.InvalidCategoryName}
@@ -661,7 +659,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.product_name}
             selectedItem={data.product_name}
-            style={[Styles.paddingTop16]}
+
           />
 
           <HelperText type="error" visible={errors.product_name}>
@@ -686,7 +684,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.gpcoil_width}
             selectedItem={data.gpcoil_width}
-            style={[Styles.paddingTop16]}
+
           />
 
           <HelperText type="error" visible={errors.gpcoil_width}>
@@ -709,7 +707,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.brand_name}
             selectedItem={data.brand_name}
-            style={[Styles.paddingTop16]}
+
           />
           <HelperText type="error" visible={errors.gpcoil_width}>
             {communication.InvalidBrandName}
@@ -733,7 +731,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.mass_of_zinc_coating}
             selectedItem={data.mass_of_zinc_coating}
-            style={[Styles.paddingTop16]}
+
           />
           <HelperText type="error" visible={errors.mass_of_zinc_coating}>
             {communication.InvalidServiceName}
@@ -769,7 +767,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={errors.no_gpcoil}
             selectedItem={data.no_gpcoil}
-            style={[Styles.paddingTop16]}
+
           />
           <HelperText type="error" visible={errors.no_gpcoil}>
             {communication.InvalidServiceName}
@@ -865,21 +863,25 @@ function AddProductOrderList({ route, navigation }) {
             style={[{ backgroundColor: "white" }]}
           />
 
-          <Dropdown
-            label="Supplier Name"
-            data={route.params.data.supplier.map((item) => item.client_name)}
-            onSelected={(selectedItem) => {
-              setErrors((prev) => {
-                return { ...prev, supplier_name: false };
-              });
-              setData((prev) => {
-                return { ...prev, supplier_name: selectedItem };
-              });
-            }}
-            isError={error.supplier_name}
-            selectedItem={data.supplier_name}
-            style={[Styles.paddingTop16]}
-          />
+          <View style={[Styles.paddingTop16]}>
+
+
+            <Dropdown
+              label="Supplier Name"
+              data={route.params.data.supplier.map((item) => item.client_name)}
+              onSelected={(selectedItem) => {
+                setErrors((prev) => {
+                  return { ...prev, supplier_name: false };
+                });
+                setData((prev) => {
+                  return { ...prev, supplier_name: selectedItem };
+                });
+              }}
+              isError={error.supplier_name}
+              selectedItem={data.supplier_name}
+
+            />
+          </View>
           <HelperText type="error" visible={errors.supplier_name}>
             {communication.InvalidServiceName}
           </HelperText>
@@ -897,7 +899,7 @@ function AddProductOrderList({ route, navigation }) {
             }}
             isError={error.vendor_name}
             selectedItem={data.vendor_name}
-            style={[Styles.paddingTop16]}
+
           />
           <HelperText type="error" visible={errors.vendor_name}>
             {communication.InvalidServiceName}

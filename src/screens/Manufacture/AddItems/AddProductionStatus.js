@@ -466,7 +466,6 @@ function AddProductionStatus({ route, navigation }) {
               }}
               isError={errors.mf_vo_no}
               selectedItem={data.mf_vo_no}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.mf_vo_no}>
@@ -496,7 +495,6 @@ function AddProductionStatus({ route, navigation }) {
               }}
               isError={errors.productname}
               selectedItem={data.productname}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.productname}>
@@ -635,7 +633,6 @@ function AddProductionStatus({ route, navigation }) {
               }}
               isError={errors.shift_name}
               selectedItem={data.shift_name}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.shift_name}>
@@ -710,7 +707,6 @@ function AddProductionStatus({ route, navigation }) {
               }}
               isError={errors.no_of_coil_used}
               selectedItem={data.no_of_coil_used}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={errors.no_of_coil_used}>
@@ -768,7 +764,6 @@ function AddProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.supervisor_name}
                 selectedItem={data.supervisor_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.supervisor_name}>
@@ -799,7 +794,6 @@ function AddProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.mastry_name}
                 selectedItem={data.mastry_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.mastry_name}>
@@ -830,7 +824,6 @@ function AddProductionStatus({ route, navigation }) {
                 }}
                 isError={errors.helper_name}
                 selectedItem={data.helper_name}
-                style={[Styles.borderred]}
               />
             </View>
             <HelperText type="error" visible={errors.helper_name}>

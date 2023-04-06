@@ -503,7 +503,6 @@ function AddProduction({ route, navigation }) {
               }}
               isError={error.service_name}
               selectedItem={data.service_name}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={error.service_name}>
@@ -530,7 +529,6 @@ function AddProduction({ route, navigation }) {
             }}
             isError={error.category_name}
             selectedItem={data.category_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.category_name}>
             {communication.InvalidCategoryName}
@@ -554,7 +552,6 @@ function AddProduction({ route, navigation }) {
             }}
             isError={error.brand_name}
             selectedItem={data.brand_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.brand_name}>
             {communication.InvalidBrandName}
@@ -576,7 +573,6 @@ function AddProduction({ route, navigation }) {
             }}
             isError={error.product_name}
             selectedItem={data.product_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.product_name}>
             {communication.InvalidProductName}
@@ -630,7 +626,7 @@ function AddProduction({ route, navigation }) {
               style={[
                 Styles.border2,
                 Styles.borderBottomRadius4,
-                Styles.height250,
+                Styles.height280,
               ]}
             >
               <View style={[Styles.marginTop24]}>
@@ -668,7 +664,7 @@ function AddProduction({ route, navigation }) {
                   }}
                   isError={error.thick_service_name}
                   selectedItem={data.thick_service_name}
-                  style={[Styles.height120]}
+                  
                 />
                 <HelperText type="error" visible={error.thick_service_name}>
                   {communication.InvalidServiceName}
@@ -707,7 +703,7 @@ function AddProduction({ route, navigation }) {
                 }}
                 isError={error.thick_category_name}
                 selectedItem={data.thick_category_name}
-                style={[Styles.height120]}
+                
               />
               <HelperText type="error" visible={error.thick_category_name}>
                 {communication.InvalidServiceName}
@@ -742,7 +738,6 @@ function AddProduction({ route, navigation }) {
                 }}
                 isError={error.thick_product_name}
                 selectedItem={data.thick_product_name}
-                style={[Styles.height120]}
               />
               <HelperText type="error" visible={error.thick_product_name}>
                 {communication.InvalidServiceName}

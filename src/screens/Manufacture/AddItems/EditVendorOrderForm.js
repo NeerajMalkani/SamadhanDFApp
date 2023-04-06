@@ -411,7 +411,6 @@ function EditVendorOrderForm({ route, navigation }) {
               }}
               isError={error.mf_po_no}
               selectedItem={data.mf_po_no}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={error.mf_po_no}>

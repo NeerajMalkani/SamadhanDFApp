@@ -204,6 +204,8 @@ import EditInvoiceReceipt from './src/screens/Manufacture/AddItems/EditInvoiceRe
 import EditVendorOrderForm from './src/screens/Manufacture/AddItems/EditVendorOrderForm';
 import AddVendorOrderForm from './src/screens/Manufacture/AddItems/AddVendorOrderForm';
 import BudgetBOQ from './src/screens/Architect/Budget & BOQs';
+import SetupScreen from './src/screens/Admin/Master/Setup';
+import AddSetupScreen from './src/screens/Admin/Master/AddItems/AddSetup';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -426,20 +428,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -676,6 +678,11 @@ export default function App() {
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name='MassOfZincCoating'
                 component={MassOfZincCoating}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name='SetupScreen'
+                component={SetupScreen}
               />
             </Drawer.Navigator>
           );
@@ -1383,7 +1390,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener('focus', () => {});
+      const unsubscribe = navigation.addListener('focus', () => { });
 
       return unsubscribe;
     }, [navigation]);
@@ -1479,16 +1486,16 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 9
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfile
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 9
+                          ? BasicDetailsScreen
+                          : parseInt(userDetails[0].RoleID) === 6
+                            ? UserProfile
+                            : UserProfile
               }
               options={{
                 unmountOnBlur: true,
@@ -2714,6 +2721,19 @@ export default function App() {
                   headerTintColor: theme.colors.textLight,
                 }}
               />
+              <Stack.Screen
+                name='AddSetupScreen'
+                component={AddSetupScreen}
+                options={{
+                  headerTitle: 'Add Setup Value',
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+
+
             </Stack.Navigator>
           </NavigationContainer>
         )}

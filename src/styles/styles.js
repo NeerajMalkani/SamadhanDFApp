@@ -958,6 +958,9 @@ export const Styles = StyleSheet.create({
   height250: {
     height: 250,
   },
+  height280: {
+    height: 280,
+  },
   height325: {
     height: 325,
   },
@@ -994,9 +997,7 @@ export const Styles = StyleSheet.create({
   height200: {
     height: 180
   },
-  height250: {
-    height: 250
-  },
+  
   height120: {
     height: 120
   },

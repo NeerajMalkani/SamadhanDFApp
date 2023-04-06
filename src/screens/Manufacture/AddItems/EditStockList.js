@@ -449,7 +449,6 @@ function EditStockList({ route, navigation }) {
               onSelected={onServiceNameSelected}
               isError={error.service_name}
               selectedItem={data.service_name}
-              style={[Styles.borderred]}
             />
           </View>
           <HelperText type="error" visible={error.service_name}>
@@ -481,7 +480,6 @@ function EditStockList({ route, navigation }) {
             }}
             isError={error.category_name}
             selectedItem={data.category_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.category_name}>
             {communication.InvalidCategoryName}
@@ -509,7 +507,6 @@ function EditStockList({ route, navigation }) {
             }}
             isError={error.brand_name}
             selectedItem={data.brand_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.brand_name}>
             {communication.InvalidBrandName}
@@ -534,7 +531,6 @@ function EditStockList({ route, navigation }) {
             }}
             isError={error.product_name}
             selectedItem={data.product_name}
-            style={[Styles.paddingTop16]}
           />
           <HelperText type="error" visible={error.product_name}>
             {communication.InvalidProductName}
