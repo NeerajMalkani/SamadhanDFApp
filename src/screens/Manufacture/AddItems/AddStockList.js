@@ -282,14 +282,6 @@ function AddStockList({ route, navigation }) {
             });
             let filter = response.data.data.map((item) => item.service_name);
             setServiceArray(filter);
-            setData((prev) => {
-              return {
-                ...prev,
-                service_name: filter.includes(route.params.data?.service_name)
-                  ? route.params.data?.service_name
-                  : filter[0],
-              };
-            });
           }
         }
       })
@@ -315,16 +307,6 @@ function AddStockList({ route, navigation }) {
               setCategoryFullData(response.data.data);
               let filter = response.data.data.map((item) => item.category_name);
               setCategoryArray(filter);
-              setData((prev) => {
-                return {
-                  ...prev,
-                  category_name: filter.includes(
-                    route.params.data?.category_name
-                  )
-                    ? route.params.data?.category_name
-                    : filter[0],
-                };
-              });
             }
           }
         })
@@ -353,14 +335,6 @@ function AddStockList({ route, navigation }) {
               setBrandFullData(response.data.data);
               let filter = response.data.data.map((item) => item.brand_name);
               setBrandArray(filter);
-              setData((prev) => {
-                return {
-                  ...prev,
-                  brand_name: filter.includes(route.params.data?.brand_name)
-                    ? route.params.data?.brand_name
-                    : filter[0],
-                };
-              });
             }
           }
         })
@@ -390,14 +364,6 @@ function AddStockList({ route, navigation }) {
               setProductFullData(response.data.data);
               let filter = response.data.data.map((item) => item.product_name);
               setProductArray(filter);
-              setData((prev) => {
-                return {
-                  ...prev,
-                  product_name: filter.includes(route.params.data?.product_name)
-                    ? route.params.data?.product_name
-                    : filter[0],
-                };
-              });
             }
           }
         })
