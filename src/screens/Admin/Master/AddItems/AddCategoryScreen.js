@@ -312,7 +312,7 @@ const AddCategoryScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={hsnError}>
             {communication.InvalidHSNSAC}
           </HelperText>
-          <TextInput ref={ref_input3} mode="outlined" label="GST Rate" value={gst} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
+          <TextInput ref={ref_input3} mode="outlined" label="GST Rate" maxLength={15} value={gst} returnKeyType="done" keyboardType="decimal-pad" onChangeText={onGSTChanged} style={{ backgroundColor: "white" }} error={gstError} />
           <HelperText type="error" visible={gstError}>
             {communication.InvalidGSTRate}
           </HelperText>

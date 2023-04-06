@@ -169,7 +169,7 @@ const SearchClientScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={companyNameInvalid}>
             {communication.InvalidCompanyClient}
           </HelperText>
-          <TextInput ref={mobileNoRef} mode="outlined" dense keyboardType="number-pad" label="Mobile No" value={mobileNo} returnKeyType="done" onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
+          <TextInput ref={mobileNoRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Mobile No" value={mobileNo} returnKeyType="done" onChangeText={onMobileNoChanged} style={{ backgroundColor: "white" }} error={mobileNoInvalid} />
           <HelperText type="error" visible={mobileNoInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>

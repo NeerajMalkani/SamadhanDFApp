@@ -346,6 +346,7 @@ function AddNewAddress({ route, navigation }) {
             mode="outlined"
             keyboardType={"number-pad"}
             label="Contact Mobile No."
+            maxLength={10}
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}
             returnKeyType="next"
@@ -434,6 +435,7 @@ function AddNewAddress({ route, navigation }) {
             mode="outlined"
             keyboardType={"number-pad"}
             label="Pincode"
+            maxLength={6}
             name="pincode"
             value={data.pincode}
             returnKeyType="next"

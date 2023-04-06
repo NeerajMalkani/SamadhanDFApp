@@ -404,6 +404,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
         <TextInput
           label='Client Contact Number'
           disabled={true}
+          maxLength={10}     
           value={clientDetails.client_contact_number}
           mode='outlined'
           returnKeyType='next'
@@ -441,6 +442,7 @@ const AddUpdate = ({ index, unload, navigation }) => {
         <TextInput
           label='Contact Number'
           mode='outlined'
+          maxLength={10}  
           keyboardType='phone-pad'
           defaultValue={state.contact_mobile_no}
           onChangeText={(e) => handleChange(e, 'contact_mobile_no')}

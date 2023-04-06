@@ -225,6 +225,7 @@ const ForgotPassword = ({ navigation }) => {
             mode="flat"
             dense
             label="Mobile number"
+            maxLength={10}
             autoComplete="tel"
             keyboardType="phone-pad"
             value={mobileNumber}

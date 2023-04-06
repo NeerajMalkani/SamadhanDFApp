@@ -669,6 +669,7 @@ const Form = ({ route, navigation }) => {
           <TextInput
             mode="outlined"
             label="Pincode"
+            maxLength={6}
             keyboardType="number-pad"
             multiline={false}
             value={state.pincode}

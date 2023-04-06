@@ -689,16 +689,16 @@ const BranchEditScreen = ({ route, navigation }) => {
               </View>
 
               <TextInput ref={contactPersonNoRef} mode="outlined" dense label="Conatct Person No"
-                keyboardType="number-pad" value={contactPersonNo} returnKeyType="next" editable={false}
+                keyboardType="number-pad"  maxLength={10} value={contactPersonNo} returnKeyType="next" editable={false}
                 selectTextOnFocus={false} onSubmitEditing={() => contactPersonNoRef.current.focus()}
                 style={[Styles.backgroundSecondaryColor]} error={contactPersonNoInvalid} />
 
-              <TextInput ref={gstNoRef} mode="outlined" dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
+              <TextInput ref={gstNoRef} mode="outlined"  maxLength={15} dense label="GST No" value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
               <HelperText type="error" visible={gstNoInvalid}>
                 {communication.InvalidGSTNo}
               </HelperText>
 
-              <TextInput ref={panNoRef} mode="outlined" dense label="Pan No" value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
+              <TextInput ref={panNoRef} mode="outlined" dense  label="Pan No" maxLength={10} value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
               <HelperText type="error" visible={panNoInvalid}>
                 {communication.InvalidPANNo}
               </HelperText>

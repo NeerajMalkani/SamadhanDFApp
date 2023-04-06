@@ -748,7 +748,7 @@ const AddRateCard = ({ route, navigation }) => {
 
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween, Styles.marginTop16]}>
             <TextInput value={hsn} style={[Styles.width48per]} label="HSN / SAC Code" disabled />
-            <TextInput value={gst} style={[Styles.width48per]} label="GST Rate (%)" disabled />
+            <TextInput value={gst} style={[Styles.width48per]} maxLength={15} label="GST Rate (%)" disabled />
           </View>
           <View style={[Styles.marginTop16]}>
             <Dropdown label="Service Product Name" data={productsData} onSelected={onProductsNameSelected} isError={errorPN} selectedItem={productsName} reference={productsDDRef} />

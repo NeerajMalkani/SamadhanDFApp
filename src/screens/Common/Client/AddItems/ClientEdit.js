@@ -388,7 +388,7 @@ const ClientEditScreen = ({ route, navigation }) => {
                                 {communication.contactNameInvalid}
                             </HelperText>
 
-                            <TextInput ref={contactNumberRef} disabled={addedBy} mode="outlined" dense keyboardType="number-pad" label="Contact Mobile No." value={contactNumber}
+                            <TextInput maxLength={10} ref={contactNumberRef} disabled={addedBy} mode="outlined"  dense keyboardType="number-pad"  maxLength={10} label="Contact Mobile No." value={contactNumber}
                                 returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }}
                                 error={contactNumberInvalid} />
                             <HelperText type="error" visible={contactNumberInvalid}>
@@ -408,19 +408,19 @@ const ClientEditScreen = ({ route, navigation }) => {
                             <HelperText type="error" visible={errorCN}>
                                 {communication.InvalidCity}
                             </HelperText>
-                            <TextInput ref={pincodenRef} mode="outlined" disabled={addedBy} dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="next"
+                            <TextInput ref={pincodenRef} mode="outlined" disabled={addedBy} dense keyboardType="number-pad" maxLength={6} label="Pincode" value={pincode} returnKeyType="next"
                                 onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
                             <HelperText type="error" visible={pincodeInvalid}>
                                 {communication.InvalidPincode}
                             </HelperText>
-                            <TextInput ref={gstNumberRef} mode="outlined" disabled={addedBy} dense label="GST No." value={gstNumber} returnKeyType="next"
+                            <TextInput ref={gstNumberRef} mode="outlined" disabled={addedBy} maxLength={15} dense label="GST No." value={gstNumber} returnKeyType="next"
                                 onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }}
                                 error={gstNumberInvalid} />
                             <HelperText type="error" visible={gstNumberInvalid}>
                                 {communication.InvalidGSTNo}
                             </HelperText>
 
-                            <TextInput ref={panNumberRef} mode="outlined" disabled={addedBy} dense label="PAN No." value={panNumber} returnKeyType="done"
+                            <TextInput ref={panNumberRef} mode="outlined" disabled={addedBy} maxLength={10} dense label="PAN No." value={panNumber} returnKeyType="done"
                                 onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                             <HelperText type="error" visible={panNumberInvalid}>
                                 {communication.InvalidPANNo}

@@ -400,6 +400,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         <TextInput
           mode="outlined"
           label="CGST(%)"
+          maxLength={4}
           value={String(state.cgst) || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "cgst")}
@@ -409,6 +410,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         <TextInput
           mode="outlined"
           label="SGST(%)"
+          maxLength={4}
           value={state.sgst || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "sgst")}
@@ -418,6 +420,7 @@ const EditInvoiceReceipt = ({ route, navigation }) => {
         <TextInput
           mode="outlined"
           label="IGST(%)"
+          maxLength={4}
           value={state.igst || ""}
           keyboardType="numeric"
           onChangeText={(e) => Number(e) <= 100 && onChange(e, "igst")}

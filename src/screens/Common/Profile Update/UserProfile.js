@@ -578,7 +578,7 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={contactNameInvalid}>
                   {communication.InvalidContactPerson}
                 </HelperText>
-                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" label="Contact Number" 
+                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Contact Number" 
                 value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} 
                 onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
                 <HelperText type="error" visible={contactNumberInvalid}>
@@ -598,17 +598,17 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={errorCN}>
                   select a valid city
                 </HelperText>
-                <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+                <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" maxLength={6} label="Pincode" value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
                 <HelperText type="error" visible={pincodeInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
                 <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." 
-                value={gstNumber} returnKeyType="next" 
+                value={gstNumber} returnKeyType="next"  maxLength={15}
                 onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
                 <HelperText type="error" visible={gstNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No."  maxLength={10} value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                 <HelperText type="error" visible={panNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>

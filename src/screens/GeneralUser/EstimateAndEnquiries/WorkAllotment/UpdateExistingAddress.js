@@ -344,6 +344,7 @@ function UpdateExistingAddress({ route, navigation }) {
           <TextInput
             mode="outlined"
             keyboardType={"number-pad"}
+            maxLength={10}
             label="Contact Mobile No."
             name="contact_person_mobile_no"
             value={data.contact_person_mobile_no}
@@ -432,6 +433,7 @@ function UpdateExistingAddress({ route, navigation }) {
           <TextInput
             mode="outlined"
             label="Pincode"
+            maxLength={6}
             name="pincode"
             value={data.pincode}
             returnKeyType="next"

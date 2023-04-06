@@ -268,6 +268,7 @@ const AddGMyContactsScreen = ({ route, navigation }) => {
           <TextInput
             mode="outlined"
             label="Mobile No"
+            maxLength={10}
             keyboardType="number-pad"
             value={mobileNo}
             onChangeText={onMobileNoChanged}

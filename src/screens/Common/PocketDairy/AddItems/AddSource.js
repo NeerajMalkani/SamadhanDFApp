@@ -2205,6 +2205,7 @@ const AddSource = ({ route, navigation }) => {
                mode="outlined"
                 label="Mobile No."
                 value={mobileNumber}
+                maxLength={10}
                 returnKeyType="next"
                 keyboardType="number-pad"
                 onSubmitEditing={() => ref_input2.current.focus()}

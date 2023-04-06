@@ -884,6 +884,7 @@ const QuotationAddEditTab = ({
                 mode="outlined"
                 dense
                 label="Client Number"
+                maxLength={10}
                 value={data.client_contact_number}
                 disabled
                 style={{ marginTop: 20 }}
@@ -963,6 +964,7 @@ const QuotationAddEditTab = ({
                     mode="outlined"
                     dense
                     label="Contact Number"
+                    maxLength={10}
                     value={data.contact_person_mobile_no}
                     keyboardType={"number-pad"}
                     returnKeyType="next"
@@ -1570,6 +1572,7 @@ const QuotationAddEditTab = ({
                       dense
                       keyboardType={"number-pad"}
                       label="Contact Mobile No"
+                      maxLength={10}
                       value={newclient.contact_person_mobile_no}
                       returnKeyType="next"
                       onChangeText={(text) => {
@@ -1704,6 +1707,7 @@ const QuotationAddEditTab = ({
                       mode="outlined"
                       dense
                       label="Pincode"
+                      maxLength={6}
                       value={newclient.pincode}
                       returnKeyType="next"
                       onChangeText={(text) => {
@@ -1720,6 +1724,7 @@ const QuotationAddEditTab = ({
                       mode="outlined"
                       dense
                       label="GST"
+                      maxLength={15}
                       value={newclient.gst_no}
                       returnKeyType="next"
                       onChangeText={(text) => {
@@ -1736,6 +1741,7 @@ const QuotationAddEditTab = ({
                       mode="outlined"
                       dense
                       label="Pan"
+                      maxLength={10}
                       value={newclient.pan_no}
                       returnKeyType="next"
                       onChangeText={(text) => {

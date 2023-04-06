@@ -209,7 +209,7 @@ const SignupScreen = ({ route, navigation }) => {
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={[Styles.padding32, Styles.paddingTop0]}>
           <Headline style={[Styles.padding24, Styles.textCenter, Styles.fontBold]}>Create New Account</Headline>
-          <TextInput mode="flat" dense label="Mobile number" autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
+          <TextInput mode="flat" dense label="Mobile number" maxLength={10} autoComplete="tel" keyboardType="phone-pad" value={mobileNumber} style={[Styles.marginTop8]} onChangeText={onMobileNumberChanged} error={isMobileNumberInvalid} />
           <HelperText type="error" visible={isMobileNumberInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>

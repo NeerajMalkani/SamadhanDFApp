@@ -1160,6 +1160,7 @@ console.log('image path', employee_data.profile_photo_url);
                 ref={mobileNoRef}
                 mode="outlined"
                 dense
+                maxLength={10}
                 keyboardType="number-pad"
                 label="Mobile No"
                 value={mobileNo}
@@ -1177,6 +1178,7 @@ console.log('image path', employee_data.profile_photo_url);
                 mode="outlined"
                 dense
                 label="Aadhar No"
+                maxLength={12}
                 keyboardType={"number-pad"}
                 value={aadharNo}
                 returnKeyType="next"
@@ -1238,6 +1240,7 @@ console.log('image path', employee_data.profile_photo_url);
                 dense
                 keyboardType="number-pad"
                 label="Pincode"
+                maxLength={6}
                 value={pincode}
                 returnKeyType="done"
                 onChangeText={onPincodeChanged}
@@ -1296,6 +1299,7 @@ console.log('image path', employee_data.profile_photo_url);
                 mode="outlined"
                 dense
                 label="Emergency Contact No"
+                maxLength={10}
                 value={emergencyContactNo}
                 keyboardType="number-pad"
                 returnKeyType="next"

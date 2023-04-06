@@ -552,6 +552,7 @@ const AddClientScreen = ({ route, navigation }) => {
             mode='flat'
             dense
             keyboardType='number-pad'
+            maxLength={10}
             label='Contact Mobile No.'
             value={contactNumber}
             returnKeyType='next'
@@ -608,6 +609,7 @@ const AddClientScreen = ({ route, navigation }) => {
             disabled={addedBy}
             dense
             keyboardType='number-pad'
+            maxLength={6}
             label='Pincode'
             value={pincode}
             returnKeyType='next'
@@ -623,6 +625,7 @@ const AddClientScreen = ({ route, navigation }) => {
             ref={gstNumberRef}
             mode='flat'
             disabled={addedBy}
+            maxLength={15}
             dense
             label='GST No.'
             value={gstNumber}
@@ -640,6 +643,7 @@ const AddClientScreen = ({ route, navigation }) => {
             mode='flat'
             disabled={addedBy}
             dense
+            maxLength={10}
             label='PAN No.'
             value={panNumber}
             returnKeyType='done'

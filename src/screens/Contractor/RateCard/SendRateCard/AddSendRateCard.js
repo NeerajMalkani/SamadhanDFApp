@@ -423,6 +423,7 @@ const AddSendRateCard = ({ route, navigation }) => {
           <TextInput
             mode="outlined"
             dense
+            maxLength={10}
             label="Client Number"
             value={clientNumber}
             disabled
