@@ -156,7 +156,7 @@ const BasicDetailsScreen = ({ route, navigation }) => {
 
             if (response.data.data[0].recordcount != "0") {
               response.data.data = APIConverter(response.data.data, null, "basicDetails");
-              
+
               setCompanyName(response.data.data[0].companyName ? response.data.data[0].companyName : "");
               setCompanyID(response.data.data[0].id ? response.data.data[0].id : "0");
               setContactName(response.data.data[0].contactPersonName ? response.data.data[0].contactPersonName : "");
@@ -581,15 +581,17 @@ const BasicDetailsScreen = ({ route, navigation }) => {
                 {communication.InvalidContactPerson}
               </HelperText>
 
-              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad"  maxLength={10} editable={false} disabled={true} label="Contact Number" value={contactNumber} style={{ backgroundColor: "white" }} />
+              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} editable={false} disabled={true} label="Contact Number" value={contactNumber} style={{ backgroundColor: "white" }} />
               <HelperText type="error" visible={contactNameInvalid}>
                 {communication.InvalidContactPerson}
               </HelperText>
-              <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No."  maxLength={15} value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+              <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." autoCapitalize='characters'
+                autoCorrect={false} maxLength={15} value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
               <HelperText type="error" visible={gstNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No."  maxLength={10} value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+              <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." autoCapitalize='characters'
+            autoCorrect={false} maxLength={10} value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>

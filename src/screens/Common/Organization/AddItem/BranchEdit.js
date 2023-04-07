@@ -454,7 +454,7 @@ const BranchEditScreen = ({ route, navigation }) => {
       if (filePath !== null) {
         uploadFile();
       } else {
-      
+
         InsertData();
       }
     }
@@ -482,17 +482,19 @@ const BranchEditScreen = ({ route, navigation }) => {
                 {communication.InvalidAssignBranchAdmin}
               </HelperText>
 
-              <TextInput ref={contactPersonNoRef} mode="outlined" keyboardType={"number-pad"}  maxLength={10} dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
-              <HelperText type="error" visible={contactPersonNoInvalid}> 
+              <TextInput ref={contactPersonNoRef} mode="outlined" keyboardType={"number-pad"} maxLength={10} dense label="Conatct Person No" value={contactPersonNo} returnKeyType="next" onSubmitEditing={() => contactPersonNoRef.current.focus()} onChangeText={onContactPersonNoChanged} style={{ backgroundColor: "white" }} error={contactPersonNoInvalid} />
+              <HelperText type="error" visible={contactPersonNoInvalid}>
                 {communication.InvalidContactPersonNo}
               </HelperText>
 
-              <TextInput ref={gstNoRef} mode="outlined" dense label="GST No"  maxLength={15} value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
+              <TextInput ref={gstNoRef} mode="outlined" dense label="GST No" autoCapitalize='characters'
+                autoCorrect={false} maxLength={15} value={gstNo} returnKeyType="next" onSubmitEditing={() => gstNoRef.current.focus()} onChangeText={onGstNoChanged} style={{ backgroundColor: "white" }} error={gstNoInvalid} />
               <HelperText type="error" visible={gstNoInvalid}>
                 {communication.InvalidGSTNo}
               </HelperText>
 
-              <TextInput ref={panNoRef} mode="outlined" dense label="Pan No"  maxLength={10} value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
+              <TextInput ref={panNoRef} mode="outlined" dense label="Pan No" autoCapitalize='characters'
+            autoCorrect={false} maxLength={10} value={panNo} returnKeyType="next" onSubmitEditing={() => panNoRef.current.focus()} onChangeText={onPanNoChanged} style={{ backgroundColor: "white" }} error={panNoInvalid} />
               <HelperText type="error" visible={panNoInvalid}>
                 {communication.InvalidPANNo}
               </HelperText>
@@ -526,7 +528,7 @@ const BranchEditScreen = ({ route, navigation }) => {
 
               <Dropdown label="City" data={cityData} onSelected={onCityNameSelected} isError={errorCN} selectedItem={cityName} reference={cityRef} />
 
-              <TextInput ref={pincodeRef} mode="outlined" dense keyboardType="number-pad" label="Pincode"  maxLength={6} value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodeRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" maxLength={6} value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
             </View>
           </ScrollView>
         );

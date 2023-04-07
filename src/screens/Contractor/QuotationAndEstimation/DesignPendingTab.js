@@ -187,6 +187,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
+    console.log('start');
     setIsLoading(true);
     let params = {
       data: {
@@ -201,7 +202,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
       params
     )
       .then((response) => {
-        //console.log('response:', JSON.stringify(response.data));
+        console.log('response:', JSON.stringify(response.data));
         if (response.data && response.data.data) {
           listData[1](response.data.data);
           listSearchData[1](response.data.data);

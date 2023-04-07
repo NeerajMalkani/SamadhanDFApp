@@ -205,7 +205,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCities = (tempStateName, stateData) => {
@@ -214,11 +214,11 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
         Sess_UserRefno: userID,
         state_refno: stateData
           ? stateData.find((el) => {
-              return el.stateName == tempStateName;
-            }).stateID
+            return el.stateName == tempStateName;
+          }).stateID
           : statesFullData.find((el) => {
-              return el.stateName == tempStateName;
-            }).stateID,
+            return el.stateName == tempStateName;
+          }).stateID,
       },
     };
     Provider.createDFCommon(Provider.API_URLS.GetDistrictDetailsByStateRefno, params)
@@ -239,7 +239,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -379,10 +379,10 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
       "company_logo",
       filePath && filePath != null && filePath.type && filePath.uri
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri: Platform.OS === "android" ? filePath.uri : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFCommonWithHeader(Provider.API_URLS.DealerCompanyBasicDetailsUpdate, datas)
@@ -429,15 +429,17 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={contactNameInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad"  maxLength={10} label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+              <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Contact Number" value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
               <HelperText type="error" visible={contactNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." maxLength={15} value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+              <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." maxLength={15} autoCapitalize='characters'
+                autoCorrect={false} value={gstNumber} returnKeyType="next" onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
               <HelperText type="error" visible={gstNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
-              <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No."  maxLength={10} value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+              <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." maxLength={10} autoCapitalize='characters'
+                autoCorrect={false} value={panNumber} returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
               <HelperText type="error" visible={panNumberInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>
@@ -457,7 +459,7 @@ const DealerBasicDetailsScreen = ({ route, navigation }) => {
               <HelperText type="error" visible={errorCN}>
                 {communication.InvalidStateName}
               </HelperText>
-              <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode"  maxLength={6} value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
+              <TextInput ref={pincodenRef} mode="outlined" dense keyboardType="number-pad" label="Pincode" maxLength={6} value={pincode} returnKeyType="done" onChangeText={onPincodeChanged} style={{ backgroundColor: "white" }} error={pincodeInvalid} />
               <HelperText type="error" visible={pincodeInvalid}>
                 {communication.InvalidActivityName}
               </HelperText>

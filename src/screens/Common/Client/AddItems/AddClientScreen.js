@@ -17,10 +17,10 @@ import { communication } from '../../../../utils/communication';
 import { APIConverter } from '../../../../utils/apiconverter';
 import DFButton from '../../../../components/Button';
 import RadioGroup from "react-native-radio-buttons-group";
+import { projectLoginTypes } from '../../../../utils/credentials';
 
-let userID = 0;
-let Sess_company_refno = 0;
-let Sess_branch_refno = 0;
+let userID = 0, Sess_company_refno = 0, Sess_branch_refno = 0, Sess_designation_refno = 0;
+
 const AddClientScreen = ({ route, navigation }) => {
   let addedBy = false;
   if (route.params.data) {
@@ -65,6 +65,13 @@ const AddClientScreen = ({ route, navigation }) => {
     route.params.type === 'edit' ? route.params.data.stateName : '',
   );
   const [errorSN, setSNError] = React.useState(false);
+
+  const [refFullData, setRefFullData] = React.useState([]);
+  const [refData, setRefData] = React.useState([]);
+  const [refName, setRefName] = React.useState(
+    route.params.type === 'edit' ? route.params.data.stateName : '',
+  );
+  const [errorRef, setRefError] = React.useState(false);
 
   const [pincode, setPincode] = useState(
     route.params.type === 'edit' ? route.params.data.pincode : '',
@@ -167,14 +174,19 @@ const AddClientScreen = ({ route, navigation }) => {
       userID = JSON.parse(userData).UserID;
       Sess_company_refno = JSON.parse(userData).Sess_company_refno;
       Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+      Sess_designation_refno = JSON.parse(userData).Sess_designation_refno;
 
-      if (JSON.parse(userData).Sess_group_refno == 4) {
+      if (JSON.parse(userData).Sess_group_refno == projectLoginTypes.DEF_DEALER_GROUP_REFNO) {
         setIsDealer(true);
         FetchBuyerCategory();
+        FetchReferences();
       }
       else {
         setIsDealer(false);
       }
+
+      FetchStates();
+
     }
   };
 
@@ -191,6 +203,11 @@ const AddClientScreen = ({ route, navigation }) => {
 
             let buyerCat = [];
             response.data.data.map((data) => {
+
+              if (route.params.type === 'edit' && route.params.data.buyerCategoryName != "" && route.params.data.buyerCategoryName == data.buyercategory_name) {
+                setBuyerTypeID(data.buyercategory_refno);
+              }
+
               buyerCat.push({
                 id: data.buyercategory_refno,
                 label: data.buyercategory_name,
@@ -217,6 +234,50 @@ const AddClientScreen = ({ route, navigation }) => {
         }
         else {
           setIsBT(true);
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchReferences = () => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno.toString(),
+        Sess_branch_refno: Sess_branch_refno.toString(),
+        Sess_designation_refno: Sess_designation_refno.toString()
+      }
+    };
+
+    Provider.createDFCommon(Provider.API_URLS.getreferenceby_clientcreateform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            let refData = [];
+            response.data.data.map((data) => {
+              refData.push({
+                refer_user_refno: data.refer_user_refno,
+                employee_user_refno: data.employee_user_refno,
+                employee_name: data.employee_name,
+                employee_designation: data.employee_designation,
+                displayName: data.employee_designation == "" ? data.employee_name : data.employee_name + " (" + data.employee_designation + ")"
+              });
+            });
+
+            setRefFullData(refData);
+            const ref = refData.map((data) => data.displayName);
+            setRefData(ref);
+            if (route.params.type === 'edit') {
+              let d = refData.find((el) => {
+                return el.refer_user_refno === route.params.data.refer_user_refno;
+              })
+
+              if (d != null) {
+                setRefName(d.displayName);
+              }
+            }
+          }
         }
       })
       .catch((e) => { });
@@ -292,7 +353,7 @@ const AddClientScreen = ({ route, navigation }) => {
       setPANNumberInvalid(false);
       setServiceTypeInvalid(false);
     }
-    FetchStates();
+
     GetUserID();
   }, []);
 
@@ -312,6 +373,12 @@ const AddClientScreen = ({ route, navigation }) => {
     setAddress(text);
     setAddressInvalid(false);
   };
+
+  const onRefSelected = (selectedItem) => {
+    setRefName(selectedItem);
+    setRefError(false);
+  };
+
   const onStateNameSelected = (selectedItem) => {
     setStateName(selectedItem);
     setSNError(false);
@@ -372,6 +439,16 @@ const AddClientScreen = ({ route, navigation }) => {
         view_status: checked ? "1" : "0",
       },
     };
+
+    if (isDealer) {
+      params.data.refer_user_refno = refFullData.find((el) => {
+        return el.displayName && el.displayName === refName;
+      }).refer_user_refno;
+    }
+    else {
+      params.data.refer_user_refno = "0";
+    }
+
     Provider.createDFCommon(Provider.API_URLS.ClientCreate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -431,9 +508,20 @@ const AddClientScreen = ({ route, navigation }) => {
         pan_no: panNumber,
         client_role_refno: arrServiceTypeRole,
         buyercategory_refno: buyerTypeID,
-        view_status: checked,
+        view_status: checked ? "1" : "0",
       },
     };
+
+    if (isDealer) {
+      params.data.refer_user_refno = refFullData.find((el) => {
+        return el.displayName && el.displayName === refName;
+      }).refer_user_refno;
+    }
+    else {
+      params.data.refer_user_refno = "0";
+    }
+
+
     Provider.createDFCommon(Provider.API_URLS.ClientUpdate, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -497,6 +585,12 @@ const AddClientScreen = ({ route, navigation }) => {
       setServiceTypeInvalid(true);
       isValid = false;
     }
+
+    if (isDealer && refName == "") {
+      setRefError(true);
+      isValid = false;
+    }
+
     if (isValid) {
       setIsButtonLoading(true);
       if (route.params.type === 'edit') {
@@ -514,6 +608,24 @@ const AddClientScreen = ({ route, navigation }) => {
         keyboardShouldPersistTaps='handled'
       >
         <View style={[Styles.paddingHorizontal16, Styles.paddingTop16]}>
+
+          {isDealer &&
+
+            <>
+              <Dropdown
+                label='Reference By'
+                data={refData}
+                forceDisable={addedBy}
+                onSelected={onRefSelected}
+                isError={errorRef}
+                selectedItem={refName}
+              />
+              <HelperText type='error' visible={errorRef}>
+                Please select reference
+              </HelperText>
+            </>
+          }
+
           <TextInput
             ref={companyNameRef}
             disabled={addedBy}
@@ -634,6 +746,8 @@ const AddClientScreen = ({ route, navigation }) => {
             onChangeText={onGSTNumberChanged}
             style={{ backgroundColor: 'white' }}
             error={gstNumberInvalid}
+            autoCapitalize='characters'
+            autoCorrect={false}
           />
           <HelperText type='error' visible={gstNumberInvalid}>
             {communication.InvalidGSTNo}
@@ -650,6 +764,8 @@ const AddClientScreen = ({ route, navigation }) => {
             onChangeText={onPANNumberChanged}
             style={{ backgroundColor: 'white' }}
             error={panNumberInvalid}
+            autoCapitalize='characters'
+            autoCorrect={false}
           />
           <HelperText type='error' visible={panNumberInvalid}>
             {communication.InvalidPANNo}
@@ -742,7 +858,7 @@ const AddClientScreen = ({ route, navigation }) => {
             />
           </View>
         </View>
-      </ScrollView>
+      </ScrollView >
       <View
         style={[
           Styles.backgroundColor,
@@ -771,7 +887,7 @@ const AddClientScreen = ({ route, navigation }) => {
       >
         {snackbarText}
       </Snackbar>
-    </View>
+    </View >
   );
 };
 export default AddClientScreen;

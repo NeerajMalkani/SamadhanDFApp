@@ -669,8 +669,9 @@ class Provider {
       'ratecard_contractorproductrefnocheck/',
     getapilist: 'getapilist/',
     getapitaskreport: 'getapitaskreport/',
-    setupoptionidcheck:"setupoptionidcheck/",
-    setupupdate:"setupupdate/",
+    setupoptionidcheck: "setupoptionidcheck/",
+    setupupdate: "setupupdate/",
+    getreferenceby_clientcreateform: "getreferenceby_clientcreateform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -704,13 +705,13 @@ class Provider {
       'profile_photo',
       isImageReplaced
         ? {
-            name: 'appimage1212.jpg',
-            type: filePath.type + '/*',
-            uri:
-              Platform.OS === 'android'
-                ? filePath.uri
-                : filePath.uri.replace('file://', ''),
-          }
+          name: 'appimage1212.jpg',
+          type: filePath.type + '/*',
+          uri:
+            Platform.OS === 'android'
+              ? filePath.uri
+              : filePath.uri.replace('file://', ''),
+        }
         : '',
     );
     return datas;

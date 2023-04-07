@@ -415,13 +415,15 @@ const ClientEditScreen = ({ route, navigation }) => {
                             </HelperText>
                             <TextInput ref={gstNumberRef} mode="outlined" disabled={addedBy} maxLength={15} dense label="GST No." value={gstNumber} returnKeyType="next"
                                 onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }}
-                                error={gstNumberInvalid} />
+                                error={gstNumberInvalid} autoCapitalize='characters'
+                                autoCorrect={false} />
                             <HelperText type="error" visible={gstNumberInvalid}>
                                 {communication.InvalidGSTNo}
                             </HelperText>
 
                             <TextInput ref={panNumberRef} mode="outlined" disabled={addedBy} maxLength={10} dense label="PAN No." value={panNumber} returnKeyType="done"
-                                onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                                onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} autoCapitalize='characters'
+                                autoCorrect={false} />
                             <HelperText type="error" visible={panNumberInvalid}>
                                 {communication.InvalidPANNo}
                             </HelperText>

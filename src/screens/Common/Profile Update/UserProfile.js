@@ -603,12 +603,14 @@ const UserProfile = ({ route, navigation }) => {
                   {communication.InvalidActivityName}
                 </HelperText>
                 <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." 
-                value={gstNumber} returnKeyType="next"  maxLength={15}
+                value={gstNumber} returnKeyType="next"  maxLength={15} autoCapitalize='characters'
+                autoCorrect={false}
                 onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
                 <HelperText type="error" visible={gstNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No."  maxLength={10} value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." autoCapitalize='characters'
+            autoCorrect={false} maxLength={10} value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                 <HelperText type="error" visible={panNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
@@ -689,7 +691,6 @@ const UserProfile = ({ route, navigation }) => {
             </RBSheet>
           </View>
         );
-
 
       default:
         return null;
