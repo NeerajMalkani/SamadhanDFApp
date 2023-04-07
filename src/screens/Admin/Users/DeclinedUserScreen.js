@@ -237,7 +237,7 @@ const DeclinedUserScreen = ({ navigation }) => {
             <Paragraph>Confirm to Approve ? </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            {/* <Button onPress={approveUserStatus}>Ok</Button> */}
+            
             <DFButton mode="contained" onPress={approveUserStatus} title="Ok" loader={isButtonLoading} />
             <Button onPress={hideDialog}>Cancel</Button>
           </Dialog.Actions>

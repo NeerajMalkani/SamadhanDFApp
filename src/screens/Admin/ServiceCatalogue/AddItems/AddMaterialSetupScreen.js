@@ -823,9 +823,6 @@ const AddMaterialSetupScreen = ({ route, navigation }) => {
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content style={[Styles.flexRow, { justifyContent: "space-between" }]}>
           <Subheading style={[Styles.fontBold, Styles.primaryColor]}>Sub total: {parseFloat(total).toFixed(4)}</Subheading>
-          {/* <Button mode="contained" onPress={ValidateData}>
-            Submit
-          </Button> */}
           <DFButton mode="contained" onPress={ValidateData} title="   Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>

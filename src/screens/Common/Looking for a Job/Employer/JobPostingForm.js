@@ -354,9 +354,7 @@ const JobPostingForm = ({ navigation }) => {
           >
             Please enter notes
           </HelperText>
-          {/* <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
-            Submit
-          </Button> */}
+         
            <DFButton mode="contained" onPress={onSubmit} title="Submit" loader={isButtonLoading} />
         </View>
       </ScrollView>

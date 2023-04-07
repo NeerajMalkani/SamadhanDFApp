@@ -868,9 +868,6 @@ const AddClientScreen = ({ route, navigation }) => {
         ]}
       >
         <Card.Content>
-          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateData}>
-            SAVE
-          </Button> */}
           <DFButton
             mode='contained'
             onPress={ValidateData}

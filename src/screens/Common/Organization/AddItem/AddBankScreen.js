@@ -409,9 +409,7 @@ const AddBankScreen = ({ route, navigation }) => {
                         }}
                     />
                 </View>
-                {/* <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateSubmitButton}>
-                    Submit
-                </Button> */}
+               
                  <DFButton mode="contained" onPress={ValidateSubmitButton} title="Submit" loader={isButtonLoading} />
 
             </View>

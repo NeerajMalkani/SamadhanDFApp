@@ -215,9 +215,7 @@ const JobListing = ({ route, navigation }) => {
                 }}
               />
             </List.Accordion>
-            {/* <Button mode='contained' onPress={() => search()}>
-              Search
-            </Button> */}
+           
             <DFButton mode="contained" onPress={() => search()} title="Search" loader={isButtonLoading} />
             <HelperText>
               *Filling One Field is Mandatory to view Jobs

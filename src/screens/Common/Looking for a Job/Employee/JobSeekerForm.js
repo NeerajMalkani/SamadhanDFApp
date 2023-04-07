@@ -417,9 +417,7 @@ const JobSeekerForm = ({ route, navigation }) => {
             {resume ? <Text>{resume.name}</Text> : null}
             <HelperText type='error' visible={errors.resume}></HelperText>
           </View>
-          {/* <Button mode='contained' onPress={onSubmit} style={{ marginTop: 25 }}>
-            Submit
-          </Button> */}
+          
            <DFButton mode="contained" onPress={onSubmit} title="Submit" loader={isButtonLoading} />
         </View>
       </ScrollView>

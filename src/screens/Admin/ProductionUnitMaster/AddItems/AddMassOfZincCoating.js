@@ -217,14 +217,6 @@ const AddMassOfZincCoating = ({ route, navigation }) => {
         ]}
       >
         <Card.Content>
-          {/* <Button
-            mode="contained"
-            loading={isButtonLoading}
-            disabled={isButtonLoading}
-            onPress={ValidateData}
-          >
-            Submit
-          </Button> */}
           <DFButton mode="contained" onPress={ValidateData} title="Submit" loader={isButtonLoading} />
         </Card.Content>
       </View>

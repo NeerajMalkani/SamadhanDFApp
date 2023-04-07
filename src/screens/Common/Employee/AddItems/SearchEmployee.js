@@ -436,14 +436,7 @@ const SearchEmployee = ({ route, navigation }) => {
             </Text>
           </TouchableOpacity> */}
           <Card.Content>
-            {/* <Button
-              mode="contained"
-              onPress={OnSearchEmployee}
-              loading={isButtonLoading}
-              disabled={isButtonLoading}
-            >
-              SEARCH EMPLOYEE
-            </Button> */}
+           
              <DFButton mode="contained" onPress={OnSearchEmployee} title="SEARCH EMPLOYEE" loader={isButtonLoading} />
           </Card.Content>
         </View>

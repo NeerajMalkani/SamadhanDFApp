@@ -802,9 +802,6 @@ const AddRateCard = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          {/* <Button mode="contained" onPress={ValidateData}>
-            Submit
-          </Button> */}
 
           <DFButton mode="contained" onPress={ValidateData} title="SUBMIT" loader={isButtonLoading} />
         </Card.Content>

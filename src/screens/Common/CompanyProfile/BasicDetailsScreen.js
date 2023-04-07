@@ -725,9 +725,6 @@ const BasicDetailsScreen = ({ route, navigation }) => {
         )}
         <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
           <Card.Content>
-            {/* <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
-              Update
-            </Button> */}
             <DFButton mode="contained" onPress={ValidateData} title={Sess_company_refno == 0 ? "Submit" : "Update"} loader={isButtonLoading} />
           </Card.Content>
         </View>

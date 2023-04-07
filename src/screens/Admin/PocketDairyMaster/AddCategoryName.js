@@ -377,9 +377,6 @@ const AddCategoryNameScreen = ({ route, navigation }) => {
       </ScrollView>
       <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
         <Card.Content>
-          {/* <Button mode="contained" loading={isButtonLoading} disabled={isButtonLoading} onPress={ValidateActivityName}>
-            SAVE
-          </Button> */}
            <DFButton mode="contained" onPress={ValidateActivityName} title="SAVE" loader={isButtonLoading} />
         </Card.Content>
       </View>

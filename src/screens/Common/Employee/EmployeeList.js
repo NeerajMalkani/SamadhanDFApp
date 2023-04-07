@@ -511,9 +511,6 @@ const EmployeeListScreen = ({ navigation }) => {
               </HelperText>
             </View>
             <Card.Content style={[Styles.marginTop16]}>
-              {/* <Button mode="contained" onPress={OnOTPSend}>
-                Submit & Verify
-              </Button> */}
               <DFButton
                 mode="contained"
                 onPress={OnOTPSend}

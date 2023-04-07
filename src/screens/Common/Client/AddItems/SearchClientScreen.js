@@ -173,9 +173,6 @@ const SearchClientScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={mobileNoInvalid}>
             {communication.InvalidMobileNumber}
           </HelperText>
-          {/* <Button mode="contained" onPress={OnSearchEmployee} style={[Styles.marginTop24]}>
-            SEARCH CLIENT
-          </Button> */}
           <DFButton mode="contained" onPress={OnSearchEmployee} title="SEARCH CLIENT" loader={isButtonLoading} />
           <View>
             <View style={[Styles.width100per, Styles.borderBottom2, Styles.borderBottom2, Styles.marginTop24]}>

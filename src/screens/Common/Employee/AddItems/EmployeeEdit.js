@@ -1590,14 +1590,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
           ]}
         >
           <Card.Content>
-            {/* <Button
-              mode="contained"
-              onPress={ValidateData}
-              loading={isButtonLoading}
-              disabled={isButtonLoading}
-            >
-              Update
-            </Button> */}
+            
             <DFButton
               mode="contained"
               onPress={ValidateData}
