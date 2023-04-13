@@ -153,7 +153,6 @@ const AddSendRateCard = ({ route, navigation }) => {
           ...data,
         };
       });
-      console.log(data.units);
       if (route.params.type == "add") {
         setIsLoading(false);
       } else {

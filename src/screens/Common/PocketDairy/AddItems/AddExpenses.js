@@ -26,7 +26,7 @@ import RadioGroup from "react-native-radio-buttons-group";
 import { PaperSelect } from "react-native-paper-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
-import { projectVariables } from "../../../../utils/credentials";
+import { projectVariables, projectLoginTypes, projectFixedDesignations } from "../../../../utils/credentials";
 import * as Contacts from "expo-contacts";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
@@ -298,6 +298,24 @@ const AddExpenses = ({ route, navigation }) => {
   const [designationListStatus, setDesignationListstatus] = React.useState(false);
   const [employeeListStatus, setEmployeeListstatus] = React.useState(false);
   const [usageListStatus, setUsageListstatus] = React.useState(false);
+
+  const [expenseToFullData, setExpenseToFullData] = React.useState([]);
+  const [expenseToData, setExpenseToData] = React.useState([]);
+  const [expenseTo, setExpenseToName] = React.useState([]);
+  const [errorExpenseTo, setExpenseToError] = React.useState(false);
+  const [expenseToStatus, setExpenseToStatus] = React.useState(false);
+
+  const [MKT_clientListFullData, setMKT_ClientListFullData] = React.useState([]);
+  const [MKT_clientListData, setMKT_ClientListData] = React.useState([]);
+  const [MKT_clientList, setMKT_ClientList] = React.useState([]);
+  const [errorMKT_CL, setErrorMKT_CL] = React.useState(false);
+  const [MKT_clientListStatus, setMKT_ClientListstatus] = React.useState(false);
+
+  const [followupFullData, setFollowupFullData] = React.useState([]);
+  const [followupData, setFollowupData] = React.useState([]);
+  const [followup, setFollowup] = React.useState([]);
+  const [errorFollowup, setFollowupError] = React.useState(false);
+  const [followupStatus, setFollowupStatus] = React.useState(true);
 
   //#endregion
 
@@ -667,6 +685,8 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
+        Sess_designation_refno: designID.toString(),
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString(),
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
@@ -686,6 +706,85 @@ const AddExpenses = ({ route, navigation }) => {
                 response.data.data.filter((el) => {
                   return el.myclient_refno === clientID;
                 })[0].companyName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchMKTClientList = (clientID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString(),
+        Sess_designation_refno: designID.toString(),
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            response.data.data = APIConverter(response.data.data);
+            setMKT_ClientListFullData(response.data.data);
+
+            const clientList = response.data.data.map(
+              (data) => data.companyName
+            );
+            setMKT_ClientListData(clientList);
+
+            if (clientID != null) {
+              setMKT_ClientList(
+                response.data.data.filter((el) => {
+                  return el.myclient_refno === clientID;
+                })[0].companyName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchFollowUpCustomerList = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getfollowupcustomerlist_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            let custData=[];
+            response.data.data.map((data) => {
+              custData.push({
+                company_name: data.company_name,
+                contact_person: data.contact_person,
+                mycustomer_refno: data.mycustomer_refno,
+                displayName: (data.contact_person == "" || data.contact_person == null) ? data.company_name : data.contact_person + " (" + data.company_name + ")"
+              });
+            });
+
+            setFollowupFullData(custData);
+
+            const customer = custData.map(
+              (data) => data.displayName
+            );
+            setFollowupData(customer);
+
+            if (editID != null) {
+              setFollowupData(
+                custData.filter((el) => {
+                  return el.mycustomer_refno === editID;
+                })[0].displayName
               );
             }
           }
@@ -886,8 +985,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_group_refno: groupID.toString(),
         Sess_designation_refno: designID.toString(),
         pck_entrytype_refno: _pktEntryTypeID,
-        pck_transtype_refno:
-          projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO,
+        pck_transtype_refno: projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO,
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
@@ -895,16 +993,26 @@ const AddExpenses = ({ route, navigation }) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
-            setMyBankFullData(response.data.data);
+            let bankData = [];
+            response.data.data.map((data) => {
+              bankData.push({
+                accountNumber: data.accountNumber,
+                bankName: data.bankName,
+                bank_refno: data.bank_refno,
+                displayBank: data.bankName + " (" + data.accountNumber + ")"
+              });
+            });
 
-            const bank = response.data.data.map((data) => data.bankName);
+            setMyBankFullData(bankData);
+
+            const bank = bankData.map((data) => data.displayBank);
             setMyBankData(bank);
 
             if (editID != null) {
               setMyBank(
-                response.data.data.filter((el) => {
+                bankData.filter((el) => {
                   return el.bank_refno === editID;
-                })[0].bankName
+                })[0].displayBank
               );
             }
 
@@ -1451,6 +1559,41 @@ const AddExpenses = ({ route, navigation }) => {
       .catch((e) => { });
   };
 
+  const FetchExpenseTo = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID,
+        Sess_branch_refno: branchID,
+        Sess_designation_refno: designID,
+      },
+    };
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.getexpensesto_pckaddexpensesform,
+      params
+    )
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+            setExpenseToFullData(response.data.data);
+            const expenseTo = response.data.data.map(
+              (data) => data.category_name
+            );
+            setExpenseToData(expenseTo);
+
+            if (editID != null) {
+              setExpenseToData(
+                response.data.data.filter((el) => {
+                  return el.pck_custom_category_refno === editID;
+                })[0].category_name
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
   const InsertNewContact = (name, mobileNo) => {
     let params = {
       data: {
@@ -1643,14 +1786,6 @@ const AddExpenses = ({ route, navigation }) => {
       setDepositTypeStatus(true);
       FetchDepositType();
     }
-
-    // if (a[0].pckCategoryID == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO || a[0].pckCategoryID == "4") {
-
-    // }
-    // else if (a[0].pckModeID == "3") {
-    //   setDepositTypeStatus(true);
-    //   FetchDepositType();
-    // }
   };
 
   const onBranchListChanged = (text) => {
@@ -1659,7 +1794,7 @@ const AddExpenses = ({ route, navigation }) => {
 
     setEmployeeData([]);
     setEmployee("")
-    
+
     setDesignationData([]);
     setDesignation("");
 
@@ -1692,8 +1827,6 @@ const AddExpenses = ({ route, navigation }) => {
 
     setUsageListstatus(true);
     FetchUsageList(null, category[0].pckCategoryID);
-
-    ////////////
 
     setCommonDisplayStatus(true);
     setButtonStatus(false);
@@ -1796,81 +1929,98 @@ const AddExpenses = ({ route, navigation }) => {
     setSubCategoryName(text);
     setSCNError(false);
 
-    setCommonDisplayStatus(true);
-    setButtonStatus(false);
+    if (groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+      designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO) {
+      setExpenseToStatus(true);
+      FetchExpenseTo();
+    }
+    else {
+      setExpenseToStatus(false);
+      setCommonDisplayStatus(true);
+      setButtonStatus(false);
 
-    let mode = payModeFullData.filter((el) => {
-      return el.pckModeName === payMode;
-    });
+      let mode = payModeFullData.filter((el) => {
+        return el.pckModeName === payMode;
+      });
 
-    let subcat = subCategoryNameFullData.filter((el) => {
-      return el.subCategoryName === text;
-    });
+      let subcat = subCategoryNameFullData.filter((el) => {
+        return el.subCategoryName === text;
+      });
 
-    let deposit = depositeTypeFullData.filter((el) => {
-      return el.deposit_type_name === depositeType;
-    });
+      let deposit = depositeTypeFullData.filter((el) => {
+        return el.deposit_type_name === depositeType;
+      });
 
-    if (mode[0].pckModeID == "1") {
-      if (subcat[0].subcategoryID == "8") {
-        setPaidToStatus(true);
-        //FetchReceiverList();
-        setContactTypeStatus(true);
-        FetchContactType();
+      if (mode[0].pckModeID == "1") {
+        if (subcat[0].subcategoryID == "8") {
+          setPaidToStatus(true);
+          setContactTypeStatus(true);
+          FetchContactType();
 
-        setRecurringStatus(true);
-        setRecurringReminderDateStatus(true);
-      } else {
-        setPaidToStatus(false);
-        setRecurringStatus(false);
-        setRecurringReminderDateStatus(false);
-      }
-    } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-      FetchBankList();
-      setUtrNoStatus(true);
-      setBankStatus(true);
+          setRecurringStatus(true);
+          setRecurringReminderDateStatus(true);
+        } else {
+          setPaidToStatus(false);
+          setRecurringStatus(false);
+          setRecurringReminderDateStatus(false);
+        }
+      } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+        FetchBankList();
+        setUtrNoStatus(true);
+        setBankStatus(true);
 
-      if (subcat[0].subcategoryID == "8") {
-        // setPaidToStatus(true);
-        // //FetchReceiverList();
-        // setContactTypeStatus(true);
-        // FetchContactType();
+        if (subcat[0].subcategoryID == "8") {
 
-        setRecurringStatus(true);
-        setRecurringReminderDateStatus(true);
-      } else {
-        // setPaidToStatus(false);
-        // //FetchReceiverList();
-        // setContactTypeStatus(true);
-        // FetchContactType();
+          setRecurringStatus(true);
+          setRecurringReminderDateStatus(true);
+        } else {
 
-        setRecurringStatus(false);
-        setRecurringReminderDateStatus(false);
-      }
-    } else if (mode[0].pckModeID == "3") {
-      setDepositTypeStatus(true);
-      FetchDepositType();
+          setRecurringStatus(false);
+          setRecurringReminderDateStatus(false);
+        }
+      } else if (mode[0].pckModeID == "3") {
+        setDepositTypeStatus(true);
+        FetchDepositType();
 
-      if (subcat[0].subcategoryID == "8") {
-        //FetchBankList();
-        //setUtrNoStatus(true);
-        //setBankStatus(true);
+        if (subcat[0].subcategoryID == "8") {
 
-        // setPaidToStatus(true);
-        // //FetchReceiverList();
-        // setContactTypeStatus(true);
-        // FetchContactType();
-        setRecurringStatus(true);
-        setRecurringReminderDateStatus(true);
-      } else {
-        // setPaidToStatus(false);
-        // //FetchReceiverList();
-        // setContactTypeStatus(true);
-        // FetchContactType();
-        setRecurringStatus(false);
-        setRecurringReminderDateStatus(false);
+          setRecurringStatus(true);
+          setRecurringReminderDateStatus(true);
+        } else {
+
+          setRecurringStatus(false);
+          setRecurringReminderDateStatus(false);
+        }
       }
     }
+
+
+  };
+  
+  const onFollowupChanged = (text) => {
+    setFollowup(text);
+    setFollowupError(false);
+  };
+  const onExpenseToChanged = (text) => {
+    setExpenseToName(text);
+    setExpenseToError(false);
+
+    let category = expenseToFullData.filter((el) => {
+      return el.category_name === text;
+    })
+
+    if (category[0].pck_custom_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO) {
+      setMKT_ClientListstatus(true);
+      setFollowupStatus(false);
+      FetchMKTClientList();
+    }
+    else {
+      setMKT_ClientListstatus(false);
+      FetchFollowUpCustomerList();
+      setFollowupStatus(true);
+    }
+
   };
 
   const onDepositeTypeChanged = (text) => {
@@ -1896,16 +2046,23 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (mode[0].pckModeID == "3" && subCatStatus) {
       if (subcat[0].subcategoryID == "8") {
-        //setUtrNoStatus(true);
 
         setPaidToStatus(true);
-        FetchReceiverList();
+
+        if (groupID != projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+          designID != projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO) {
+          FetchReceiverList();
+        }
 
         setRecurringStatus(true);
         setRecurringReminderDateStatus(true);
       } else {
         setPaidToStatus(false);
-        FetchReceiverList();
+
+        if (groupID != projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+          designID != projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO) {
+          FetchReceiverList();
+        }
 
         setRecurringStatus(false);
         setRecurringReminderDateStatus(false);
@@ -2036,6 +2193,24 @@ const AddExpenses = ({ route, navigation }) => {
     setProjectExpenseData([]);
     setProjectExpense("");
 
+    setExpenseToStatus(false);
+    setExpenseToFullData([]);
+    setExpenseToData([]);
+    setExpenseToName("");
+    setExpenseToError(false);
+
+    setMKT_ClientListFullData([]);
+    setMKT_ClientListData([]);
+    setMKT_ClientList("");
+    setErrorMKT_CL(false);
+    setMKT_ClientListstatus(false);
+
+    setFollowupFullData([]);
+    setFollowupData([]);
+    setFollowup("");
+    setFollowupError(false);
+    setFollowupStatus(false);
+
   };
 
   const onEntryTypeChanged = (selectedItem) => {
@@ -2121,7 +2296,7 @@ const AddExpenses = ({ route, navigation }) => {
       setBankBalanceStatus(true);
 
       let bankID = myBankFullData.filter((el) => {
-        return el.bankName === text;
+        return el.displayBank === text;
       })[0].bank_refno;
 
       FetchBankCurrentBalance(bankID);
@@ -2143,6 +2318,41 @@ const AddExpenses = ({ route, navigation }) => {
 
     setProjectListstatus(true);
     FetchProjectList(a[0].myclient_refno);
+  };
+
+  const onMKT_ClientListChanged = (text) => {
+    setMKT_ClientList(text);
+    setErrorMKT_CL(false);
+
+    setCommonDisplayStatus(true);
+    setButtonStatus(false);
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let category = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    if (category[0].pckCategoryID == 4) {
+      setRecurringReminderDateStatus(true);
+      setRecurringStatus(true);
+    } else {
+      setRecurringReminderDateStatus(false);
+      setRecurringStatus(false);
+    }
+
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+      setBankStatus(true);
+      FetchBankList();
+      setUtrNoStatus(true);
+    }
+    if (mode[0].pckModeID == "3") {
+      setDepositTypeStatus(true);
+      FetchDepositType();
+    }
+
   };
 
   const chooseFile = async () => {
@@ -2217,7 +2427,7 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (bankStatus) {
       params.pck_mybank_refno = myBankFullData.filter((el) => {
-        return el.bankName === MyBank;
+        return el.displayBank === MyBank;
       })[0].bank_refno;
     }
 
@@ -2411,7 +2621,7 @@ const AddExpenses = ({ route, navigation }) => {
 
     if (bankStatus) {
       params.pck_mybank_refno = myBankFullData.filter((el) => {
-        return el.bankName === MyBank;
+        return el.displayBank === MyBank;
       })[0].bank_refno;
     }
 
@@ -2989,6 +3199,70 @@ const AddExpenses = ({ route, navigation }) => {
             </>
           )}
 
+          {expenseToStatus && (
+            <>
+              <Dropdown
+                label="Expense To"
+                data={expenseToData}
+                onSelected={onExpenseToChanged}
+                isError={errorExpenseTo}
+                selectedItem={expenseTo}
+              />
+              <HelperText type="error" visible={errorExpenseTo}>
+                Please select a valid expense
+              </HelperText>
+            </>
+          )}
+
+          {MKT_clientListStatus && (
+            <>
+              <View
+                style={[Styles.border1, Styles.borderRadius4, Styles.padding4]}
+              >
+                <Dropdown
+                  label="My Client List"
+                  data={MKT_clientListData}
+                  onSelected={onMKT_ClientListChanged}
+                  isError={errorMKT_CL}
+                  selectedItem={MKT_clientList}
+                />
+                <HelperText type="error" visible={errorMKT_CL}>
+                  Please select a client
+                </HelperText>
+                <Button
+                  icon={"plus"}
+                  mode="contained"
+                  onPress={() => {
+                    navigation.navigate("AddClientScreen", {
+                      type: "expenses_client",
+                      data: {
+                        serviceType: "8",
+                      },
+                      fetchClientList: FetchMKTClientList,
+                    });
+                  }}
+                >
+                  Add New Client
+                </Button>
+              </View>
+            </>
+          )}
+
+          {followupStatus && (
+            <>
+              <Dropdown
+                label="Followup Customer List"
+                data={followupData}
+                onSelected={onFollowupChanged}
+                isError={errorFollowup}
+                selectedItem={followup}
+              />
+              <HelperText type="error" visible={errorFollowup}>
+                Please select a valid customer
+              </HelperText>
+            </>
+          )}
+
           {contactTypeStatus && (
             <>
               <Dropdown
@@ -3040,7 +3314,7 @@ const AddExpenses = ({ route, navigation }) => {
           {newContactNameStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Received From"
                 value={contactName}
                 returnKeyType="next"
@@ -3101,16 +3375,18 @@ const AddExpenses = ({ route, navigation }) => {
 
           {depositTypeStatus && (
             <>
-              <Dropdown
-                label="Deposit Type"
-                data={depositeTypeData}
-                onSelected={onDepositeTypeChanged}
-                isError={errorDT}
-                selectedItem={depositeType}
-              />
-              <HelperText type="error" visible={errorDT}>
-                {communication.InvalidDepositeType}
-              </HelperText>
+              <View style={[Styles.marginTop16]}>
+                <Dropdown
+                  label="Deposit Type"
+                  data={depositeTypeData}
+                  onSelected={onDepositeTypeChanged}
+                  isError={errorDT}
+                  selectedItem={depositeType}
+                />
+                <HelperText type="error" visible={errorDT}>
+                  {communication.InvalidDepositeType}
+                </HelperText>
+              </View>
             </>
           )}
 
@@ -3226,7 +3502,7 @@ const AddExpenses = ({ route, navigation }) => {
           {commonDisplayStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Notes"
                 value={notes}
                 returnKeyType="next"

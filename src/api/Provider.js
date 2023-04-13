@@ -685,6 +685,8 @@ class Provider {
       "contractor_getproductlist_rc_unit_type_refno_onchange_sendratecardform/",
     contractor_sendratecard_create: "contractor_sendratecard_create/",
     contractor_sendratecard_update: "contractor_sendratecard_update/",
+    getexpensesto_pckaddexpensesform: "getexpensesto_pckaddexpensesform/",
+    getfollowupcustomerlist_pckaddexpensesform:"getfollowupcustomerlist_pckaddexpensesform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -718,13 +720,13 @@ class Provider {
       "profile_photo",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;
