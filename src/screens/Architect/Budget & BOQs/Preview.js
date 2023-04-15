@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Styles } from "../../../styles/styles";
@@ -10,6 +10,8 @@ import { Checkbox, TextInput, Button, Snackbar } from "react-native-paper";
 import { theme } from "../../../theme/apptheme";
 import { Table, TableWrapper, Row, Col } from "react-native-table-component";
 import WebView from "react-native-webview";
+import ApproveModal from "./components/ApproveModal";
+import GenerateBOQ from "./components/GenerateBOQ";
 // import RenderHTML from "react-native-render-html";
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -31,6 +33,8 @@ const styles = StyleSheet.create({
 });
 
 const Preview = ({ navigation, route }) => {
+  const [boq, setBoq] = useState(false);
+  const [modal, setModal] = useState(false);
   const [state, setState] = useState({ ProductDetails: [] });
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -49,6 +53,57 @@ const Preview = ({ navigation, route }) => {
       await fetchState();
       await fetchUnits();
     }
+  };
+
+  const cancelBudget = () => {
+    Alert.alert("Are you sure?", "Do you want to cancel this budget", [
+      {
+        text: "No",
+        // onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => {
+          Provider.createDFArchitect(
+            Provider.API_URLS.architect_budget_cancel,
+            {
+              data: {
+                Sess_UserRefno,
+                Sess_company_refno,
+                Sess_branch_refno,
+                budget_refno: route.params.data.budget_refno,
+              },
+            }
+          ).then((res) => {
+            navigation.navigate("Budget&BOQ's");
+          });
+        },
+      },
+    ]);
+  };
+
+  const cancelBoq = () => {
+    Alert.alert("Are you sure?", "Do you want to cancel the generated BOQ", [
+      {
+        text: "No",
+        // onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => {
+          Provider.createDFArchitect(Provider.API_URLS.architect_boq_cancel, {
+            data: {
+              Sess_UserRefno,
+              budget_refno: route.params.data.budget_refno,
+            },
+          }).then((res) => {
+            navigation.navigate("Budget&BOQ's");
+          });
+        },
+      },
+    ]);
   };
 
   const fetchUnits = () => {
@@ -78,7 +133,7 @@ const Preview = ({ navigation, route }) => {
       })
       .catch((error) => console.log(error));
   };
-  console.log(JSON.stringify(route.params.data, null, 2));
+
   const fetchBudget = () => {
     Provider.createDFArchitect(
       Provider.API_URLS.architect_budget_budgetrefnocheck,
@@ -130,6 +185,18 @@ const Preview = ({ navigation, route }) => {
     <ScrollView
       style={[Styles.padding16, Styles.flex1, { backgroundColor: "white" }]}
     >
+      <ApproveModal
+        open={modal}
+        setOpen={setModal}
+        callback={() => navigation.goBack()}
+        budget_refno={route.params.data.budget_refno}
+      />
+      <GenerateBOQ
+        open={boq}
+        setOpen={setBoq}
+        callback={() => navigation.navigate("Budget&BOQ's")}
+        budget_refno={route.params.data.budget_refno}
+      />
       <View style={[Styles.flex1, Styles.marginBottom12]}>
         <Text
           style={[
@@ -384,7 +451,7 @@ const Preview = ({ navigation, route }) => {
           source={{ html: state.terms_condition }}
         />
         <View style={{ marginVertical: 24 }}>
-          {route.params.data.action_button.includes(
+          {route.params?.data?.action_button?.includes(
             "Send Budget to Client"
           ) && (
             <Button onPress={sendBudgetToClient} mode="contained">
@@ -403,14 +470,42 @@ const Preview = ({ navigation, route }) => {
               Waiting for Client Approval
             </Text>
           )}
-          {route.params.data.action_button.includes(
+          {route.params.data?.action_button?.includes(
             "Finally Approve & Take Project"
           ) &&
             route.params.data.client_approve_status_name !== "Pending" && (
-              <Button onPress={sendBudgetToClient} mode="contained">
+              <Button onPress={() => setModal(true)} mode="contained">
                 Finally Approve & Take Project
               </Button>
             )}
+
+          {route.params?.data.budget_action_button?.includes(
+            "Cancel Budget"
+          ) && (
+            <Button onPress={cancelBudget} mode="contained">
+              Cancel Budget
+            </Button>
+          )}
+          {route.params.data.boq_action_button?.includes("Generate BOQ") && (
+            <Button
+              style={{ marginTop: 15 }}
+              onPress={() => setBoq(true)}
+              mode="contained"
+            >
+              Generate BOQ
+            </Button>
+          )}
+          {route.params.data.boq_action_button?.includes(
+            "Cancel Generated BOQ's"
+          ) && (
+            <Button
+              onPress={cancelBoq}
+              style={{ marginTop: 15 }}
+              mode="contained"
+            >
+              Cancel Generated BOQ's
+            </Button>
+          )}
         </View>
       </View>
       <Snackbar

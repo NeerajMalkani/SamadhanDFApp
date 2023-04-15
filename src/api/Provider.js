@@ -700,6 +700,13 @@ class Provider {
     client_budget_view: "client_budget_view/",
     client_budget_popup_approve: "client_budget_popup_approve/",
     client_budget_popup_reject: "client_budget_popup_reject/",
+    architect_budget_finallytakeproject_update:
+      "architect_budget_finallytakeproject_update/",
+    architect_budget_cancel: "architect_budget_cancel/",
+    architect_boq_cancel: "architect_boq_cancel/",
+    getboqtype_architect_boq_popup_generateform:
+      "getboqtype_architect_boq_popup_generateform/",
+    architect_boq_generate: "architect_boq_generate/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -1080,6 +1087,18 @@ class Provider {
       return axios.post(`${BASE_URL_Architect}/${resource}`, params);
     } else {
       return axios.post(`${BASE_URL_Architect}/${resource}`);
+    }
+  }
+
+  createDFArchitectWithHeader(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Architect}/${resource}`, params, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      return axios.post(`${BASE_URL_Architect}/${resource}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
     }
   }
 

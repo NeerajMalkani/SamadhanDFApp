@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image, Platform } from "react-native";
 import React from "react";
 import {
   Button,
@@ -10,12 +10,137 @@ import {
   TextInput,
 } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
-import { Styles } from "../../../../styles/styles";
+import * as ImagePicker from "expo-image-picker";
+import uuid from "react-native-uuid";
 
-const ApproveModal = () => {
+import { Styles } from "../../../../styles/styles";
+import { useState } from "react";
+import { communication } from "../../../../utils/communication";
+import Provider from "../../../../api/Provider";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
+import { AWSImagePath } from "../../../../utils/paths";
+let Sess_UserRefno = 0;
+let Sess_company_refno = 0;
+let Sess_branch_refno = 0;
+let Sess_CompanyAdmin_UserRefno = 0;
+const ApproveModal = ({ open, setOpen, budget_refno, callback }) => {
+  const [remarks, setRemarks] = useState("");
+  const [response, setResponse] = useState([]);
+  const [approvedThrough, setApprovedThrough] = useState("");
+  const [attachment, setAttachment] = useState(null);
+  const [errors, setErrors] = useState({
+    remarks: false,
+    approved_through: false,
+  });
+
+  const [designImage, setDesignImage] = useState(null);
+  const [image, setImage] = useState(null);
+  const [filePath, setFilePath] = useState(null);
+  const isFocused = useIsFocused();
+  const fetchUser = async () => {
+    const data = JSON.parse(await AsyncStorage.getItem("user"));
+    Sess_UserRefno = data.UserID;
+    Sess_company_refno = data.Sess_company_refno;
+    Sess_branch_refno = data.Sess_branch_refno;
+    Sess_CompanyAdmin_UserRefno = data.Sess_CompanyAdmin_UserRefno;
+    FetchData();
+  };
+
+  const FetchData = async (toPending, text) => {
+    let params = {
+      data: {
+        Sess_UserRefno: Sess_UserRefno,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
+      },
+    };
+    try {
+      const data = await Provider.getcontractordesignwise(params, () => {});
+      setResponse(data.response);
+    } catch (e) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchUser();
+  }, [isFocused]);
+
+  const chooseFile = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.canceled) {
+        console.log(result);
+        const arrExt = result.assets[0].uri.split(".");
+        const unique_id = uuid.v4();
+        setDesignImage(
+          AWSImagePath + unique_id + "." + arrExt[arrExt.length - 1]
+        );
+
+        setImage(result.assets[0].uri);
+        setFilePath(result);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  console.log(approvedThrough);
+  const ValidateEstimationStatus = () => {
+    let isValid = true;
+
+    if (remarks.length === 0) {
+      isValid = false;
+      setErrors((state) => ({ ...state, remarks: true }));
+    }
+    if (approvedThrough === "") {
+      isValid = false;
+      setErrors((state) => ({ ...state, approved_through: true }));
+    }
+
+    if (isValid) {
+      const formdata = new FormData();
+      formdata.append(
+        "data",
+        JSON.stringify({
+          Sess_UserRefno,
+          budget_refno,
+          budget_remarks: remarks,
+          reponse_refno: approvedThrough,
+        })
+      );
+      formdata.append(
+        "attach_approved_proof",
+        JSON.stringify({
+          name: "appimage1212.jpg",
+          type: filePath.assets[0].type + "/*",
+          uri: image,
+        })
+      );
+
+      Provider.createDFArchitectWithHeader(
+        Provider.API_URLS.architect_budget_finallytakeproject_update,
+        formdata
+      )
+        .then((res) => {
+          console.log(res.data);
+          setOpen(false);
+          callback();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
   return (
     <Portal>
-      <Dialog visible={popupVisible} dismissable={false}>
+      <Dialog visible={open} dismissable={false}>
         <Dialog.Title>Estimation Status</Dialog.Title>
         <Dialog.Content>
           <ScrollView keyboardShouldPersistTaps="handled">
@@ -27,11 +152,11 @@ const ApproveModal = () => {
               value={remarks}
               onChangeText={(text) => {
                 setRemarks(text);
-                setErrorR(false);
+                setErrors((state) => ({ ...state, remarks: false }));
               }}
-              error={errorR}
+              error={errors.remarks}
             />
-            <HelperText type="error" visible={errorR}>
+            <HelperText type="error" visible={errors.remarks}>
               {communication.InvalidRemarks}
             </HelperText>
             <View>
@@ -40,10 +165,10 @@ const ApproveModal = () => {
               </Subheading>
               <RadioButton.Group
                 onValueChange={(value) => {
-                  setValue(value);
-                  setErrorCAT(false);
+                  setApprovedThrough(value);
+                  setErrors((state) => ({ ...state, approved_through: false }));
                 }}
-                value={value}
+                value={approvedThrough}
               >
                 {response?.map((item, idx) => (
                   <RadioButton.Item
@@ -56,7 +181,7 @@ const ApproveModal = () => {
                   />
                 ))}
               </RadioButton.Group>
-              <HelperText type="error" visible={errorCAT}>
+              <HelperText type="error" visible={errors.approved_through}>
                 {communication.InvalidClientApprovedThrough}
               </HelperText>
             </View>
@@ -79,21 +204,13 @@ const ApproveModal = () => {
           <Button
             mode="outlined"
             onPress={() => {
-              setPopupVisible(false);
-              setValue("");
-              setRemarks("");
-              setErrorR(false);
-              setErrorCAT(false);
-              setDesignImage("");
-              setImage(AWSImagePath + "placeholder-image.png");
-              setFilePath(null);
+              setOpen(false);
             }}
           >
             Close
           </Button>
           <Button
             style={[Styles.marginStart12]}
-            loading={isButtonLoading}
             mode="contained"
             onPress={ValidateEstimationStatus}
           >
