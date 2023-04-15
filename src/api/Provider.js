@@ -9,6 +9,7 @@ const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
 export const BASE_URL_Architect = `${BASE_}/apiarchitect/spawu7S4urax/tYjD`;
+export const BASE_URL_Employee = `${BASE_}/apiemployee/spawu7S4urax/tYjD`;
 const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
 export const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
@@ -686,7 +687,19 @@ class Provider {
     contractor_sendratecard_create: "contractor_sendratecard_create/",
     contractor_sendratecard_update: "contractor_sendratecard_update/",
     getexpensesto_pckaddexpensesform: "getexpensesto_pckaddexpensesform/",
-    getfollowupcustomerlist_pckaddexpensesform:"getfollowupcustomerlist_pckaddexpensesform/",
+    getfollowupcustomerlist_pckaddexpensesform:
+      "getfollowupcustomerlist_pckaddexpensesform/",
+    employee_mycustomerlist: "employee_mycustomerlist/",
+    employee_activity_report: "employee_activity_report/",
+    employeeactivity_myemployeeactivityrefnocheck:
+      "employeeactivity_myemployeeactivityrefnocheck/",
+    architect_budget_budgetrefnocheck: "architect_budget_budgetrefnocheck/",
+    architect_budget_sendtoclient: "architect_budget_sendtoclient/",
+    employee_create_customerdata: "employee_create_customerdata/",
+    client_mybudget_list: "client_mybudget_list/",
+    client_budget_view: "client_budget_view/",
+    client_budget_popup_approve: "client_budget_popup_approve/",
+    client_budget_popup_reject: "client_budget_popup_reject/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -720,13 +733,13 @@ class Provider {
       "profile_photo",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     return datas;
@@ -1067,6 +1080,14 @@ class Provider {
       return axios.post(`${BASE_URL_Architect}/${resource}`, params);
     } else {
       return axios.post(`${BASE_URL_Architect}/${resource}`);
+    }
+  }
+
+  createDFEmployee(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Employee}/${resource}`, params);
+    } else {
+      return axios.post(`${BASE_URL_Employee}/${resource}`);
     }
   }
 

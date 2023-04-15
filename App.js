@@ -138,6 +138,8 @@ import OpeningStockList from "./src/screens/Manufacture/ProductionUnitMaster/Ope
 import ApiMaster from "./src/screens/Admin/Master/ApiMaster";
 import AddApiMaster from "./src/screens/Admin/Master/AddItems/AddApiMaster";
 import openingStockScrap from "./src/screens/Manufacture/openingStockScrap";
+import Budget from "./src/screens/Common/Client/Budget";
+import BudgetPreview from "./src/screens/Common/Client/Budget/Preview";
 import OpeningStockScrap from "./src/screens/Manufacture/openingStockScrap";
 import AddOpeningStockScrap from "./src/screens/Manufacture/AddItems/AddOpeningStockScrap";
 import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
@@ -208,6 +210,11 @@ import SetupScreen from "./src/screens/Admin/Master/Setup";
 import AddSetupScreen from "./src/screens/Admin/Master/AddItems/AddSetup";
 import Preview from "./src/screens/Architect/Budget & BOQs/Preview";
 
+import CustomerList from "./src/screens/Marketing/EmployeeActivity/CustomerList";
+import DailyActivityList from "./src/screens/Marketing/EmployeeActivity/DailyActivityList";
+import ActivityReport from "./src/screens/Marketing/EmployeeActivity/ActivityReport";
+import MeetingPerson from "./src/screens/Marketing/EmployeeActivity/MeetingPerson";
+import EmployeeCustomerForm from "./src/screens/Marketing/EmployeeActivity/forms/EmployeeCustomerForm";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -497,6 +504,7 @@ export default function App() {
                       onPress={(e) => {
                         if (j.navigation !== undefined) {
                           activeIndex = parseInt(i.toString() + l.toString());
+
                           props.navigation.navigate(j.navigation);
                         }
                       }}
@@ -1318,6 +1326,67 @@ export default function App() {
                 name="EmployeeListScreen"
                 component={EmployeeListScreen}
               />
+              <Drawer.Screen
+                name="CustomerList"
+                component={CustomerList}
+                options={{
+                  headerTitle: "My Customer List",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="DailyActivityList"
+                component={DailyActivityList}
+                options={{
+                  headerTitle: "Daily Activity List",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="EmployeeCustomerForm"
+                component={EmployeeCustomerForm}
+                options={{
+                  headerTitle: "Employee Customer Form",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+
+              <Drawer.Screen
+                name="ActivityReport"
+                component={ActivityReport}
+                options={{
+                  headerTitle: "Activity Report",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="MeetingPerson"
+                component={MeetingPerson}
+                options={{
+                  headerTitle: "Meeting Person",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               
@@ -1331,6 +1400,30 @@ export default function App() {
               drawerContent={(props) => <DrawerContent {...props} />}
               initialRouteName="HomeScreen"
             >
+              <Drawer.Screen
+                name="My Budget"
+                component={Budget}
+                options={{
+                  headerTitle: "My Budget",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="My Budget Preview"
+                component={BudgetPreview}
+                options={{
+                  headerTitle: "Budget Preview",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="HomeScreen"
@@ -1407,7 +1500,6 @@ export default function App() {
 
       return unsubscribe;
     }, [navigation]);
-
     switch (parseInt(userDetails[0].RoleID)) {
       case 2:
         return (
