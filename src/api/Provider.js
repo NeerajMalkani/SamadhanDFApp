@@ -707,6 +707,8 @@ class Provider {
     getboqtype_architect_boq_popup_generateform:
       "getboqtype_architect_boq_popup_generateform/",
     architect_boq_generate: "architect_boq_generate/",
+    architect_boq_view: "architect_boq_view/",
+    client_boq_view: "client_boq_view/",
   };
 
   createDFPocketDairy(resource, params) {

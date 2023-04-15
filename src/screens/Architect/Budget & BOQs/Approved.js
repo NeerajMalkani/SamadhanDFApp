@@ -11,7 +11,6 @@ import Provider from "../../../api/Provider";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 const RenderItems = (data, navigation) => {
-  console.log(data.item);
   return (
     <View
       style={[
@@ -69,9 +68,7 @@ const RenderItems = (data, navigation) => {
           <Button
             mode="outlined"
             onPress={() => {
-              refRBSheet.current.open();
-
-              setCurrent(data.item);
+              navigation.navigate("BOQ", { data: data.item });
             }}
             style={{
               borderColor: theme.colors.primary,

@@ -52,28 +52,17 @@ const RenderItems = (data, navigation) => {
           flexDirection: "row",
         }}
       >
-        {/* {data.item.action_button.includes("Edit") && (
+        {data.item.boq_action_button.includes("View Generated BOQ's") && (
           <Button
-            mode="outlined"
-            onPress={() => {
-              navigation.navigate("ContractorEstimation", {
-                userDesignEstimationID: data.item?.cont_estimation_refno,
-                isContractor: true,
-                designImage: data.item?.design_image_url,
-                fetchData: fetch,
-                isUpdate: true,
-                data: data.item,
-                set: set,
-              });
-            }}
             style={{
               borderColor: theme.colors.primary,
               borderWidth: 1.2,
             }}
+            onPress={() => navigation.navigate("My BOQ", { data: data.item })}
           >
-            Edit
-          </Button> 
-        )} */}
+            View BOQ
+          </Button>
+        )}
         <Button
           mode="outlined"
           onPress={() => {

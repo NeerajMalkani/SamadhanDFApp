@@ -177,7 +177,7 @@ import PayableList from "./src/screens/Common/PocketDairy/PayableList";
 import ReceivableList from "./src/screens/Common/PocketDairy/ReceivableList";
 import BankListScreen from "./src/screens/Common/Organization/BankScreen";
 import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScreen";
-
+import MyBOQ from "./src/screens/Common/Client/Budget/BOQ";
 import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
 import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
 import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
@@ -215,6 +215,7 @@ import DailyActivityList from "./src/screens/Marketing/EmployeeActivity/DailyAct
 import ActivityReport from "./src/screens/Marketing/EmployeeActivity/ActivityReport";
 import MeetingPerson from "./src/screens/Marketing/EmployeeActivity/MeetingPerson";
 import EmployeeCustomerForm from "./src/screens/Marketing/EmployeeActivity/forms/EmployeeCustomerForm";
+import BOQ from "./src/screens/Architect/Budget & BOQs/BOQ";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -1114,6 +1115,18 @@ export default function App() {
                 component={BudgetBOQ}
               />
               <Drawer.Screen
+                name="BOQ"
+                component={BOQ}
+                options={{
+                  headerTitle: "View BOQ",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
                 options={{
                   headerTitle: "Budget Preview",
                   headerBackTitleVisible: false,
@@ -1406,6 +1419,18 @@ export default function App() {
                 component={Budget}
                 options={{
                   headerTitle: "My Budget",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="My BOQ"
+                component={MyBOQ}
+                options={{
+                  headerTitle: "View BOQ",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
