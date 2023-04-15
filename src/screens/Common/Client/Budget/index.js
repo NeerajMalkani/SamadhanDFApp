@@ -2,13 +2,13 @@ import { View, Text, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { Button } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
-import { Styles } from "../../../styles/styles";
-import { theme } from "../../../theme/apptheme";
+import { Styles } from "../../../../styles/styles";
+import { theme } from "../../../../theme/apptheme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
 import { useEffect } from "react";
-import Provider from "../../../api/Provider";
+import Provider from "../../../../api/Provider";
 import { SwipeListView } from "react-native-swipe-list-view";
+import { useIsFocused } from "@react-navigation/native";
 
 const RenderItems = (data, navigation) => {
   return (
@@ -38,8 +38,8 @@ const RenderItems = (data, navigation) => {
         <Text>Project Name : {data.item.project_name}</Text>
 
         <Text>
-          Contact Person & Name : {data.item.contact_person} &{" "}
-          {data.item.contact_mobile_no}
+          Contact Person & Name : {data.item.architect_firstname} &{" "}
+          {data.item.architect_mobile_no}
         </Text>
         <Text>Budget Unit : {data.item.quot_unit_type_name}</Text>
       </View>
@@ -51,7 +51,7 @@ const RenderItems = (data, navigation) => {
           flexDirection: "row",
         }}
       >
-        {data.item.action_button.includes("Edit") && (
+        {/* {data.item.action_button.includes("Edit") && (
           <Button
             mode="outlined"
             onPress={() => {
@@ -71,12 +71,12 @@ const RenderItems = (data, navigation) => {
             }}
           >
             Edit
-          </Button>
-        )}
+          </Button> 
+        )} */}
         <Button
           mode="outlined"
           onPress={() => {
-            navigation.navigate("Budget Preview", { data: data.item });
+            navigation.navigate("My Budget Preview", { data: data.item });
           }}
           style={{
             borderColor: theme.colors.primary,
@@ -90,38 +90,38 @@ const RenderItems = (data, navigation) => {
   );
 };
 let Sess_UserRefno = 0;
-let Sess_company_refno = 0;
-let Sess_branch_refno = 0;
-const SendPending = ({ index, navigation }) => {
+
+const ApprovedPending = ({ navigation }) => {
+  const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const getUserData = async () => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       Sess_UserRefno = JSON.parse(userData).UserID;
-      Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
-      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
 
       await fetchPending();
       setRefreshing(false);
     }
   };
   const fetchPending = () => {
-    Provider.createDFArchitect(
-      Provider.API_URLS.architect_budget_send_pendng_list,
-      { data: { Sess_UserRefno, Sess_company_refno, Sess_branch_refno } }
-    ).then((res) => {
+    Provider.createDFClient(Provider.API_URLS.client_mybudget_list, {
+      data: { Sess_UserRefno },
+    }).then((res) => {
+      console.log(res.data);
+
       if (res.data.data) {
         setData(res.data.data);
       }
     });
   };
   useEffect(() => {
-    if (index === 1) getUserData();
+    if (isFocused) getUserData();
     else {
       setData([]);
     }
-  }, [index]);
+  }, [isFocused]);
+  console.log(JSON.stringify(data, null, 2));
   return (
     <View>
       <ScrollView>
@@ -153,4 +153,4 @@ const SendPending = ({ index, navigation }) => {
   );
 };
 
-export default SendPending;
+export default ApprovedPending;
