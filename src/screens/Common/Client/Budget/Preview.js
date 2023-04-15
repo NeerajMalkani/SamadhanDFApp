@@ -402,24 +402,28 @@ const Preview = ({ navigation, route }) => {
               Architect Not Generated BOQ's
             </Text>
           )}
-          <View
-            style={{
-              flexDirection: "row",
-              marginTop: 5,
-              justifyContent: "space-around",
-            }}
-          >
-            <Button
-              mode="contained"
-              onPress={reject}
-              style={{ backgroundColor: theme.colors.error }}
+          {route?.params?.data?.budget_action_button?.includes(
+            "View & Approve Budget"
+          ) && (
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 5,
+                justifyContent: "space-around",
+              }}
             >
-              Reject
-            </Button>
-            <Button onPress={accept} mode="contained">
-              Accept
-            </Button>
-          </View>
+              <Button
+                mode="contained"
+                onPress={reject}
+                style={{ backgroundColor: theme.colors.error }}
+              >
+                Reject
+              </Button>
+              <Button onPress={accept} mode="contained">
+                Accept
+              </Button>
+            </View>
+          )}
         </View>
       </View>
       <Snackbar

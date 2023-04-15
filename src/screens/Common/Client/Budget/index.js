@@ -11,6 +11,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { useIsFocused } from "@react-navigation/native";
 
 const RenderItems = (data, navigation) => {
+  console.log(JSON.stringify(data.item, null, 2));
   return (
     <View
       style={[
@@ -83,7 +84,9 @@ const RenderItems = (data, navigation) => {
             borderWidth: 1.2,
           }}
         >
-          View Actions
+          {data.item.budget_action_button.includes("View & Approve Budget")
+            ? "View & Approve Budget"
+            : "View Budget"}
         </Button>
       </View>
     </View>
