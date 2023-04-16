@@ -181,6 +181,7 @@ const Preview = ({ navigation, route }) => {
         console.log(error);
       });
   };
+  console.log(JSON.stringify(route.params.data, null, 2));
   return (
     <ScrollView
       style={[Styles.padding16, Styles.flex1, { backgroundColor: "white" }]}
@@ -458,6 +459,7 @@ const Preview = ({ navigation, route }) => {
               Send Budget to Client
             </Button>
           )}
+
           {route.params.data.client_approve_status_name === "Pending" && (
             <Text
               style={{
@@ -479,12 +481,17 @@ const Preview = ({ navigation, route }) => {
               </Button>
             )}
 
-          {route.params?.data.budget_action_button?.includes(
-            "Cancel Budget"
-          ) && (
-            <Button onPress={cancelBudget} mode="contained">
+          {route.params?.data.action_button?.includes("Cancel Budget") ||
+          route.params?.data.budget_action_button?.includes("Cancel Budget") ? (
+            <Button
+              style={{ marginVertical: "5%" }}
+              onPress={cancelBudget}
+              mode="contained"
+            >
               Cancel Budget
             </Button>
+          ) : (
+            <></>
           )}
           {route.params.data.boq_action_button?.includes("Generate BOQ") && (
             <Button
