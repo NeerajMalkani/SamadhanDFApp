@@ -26,6 +26,7 @@ import { common } from "@material-ui/core/colors";
 import { projectVariables, projectLoginTypes, projectFixedDesignations } from "../../../../utils/credentials";
 import RadioGroup from "react-native-radio-buttons-group";
 import * as Contacts from "expo-contacts";
+import DFButton from "../../../../components/Button";
 
 let userID = 0,
   groupID = 0,
@@ -37,6 +38,8 @@ let userID = 0,
 
 const AddSource = ({ route, navigation }) => {
   //#region Variables
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
@@ -573,7 +576,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchBankList = (bankID, receiptModeID, categoryID) => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -606,7 +608,7 @@ const AddSource = ({ route, navigation }) => {
             setMyBankListData(bank);
             if (bankID != null) {
               setMyBankList(
-                response.data.data.filter((el) => {
+                bankData.filter((el) => {
                   return el.bank_refno === bankID;
                 })[0].displayBank
               );
@@ -1614,6 +1616,7 @@ const AddSource = ({ route, navigation }) => {
       datas
     )
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1626,6 +1629,7 @@ const AddSource = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -1774,6 +1778,7 @@ const AddSource = ({ route, navigation }) => {
         : Provider.API_URLS.pck_companysource_verify_action,
       datas)
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -1786,6 +1791,7 @@ const AddSource = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -1858,11 +1864,17 @@ const AddSource = ({ route, navigation }) => {
 
     if (isValid) {
       // verify 324 api call
+      setIsButtonLoading(true);
       if (route.params.type === "edit" || route.params.type === "verify") {
         UpdateData(route.params.type);
       } else {
         InsertData();
       }
+    }
+    else {
+      setSnackbarText("Please fill all mandatory fields");
+      setSnackbarColor(theme.colors.error);
+      setSnackbarVisible(true);      
     }
   };
 
@@ -2477,8 +2489,9 @@ const AddSource = ({ route, navigation }) => {
         <Card.Content>
           <Button
             mode="contained"
-            disabled={buttonStatus}
+            disabled={isButtonLoading ? isButtonLoading : buttonStatus}
             onPress={ValidateData}
+            loading={isButtonLoading}
           >
             Submit
           </Button>

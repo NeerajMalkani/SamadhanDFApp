@@ -2,8 +2,8 @@ import axios from "axios";
 import { onePixelImage, timeoutLimit } from "../utils/paths";
 
 const BASE_OLD = "https://dfsolutions.in/api";
-const BASE_ = "https://samadhanerp.com/api";
-const BASE_4 = "https://samadhanerp.com/testkit/api";
+const BASE_4 = "https://samadhanerp.com/api";
+const BASE_ = "https://samadhanerp.com/testkit/api";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
@@ -709,6 +709,7 @@ class Provider {
     architect_boq_generate: "architect_boq_generate/",
     architect_boq_view: "architect_boq_view/",
     client_boq_view: "client_boq_view/",
+    getpurposeofvisit_pckaddexpensesform: "getpurposeofvisit_pckaddexpensesform/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -742,13 +743,13 @@ class Provider {
       "profile_photo",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     return datas;

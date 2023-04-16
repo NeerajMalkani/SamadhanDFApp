@@ -45,6 +45,9 @@ LogBox.ignoreLogs([
 ]);
 
 const AddExpenses = ({ route, navigation }) => {
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
   const [RecurringRadioButtons, setRecurringRadioButtons] = useState([
     {
       id: "1", // acts as primary key, should be unique and non-empty string
@@ -315,7 +318,13 @@ const AddExpenses = ({ route, navigation }) => {
   const [followupData, setFollowupData] = React.useState([]);
   const [followup, setFollowup] = React.useState([]);
   const [errorFollowup, setFollowupError] = React.useState(false);
-  const [followupStatus, setFollowupStatus] = React.useState(true);
+  const [followupStatus, setFollowupStatus] = React.useState(false);
+
+  const [purposeFullData, setPurposeFullData] = React.useState([]);
+  const [purposeData, setPurposeData] = React.useState([]);
+  const [purpose, setPurpose] = React.useState([]);
+  const [errorPurpose, setPurposeError] = React.useState(false);
+  const [purposeStatus, setPurposeStatus] = React.useState(false);
 
   //#endregion
 
@@ -533,10 +542,29 @@ const AddExpenses = ({ route, navigation }) => {
         new Date(dateBreakup[2] + "/" + dateBreakup[1] + "/" + dateBreakup[0])
       );
     }
-    if (data.myclient_refno != null && data.myclient_refno != "0") {
-      setClientListstatus(true);
-      FetchClientList(data.myclient_refno);
-    }
+
+    if (groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+      designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO) {
+        if (data.myclient_refno != null && data.myclient_refno != "0") {
+          setMKT_ClientListstatus(true);
+          FetchMKTClientList(data.myclient_refno);
+        }
+
+        if (data.pck_custom_category_refno != null && data.pck_custom_category_refno != "0") {
+          setExpenseToStatus(true);
+          FetchExpenseTo(data.pck_custom_category_refno);
+        }
+
+      }
+      else {
+        if (data.myclient_refno != null && data.myclient_refno != "0") {
+          setClientListstatus(true);
+          FetchClientList(data.myclient_refno);
+        }
+      }
+
+    
 
     if (data.cont_project_refno != null && data.cont_project_refno != "0") {
       setProjectListstatus(true);
@@ -763,7 +791,7 @@ const AddExpenses = ({ route, navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            let custData=[];
+            let custData = [];
             response.data.data.map((data) => {
               custData.push({
                 company_name: data.company_name,
@@ -781,10 +809,44 @@ const AddExpenses = ({ route, navigation }) => {
             setFollowupData(customer);
 
             if (editID != null) {
-              setFollowupData(
+              setFollowup(
                 custData.filter((el) => {
                   return el.mycustomer_refno === editID;
                 })[0].displayName
+              );
+            }
+          }
+        }
+      })
+      .catch((e) => { });
+  };
+
+  const FetchPurposeList = (editID) => {
+    let params = {
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: companyID.toString(),
+        Sess_branch_refno: branchID.toString(),
+        Sess_group_refno: groupID.toString(),
+      },
+    };
+    Provider.createDFPocketDairy(Provider.API_URLS.getpurposeofvisit_pckaddexpensesform, params)
+      .then((response) => {
+        if (response.data && response.data.code === 200) {
+          if (response.data.data) {
+
+            setPurposeFullData(response.data.data);
+
+            const purpose = response.data.data.map(
+              (data) => data.activity_name
+            );
+            setPurposeData(purpose);
+
+            if (editID != null) {
+              setPurpose(
+                response.data.data.filter((el) => {
+                  return el.activity_refno === editID;
+                })[0].activity_name
               );
             }
           }
@@ -1582,9 +1644,9 @@ const AddExpenses = ({ route, navigation }) => {
             setExpenseToData(expenseTo);
 
             if (editID != null) {
-              setExpenseToData(
+              setExpenseToName(
                 response.data.data.filter((el) => {
-                  return el.pck_custom_category_refno === editID;
+                  return el.pck_custom_category_refno == editID;
                 })[0].category_name
               );
             }
@@ -1997,14 +2059,56 @@ const AddExpenses = ({ route, navigation }) => {
 
 
   };
-  
+
   const onFollowupChanged = (text) => {
     setFollowup(text);
     setFollowupError(false);
+    setPurposeStatus(true);
+    FetchPurposeList();
   };
+
+  const displayCommonFields_MKT = () => {
+    setCommonDisplayStatus(true);
+    setButtonStatus(false);
+
+    let mode = payModeFullData.filter((el) => {
+      return el.pckModeName === payMode;
+    });
+
+    let category = expensesFullData.filter((el) => {
+      return el.categoryName === expenses;
+    });
+
+    if (category[0].pckCategoryID == 4) {
+      setRecurringReminderDateStatus(true);
+      setRecurringStatus(true);
+    } else {
+      setRecurringReminderDateStatus(false);
+      setRecurringStatus(false);
+    }
+
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
+      setBankStatus(true);
+      FetchBankList();
+      setUtrNoStatus(true);
+    }
+    if (mode[0].pckModeID == "3") {
+      setDepositTypeStatus(true);
+      FetchDepositType();
+    }
+  }
+
+  const onPurposeChanged = (text) => {
+    setPurpose(text);
+    setPurposeError(false);
+    displayCommonFields_MKT();
+  };
+
+
   const onExpenseToChanged = (text) => {
     setExpenseToName(text);
     setExpenseToError(false);
+    setPurposeStatus(false);
 
     let category = expenseToFullData.filter((el) => {
       return el.category_name === text;
@@ -2211,6 +2315,12 @@ const AddExpenses = ({ route, navigation }) => {
     setFollowupError(false);
     setFollowupStatus(false);
 
+    setPurposeFullData([]);
+    setPurposeData([]);
+    setPurpose("");
+    setPurposeError(false);
+    setPurposeStatus(false);
+
   };
 
   const onEntryTypeChanged = (selectedItem) => {
@@ -2323,36 +2433,7 @@ const AddExpenses = ({ route, navigation }) => {
   const onMKT_ClientListChanged = (text) => {
     setMKT_ClientList(text);
     setErrorMKT_CL(false);
-
-    setCommonDisplayStatus(true);
-    setButtonStatus(false);
-
-    let mode = payModeFullData.filter((el) => {
-      return el.pckModeName === payMode;
-    });
-
-    let category = expensesFullData.filter((el) => {
-      return el.categoryName === expenses;
-    });
-
-    if (category[0].pckCategoryID == 4) {
-      setRecurringReminderDateStatus(true);
-      setRecurringStatus(true);
-    } else {
-      setRecurringReminderDateStatus(false);
-      setRecurringStatus(false);
-    }
-
-    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-      setBankStatus(true);
-      FetchBankList();
-      setUtrNoStatus(true);
-    }
-    if (mode[0].pckModeID == "3") {
-      setDepositTypeStatus(true);
-      FetchDepositType();
-    }
-
+    displayCommonFields_MKT();
   };
 
   const chooseFile = async () => {
@@ -2459,10 +2540,46 @@ const AddExpenses = ({ route, navigation }) => {
       params.recurring_status = recurringDateFlat;
     }
 
-    if (clientListStatus) {
-      params.myclient_refno = clientListFullData.filter((el) => {
-        return el.companyName === clientList;
-      })[0].myclient_refno;
+    if (groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+      designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO) {
+
+      if (MKT_clientListStatus) {
+        params.myclient_refno = MKT_clientListFullData.filter((el) => {
+          return el.companyName === MKT_clientList;
+        })[0].myclient_refno;
+      }
+    }
+    else {
+      if (clientListStatus) {
+        params.myclient_refno = clientListFullData.filter((el) => {
+          return el.companyName === clientList;
+        })[0].myclient_refno;
+      }
+    }
+
+    if (expenseToStatus) {
+      params.pck_custom_category_refno = expenseToFullData.filter((el) => {
+        return el.category_name === expenseTo;
+      })[0].pck_custom_category_refno;
+    }
+
+    if (followupStatus) {
+      params.mycustomer_refno = followupFullData.filter((el) => {
+        return el.displayName === followup;
+      })[0].mycustomer_refno;
+    }
+    else {
+      params.mycustomer_refno = "0";
+    }
+
+    if (purposeStatus) {
+      params.activity_refno = purposeFullData.filter((el) => {
+        return el.activity_name === purpose;
+      })[0].activity_refno;
+    }
+    else {
+      params.activity_refno = "0";
     }
 
     if (projectListStatus) {
@@ -2547,6 +2664,7 @@ const AddExpenses = ({ route, navigation }) => {
       datas
     )
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -2559,6 +2677,7 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -2657,10 +2776,46 @@ const AddExpenses = ({ route, navigation }) => {
       params.recurring_status = recurringDateFlat;
     }
 
-    if (clientListStatus) {
-      params.myclient_refno = clientListFullData.filter((el) => {
-        return el.companyName === clientList;
-      })[0].myclient_refno;
+    if (groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
+      designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO) {
+
+      if (MKT_clientListStatus) {
+        params.myclient_refno = MKT_clientListFullData.filter((el) => {
+          return el.companyName === MKT_clientList;
+        })[0].myclient_refno;
+      }
+    }
+    else {
+      if (clientListStatus) {
+        params.myclient_refno = clientListFullData.filter((el) => {
+          return el.companyName === clientList;
+        })[0].myclient_refno;
+      }
+    }
+
+    if (expenseToStatus) {
+      params.pck_custom_category_refno = expenseToFullData.filter((el) => {
+        return el.category_name === expenseTo;
+      })[0].pck_custom_category_refno;
+    }
+
+    if (followupStatus) {
+      params.mycustomer_refno = followupFullData.filter((el) => {
+        return el.displayName === followup;
+      })[0].mycustomer_refno;
+    }
+    else {
+      params.mycustomer_refno = "0";
+    }
+
+    if (purposeStatus) {
+      params.activity_refno = purposeFullData.filter((el) => {
+        return el.activity_name === purpose;
+      })[0].activity_refno;
+    }
+    else {
+      params.activity_refno = "0";
     }
 
     if (projectListStatus) {
@@ -2745,6 +2900,7 @@ const AddExpenses = ({ route, navigation }) => {
     )
 
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -2757,6 +2913,7 @@ const AddExpenses = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -2843,11 +3000,17 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (isValid) {
+      setIsButtonLoading(true);
       if (route.params.type === "edit" || route.params.type === "verify") {
         UpdateData(route.params.type, route.params.mode);
       } else {
         InsertData();
       }
+    }
+    else {
+      setSnackbarText("Please fill all mandatory fields");
+      setSnackbarColor(theme.colors.error);
+      setSnackbarVisible(true);      
     }
   };
 
@@ -3263,6 +3426,21 @@ const AddExpenses = ({ route, navigation }) => {
             </>
           )}
 
+          {purposeStatus && (
+            <>
+              <Dropdown
+                label="Purpose of Visit"
+                data={purposeData}
+                onSelected={onPurposeChanged}
+                isError={errorPurpose}
+                selectedItem={purpose}
+              />
+              <HelperText type="error" visible={errorPurpose}>
+                Please select a purpose
+              </HelperText>
+            </>
+          )}
+
           {contactTypeStatus && (
             <>
               <Dropdown
@@ -3522,10 +3700,10 @@ const AddExpenses = ({ route, navigation }) => {
                   Styles.marginTop16,
                 ]}
               >
-                {/* <Image
+                <Image
                   source={{ uri: image }}
                   style={[Styles.width104, Styles.height96, Styles.border1]}
-                /> */}
+                />
                 <Button mode="text" onPress={chooseFile}>
                   {filePath !== null ? "Replace" : "Attachment / Slip Copy"}
                 </Button>
@@ -3567,8 +3745,9 @@ const AddExpenses = ({ route, navigation }) => {
         <Card.Content>
           <Button
             mode="contained"
-            disabled={buttonStatus}
+            disabled={isButtonLoading ? isButtonLoading : buttonStatus}
             onPress={ValidateData}
+            loading={isButtonLoading}
           >
             Submit
           </Button>
