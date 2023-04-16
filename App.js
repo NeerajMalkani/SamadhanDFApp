@@ -1069,6 +1069,7 @@ export default function App() {
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
               initialRouteName="HomeScreen"
+              backBehavior="history"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
