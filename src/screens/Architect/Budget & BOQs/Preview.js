@@ -400,14 +400,7 @@ const Preview = ({ navigation, route }) => {
                       width={120}
                       data={[
                         ...state.ProductDetails?.map((obj, index) => (
-                          <View key={index} style={{ padding: 10 }}>
-                            <Button
-                              mode="contained"
-                              onPress={async () => await chooseFile(index)}
-                            >
-                              Add Image
-                            </Button>
-                          </View>
+                          <View key={index} style={{ padding: 10 }}></View>
                         )),
                       ]}
                     />
