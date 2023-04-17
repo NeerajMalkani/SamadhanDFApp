@@ -12,7 +12,8 @@ import { Button } from "react-native-paper";
 let userID = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const EmployeeCustomerForm = () => {
+
+const EmployeeCustomerForm = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [state, setState] = useState({
     company_name: "",
@@ -108,19 +109,19 @@ const EmployeeCustomerForm = () => {
       setError((state) => ({ ...state, email_id: true }));
       errors = true;
     }
-    if (state.address.length !== 10) {
+    if (state.address.length === 0) {
       setError((state) => ({ ...state, address: true }));
       errors = true;
     }
-    if (state.state_refno.length !== 10) {
+    if (state.state_refno.length === 0) {
       setError((state) => ({ ...state, state_refno: true }));
       errors = true;
     }
-    if (state.district_refno.length !== 10) {
+    if (state.district_refno.length === 0) {
       setError((state) => ({ ...state, district_refno: true }));
       errors = true;
     }
-    if (state.pincode.length !== 10) {
+    if (state.pincode.length === 0) {
       setError((state) => ({ ...state, pincode: true }));
       errors = true;
     }
@@ -135,8 +136,9 @@ const EmployeeCustomerForm = () => {
             ...state,
           },
         }
-      );
+      ).then((res) => navigation.navigate("CustomerList"));
     }
+    console.log(state, errors, "state");
   };
 
   return (
@@ -330,7 +332,7 @@ const EmployeeCustomerForm = () => {
         <Button
           onPress={handleSubmit}
           mode="contained"
-          style={{ width: "40%", alignSelf: "center" }}
+          style={{ width: "50%", alignSelf: "center" }}
         >
           Submit
         </Button>

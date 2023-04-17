@@ -9,6 +9,12 @@ import {
   DrawerContentScrollView,
   DrawerItem,
 } from "@react-navigation/drawer";
+import MyBOQ from "./src/screens/Common/Client/Budget/BOQ";
+
+import BOQ from "./src/screens/Architect/Budget & BOQs/BOQ";
+import Preview from "./src/screens/Architect/Budget & BOQs/Preview";
+import Budget from "./src/screens/Common/Client/Budget";
+import BudgetPreview from "./src/screens/Common/Client/Budget/Preview";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
@@ -138,8 +144,6 @@ import OpeningStockList from "./src/screens/Manufacture/ProductionUnitMaster/Ope
 import ApiMaster from "./src/screens/Admin/Master/ApiMaster";
 import AddApiMaster from "./src/screens/Admin/Master/AddItems/AddApiMaster";
 import openingStockScrap from "./src/screens/Manufacture/openingStockScrap";
-import Budget from "./src/screens/Common/Client/Budget";
-import BudgetPreview from "./src/screens/Common/Client/Budget/Preview";
 import OpeningStockScrap from "./src/screens/Manufacture/openingStockScrap";
 import AddOpeningStockScrap from "./src/screens/Manufacture/AddItems/AddOpeningStockScrap";
 import AddStockList from "./src/screens/Manufacture/AddItems/AddStockList";
@@ -177,7 +181,7 @@ import PayableList from "./src/screens/Common/PocketDairy/PayableList";
 import ReceivableList from "./src/screens/Common/PocketDairy/ReceivableList";
 import BankListScreen from "./src/screens/Common/Organization/BankScreen";
 import AddBankScreen from "./src/screens/Common/Organization/AddItem/AddBankScreen";
-import MyBOQ from "./src/screens/Common/Client/Budget/BOQ";
+
 import PDCDataUpdate from "./src/screens/Common/PocketDairy/PDCDataUpdate";
 import MyPersonalBankScreen from "./src/screens/Common/PocketDairy/Setting/MyPersonalBank";
 import AddMyPersonalBank from "./src/screens/Common/PocketDairy/Setting/AddItems/AddMyPersonalBank";
@@ -208,14 +212,7 @@ import AddVendorOrderForm from "./src/screens/Manufacture/AddItems/AddVendorOrde
 import BudgetBOQ from "./src/screens/Architect/Budget & BOQs";
 import SetupScreen from "./src/screens/Admin/Master/Setup";
 import AddSetupScreen from "./src/screens/Admin/Master/AddItems/AddSetup";
-import Preview from "./src/screens/Architect/Budget & BOQs/Preview";
 
-import CustomerList from "./src/screens/Marketing/EmployeeActivity/CustomerList";
-import DailyActivityList from "./src/screens/Marketing/EmployeeActivity/DailyActivityList";
-import ActivityReport from "./src/screens/Marketing/EmployeeActivity/ActivityReport";
-import MeetingPerson from "./src/screens/Marketing/EmployeeActivity/MeetingPerson";
-import EmployeeCustomerForm from "./src/screens/Marketing/EmployeeActivity/forms/EmployeeCustomerForm";
-import BOQ from "./src/screens/Architect/Budget & BOQs/BOQ";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -505,7 +502,6 @@ export default function App() {
                       onPress={(e) => {
                         if (j.navigation !== undefined) {
                           activeIndex = parseInt(i.toString() + l.toString());
-
                           props.navigation.navigate(j.navigation);
                         }
                       }}
@@ -1069,7 +1065,6 @@ export default function App() {
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
               initialRouteName="HomeScreen"
-              backBehavior="history"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
@@ -1210,7 +1205,6 @@ export default function App() {
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
               initialRouteName="HomeScreen"
-              backBehavior="history"
             >
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
@@ -1341,67 +1335,6 @@ export default function App() {
                 name="EmployeeListScreen"
                 component={EmployeeListScreen}
               />
-              <Drawer.Screen
-                name="CustomerList"
-                component={CustomerList}
-                options={{
-                  headerTitle: "My Customer List",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
-              <Drawer.Screen
-                name="DailyActivityList"
-                component={DailyActivityList}
-                options={{
-                  headerTitle: "Daily Activity List",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
-              <Drawer.Screen
-                name="EmployeeCustomerForm"
-                component={EmployeeCustomerForm}
-                options={{
-                  headerTitle: "Employee Customer Form",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
-
-              <Drawer.Screen
-                name="ActivityReport"
-                component={ActivityReport}
-                options={{
-                  headerTitle: "Activity Report",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
-              <Drawer.Screen
-                name="MeetingPerson"
-                component={MeetingPerson}
-                options={{
-                  headerTitle: "Meeting Person",
-                  headerBackTitleVisible: false,
-                  headerStyle: [Styles.primaryBgColor, Styles.height64],
-                  headerTitleStyle: { color: theme.colors.textLight },
-                  headerTintColor: theme.colors.textLight,
-                  unmountOnBlur: true,
-                }}
-              />
               {/* <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="GMyBankScreen" component={GMyBankScreen} />
               <Drawer.Screen options={{ headerShown: false, unmountOnBlur: true }} name="BudgetSetup" component={BudgetSetup} />
               
@@ -1415,6 +1348,15 @@ export default function App() {
               drawerContent={(props) => <DrawerContent {...props} />}
               initialRouteName="HomeScreen"
             >
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
+                name="HomeScreen"
+                component={HomeScreen}
+                initialParams={{
+                  userDetails: userDetails,
+                  setUserFunc: SetUser,
+                }}
+              />
               <Drawer.Screen
                 name="My Budget"
                 component={Budget}
@@ -1451,15 +1393,7 @@ export default function App() {
                   unmountOnBlur: true,
                 }}
               />
-              <Drawer.Screen
-                options={{ headerShown: false, unmountOnBlur: true }}
-                name="HomeScreen"
-                component={HomeScreen}
-                initialParams={{
-                  userDetails: userDetails,
-                  setUserFunc: SetUser,
-                }}
-              />
+
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="BrandConversionValue"
@@ -1527,6 +1461,7 @@ export default function App() {
 
       return unsubscribe;
     }, [navigation]);
+
     switch (parseInt(userDetails[0].RoleID)) {
       case 2:
         return (

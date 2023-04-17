@@ -1371,28 +1371,28 @@ export const MenuItemsClient = [
 export const MenuItemsMarketingExecutive = [
   {
     title: "Employee Activity",
-    icon: "office-building-cog",
+    icon: "calculator-variant",
     type: "accordian",
-    index: 1,
+    index: 8,
     roleID: 7,
     items: [
       {
-        title: "My Customer List",
+        title: "Customer List",
         type: "accordian",
-        index: 10,
-        navigation: "CustomerList",
+        index: 80,
+        //navigation: "GCategoryNameScreen",
       },
       {
         title: "Daily Activity List",
         type: "accordian",
-        index: 10,
-        navigation: "DailyActivityList",
+        index: 81,
+        //navigation: "GSubCategoryNameScreen",
       },
       {
         title: "Activity Report",
         type: "accordian",
-        index: 10,
-        navigation: "ActivityReport",
+        index: 82,
+        //navigation: "GMyContactsScreen",
       },
     ],
   },

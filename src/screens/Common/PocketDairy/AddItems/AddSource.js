@@ -23,7 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 import { AWSImagePath } from "../../../../utils/paths";
 import { APIConverter } from "../../../../utils/apiconverter";
 import { common } from "@material-ui/core/colors";
-import { projectVariables, projectLoginTypes, projectFixedDesignations } from "../../../../utils/credentials";
+import { projectVariables } from "../../../../utils/credentials";
 import RadioGroup from "react-native-radio-buttons-group";
 import * as Contacts from "expo-contacts";
 
@@ -573,7 +573,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchBankList = (bankID, receiptModeID, categoryID) => {
-
+    
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -588,27 +588,18 @@ const AddSource = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmybankname, params)
       .then((response) => {
-        console.log('bank data:', response.data.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data, "pkt_subcat");
-            let bankData = [];
-            response.data.data.map((data) => {
-              bankData.push({
-                accountNumber: data.accountNumber,
-                bankName: data.bankName,
-                bank_refno: data.bank_refno,
-                displayBank: data.bankName + " >> "+ data.company_branch_name + " (" + data.accountNumber + ")"
-              });
-            });
-            setMyBankListFullData(bankData);
-            const bank = bankData.map((data) => data.displayBank);
+            setMyBankListFullData(response.data.data);
+
+            const bank = response.data.data.map((data) => data.bankName);
             setMyBankListData(bank);
             if (bankID != null) {
               setMyBankList(
                 response.data.data.filter((el) => {
                   return el.bank_refno === bankID;
-                })[0].displayBank
+                })[0].bankName
               );
 
               if (receiptModeID == 1 && categoryID == 1) {
@@ -773,8 +764,6 @@ const AddSource = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
-        Sess_designation_refno: designID.toString(),
-        Sess_CompanyAdmin_UserRefno: companyAdminID.toString(),
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
@@ -972,7 +961,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const onReceiptModeChanged = (selectedItem) => {
-    console.log('onReceiptModeChanged');
     setReceiptMode(selectedItem);
     setRMError(false);
     resetFields();
@@ -1212,34 +1200,8 @@ const AddSource = ({ route, navigation }) => {
       return el.companyName === text;
     });
 
-    if (groupID = projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO && designID == projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO) {
-      setProjectListstatus(false);
-      setPaymentGroupStatus(true);
-      FetchPaymentGroup();
-      FetchPaymentType();
-
-      setCommonStatus(true);
-      setButtonStatus(false);
-
-      let mode = receiptModeFullData.filter((el) => {
-        return el.pckModeName === receiptMode;
-      });
-
-      if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-        setUTRNoStatus(true);
-        FetchBankList();
-        setBankListStatus(true);
-      } else if (mode[0].pckModeID == "3") {
-        setDepositTypeStatus(true);
-        FetchDepositType();
-      }
-    }
-    else {
-      setProjectListstatus(true);
-      FetchProjectList(a[0].myclient_refno);
-    }
-
-
+    setProjectListstatus(true);
+    FetchProjectList(a[0].myclient_refno);
   };
 
   const onProjectListChanged = (text) => {
@@ -1291,10 +1253,6 @@ const AddSource = ({ route, navigation }) => {
     setProjectListData([]);
     setProjectList("");
     setPaymentGroupStatus(false);
-    setPaymentTypeStatus(false);
-    setInvoiceStatus(false);
-    setMyBankListData([]);
-    setMyBankList("");
   };
 
   const onReceivedFormChanged = (text) => {
@@ -1392,6 +1350,7 @@ const AddSource = ({ route, navigation }) => {
     let mode = receiptModeFullData.filter((el) => {
       return el.pckModeName === receiptMode;
     });
+
     let category = sourceFullData.filter((el) => {
       return el.categoryName === source;
     });
@@ -1400,7 +1359,7 @@ const AddSource = ({ route, navigation }) => {
       setBankBalanceStatus(true);
 
       let bankID = myBankListFullData.filter((el) => {
-        return el.displayBank === text;
+        return el.bankName === text;
       })[0].bank_refno;
 
       FetchBankCurrentBalance(bankID);
@@ -1479,7 +1438,7 @@ const AddSource = ({ route, navigation }) => {
 
     if (myBankListFullData.length > 0) {
       bankID = myBankListFullData.filter((el) => {
-        return el.displayBank === myBankList;
+        return el.bankName === myBankList;
       })[0].bank_refno;
     }
 
@@ -1541,7 +1500,7 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (subCatStatus) {
-
+      
       params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
         return el.subCategoryName === subCategoryName;
       })[0].subcategoryID;
@@ -1645,7 +1604,7 @@ const AddSource = ({ route, navigation }) => {
 
     if (myBankListFullData.length > 0) {
       bankID = myBankListFullData.filter((el) => {
-        return el.displayBank === myBankList;
+        return el.bankName === myBankList;
       })[0].bank_refno;
     }
 
@@ -1914,7 +1873,7 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const PhoneClicked = (contact) => {
-
+    
     if (contact != null) {
       InsertNewContact(contact.name, contact.number);
     }
@@ -2050,7 +2009,7 @@ const AddSource = ({ route, navigation }) => {
           {rentalDescriptionStatus && (
             <>
               <TextInput
-                mode="outlined"
+               mode="outlined"
                 label="Rental Description"
                 value={rentalDescription}
                 returnKeyType="next"
@@ -2243,7 +2202,7 @@ const AddSource = ({ route, navigation }) => {
           {newMobileNumberStatus && (
             <>
               <TextInput
-                mode="outlined"
+               mode="outlined"
                 label="Mobile No."
                 value={mobileNumber}
                 maxLength={10}
@@ -2264,18 +2223,16 @@ const AddSource = ({ route, navigation }) => {
 
           {depositTypeStatus && (
             <>
-              <View style={[Styles.marginTop16]}>
-                <Dropdown
-                  label="Deposit Type"
-                  data={depositeTypeData}
-                  onSelected={onDepositeTypeChanged}
-                  isError={errorDT}
-                  selectedItem={depositeType}
-                />
-                <HelperText type="error" visible={errorDT}>
-                  {communication.InvalidDepositeType}
-                </HelperText>
-              </View>
+              <Dropdown
+                label="Deposit Type"
+                data={depositeTypeData}
+                onSelected={onDepositeTypeChanged}
+                isError={errorDT}
+                selectedItem={depositeType}
+              />
+              <HelperText type="error" visible={errorDT}>
+                {communication.InvalidDepositeType}
+              </HelperText>
             </>
           )}
 
@@ -2334,7 +2291,7 @@ const AddSource = ({ route, navigation }) => {
           {chequeNoStatus && (
             <>
               <TextInput
-                mode="outlined"
+               mode="outlined"
                 label="Cheque No"
                 value={chequeNo}
                 returnKeyType="next"
@@ -2353,7 +2310,7 @@ const AddSource = ({ route, navigation }) => {
           {UTRNoStatus && (
             <>
               <TextInput
-                mode="outlined"
+               mode="outlined"
                 label="UTR No"
                 value={UTRNo}
                 returnKeyType="next"
@@ -2405,7 +2362,7 @@ const AddSource = ({ route, navigation }) => {
           {commonStatus && (
             <>
               <TextInput
-                mode="outlined"
+               mode="outlined"
                 label="Notes"
                 value={notes}
                 returnKeyType="next"
