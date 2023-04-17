@@ -26,6 +26,7 @@ import { common } from "@material-ui/core/colors";
 import { projectVariables } from "../../../../utils/credentials";
 import RadioGroup from "react-native-radio-buttons-group";
 import * as Contacts from "expo-contacts";
+import DFButton from "../../../../components/Button";
 
 let userID = 0,
   groupID = 0,
@@ -37,6 +38,8 @@ let userID = 0,
 
 const AddSource = ({ route, navigation }) => {
   //#region Variables
+
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const [amountError, setAmountError] = React.useState(false);
   const [amount, settAmount] = React.useState("");
@@ -150,7 +153,8 @@ const AddSource = ({ route, navigation }) => {
   const [bankListStatus, setBankListStatus] = React.useState(false);
   const [bankBalanceStatus, setBankBalanceStatus] = React.useState(false);
   const [chequeNoStatus, setChequeNoStatus] = React.useState(false);
-  const [newMobileNumberStatus, setNewMobileNumberStatus] = React.useState(false);
+  const [newMobileNumberStatus, setNewMobileNumberStatus] =
+    React.useState(false);
   const [newContactNameStatus, setNewContactNameStatus] = React.useState(false);
   const [UTRNoStatus, setUTRNoStatus] = React.useState(false);
   const [chequeDateStatus, setChequeDateStatus] = React.useState(false);
@@ -159,7 +163,8 @@ const AddSource = ({ route, navigation }) => {
   const [commonStatus, setCommonStatus] = React.useState(false);
   const [buttonStatus, setButtonStatus] = React.useState(true);
   const [subCatStatus, setSubCatStatus] = React.useState(true);
-  const [rentalDescriptionStatus, setRentalDescriptionStatus] = React.useState(false);
+  const [rentalDescriptionStatus, setRentalDescriptionStatus] =
+    React.useState(false);
   const [clientListStatus, setClientListstatus] = React.useState(false);
   const [projectListStatus, setProjectListstatus] = React.useState(false);
   const [invoiceStatus, setInvoiceStatus] = React.useState(false);
@@ -231,7 +236,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const FetchData_Company = (transactionID) => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -273,10 +277,7 @@ const AddSource = ({ route, navigation }) => {
 
     setReceiptMode(data.pck_mode_name);
     setSource(data.pck_category_name);
-    FetchReceptCategory(
-      data.pck_mode_refno,
-      data.pck_category_refno
-    );
+    FetchReceptCategory(data.pck_mode_refno, data.pck_category_refno);
 
     if (
       data.pck_sub_category_refno != "" &&
@@ -291,41 +292,38 @@ const AddSource = ({ route, navigation }) => {
       setSubCatStatus(false);
     }
 
-    if (
-      data.pck_contacttype_refno != "" &&
-      data.pck_contacttype_refno != "0"
-    ) {
+    if (data.pck_contacttype_refno != "" && data.pck_contacttype_refno != "0") {
       setContactTypeStatus(true);
       FetchContactType(data.pck_contacttype_refno);
     }
 
-    if (
-      data.pck_mycontact_refno != "" &&
-      data.pck_mycontact_refno != "0"
-    ) {
+    if (data.pck_mycontact_refno != "" && data.pck_mycontact_refno != "0") {
       setReceivedStatus(true);
       setReceivedEditID(data.pck_mycontact_refno);
-      FetchReceiverList(data.pck_mycontact_refno, null, data.pck_sub_category_refno, data.pck_contacttype_refno);
+      FetchReceiverList(
+        data.pck_mycontact_refno,
+        null,
+        data.pck_sub_category_refno,
+        data.pck_contacttype_refno
+      );
     }
 
-    if (
-      data.deposit_type_refno != "" &&
-      data.deposit_type_refno != "0"
-    ) {
+    if (data.deposit_type_refno != "" && data.deposit_type_refno != "0") {
       setDepositTypeStatus(true);
       //setDepositeType(data.deposit_type_refno);
       setDepositeTypeEditID(data.deposit_type_refno);
       FetchDepositType(data.deposit_type_refno);
     }
 
-    if (
-      data.pck_mybank_refno != "" &&
-      data.pck_mybank_refno != "0"
-    ) {
+    if (data.pck_mybank_refno != "" && data.pck_mybank_refno != "0") {
       setBankListStatus(true);
       //setMyBankList(data.pck_mybank_refno);
       setMyBankListEditID(data.pck_mybank_refno);
-      FetchBankList(data.pck_mybank_refno, data.pck_mode_refno, data.pck_category_refno);
+      FetchBankList(
+        data.pck_mybank_refno,
+        data.pck_mode_refno,
+        data.pck_category_refno
+      );
     }
 
     if (data.cheque_no != "") {
@@ -359,23 +357,14 @@ const AddSource = ({ route, navigation }) => {
       );
     }
 
-    if (
-      data.myclient_refno != null &&
-      data.myclient_refno != "0"
-    ) {
+    if (data.myclient_refno != null && data.myclient_refno != "0") {
       setClientListstatus(true);
       FetchClientList(data.myclient_refno);
     }
 
-    if (
-      data.cont_project_refno != null &&
-      data.cont_project_refno != "0"
-    ) {
+    if (data.cont_project_refno != null && data.cont_project_refno != "0") {
       setProjectListstatus(true);
-      FetchProjectList(
-        data.myclient_refno,
-        data.cont_project_refno
-      );
+      FetchProjectList(data.myclient_refno, data.cont_project_refno);
     }
 
     if (data.invoice_no != "") {
@@ -383,7 +372,8 @@ const AddSource = ({ route, navigation }) => {
       setInvoiceNo(data.invoice_no);
     }
 
-    if (data.payment_group_refno != null &&
+    if (
+      data.payment_group_refno != null &&
       data.payment_group_refno != "" &&
       data.payment_group_refno != "0"
     ) {
@@ -400,14 +390,12 @@ const AddSource = ({ route, navigation }) => {
             setInvoiceStatus(true);
           }
         }
-
       });
 
       setPaymentGroup(recc);
     }
 
     if (data.payment_type_refno != "" && data.payment_type_refno != "0") {
-
       setPaymentTypeStatus(true);
 
       let recc = [...paymentRB];
@@ -462,16 +450,20 @@ const AddSource = ({ route, navigation }) => {
               setEntryTypeDisable(false);
               setEntryTypeStatus(true);
               if (route.params.type === "add") {
-
-                setEntryType(response.data.data[route.params.tabIndex].pck_entrytype_name);
-                setPktEntryTypeID(response.data.data[route.params.tabIndex].pck_entrytype_refno);
-                _pktEntryTypeID = response.data.data[route.params.tabIndex].pck_entrytype_refno;
+                setEntryType(
+                  response.data.data[route.params.tabIndex].pck_entrytype_name
+                );
+                setPktEntryTypeID(
+                  response.data.data[route.params.tabIndex].pck_entrytype_refno
+                );
+                _pktEntryTypeID =
+                  response.data.data[route.params.tabIndex].pck_entrytype_refno;
               }
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchRecepientMode = () => {
@@ -497,7 +489,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReceptCategory = (receiptModeID, categoryID) => {
@@ -533,7 +525,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchReceptSubCategory = (categoryID, subCategoryID) => {
@@ -569,11 +561,10 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBankList = (bankID, receiptModeID, categoryID) => {
-    
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -597,7 +588,7 @@ const AddSource = ({ route, navigation }) => {
             setMyBankListData(bank);
             if (bankID != null) {
               setMyBankList(
-                response.data.data.filter((el) => {
+                bankData.filter((el) => {
                   return el.bank_refno === bankID;
                 })[0].bankName
               );
@@ -605,18 +596,15 @@ const AddSource = ({ route, navigation }) => {
               if (receiptModeID == 1 && categoryID == 1) {
                 setBankBalanceStatus(true);
                 FetchBankCurrentBalance(bankID);
-              }
-              else {
+              } else {
                 setBankBalanceStatus(false);
                 setBankBalance(0);
               }
-
-
             }
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBankCurrentBalance = (bankID) => {
@@ -630,39 +618,54 @@ const AddSource = ({ route, navigation }) => {
         pck_mybank_refno: bankID.toString(),
       },
     };
-    Provider.createDFPocketDairy(Provider.API_URLS.get_availablebalance_cashinbank_sourceform, params)
+    Provider.createDFPocketDairy(
+      Provider.API_URLS.get_availablebalance_cashinbank_sourceform,
+      params
+    )
       .then((response) => {
-
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setBankBalance(response.data.data[0].cashinbank.toString());
 
             let amt = amount == "" ? 0 : parseFloat(amount);
-            let bankAmt = response.data.data[0].cashinbank == "" ? 0 : parseFloat(response.data.data[0].cashinbank);
+            let bankAmt =
+              response.data.data[0].cashinbank == ""
+                ? 0
+                : parseFloat(response.data.data[0].cashinbank);
 
             if (amt > bankAmt) {
               settAmount("");
-              setSnackbarText("Your entered amount is greater than for available balance.");
+              setSnackbarText(
+                "Your entered amount is greater than for available balance."
+              );
               setSnackbarColor(theme.colors.error);
               setSnackbarVisible(true);
-
             }
-
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
-  const FetchReceiverList = (contactID, contactName, subCategoryID, contactTypeID) => {
+  const FetchReceiverList = (
+    contactID,
+    contactName,
+    subCategoryID,
+    contactTypeID
+  ) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
         pck_sub_category_refno: subCategoryID.toString(),
-        pck_contacttype_refno: contactTypeID == null ? 0 : contactTypeID == "" ? 0 : contactTypeID.toString(),
+        pck_contacttype_refno:
+          contactTypeID == null
+            ? 0
+            : contactTypeID == ""
+            ? 0
+            : contactTypeID.toString(),
         AddNew: "NO",
-        UserPhoneBookAllContactList: ""
-      }
+        UserPhoneBookAllContactList: "",
+      },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
@@ -694,7 +697,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const CheckContactList = (contactList, originalList) => {
@@ -704,8 +707,8 @@ const AddSource = ({ route, navigation }) => {
         pck_sub_category_refno: "0",
         pck_contacttype_refno: "0",
         AddNew: "YES",
-        UserPhoneBookAllContactList: contactList
-      }
+        UserPhoneBookAllContactList: contactList,
+      },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmycontactname, params)
       .then((response) => {
@@ -720,13 +723,11 @@ const AddSource = ({ route, navigation }) => {
             }
 
             originalList.map((data) => {
-
               let n = response.data.data.find((el) => {
                 return el.Actual_no === data.phoneNumbers[0].number;
               });
 
               if (n != null) {
-
                 if (ct == 1 && n.Is_SamadhanUser == 1) {
                   margedList.push({
                     name: data.name,
@@ -734,8 +735,7 @@ const AddSource = ({ route, navigation }) => {
                     Is_MyContactList: n.Is_MyContactList,
                     Is_SamadhanUser: n.Is_SamadhanUser,
                   });
-                }
-                else if (ct == 2 && n.Is_SamadhanUser == 0) {
+                } else if (ct == 2 && n.Is_SamadhanUser == 0) {
                   margedList.push({
                     name: data.name,
                     number: data.phoneNumbers[0].number,
@@ -754,7 +754,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchClientList = (clientID) => {
@@ -788,13 +788,13 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchContactType = (editID) => {
     let params = {
       data: {
-        Sess_UserRefno: userID
+        Sess_UserRefno: userID,
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_contacttype, params)
@@ -818,7 +818,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -858,7 +858,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchDepositType = (depositID) => {
@@ -887,7 +887,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchPaymentType = () => {
@@ -914,7 +914,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchPaymentGroup = (editID) => {
@@ -941,7 +941,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   useEffect(() => {
@@ -1005,8 +1005,7 @@ const AddSource = ({ route, navigation }) => {
       setNewMobileNumberStatus(true);
       setNewContactNameStatus(true);
       setReceivedStatus(false);
-    }
-    else {
+    } else {
       setNewMobileNumberStatus(false);
       setNewContactNameStatus(false);
       setReceivedStatus(true);
@@ -1014,25 +1013,19 @@ const AddSource = ({ route, navigation }) => {
 
     if (category[0].pckCategoryID == 4) {
       setPaymentReminderStatus(true);
-    }
-    else {
+    } else {
       setPaymentReminderStatus(false);
     }
 
     if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
-
       setBankListStatus(true);
       FetchBankList();
       setUTRNoStatus(true);
-
     }
     if (mode[0].pckModeID == "3") {
-
       setDepositTypeStatus(true);
       FetchDepositType();
-
     }
-
   };
 
   const onSourceChanged = (text) => {
@@ -1054,8 +1047,7 @@ const AddSource = ({ route, navigation }) => {
       setSubCatStatus(false);
       setContactTypeStatus(true);
       FetchContactType();
-    }
-    else {
+    } else {
       setContactTypeStatus(false);
       setSubCatStatus(true);
       setClientListstatus(false);
@@ -1064,7 +1056,6 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const onSubCategoryNameChanged = (text) => {
-
     setReceivedFormFullData([]);
     setReceivedFormData([]);
     setReceivedForm([]);
@@ -1089,8 +1080,7 @@ const AddSource = ({ route, navigation }) => {
 
     if (category[0].pckCategoryID == 13) {
       setRentalDescriptionStatus(true);
-    }
-    else {
+    } else {
       setRentalDescriptionStatus(false);
     }
 
@@ -1363,8 +1353,7 @@ const AddSource = ({ route, navigation }) => {
       })[0].bank_refno;
 
       FetchBankCurrentBalance(bankID);
-    }
-    else {
+    } else {
       setBankBalanceStatus(false);
       setBankBalance(0);
     }
@@ -1383,19 +1372,24 @@ const AddSource = ({ route, navigation }) => {
     });
 
     if (mode.length > 0 && category.length > 0) {
-      if (mode[0].pckModeID == 1 && category[0].pckCategoryID == 1 && bankBalanceStatus) {
+      if (
+        mode[0].pckModeID == 1 &&
+        category[0].pckCategoryID == 1 &&
+        bankBalanceStatus
+      ) {
         let amt = text == "" ? 0 : parseFloat(text);
         let bankAmt = bankBalance == "" ? 0 : parseFloat(bankBalance);
 
         if (amt > bankAmt) {
           settAmount("");
-          setSnackbarText("Your entered amount is greater than your available balance.");
+          setSnackbarText(
+            "Your entered amount is greater than your available balance."
+          );
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
         }
       }
     }
-
   };
 
   const onrentalDescriptionChange = (text) => {
@@ -1410,7 +1404,6 @@ const AddSource = ({ route, navigation }) => {
       quality: 1,
     });
     if (!result.cancelled) {
-
       setDIError(false);
       const arrExt = result.uri.split(".");
       const unique_id = uuid.v4();
@@ -1500,7 +1493,6 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (subCatStatus) {
-      
       params.pck_sub_category_refno = subCategoryNameFullData.filter((el) => {
         return el.subCategoryName === subCategoryName;
       })[0].subcategoryID;
@@ -1513,9 +1505,11 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (projectListStatus) {
-      params.cont_project_refno = projectListFullData.filter((el) => {
-        return el.project_name === projectList;
-      })[0].cont_project_refno.toString();
+      params.cont_project_refno = projectListFullData
+        .filter((el) => {
+          return el.project_name === projectList;
+        })[0]
+        .cont_project_refno.toString();
     }
 
     if (invoiceStatus) {
@@ -1534,8 +1528,7 @@ const AddSource = ({ route, navigation }) => {
       params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
-    }
-    else {
+    } else {
       params.pck_contacttype_refno = "0";
     }
 
@@ -1544,11 +1537,13 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (newMobileNumberStatus) {
-      params.contact_phoneno = mobileNumber.trim() == "" ? "" : mobileNumber.trim();
+      params.contact_phoneno =
+        mobileNumber.trim() == "" ? "" : mobileNumber.trim();
     }
 
     if (rentalDescriptionStatus) {
-      params.pck_sub_category_notes = rentalDescription.trim() == "" ? "" : rentalDescription.trim();
+      params.pck_sub_category_notes =
+        rentalDescription.trim() == "" ? "" : rentalDescription.trim();
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1559,13 +1554,13 @@ const AddSource = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
@@ -1573,6 +1568,7 @@ const AddSource = ({ route, navigation }) => {
       datas
     )
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("add");
           navigation.goBack();
@@ -1585,6 +1581,7 @@ const AddSource = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -1649,9 +1646,11 @@ const AddSource = ({ route, navigation }) => {
     }
 
     if (projectListStatus) {
-      params.cont_project_refno = projectListFullData.filter((el) => {
-        return el.project_name === projectList;
-      })[0].cont_project_refno.toString();
+      params.cont_project_refno = projectListFullData
+        .filter((el) => {
+          return el.project_name === projectList;
+        })[0]
+        .cont_project_refno.toString();
     }
 
     if (invoiceStatus) {
@@ -1704,13 +1703,13 @@ const AddSource = ({ route, navigation }) => {
       params.pck_contacttype_refno = contactTypeFullData.filter((el) => {
         return el.pck_contacttype_name === contactType;
       })[0].pck_contacttype_refno;
-    }
-    else {
+    } else {
       params.pck_contacttype_refno = "0";
     }
 
     if (rentalDescriptionStatus) {
-      params.pck_sub_category_notes = rentalDescription.trim() == "" ? "" : rentalDescription.trim();
+      params.pck_sub_category_notes =
+        rentalDescription.trim() == "" ? "" : rentalDescription.trim();
     }
 
     datas.append("data", JSON.stringify(params));
@@ -1718,21 +1717,23 @@ const AddSource = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-          name: "appimage1212.jpg",
-          type: filePath.type + "/*",
-          uri:
-            Platform.OS === "android"
-              ? filePath.uri
-              : filePath.uri.replace("file://", ""),
-        }
+            name: "appimage1212.jpg",
+            type: filePath.type + "/*",
+            uri:
+              Platform.OS === "android"
+                ? filePath.uri
+                : filePath.uri.replace("file://", ""),
+          }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddsourceupdate
         : Provider.API_URLS.pck_companysource_verify_action,
-      datas)
+      datas
+    )
       .then((response) => {
+        setIsButtonLoading(false);
         if (response.data && response.data.code === 200) {
           route.params.fetchData("update");
           navigation.goBack();
@@ -1745,6 +1746,7 @@ const AddSource = ({ route, navigation }) => {
         }
       })
       .catch((e) => {
+        setIsButtonLoading(false);
         console.log(e);
         setSnackbarText(communication.NetworkError);
         setSnackbarVisible(true);
@@ -1817,11 +1819,16 @@ const AddSource = ({ route, navigation }) => {
 
     if (isValid) {
       // verify 324 api call
+      setIsButtonLoading(true);
       if (route.params.type === "edit" || route.params.type === "verify") {
         UpdateData(route.params.type);
       } else {
         InsertData();
       }
+    } else {
+      setSnackbarText("Please fill all mandatory fields");
+      setSnackbarColor(theme.colors.error);
+      setSnackbarVisible(true);
     }
   };
 
@@ -1834,7 +1841,9 @@ const AddSource = ({ route, navigation }) => {
           fields: [Contacts.Fields.PhoneNumbers],
         });
         if (data.length > 0) {
-          const arrPhones = [], arrNumbers = [], arrDisplayNumbers = [];
+          const arrPhones = [],
+            arrNumbers = [],
+            arrDisplayNumbers = [];
           data.map((k, i) => {
             //if (i < 100) {
             if (Array.isArray(k.phoneNumbers)) {
@@ -1842,21 +1851,38 @@ const AddSource = ({ route, navigation }) => {
               if (k.phoneNumbers.length > 1) {
                 if (k.phoneNumbers[0].number != null) {
                   arrNumbers.push(
-                    k.phoneNumbers[0].number == "" ? "" : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers[0].number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    k.phoneNumbers[0].number == ""
+                      ? ""
+                      : k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "").length <= 10
+                      ? k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                      : k.phoneNumbers[0].number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                          .slice(-10)
                   );
-                  arrDisplayNumbers.push(
-                    k.phoneNumbers[0].number
-                  );
+                  arrDisplayNumbers.push(k.phoneNumbers[0].number);
                 }
-              }
-              else {
+              } else {
                 if (k.phoneNumbers.number != null) {
                   arrNumbers.push(
-                    k.phoneNumbers.number == "" ? "" : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').length <= 10 ? k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '') : k.phoneNumbers.number.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10),
+                    k.phoneNumbers.number == ""
+                      ? ""
+                      : k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "").length <= 10
+                      ? k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                      : k.phoneNumbers.number
+                          .replace(/\s+/g, "")
+                          .replace(/[^0-9]/g, "")
+                          .slice(-10)
                   );
-                  arrDisplayNumbers.push(
-                    k.phoneNumbers.number
-                  );
+                  arrDisplayNumbers.push(k.phoneNumbers.number);
                 }
               }
             }
@@ -1866,14 +1892,12 @@ const AddSource = ({ route, navigation }) => {
           let obj = {};
           arrNumbers.map((key, index) => (obj[key] = arrDisplayNumbers[index]));
           CheckContactList(obj, arrPhones);
-
         }
       }
     })();
   };
 
   const PhoneClicked = (contact) => {
-    
     if (contact != null) {
       InsertNewContact(contact.name, contact.number);
     }
@@ -1884,7 +1908,13 @@ const AddSource = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         contact_name: name,
-        contact_phoneno: mobileNo.length > 10 ? mobileNo.replace(/\s+/g, '').replace(/[^0-9]/g, '').slice(-10) : mobileNo,
+        contact_phoneno:
+          mobileNo.length > 10
+            ? mobileNo
+                .replace(/\s+/g, "")
+                .replace(/[^0-9]/g, "")
+                .slice(-10)
+            : mobileNo,
         remarks: "",
         view_status: "1",
       },
@@ -1893,8 +1923,8 @@ const AddSource = ({ route, navigation }) => {
       .then((response) => {
         setIsContactLoading(false);
         if (response.data && response.data.code === 200) {
-
-          let subcatID = 0, ct = 0;
+          let subcatID = 0,
+            ct = 0;
           if (subCatStatus) {
             subcatID = subCategoryNameFullData.filter((el) => {
               return el.subCategoryName === subCategoryName;
@@ -1911,7 +1941,6 @@ const AddSource = ({ route, navigation }) => {
           setSnackbarText("New Contact Added");
           setSnackbarColor(theme.colors.success);
           setSnackbarVisible(true);
-
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setSnackbarVisible(true);
@@ -2009,7 +2038,7 @@ const AddSource = ({ route, navigation }) => {
           {rentalDescriptionStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Rental Description"
                 value={rentalDescription}
                 returnKeyType="next"
@@ -2175,7 +2204,6 @@ const AddSource = ({ route, navigation }) => {
                 >
                   Add New Contact
                 </Button>
-
               </View>
             </>
           )}
@@ -2202,7 +2230,7 @@ const AddSource = ({ route, navigation }) => {
           {newMobileNumberStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Mobile No."
                 value={mobileNumber}
                 maxLength={10}
@@ -2218,8 +2246,6 @@ const AddSource = ({ route, navigation }) => {
               </HelperText>
             </>
           )}
-
-
 
           {depositTypeStatus && (
             <>
@@ -2291,7 +2317,7 @@ const AddSource = ({ route, navigation }) => {
           {chequeNoStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Cheque No"
                 value={chequeNo}
                 returnKeyType="next"
@@ -2310,7 +2336,7 @@ const AddSource = ({ route, navigation }) => {
           {UTRNoStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="UTR No"
                 value={UTRNo}
                 returnKeyType="next"
@@ -2362,7 +2388,7 @@ const AddSource = ({ route, navigation }) => {
           {commonStatus && (
             <>
               <TextInput
-               mode="outlined"
+                mode="outlined"
                 label="Notes"
                 value={notes}
                 returnKeyType="next"
@@ -2400,8 +2426,6 @@ const AddSource = ({ route, navigation }) => {
             </>
           )}
 
-
-
           {commonStatus && (
             <>
               <View style={{ width: 160 }}>
@@ -2434,8 +2458,9 @@ const AddSource = ({ route, navigation }) => {
         <Card.Content>
           <Button
             mode="contained"
-            disabled={buttonStatus}
+            disabled={isButtonLoading ? isButtonLoading : buttonStatus}
             onPress={ValidateData}
+            loading={isButtonLoading}
           >
             Submit
           </Button>

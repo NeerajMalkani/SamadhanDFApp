@@ -111,6 +111,7 @@ const SendPending = ({ index, navigation }) => {
       Provider.API_URLS.architect_budget_send_pendng_list,
       { data: { Sess_UserRefno, Sess_company_refno, Sess_branch_refno } }
     ).then((res) => {
+      console.log('resp:', res.data.data);
       if (res.data.data) {
         setData(res.data.data);
       }
