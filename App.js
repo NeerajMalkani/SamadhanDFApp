@@ -215,6 +215,7 @@ import DailyActivityList from "./src/screens/Marketing/EmployeeActivity/DailyAct
 import ActivityReport from "./src/screens/Marketing/EmployeeActivity/ActivityReport";
 import MeetingPerson from "./src/screens/Marketing/EmployeeActivity/MeetingPerson";
 import EmployeeCustomerForm from "./src/screens/Marketing/EmployeeActivity/forms/EmployeeCustomerForm";
+import DailyActivityForm from "./src/screens/Marketing/EmployeeActivity/forms/DailyActivityForm";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -1331,6 +1332,18 @@ export default function App() {
                 component={CustomerList}
                 options={{
                   headerTitle: "My Customer List",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="DailyActivityForm"
+                component={DailyActivityForm}
+                options={{
+                  headerTitle: "Daily Activity Form",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

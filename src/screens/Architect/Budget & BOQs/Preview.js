@@ -9,7 +9,7 @@ import LabelInput from "../../Marketing/EmployeeActivity/common/LabelInput";
 import { Checkbox, TextInput, Button, Snackbar } from "react-native-paper";
 import { theme } from "../../../theme/apptheme";
 import { Table, TableWrapper, Row, Col } from "react-native-table-component";
-import WebView from "react-native-webview";
+// import WebView from "react-native-webview";
 // import RenderHTML from "react-native-render-html";
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
@@ -379,10 +379,10 @@ const Preview = ({ navigation, route }) => {
         >
           Terms & Conditions
         </Text>
-        <WebView
+        {/* <WebView
           originWhitelist={"*"}
           source={{ html: state.terms_condition }}
-        />
+        /> */}
         <View style={{ marginVertical: 24 }}>
           {route.params.data.action_button.includes(
             "Send Budget to Client"
@@ -391,6 +391,7 @@ const Preview = ({ navigation, route }) => {
               Send Budget to Client
             </Button>
           )}
+
           {route.params.data.client_approve_status_name === "Pending" && (
             <Text
               style={{

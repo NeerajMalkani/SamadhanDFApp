@@ -700,6 +700,30 @@ class Provider {
     client_budget_view: "client_budget_view/",
     client_budget_popup_approve: "client_budget_popup_approve/",
     client_budget_popup_reject: "client_budget_popup_reject/",
+    client_budget_popup_reject: "client_budget_popup_reject/",
+    get_entrytype_employeeactivityform: "get_entrytype_employeeactivityform/",
+    get_mycustomer_companyname_employeeactivityform:
+      "get_mycustomer_companyname_employeeactivityform/",
+    get_othercustomer_companyname_employeeactivityform:
+      "get_othercustomer_companyname_employeeactivityform/",
+    get_contactpersonname_employeeactivityform:
+      "get_contactpersonname_employeeactivityform/",
+    get_activitytype_employeeactivityform:
+      "get_activitytype_employeeactivityform/",
+    get_activitystatus_employeeactivityform:
+      "get_activitystatus_employeeactivityform/",
+    get_nextvisitno_employeeactivityform:
+      "get_nextvisitno_employeeactivityform/",
+    get_daysmonthsrefno_employeeactivityform:
+      "get_daysmonthsrefno_employeeactivityform/",
+    get_helpperson_employeeactivityform: "get_helpperson_employeeactivityform/",
+    employeeactivity_create: "employeeactivity_create/",
+    employeeactivity_update: "employeeactivity_update/",
+    get_marketingexecutivename_employeeactivityform:
+      "get_marketingexecutivename_employeeactivityform/",
+    get_referencerefno_employeeactivityform:
+      "get_referencerefno_employeeactivityform/",
+    employeeactivity_addnew_contact: "employeeactivity_addnew_contact/",
   };
 
   createDFPocketDairy(resource, params) {
