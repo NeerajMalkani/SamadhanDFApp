@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { useState } from "react";
 import Provider from "../../../api/Provider";
+import { Button } from "react-native-paper";
 
 const sample = [
   {
@@ -134,7 +135,7 @@ let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 let Sess_group_refno = 0;
-const DailyActivityList = () => {
+const DailyActivityList = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const fetchUser = async () => {
@@ -171,6 +172,11 @@ const DailyActivityList = () => {
       keyboardShouldPersistTaps="handled"
     >
       <View style={[Styles.flex1, { background: "#fff" }]}>
+        <View style={{ justifyContent: "flex-end" }}>
+          <Button onPress={() => navigation.navigate("DailyActivityForm")}>
+            Add
+          </Button>
+        </View>
         {data.map((person, i) => (
           <PersonCard
             key={i}

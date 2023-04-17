@@ -9,7 +9,7 @@ import LabelInput from "../../Marketing/EmployeeActivity/common/LabelInput";
 import { Checkbox, TextInput, Button, Snackbar } from "react-native-paper";
 import { theme } from "../../../theme/apptheme";
 import { Table, TableWrapper, Row, Col } from "react-native-table-component";
-import WebView from "react-native-webview";
+// import WebView from "react-native-webview";
 import ApproveModal from "./components/ApproveModal";
 import GenerateBOQ from "./components/GenerateBOQ";
 // import RenderHTML from "react-native-render-html";
@@ -440,10 +440,10 @@ const Preview = ({ navigation, route }) => {
         >
           Terms & Conditions
         </Text>
-        <WebView
+        {/* <WebView
           originWhitelist={"*"}
           source={{ html: state.terms_condition }}
-        />
+        /> */}
         <View style={{ marginVertical: 24 }}>
           {route.params?.data?.action_button?.includes(
             "Send Budget to Client"
