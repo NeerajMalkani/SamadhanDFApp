@@ -2,8 +2,8 @@ import axios from "axios";
 import { onePixelImage, timeoutLimit } from "../utils/paths";
 
 const BASE_OLD = "https://dfsolutions.in/api";
-const BASE_4 = "https://samadhanerp.com/api";
-const BASE_ = "https://samadhanerp.com/testkit/api";
+const BASE_ = "https://samadhanerp.com/api";
+const BASE_4 = "https://samadhanerp.com/testkit/api";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
@@ -699,7 +699,6 @@ class Provider {
     client_mybudget_list: "client_mybudget_list/",
     client_budget_view: "client_budget_view/",
     client_budget_popup_approve: "client_budget_popup_approve/",
-    client_budget_popup_reject: "client_budget_popup_reject/",
     architect_budget_finallytakeproject_update:
       "architect_budget_finallytakeproject_update/",
     architect_budget_cancel: "architect_budget_cancel/",
@@ -709,9 +708,6 @@ class Provider {
     architect_boq_generate: "architect_boq_generate/",
     architect_boq_view: "architect_boq_view/",
     client_boq_view: "client_boq_view/",
-    getpurposeofvisit_pckaddexpensesform:
-      "getpurposeofvisit_pckaddexpensesform/",
-
     getpurposeofvisit_pckaddexpensesform: "getpurposeofvisit_pckaddexpensesform/",
     client_budget_popup_reject: "client_budget_popup_reject/",
     get_entrytype_employeeactivityform: "get_entrytype_employeeactivityform/",
