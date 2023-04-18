@@ -138,6 +138,7 @@ let Sess_group_refno = 0;
 const DailyActivityList = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [data, setData] = useState([]);
+
   const fetchUser = async () => {
     const data = JSON.parse(await AsyncStorage.getItem("user"));
     Sess_UserRefno = data.UserID;
@@ -152,6 +153,7 @@ const DailyActivityList = ({ navigation }) => {
       fetchUser();
     }
   }, [isFocused]);
+
   const fetchData = () => {
     Provider.createDFEmployee(
       Provider.API_URLS.employeeactivity_myemployeeactivityrefnocheck,
@@ -161,11 +163,13 @@ const DailyActivityList = ({ navigation }) => {
           Sess_company_refno,
           Sess_branch_refno,
           Sess_group_refno,
-          myemployee_activity_refno: "0",
+          myemployee_activity_refno: "all",
         },
       }
-    ).then((res) => console.log(res.data));
+    ).then((res) => setData(res?.data?.data));
   };
+
+  console.log(data, "data");
   return (
     <ScrollView
       style={[Styles.flex1, { backgroundColor: "#fff" }, Styles.padding16]}
@@ -180,14 +184,14 @@ const DailyActivityList = ({ navigation }) => {
         {data.map((person, i) => (
           <PersonCard
             key={i}
-            activity={person.activity}
-            date={person.date}
-            location={person.location}
-            companyName={person.companyName}
-            mobileNo={person.mobileNo}
-            contactPerson={person.contactPerson}
-            status={person.status}
-            display={person.display}
+            activity={person.activity_name ?? "-"}
+            date={person.activity_date ?? "-"}
+            location={person.location_name ?? "-"}
+            companyName={person.company_name ?? "-"}
+            mobileNo={person.mobile_no ?? "-"}
+            contactPerson={person.contact_person ?? "-"}
+            status={person.activity_status_name ?? "-"}
+            display={person.view_status ?? "-"}
           />
         ))}
       </View>

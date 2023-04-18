@@ -68,14 +68,7 @@ let Sess_group_refno = 0;
 const CustomerList = ({ navigation }) => {
   const [data, setData] = useState([]);
   const isFocused = useIsFocused();
-  const fetchUser = async () => {
-    const data = JSON.parse(await AsyncStorage.getItem("user"));
-    Sess_UserRefno = data.UserID;
-    Sess_company_refno = data.Sess_company_refno;
-    Sess_branch_refno = data.Sess_branch_refno;
-    Sess_group_refno = data.Sess_group_refno;
-    fetchCustomers();
-  };
+
   const fetchCustomers = () => {
     Provider.createDFEmployee(Provider.API_URLS.employee_mycustomerlist, {
       data: {
@@ -86,18 +79,26 @@ const CustomerList = ({ navigation }) => {
       },
     })
       .then((res) => {
-        setData(res.data.data);
+        setData(res?.data?.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
+  const fetchUser = async () => {
+    const data = JSON.parse(await AsyncStorage.getItem("user"));
+    Sess_UserRefno = data.UserID;
+    Sess_company_refno = data.Sess_company_refno;
+    Sess_branch_refno = data.Sess_branch_refno;
+    Sess_group_refno = data.Sess_group_refno;
+    fetchCustomers();
+  };
   useEffect(() => {
     if (isFocused) {
       fetchUser();
     }
   }, [isFocused]);
+
   return (
     <ScrollView
       style={[Styles.flex1, { backgroundColor: "#fff" }, Styles.padding16]}
@@ -109,7 +110,7 @@ const CustomerList = ({ navigation }) => {
         </Button>
       </View>
       <View style={[Styles.flex1, { background: "#fff" }]}>
-        {data.map((com, i) => (
+        {data?.map((com, i) => (
           <CardComponent
             key={i}
             companyName={com.company_name}

@@ -5,11 +5,11 @@ const BASE_OLD = "https://dfsolutions.in/api";
 const BASE_ = "https://samadhanerp.com/api";
 const BASE_4 = "https://samadhanerp.com/testkit/api";
 const BASE_URL_OLD = "https://api.starselector.com/api";
-
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
 const BASE_URL_Admin = `${BASE_}/apiappadmin/spawu7S4urax/tYjD`;
 export const BASE_URL_Architect = `${BASE_}/apiarchitect/spawu7S4urax/tYjD`;
+export const BASE_URL_Employee = `${BASE_}/apiemployee/spawu7S4urax/tYjD`;
 const BASE_URL_Dashboard = `${BASE_}/apidashboard/spawu7S4urax/tYjD`;
 const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
 export const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
@@ -699,16 +699,7 @@ class Provider {
     client_mybudget_list: "client_mybudget_list/",
     client_budget_view: "client_budget_view/",
     client_budget_popup_approve: "client_budget_popup_approve/",
-    architect_budget_finallytakeproject_update:
-      "architect_budget_finallytakeproject_update/",
-    architect_budget_cancel: "architect_budget_cancel/",
-    architect_boq_cancel: "architect_boq_cancel/",
-    getboqtype_architect_boq_popup_generateform:
-      "getboqtype_architect_boq_popup_generateform/",
-    architect_boq_generate: "architect_boq_generate/",
-    architect_boq_view: "architect_boq_view/",
-    client_boq_view: "client_boq_view/",
-    getpurposeofvisit_pckaddexpensesform: "getpurposeofvisit_pckaddexpensesform/",
+    client_budget_popup_reject: "client_budget_popup_reject/",
     client_budget_popup_reject: "client_budget_popup_reject/",
     get_entrytype_employeeactivityform: "get_entrytype_employeeactivityform/",
     get_mycustomer_companyname_employeeactivityform:
@@ -733,7 +724,8 @@ class Provider {
     get_referencerefno_employeeactivityform:
       "get_referencerefno_employeeactivityform/",
     employeeactivity_addnew_contact: "employeeactivity_addnew_contact/",
-
+    employeeactivity_myemployeeactivityrefnocheck:
+      "employeeactivity_myemployeeactivityrefnocheck/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -887,6 +879,34 @@ class Provider {
       );
       const services = await axios.post(
         `${BASE_URL_Contractor}/contractor_getservicename_popup_quotationform/`,
+        params
+      );
+
+      return {
+        clients: clients.data.data ? clients.data.data : [],
+        states: states.data.data ? states.data.data : [],
+        units: units.data.data ? units.data.data : [],
+        services: services.data.data ? services.data.data : [],
+      };
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+  }
+
+  async getdropdownratecarddata(params, unload) {
+    try {
+      const clients = await axios.post(
+        `${BASE_URL_Contractor}/contractor_get_clientname_sendratecardform/`,
+        params
+      );
+      const states = await axios.post(`${BASE_URL}/getstatedetails/`, params);
+      const units = await axios.post(
+        `${BASE_URL_Contractor}/contractor_get_unitofsales_sendratecardform/`,
+        params
+      );
+      const services = await axios.post(
+        `${BASE_URL_Contractor}/contractor_getservicename_popup_sendratecardform/`,
         params
       );
 
@@ -1086,6 +1106,14 @@ class Provider {
       return axios.post(`${BASE_URL_Architect}/${resource}`, params);
     } else {
       return axios.post(`${BASE_URL_Architect}/${resource}`);
+    }
+  }
+
+  createDFEmployee(resource, params) {
+    if (params) {
+      return axios.post(`${BASE_URL_Employee}/${resource}`, params);
+    } else {
+      return axios.post(`${BASE_URL_Employee}/${resource}`);
     }
   }
 
