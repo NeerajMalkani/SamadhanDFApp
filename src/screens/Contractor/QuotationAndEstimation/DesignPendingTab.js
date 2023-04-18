@@ -187,7 +187,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    console.log('start');
+    console.log("start");
     setIsLoading(true);
     let params = {
       data: {
@@ -202,7 +202,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
       params
     )
       .then((response) => {
-        console.log('response:', JSON.stringify(response.data));
+        console.log("response:", JSON.stringify(response.data));
         if (response.data && response.data.data) {
           listData[1](response.data.data);
           listSearchData[1](response.data.data);
@@ -591,93 +591,90 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
             <>
               <Card.Content style={[Styles.marginTop16]}>
                 {/* <Text>{current.action_status_name}</Text> */}
-                {current?.action_status_name?.includes(
+                {current?.message_button?.includes(
                   "Waiting for Client Approval"
-                ) ? (
+                ) && (
                   <Text
                     style={{ textAlign: "center", color: "red", fontSize: 20 }}
                   >
                     Waiting for Client Approval
                   </Text>
-                ) : (
-                  <>
-                    {current.action_status_name?.includes("Reject") && (
-                      <Button
-                        mode="outlined"
-                        style={{
+                )}
+                <>
+                  {current.action_status_name?.includes("Reject") && (
+                    <Button
+                      mode="outlined"
+                      style={{
+                        borderColor: "red",
+                        borderWidth: 1.2,
+                        color: "red",
+                      }}
+                      onPress={() => {
+                        refRBSheet.current.close();
+                        setText("Reject");
+                        setPopupVisible(true);
+                      }}
+                    >
+                      <Text style={{ color: "red" }}> Reject</Text>
+                    </Button>
+                  )}
+                  {current.action_status_name?.includes("Send to Client") && (
+                    <Button
+                      mode="outlined"
+                      style={{
+                        borderColor: "green",
+                        borderWidth: 1.2,
+                        color: "green",
+                      }}
+                      onPress={() => {
+                        setText(`sendQuotationToClient`);
+                        showDialog();
+                      }}
+                    >
+                      <Text style={{ color: "green" }}>Send to Client</Text>
+                    </Button>
+                  )}
+                  {current.action_status_name?.includes("Cancel Quotation") && (
+                    <Button
+                      onPress={() => {
+                        setText(`cancelQuotation`);
+                        showDialog();
+                      }}
+                      mode="outlined"
+                      style={[
+                        Styles.marginTop16,
+                        {
                           borderColor: "red",
                           borderWidth: 1.2,
                           color: "red",
-                        }}
-                        onPress={() => {
-                          refRBSheet.current.close();
-                          setText("Reject");
-                          setPopupVisible(true);
-                        }}
-                      >
-                        <Text style={{ color: "red" }}> Reject</Text>
-                      </Button>
-                    )}
-                    {current.action_status_name?.includes("Send to Client") && (
-                      <Button
-                        mode="outlined"
-                        style={{
-                          borderColor: "green",
-                          borderWidth: 1.2,
-                          color: "green",
-                        }}
-                        onPress={() => {
-                          setText(`sendQuotationToClient`);
-                          showDialog();
-                        }}
-                      >
-                        <Text style={{ color: "green" }}>Send to Client</Text>
-                      </Button>
-                    )}
-                    {current.action_status_name?.includes(
-                      "Cancel Quotation"
-                    ) && (
-                      <Button
-                        onPress={() => {
-                          setText(`cancelQuotation`);
-                          showDialog();
-                        }}
-                        mode="outlined"
-                        style={[
-                          Styles.marginTop16,
-                          {
-                            borderColor: "red",
-                            borderWidth: 1.2,
-                            color: "red",
-                          },
-                        ]}
-                      >
-                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
-                      </Button>
-                    )}
-                    {current.action_status_name?.includes(
-                      "Self & Final Approve"
-                    ) && (
-                      <Button
-                        mode="outlined"
-                        style={{
-                          borderColor: "green",
-                          borderWidth: 1.2,
-                          color: "green",
-                        }}
-                        onPress={() => {
-                          refRBSheet.current.close();
-                          setText("Self & Final Approve");
-                          setPopupVisible(true);
-                        }}
-                      >
-                        <Text style={{ color: "green" }}>
-                          Self & Final Approve
-                        </Text>
-                      </Button>
-                    )}
-                  </>
-                )}
+                        },
+                      ]}
+                    >
+                      <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                    </Button>
+                  )}
+                  {current.action_status_name?.includes(
+                    "Self & Final Approve"
+                  ) && (
+                    <Button
+                      mode="outlined"
+                      style={{
+                        borderColor: "green",
+                        borderWidth: 1.2,
+                        color: "green",
+                      }}
+                      onPress={() => {
+                        refRBSheet.current.close();
+                        setText("Self & Final Approve");
+                        setPopupVisible(true);
+                      }}
+                    >
+                      <Text style={{ color: "green" }}>
+                        Self & Final Approve
+                      </Text>
+                    </Button>
+                  )}
+                </>
               </Card.Content>
             </>
             <View style={{ height: 20 }}></View>

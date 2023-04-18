@@ -100,9 +100,10 @@ const AddEmployee = ({ route, navigation }) => {
         Sess_branch_refno: Sess_branch_refno,
       },
     };
-
+    console.log('add param:', params);
     Provider.createDFCommon(Provider.API_URLS.employeecreate, params)
       .then((response) => {
+        console.log('resp:', response.data.data);
         if (
           response.data &&
           response.data.code === 200 &&
@@ -125,6 +126,7 @@ const AddEmployee = ({ route, navigation }) => {
   };
 
   const OnAddNewEmployee = () => {
+    console.log('click button');
     let isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {

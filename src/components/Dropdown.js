@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
-import SelectDropdown from 'react-native-select-dropdown';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Styles } from '../styles/styles';
-import { theme } from '../theme/apptheme';
+import { useState } from "react";
+import { View } from "react-native";
+import { Text } from "react-native-paper";
+import SelectDropdown from "react-native-select-dropdown";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { Styles } from "../styles/styles";
+import { theme } from "../theme/apptheme";
 
 export default Dropdown = ({
   data,
-  label,
+  label = "",
   onSelected,
   isError,
   selectedItem,
@@ -33,7 +33,7 @@ export default Dropdown = ({
         style,
       ]}
     >
-      {label !== '' ? (
+      {label !== "" ? (
         <Text
           style={[
             Styles.positionAbsolute,
@@ -69,13 +69,13 @@ export default Dropdown = ({
         data={data}
         ref={reference}
         defaultValueByIndex={data.indexOf(selectedItem)}
-        dropdownOverlayColor='rgba(0,0,0,0.2)'
+        dropdownOverlayColor="rgba(0,0,0,0.2)"
         defaultButtonText={label}
         disabled={forceDisable ? true : data.length === 0 ? true : false}
         buttonStyle={{
-          width: '100%',
+          width: "100%",
           height: 56,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
         }}
         renderCustomizedButtonChild={(selectedItem) => {
           return (
@@ -85,7 +85,7 @@ export default Dropdown = ({
                 Styles.flexRow,
                 Styles.flexAlignCenter,
                 Styles.paddingHorizontal8,
-                { justifyContent: 'space-between' },
+                { justifyContent: "space-between" },
               ]}
             >
               <Text
@@ -120,7 +120,7 @@ export default Dropdown = ({
         renderDropdownIcon={(isOpened) => {
           return (
             <FontAwesome
-              name={isOpened ? 'caret-up' : 'caret-down'}
+              name={isOpened ? "caret-up" : "caret-down"}
               color={
                 isError
                   ? theme.colors.error
@@ -146,13 +146,13 @@ export default Dropdown = ({
         }}
         selectedRowTextStyle={{
           color: theme.colors.primary,
-          textAlign: 'left',
+          textAlign: "left",
           fontSize: 16,
-          fontWeight: '600',
+          fontWeight: "600",
         }}
         rowTextStyle={{
           color: theme.colors.text,
-          textAlign: 'left',
+          textAlign: "left",
           fontSize: 16,
         }}
       />
