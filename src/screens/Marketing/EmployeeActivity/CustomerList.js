@@ -1,6 +1,6 @@
 import { ScrollView, Text, View } from "react-native";
 import React from "react";
-import { Button } from "react-native-paper";
+import { Button, FAB } from "react-native-paper";
 import { theme } from "../../../theme/apptheme";
 import { Styles } from "../../../styles/styles";
 import LabelInput from "./common/LabelInput";
@@ -104,11 +104,6 @@ const CustomerList = ({ navigation }) => {
       style={[Styles.flex1, { backgroundColor: "#fff" }, Styles.padding16]}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={{ justifyContent: "flex-end" }}>
-        <Button onPress={() => navigation.navigate("EmployeeCustomerForm")}>
-          Add
-        </Button>
-      </View>
       <View style={[Styles.flex1, { background: "#fff" }]}>
         {data?.map((com, i) => (
           <CardComponent
@@ -120,6 +115,15 @@ const CustomerList = ({ navigation }) => {
           />
         ))}
       </View>
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", top: 600, right: 0 },
+        ]}
+        icon="plus"
+        onPress={() => navigation.navigate("EmployeeCustomerForm")}
+      />
     </ScrollView>
   );
 };

@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { useState } from "react";
 import Provider from "../../../api/Provider";
-import { Button } from "react-native-paper";
+import { Button, FAB } from "react-native-paper";
 
 const sample = [
   {
@@ -176,11 +176,6 @@ const DailyActivityList = ({ navigation }) => {
       keyboardShouldPersistTaps="handled"
     >
       <View style={[Styles.flex1, { background: "#fff" }]}>
-        <View style={{ justifyContent: "flex-end" }}>
-          <Button onPress={() => navigation.navigate("DailyActivityForm")}>
-            Add
-          </Button>
-        </View>
         {data.map((person, i) => (
           <PersonCard
             key={i}
@@ -195,6 +190,15 @@ const DailyActivityList = ({ navigation }) => {
           />
         ))}
       </View>
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", top: 620, right: 0 },
+        ]}
+        icon="plus"
+        onPress={() => navigation.navigate("DailyActivityForm")}
+      />
     </ScrollView>
   );
 };

@@ -13,7 +13,7 @@ import Dropdown from "../../../../components/Dropdown";
 import FormInput from "../common/Input";
 import { createIconSetFromFontello } from "react-native-vector-icons";
 
-const DailyActivityForm = () => {
+const DailyActivityForm = ({ navigation }) => {
   const [entryType, setEntryType] = useState([]);
   const [companyName, setCompanyName] = useState([]);
   const [companyPerson, setCompanyPerson] = useState([]);
@@ -72,16 +72,28 @@ const DailyActivityForm = () => {
     ).then((res) => setEntryType(res.data?.data));
   };
 
-  const fetchMarketingExecutiveName = async () => {};
-
-  const fetchOtherompanyName = async () => {
+  const fetchMarketingExecutiveName = async () => {
     await Provider.createDFEmployee(
-      Provider.API_URLS.get_othercustomer_companyname_employeeactivityform,
+      Provider.API_URLS.get_marketingexecutivename_employeeactivityform,
       {
         data: {
           Sess_UserRefno: userRefno,
           Sess_company_refno: companyRefno,
-          refer_user_refno: "0", // to fix
+          activity_entry_type: "1",
+        },
+      }
+    ).then((res) => setCompanyName(res.data?.data));
+  };
+
+  const fetchOtherCompanyName = async () => {
+    await Provider.createDFEmployee(
+      Provider.API_URLS.get_othercustomer_companyname_employeeactivityform,
+      {
+        data: {
+          Sess_UserRefno: userRefNo,
+          Sess_company_refno: companyRefno,
+          Sess_branch_refno: branchRefno,
+          activity_entry_type: "2",
         },
       }
     ).then((res) => setCompanyName(res.data?.data));
@@ -234,7 +246,7 @@ const DailyActivityForm = () => {
         ...state,
       },
     })
-      .then((res) => console.log(res))
+      .then((res) => navigation.navigate("DailyActivityList"))
       .catch(console.log);
   };
   const fetchUser = async () => {
