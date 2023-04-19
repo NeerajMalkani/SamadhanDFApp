@@ -10,7 +10,6 @@ import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
-import { creds } from "../../../utils/credentials";
 import uuid from "react-native-uuid";
 import { AWSImagePath } from "../../../utils/paths";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,6 +21,7 @@ import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { APIConverter, RemoveUnwantedParameters } from "../../../utils/apiconverter";
+import { projectLoginTypes } from "../../../utils/credentials";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0,
@@ -42,6 +42,7 @@ const UserProfile = ({ route, navigation }) => {
   const isFocused = useIsFocused();
   const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
 
+  const [companyStatus, setCompanyStatus] = React.useState(true);
   const [companyName, setCompanyName] = useState("");
   const [companyNameInvalid, setCompanyNameInvalid] = useState("");
   const companyNameRef = useRef({});
@@ -54,6 +55,7 @@ const UserProfile = ({ route, navigation }) => {
   const [contactNumberInvalid, setContactNumberInvalid] = useState("");
   const contactNumberRef = useRef({});
 
+  const [gstStatus, setGSTStatus] = React.useState(true);
   const [gstNumber, setGSTNumber] = useState("");
   const [gstNumberInvalid, setGSTNumberInvalid] = useState("");
   const gstNumberRef = useRef({});
@@ -178,6 +180,10 @@ const UserProfile = ({ route, navigation }) => {
       companyID = JSON.parse(userData).Sess_company_refno;
       groupID = JSON.parse(userData).Sess_group_refno;
       // branchID = JSON.parse(userData).Sess_branch_refno;
+      if(groupID == projectLoginTypes.DEF_GENERALUSER_GROUP_REFNO) {
+        setCompanyStatus(false);
+        setGSTStatus(false);
+      }
       FetchBasicDetails();
       FetchData();
     }
@@ -384,7 +390,7 @@ const UserProfile = ({ route, navigation }) => {
           setSnackbarText("Data updated successfully");
           setSnackbarVisible(true);
 
-          if (route.params && route.params.from == "gu_estimate" || route.params && route.params.from == "adm_profile" ) {
+          if (route.params && route.params.from == "gu_estimate" || route.params && route.params.from == "adm_profile") {
             GetUserDetails(userID);
           }
           else {
@@ -570,23 +576,28 @@ const UserProfile = ({ route, navigation }) => {
             {/* <Header navigation={navigation} title="Update Profile" isDrawer="false" /> */}
             <ScrollView style={[Styles.flex1, Styles.backgroundColor, { marginBottom: 64 }]} keyboardShouldPersistTaps="handled">
               <View style={[Styles.padding16]}>
-                <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
-                <HelperText type="error" visible={companyNameInvalid}>
-                  {communication.InvalidActivityName}
-                </HelperText>
+                {companyStatus &&
+                  <>
+                    <TextInput ref={companyNameRef} mode="outlined" dense label="Company / Firm Name" value={companyName} returnKeyType="next" onSubmitEditing={() => contactNameRef.current.focus()} onChangeText={onCompanyNameChanged} style={{ backgroundColor: "white" }} error={companyNameInvalid} />
+                    <HelperText type="error" visible={companyNameInvalid}>
+                      {communication.InvalidActivityName}
+                    </HelperText>
+                  </>
+                }
+
                 <TextInput ref={contactNameRef} mode="outlined" dense label="Contact Person Name" value={contactName} returnKeyType="next" onSubmitEditing={() => contactNumberRef.current.focus()} onChangeText={onContactNameChanged} style={{ backgroundColor: "white" }} error={contactNameInvalid} />
                 <HelperText type="error" visible={contactNameInvalid}>
                   {communication.InvalidContactPerson}
                 </HelperText>
-                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Contact Number" 
-                value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()} 
-                onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
+                <TextInput ref={contactNumberRef} mode="outlined" dense keyboardType="number-pad" maxLength={10} label="Contact Number"
+                  value={contactNumber} returnKeyType="next" onSubmitEditing={() => gstNumberRef.current.focus()}
+                  onChangeText={onContactNumberChanged} style={{ backgroundColor: "white" }} error={contactNumberInvalid} />
                 <HelperText type="error" visible={contactNumberInvalid}>
                   {communication.InvalidMobileNumber}
                 </HelperText>
-                <TextInput ref={addressRef} mode="outlined" dense label="Location Name" value={address} returnKeyType="next" 
-                onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }} 
-                error={addressInvalid} />
+                <TextInput ref={addressRef} mode="outlined" dense label="Address" value={address} returnKeyType="next"
+                  onSubmitEditing={() => locationRef.current.focus()} onChangeText={onAddressChanged} style={{ backgroundColor: "white" }}
+                  error={addressInvalid} />
                 <HelperText type="error" visible={addressInvalid}>
                   {communication.InvalidAddress}
                 </HelperText>
@@ -602,15 +613,20 @@ const UserProfile = ({ route, navigation }) => {
                 <HelperText type="error" visible={pincodeInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>
-                <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No." 
-                value={gstNumber} returnKeyType="next"  maxLength={15} autoCapitalize='characters'
-                autoCorrect={false}
-                onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
-                <HelperText type="error" visible={gstNumberInvalid}>
-                  {communication.InvalidActivityName}
-                </HelperText>
+                {gstStatus &&
+                  <>
+                    <TextInput ref={gstNumberRef} mode="outlined" dense label="GST No."
+                      value={gstNumber} returnKeyType="next" maxLength={15} autoCapitalize='characters'
+                      autoCorrect={false}
+                      onSubmitEditing={() => panNumberRef.current.focus()} onChangeText={onGSTNumberChanged} style={{ backgroundColor: "white" }} error={gstNumberInvalid} />
+                    <HelperText type="error" visible={gstNumberInvalid}>
+                      {communication.InvalidActivityName}
+                    </HelperText>
+                  </>
+                }
+
                 <TextInput ref={panNumberRef} mode="outlined" dense label="PAN No." autoCapitalize='characters'
-            autoCorrect={false} maxLength={10} value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
+                  autoCorrect={false} maxLength={10} value={panNumber} keyboardType="name-phone-pad" returnKeyType="next" onSubmitEditing={() => addressRef.current.focus()} onChangeText={onPANNumberChanged} style={{ backgroundColor: "white" }} error={panNumberInvalid} />
                 <HelperText type="error" visible={panNumberInvalid}>
                   {communication.InvalidActivityName}
                 </HelperText>

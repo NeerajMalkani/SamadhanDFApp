@@ -101,6 +101,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
       Sess_branch_refno = userDataParsed.Sess_branch_refno;
       Sess_CompanyAdmin_UserRefno = userDataParsed.Sess_CompanyAdmin_UserRefno;
       FetchImageGalleryProductDetail();
+      console.log('Sess_company_refno:', Sess_company_refno);
     }
   };
 
@@ -214,13 +215,15 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        Sess_company_refno,
+        Sess_company_refno: Sess_company_refno,
         company_name_s: companyName,
         mobile_no_s: mobileno,
       },
     };
+    console.log('client params:', params);
     Provider.createDFCommon(Provider.API_URLS.ClientSearch, params)
       .then((response) => {
+        console.log('resp search:', response.data);
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setOtherClients(response.data.data);
@@ -592,7 +595,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
                 <View style={[Styles.paddingStart0, Styles.paddingEnd8, Styles.flex5]}>
                   <Dropdown label="Feet" data={CreateNumberDropdown(1, 50)} onSelected={onWidthFeetSelected} selectedItem={widthFeet} />
                 </View>
-                <View style={[Styles.paddingStart8 , Styles.flex5]}>
+                <View style={[Styles.paddingStart8, Styles.flex5]}>
                   <Dropdown label="Inches" data={CreateNumberDropdown(0, 11)} onSelected={onWidthInchesSelected} selectedItem={widthInches} />
                 </View>
               </View>
@@ -740,7 +743,7 @@ const EstimationPreviewScreen = ({ route, navigation }) => {
             </View>
           )}
           <View style={[Styles.height400, Styles.marginTop16, Styles.paddingHorizontal16, Styles.paddingBottom16]}>
-          <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
+            <TabView renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} initialLayout={{ width: layout.width }} />
             <TextInput
               mode="outlined"
               label="Total (Sq.Ft.)"

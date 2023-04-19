@@ -700,7 +700,6 @@ class Provider {
     client_budget_view: "client_budget_view/",
     client_budget_popup_approve: "client_budget_popup_approve/",
     client_budget_popup_reject: "client_budget_popup_reject/",
-    client_budget_popup_reject: "client_budget_popup_reject/",
     get_entrytype_employeeactivityform: "get_entrytype_employeeactivityform/",
     get_mycustomer_companyname_employeeactivityform:
       "get_mycustomer_companyname_employeeactivityform/",

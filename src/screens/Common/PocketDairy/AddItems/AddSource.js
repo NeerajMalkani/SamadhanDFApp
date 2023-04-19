@@ -463,7 +463,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchRecepientMode = () => {
@@ -489,7 +489,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceptCategory = (receiptModeID, categoryID) => {
@@ -525,7 +525,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceptSubCategory = (categoryID, subCategoryID) => {
@@ -561,7 +561,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankList = (bankID, receiptModeID, categoryID) => {
@@ -604,7 +604,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankCurrentBalance = (bankID) => {
@@ -644,7 +644,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceiverList = (
@@ -661,8 +661,8 @@ const AddSource = ({ route, navigation }) => {
           contactTypeID == null
             ? 0
             : contactTypeID == ""
-            ? 0
-            : contactTypeID.toString(),
+              ? 0
+              : contactTypeID.toString(),
         AddNew: "NO",
         UserPhoneBookAllContactList: "",
       },
@@ -697,7 +697,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const CheckContactList = (contactList, originalList) => {
@@ -754,7 +754,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchClientList = (clientID) => {
@@ -788,7 +788,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchContactType = (editID) => {
@@ -818,7 +818,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -858,7 +858,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepositType = (depositID) => {
@@ -887,7 +887,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentType = () => {
@@ -914,7 +914,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentGroup = (editID) => {
@@ -941,7 +941,7 @@ const AddSource = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   useEffect(() => {
@@ -1056,13 +1056,14 @@ const AddSource = ({ route, navigation }) => {
   };
 
   const onSubCategoryNameChanged = (text) => {
+
     setReceivedFormFullData([]);
     setReceivedFormData([]);
     setReceivedForm([]);
-
-    resetFields();
+    //resetFields();
     setSubCategoryName(text);
     setSCNError(false);
+
     setCommonStatus(true);
     setButtonStatus(false);
 
@@ -1132,7 +1133,8 @@ const AddSource = ({ route, navigation }) => {
         FetchBankList();
         setBankListStatus(true);
         setPaymentReminderStatus(true);
-      } else if (
+      }
+      else if (
         subcat[0].subcategoryID == "9" ||
         subcat[0].subcategoryID == "10" ||
         subcat[0].subcategoryID == "11" ||
@@ -1554,13 +1556,13 @@ const AddSource = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
@@ -1717,13 +1719,13 @@ const AddSource = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
@@ -1854,12 +1856,12 @@ const AddSource = ({ route, navigation }) => {
                     k.phoneNumbers[0].number == ""
                       ? ""
                       : k.phoneNumbers[0].number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers[0].number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers[0].number
+                        : k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1872,12 +1874,12 @@ const AddSource = ({ route, navigation }) => {
                     k.phoneNumbers.number == ""
                       ? ""
                       : k.phoneNumbers.number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers.number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers.number
+                        : k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1911,9 +1913,9 @@ const AddSource = ({ route, navigation }) => {
         contact_phoneno:
           mobileNo.length > 10
             ? mobileNo
-                .replace(/\s+/g, "")
-                .replace(/[^0-9]/g, "")
-                .slice(-10)
+              .replace(/\s+/g, "")
+              .replace(/[^0-9]/g, "")
+              .slice(-10)
             : mobileNo,
         remarks: "",
         view_status: "1",
