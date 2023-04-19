@@ -265,17 +265,15 @@ const EmployeeListScreen = ({ navigation }) => {
         <List.Item
           title={data.item.employee_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Mob.: ${
-            NullOrEmpty(data.item.employee_mobile_no)
+          description={`Mob.: ${NullOrEmpty(data.item.employee_mobile_no)
               ? ""
               : data.item.employee_mobile_no
-          }\nProfile Status: ${
-            NullOrEmpty(data.item.profie_update_status)
+            }\nProfile Status: ${NullOrEmpty(data.item.profie_update_status)
               ? ""
               : data.item.profie_update_status == "0"
-              ? "incomplete"
-              : "complete"
-          } `}
+                ? "incomplete"
+                : "complete"
+            } `}
           onPress={() => {
             refRBSheet.current.open();
             setEmpCode(data.item.common_employee_code);
@@ -400,7 +398,8 @@ const EmployeeListScreen = ({ navigation }) => {
             onPress: AddEmployee,
           },
         ]}
-        style={{ right: 24, bottom: 24 }}
+        style={{ paddingRight: 24, paddingBottom: 24 }}
+        sty
         onStateChange={onStateChange}
         onPress={() => {
           if (open) {
@@ -444,8 +443,8 @@ const EmployeeListScreen = ({ navigation }) => {
                 NullOrEmpty(profileStatus)
                   ? ""
                   : profileStatus
-                  ? "Complete"
-                  : "Incomplete"
+                    ? "Complete"
+                    : "Incomplete"
               }
             />
             <List.Item
@@ -460,8 +459,8 @@ const EmployeeListScreen = ({ navigation }) => {
                 NullOrEmpty(verifyStatus)
                   ? ""
                   : verifyStatus == "1"
-                  ? "Verified"
-                  : "Not Verified"
+                    ? "Verified"
+                    : "Not Verified"
               }
             />
           </ScrollView>

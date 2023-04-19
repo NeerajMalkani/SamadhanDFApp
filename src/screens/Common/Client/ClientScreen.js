@@ -235,7 +235,7 @@ const ClientScreen = ({ navigation }) => {
             // do something if the speed dial is open
           }
         }}
-        style={{ right: 24, bottom: 24 }}
+        style={{ paddingRight: 24, paddingBottom: 24 }}
       />
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
         {snackbarText}
