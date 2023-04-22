@@ -54,16 +54,18 @@ const Preview = ({ navigation, route }) => {
       await fetchUnits();
     }
   };
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => {
+      async () => {
         if (isFocused) {
-          navigation.pop();
-          navigation.navigate("Budget&BOQ's", { index: route.params.index });
-        } else {
-          navigation.goBack();
+          await AsyncStorage.setItem(
+            "budget-index",
+            String(route.params.index)
+          );
         }
+        navigation.goBack();
         return true;
       }
     );

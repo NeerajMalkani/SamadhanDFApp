@@ -12,6 +12,7 @@ import Approved from "./Approved";
 import { theme } from "../../../theme/apptheme";
 import { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const renderTabBar = (props) => (
   <TabBar
@@ -44,17 +45,30 @@ const BudgetBOQ = ({ navigation, route }) => {
     { key: "approved-pending", title: "Budget Approve Pending List" },
     { key: "approved", title: "Budget & BOQ Approved List" },
   ];
-  const [index, setIndex] = React.useState(route.params.index || 0);
-
+  const [index, setIndex] = React.useState(Number(route.params.index || 0));
+  useEffect(() => {
+    if (isFocused)
+      AsyncStorage.getItem("budget-index").then((res) => setIndex(Number(res)));
+  }, [isFocused, setIndex]);
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "add-update":
         return (
-          <AddUpdate index={index} navigation={navigation} unload={unload} />
+          <AddUpdate
+            index={index}
+            navigation={navigation}
+            unload={unload}
+            setIndex={setIndex}
+          />
         );
       case "send-pending":
         return (
-          <SendPending index={index} navigation={navigation} unload={unload} />
+          <SendPending
+            index={index}
+            navigation={navigation}
+            unload={unload}
+            setIndex={setIndex}
+          />
         );
       case "approved-pending":
         return (
@@ -62,11 +76,17 @@ const BudgetBOQ = ({ navigation, route }) => {
             index={index}
             navigation={navigation}
             unload={unload}
+            setIndex={setIndex}
           />
         );
       case "approved":
         return (
-          <Approved index={index} navigation={navigation} unload={unload} />
+          <Approved
+            index={index}
+            navigation={navigation}
+            unload={unload}
+            setIndex={setIndex}
+          />
         );
     }
   };
@@ -78,7 +98,10 @@ const BudgetBOQ = ({ navigation, route }) => {
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={renderScene}
-        onIndexChange={setIndex}
+        onIndexChange={async (e) => {
+          setIndex(e);
+          await AsyncStorage.setItem("budget-index", String(e));
+        }}
       />
       <Snackbar
         visible={snackbarVisible}

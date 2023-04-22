@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import Provider from "../../../api/Provider";
 import { SwipeListView } from "react-native-swipe-list-view";
 
-const RenderItems = (data, navigation, index) => {
+const RenderItems = (data, navigation, index, setIndex) => {
   return (
     <View
       style={[
@@ -76,7 +76,11 @@ const RenderItems = (data, navigation, index) => {
         <Button
           mode="outlined"
           onPress={() => {
-            navigation.navigate("Budget Preview", { data: data.item, index });
+            navigation.navigate("Budget Preview", {
+              data: data.item,
+              index,
+              setIndex,
+            });
           }}
           style={{
             borderColor: theme.colors.primary,
@@ -92,7 +96,7 @@ const RenderItems = (data, navigation, index) => {
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const SendPending = ({ index, navigation }) => {
+const SendPending = ({ index, navigation, setIndex }) => {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const getUserData = async () => {
@@ -146,7 +150,9 @@ const SendPending = ({ index, navigation }) => {
             useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-160}
-            renderItem={(data) => RenderItems(data, navigation, index)}
+            renderItem={(data) =>
+              RenderItems(data, navigation, index, setIndex)
+            }
           />
         </View>
       </ScrollView>
