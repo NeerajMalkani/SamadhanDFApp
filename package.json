@@ -62,7 +62,7 @@
     "react-native-modal-datetime-picker": "^14.0.0",
     "react-native-multi-selectbox": "^1.5.0",
     "react-native-multiple-select": "^0.5.9",
-    "react-native-pager-view": "6.0.1",
+    "react-native-pager-view": "^6.0.0-rc.0",
     "react-native-paper": "^4.12.2",
     "react-native-paper-dropdown": "^1.0.7",
     "react-native-paper-grid": "^0.1.12",

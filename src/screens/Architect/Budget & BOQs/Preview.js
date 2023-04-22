@@ -58,8 +58,12 @@ const Preview = ({ navigation, route }) => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        console.log(route.params.index);
-        navigation.navigate("Budget&BOQ's", { index: route.params.index });
+        if (isFocused) {
+          navigation.pop();
+          navigation.navigate("Budget&BOQ's", { index: route.params.index });
+        } else {
+          navigation.goBack();
+        }
         return true;
       }
     );
