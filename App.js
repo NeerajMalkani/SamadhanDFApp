@@ -1114,6 +1114,7 @@ export default function App() {
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
                 name="Budget&BOQ's"
+                initialParams={{ index: 0 }}
                 component={BudgetBOQ}
               />
               <Drawer.Screen

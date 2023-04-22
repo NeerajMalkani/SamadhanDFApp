@@ -45,11 +45,12 @@ const BudgetBOQ = ({ navigation, route }) => {
   const [index, setIndex] = React.useState(0);
   useEffect(() => {
     if (route?.params?.index) {
-      setIndex(route.params.index);
+      setIndex(Number(route.params.index));
     } else {
       setIndex(0);
     }
   }, [setIndex]);
+  console.log(index);
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "add-update":

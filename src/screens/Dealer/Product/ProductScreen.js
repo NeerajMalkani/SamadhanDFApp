@@ -1,6 +1,21 @@
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Searchbar, Snackbar, Title, IconButton, Subheading } from "react-native-paper";
+import {
+  ActivityIndicator,
+  View,
+  LogBox,
+  RefreshControl,
+  ScrollView,
+  Image,
+} from "react-native";
+import {
+  FAB,
+  List,
+  Searchbar,
+  Snackbar,
+  Title,
+  IconButton,
+  Subheading,
+} from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
@@ -15,7 +30,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Dropdown from "../../../components/Dropdown";
 import DFButton from "../../../components/Button";
 
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 let dealerID = 0,
   ifBrandCreate = 0,
   Sess_CompanyAdmin_UserRefno = 0,
@@ -30,7 +47,9 @@ const DealerProductScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [snackbarColor, setSnackbarColor] = React.useState(
+    theme.colors.success
+  );
 
   const [brandName, setBrandName] = React.useState("");
   const [brandPrefix, setBrandPrefix] = React.useState("");
@@ -48,12 +67,15 @@ const DealerProductScreen = ({ navigation }) => {
   const refRBSheet = useRef();
   const refRBSFilter = useRef();
 
-  const [filterServicesFullData, setFilterServicesFullData] = React.useState([]);
+  const [filterServicesFullData, setFilterServicesFullData] = React.useState(
+    []
+  );
   const [filterServicesData, setFilterServicesData] = React.useState([]);
   const [filterServiceName, setFilterServiceName] = React.useState("");
   const servicesDDRef = useRef({});
 
-  const [filterCategoriesFullData, setFilterCategoriesFullData] = React.useState([]);
+  const [filterCategoriesFullData, setFilterCategoriesFullData] =
+    React.useState([]);
   const [filterCategoriesData, setFilterCategoriesData] = React.useState([]);
   const [filterCategoriesName, setFilterCategoriesName] = React.useState("");
   const categoriesDDRef = useRef({});
@@ -64,7 +86,8 @@ const DealerProductScreen = ({ navigation }) => {
   const brandDDRef = useRef({});
 
   const [isFilterLoading, setIsFilterLoading] = React.useState(false);
-  const [isButtonClearFilterLoading, setIsButtonClearFilterLoading] = React.useState(false);
+  const [isButtonClearFilterLoading, setIsButtonClearFilterLoading] =
+    React.useState(false);
   const [pageFilterEnable, setPageFilterEnable] = React.useState(true);
 
   //#endregion
@@ -112,7 +135,8 @@ const DealerProductScreen = ({ navigation }) => {
       dealerID = JSON.parse(userData).UserID;
       group_refno = JSON.parse(userData).Sess_group_refno;
       ifBrandCreate = JSON.parse(userData).Sess_if_create_brand;
-      Sess_CompanyAdmin_UserRefno = JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
+      Sess_CompanyAdmin_UserRefno =
+        JSON.parse(userData).Sess_CompanyAdmin_UserRefno;
       FetchData();
     }
   };
@@ -120,7 +144,9 @@ const DealerProductScreen = ({ navigation }) => {
   const FetchData = (from) => {
     setIsButtonClearFilterLoading(true);
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -132,7 +158,10 @@ const DealerProductScreen = ({ navigation }) => {
         Sess_if_create_brand: ifBrandCreate,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.dealercompanyproductrefnocheck, params)
+    Provider.createDFCommon(
+      Provider.API_URLS.dealercompanyproductrefnocheck,
+      params
+    )
       .then((response) => {
         setIsButtonClearFilterLoading(false);
         if (response.data && response.data.code === 200) {
@@ -172,25 +201,23 @@ const DealerProductScreen = ({ navigation }) => {
       params = {
         data: {
           Sess_UserRefno: dealerID,
-          filter_service_refno: id
+          filter_service_refno: id,
         },
       };
-    }
-    else if (filter == "category") {
+    } else if (filter == "category") {
       api_path = Provider.API_URLS.filtercategoryrefno_dealerproductlist;
       params = {
         data: {
           Sess_UserRefno: dealerID,
-          filter_category_refno: id
+          filter_category_refno: id,
         },
       };
-    }
-    else if (filter == "brand") {
+    } else if (filter == "brand") {
       api_path = Provider.API_URLS.filterbrandrefno_dealerproductlist;
       params = {
         data: {
           Sess_UserRefno: dealerID,
-          filter_brand_refno: id
+          filter_brand_refno: id,
         },
       };
     }
@@ -237,7 +264,10 @@ const DealerProductScreen = ({ navigation }) => {
     } else {
       listSearchData[1](
         listData[0].filter((el) => {
-          return el.productName.toString().toLowerCase().includes(query.toLowerCase());
+          return el.productName
+            .toString()
+            .toLowerCase()
+            .includes(query.toLowerCase());
         })
       );
     }
@@ -245,7 +275,15 @@ const DealerProductScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.borderBottom1,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          { height: 72 },
+        ]}
+      >
         <List.Item
           title={`${data.item.brandPrefix} ${data.item.productName}`}
           titleStyle={{ fontSize: 18 }}
@@ -266,16 +304,31 @@ const DealerProductScreen = ({ navigation }) => {
             setAnnounceStatus(data.item.isPublish == "1" ? "Yes" : "No");
             setApproveStatus(data.item.isApprove == "1" ? "Yes" : "No");
           }}
-          left={() => <Image source={{ uri: data.item.image }} style={[Styles.width56, Styles.height56]} />}
+          left={() => (
+            <Image
+              source={{ uri: data.item.image }}
+              style={[Styles.width56, Styles.height56]}
+            />
+          )}
           // left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account-group" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+            />
+          )}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddDealerProductScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddDealerProductScreen", {
+      type: "add",
+      fetchData: FetchData,
+    });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -304,18 +357,23 @@ const DealerProductScreen = ({ navigation }) => {
         Sess_UserRefno: dealerID,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.getservicename_dealerproductlist, params)
+    Provider.createDFCommon(
+      Provider.API_URLS.getservicename_dealerproductlist,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setFilterServicesFullData(response.data.data);
-            const services = response.data.data.map((data) => data.service_name);
+            const services = response.data.data.map(
+              (data) => data.service_name
+            );
             setFilterServicesData(services);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchCategoriesFromServices = (serviceID) => {
@@ -323,21 +381,26 @@ const DealerProductScreen = ({ navigation }) => {
       data: {
         Sess_UserRefno: dealerID,
         Sess_group_refno: group_refno.toString(),
-        filter_service_refno: serviceID.toString()
+        filter_service_refno: serviceID.toString(),
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.getcategoryname_dealerproductlist, params)
+    Provider.createDFCommon(
+      Provider.API_URLS.getcategoryname_dealerproductlist,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             response.data.data = APIConverter(response.data.data);
             setFilterCategoriesFullData(response.data.data);
-            const categories = response.data.data.map((data) => data.category_name);
+            const categories = response.data.data.map(
+              (data) => data.category_name
+            );
             setFilterCategoriesData(categories);
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const FetchBrandFromCategory = (categoryID) => {
@@ -346,10 +409,13 @@ const DealerProductScreen = ({ navigation }) => {
         Sess_UserRefno: dealerID,
         Sess_if_create_brand: ifBrandCreate.toString(),
         Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno.toString(),
-        filter_category_refno: categoryID
+        filter_category_refno: categoryID,
       },
     };
-    Provider.createDFCommon(Provider.API_URLS.getbrandname_dealerproductlist, params)
+    Provider.createDFCommon(
+      Provider.API_URLS.getbrandname_dealerproductlist,
+      params
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -360,7 +426,7 @@ const DealerProductScreen = ({ navigation }) => {
           }
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const onServiceNameSelected = (selectedItem) => {
@@ -403,25 +469,52 @@ const DealerProductScreen = ({ navigation }) => {
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Product" />
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       ) : listData[0].length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.flexSpaceBetween]}>
-            <Searchbar editable={pageFilterEnable}
-              style={[Styles.margin16, Styles.flex1, pageFilterEnable ? Styles.backgroundColorFullWhite : Styles.backgroundColorGrey]}
-              placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-            <IconButton icon="filter-check" onPress={() => {
-              setFilterServicesData([]);
-              setFilterServiceName("");
-              setFilterCategoriesData([]);
-              setFilterCategoriesName("");
-              setFilterBrandData([]);
-              setFilterBrandName("");
-              FetchServicesFromActivity();
-              refRBSFilter.current.open();
-            }} color={theme.colors.accent} size={32} />
+          <View
+            style={[
+              Styles.flexRow,
+              Styles.flexAlignCenter,
+              Styles.flexSpaceBetween,
+            ]}
+          >
+            <Searchbar
+              editable={pageFilterEnable}
+              style={[
+                Styles.margin16,
+                Styles.flex1,
+                pageFilterEnable
+                  ? Styles.backgroundColorFullWhite
+                  : Styles.backgroundColorGrey,
+              ]}
+              placeholder="Search"
+              onChangeText={onChangeSearch}
+              value={searchQuery}
+            />
+            <IconButton
+              icon="filter-check"
+              onPress={() => {
+                setFilterServicesData([]);
+                setFilterServiceName("");
+                setFilterCategoriesData([]);
+                setFilterCategoriesName("");
+                setFilterBrandData([]);
+                setFilterBrandName("");
+                FetchServicesFromActivity();
+                refRBSFilter.current.open();
+              }}
+              color={theme.colors.accent}
+              size={32}
+            />
           </View>
 
           <SwipeListView
@@ -443,23 +536,49 @@ const DealerProductScreen = ({ navigation }) => {
             disableRightSwipe={true}
             rightOpenValue={-72}
             renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            renderHiddenItem={(data, rowMap) =>
+              RenderHiddenItems(data, rowMap, [EditCallback])
+            }
           />
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
       <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={560} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={560}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View style={{ paddingBottom: 32 }}>
-          <Title style={[Styles.paddingHorizontal16]}>{`${brandPrefix} ${productName}`}</Title>
+          <Title
+            style={[Styles.paddingHorizontal16]}
+          >{`${brandPrefix} ${productName}`}</Title>
           <ScrollView>
             <List.Item title="Brand Name" description={brandName} />
             <List.Item title="Product Image" />
-            <Image source={{ uri: image }} style={[Styles.height104, Styles.width104, Styles.marginStart16]} />
+            <Image
+              source={{ uri: image }}
+              style={[Styles.height104, Styles.width104, Styles.marginStart16]}
+            />
             <List.Item title="Unit Of Sales" description={unitOfSale} />
             <List.Item title="Converted Unit" description={convertUnit} />
             <List.Item title="Display" description={display} />
@@ -470,33 +589,69 @@ const DealerProductScreen = ({ navigation }) => {
           </ScrollView>
         </View>
       </RBSheet>
-      <RBSheet ref={refRBSFilter} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={380} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refRBSFilter}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={380}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View style={[Styles.paddingHorizontal16, { paddingBottom: 64 }]}>
           <ScrollView>
-            <Subheading style={[Styles.textSecondaryColor, Styles.fontSize12]}>Note: Change the values to filter products.</Subheading>
+            <Subheading style={[Styles.textSecondaryColor, Styles.fontSize12]}>
+              Note: Change the values to filter products.
+            </Subheading>
             <View style={[Styles.marginTop8]}>
-              <Dropdown label="Service Name" data={filterServicesData} onSelected={onServiceNameSelected}
-                selectedItem={filterServiceName} reference={servicesDDRef} />
+              <Dropdown
+                label="Service Name"
+                data={filterServicesData}
+                onSelected={onServiceNameSelected}
+                selectedItem={filterServiceName}
+                reference={servicesDDRef}
+              />
             </View>
             <View style={[Styles.marginTop16]}>
-              <Dropdown label="Category Name" data={filterCategoriesData} onSelected={onCategoriesNameSelected}
-                selectedItem={filterCategoriesName} reference={categoriesDDRef} />
+              <Dropdown
+                label="Category Name"
+                data={filterCategoriesData}
+                onSelected={onCategoriesNameSelected}
+                selectedItem={filterCategoriesName}
+                reference={categoriesDDRef}
+              />
             </View>
             <View style={[Styles.marginTop16]}>
-              <Dropdown label="Brand Name" data={filterBrandData} onSelected={onBrandNameSelected}
-                selectedItem={filterBrandName} reference={brandDDRef} />
+              <Dropdown
+                label="Brand Name"
+                data={filterBrandData}
+                onSelected={onBrandNameSelected}
+                selectedItem={filterBrandName}
+                reference={brandDDRef}
+              />
             </View>
-            <View style={[Styles.marginTop16, Styles.flexRow, Styles.flexSpaceBetween]}>
-              <DFButton mode="contained"
+            <View
+              style={[
+                Styles.marginTop16,
+                Styles.flexRow,
+                Styles.flexSpaceBetween,
+              ]}
+            >
+              <DFButton
+                mode="contained"
                 onPress={() => {
                   FetchData();
                 }}
-                title="Clear Filter" loader={isButtonClearFilterLoading} />
+                title="Clear Filter"
+                loader={isButtonClearFilterLoading}
+              />
 
-              {isFilterLoading &&
+              {isFilterLoading && (
                 <ActivityIndicator size="large" color={theme.colors.primary} />
-              }
-
+              )}
             </View>
           </ScrollView>
         </View>

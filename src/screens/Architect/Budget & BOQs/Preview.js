@@ -76,7 +76,7 @@ const Preview = ({ navigation, route }) => {
               },
             }
           ).then((res) => {
-            navigation.navigate("Budget&BOQ's");
+            navigation.navigate("Budget&BOQ's", { index: 1 });
           });
         },
       },
@@ -99,7 +99,7 @@ const Preview = ({ navigation, route }) => {
               budget_refno: route.params.data.budget_refno,
             },
           }).then((res) => {
-            navigation.navigate("Budget&BOQ's");
+            navigation.navigate("Budget&BOQ's", { index: 2 });
           });
         },
       },
@@ -195,7 +195,7 @@ const Preview = ({ navigation, route }) => {
       <GenerateBOQ
         open={boq}
         setOpen={setBoq}
-        callback={() => navigation.navigate("Budget&BOQ's")}
+        callback={() => navigation.navigate("Budget&BOQ's", { index: 3 })}
         budget_refno={route.params.data.budget_refno}
       />
       <View style={[Styles.flex1, Styles.marginBottom12]}>
@@ -465,14 +465,28 @@ const Preview = ({ navigation, route }) => {
               Waiting for Client Approval
             </Text>
           )}
-          {route.params.data?.action_button?.includes(
+          {(route.params.data?.action_button?.includes(
             "Finally Approve & Take Project"
           ) &&
-            route.params.data.client_approve_status_name !== "Pending" && (
+            route.params.data.client_approve_status_name !== "Pending") ||
+            route.params.data.client_approve_status_name !== "Pending" ||
+            (route.params.data.client_approve_status_name !== "Rejected" && (
               <Button onPress={() => setModal(true)} mode="contained">
                 Finally Approve & Take Project
               </Button>
-            )}
+            ))}
+          {route.params.data.client_approve_status_name === "Rejected" && (
+            <Text
+              style={{
+                textAlign: "center",
+                marginVertical: 9,
+                color: "red",
+                fontSize: 20,
+              }}
+            >
+              Client Rejected Budget
+            </Text>
+          )}
 
           {route.params?.data.action_button?.includes("Cancel Budget") ||
           route.params?.data.budget_action_button?.includes("Cancel Budget") ? (
