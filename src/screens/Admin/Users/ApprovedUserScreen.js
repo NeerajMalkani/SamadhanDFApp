@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Text } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title, Card,Portal, Dialog, Paragraph, Button } from "react-native-paper";
+import {
+  FAB, List, Snackbar, Searchbar, Title, Card, Portal, Dialog,
+  Paragraph, Button, Subheading, Divider
+} from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -12,6 +15,7 @@ import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DFButton from "../../../components/Button";
+import AdminUserViewList from "../../../components/AdminUserView";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
 let userID = 0;
@@ -142,22 +146,40 @@ const ApprovedUserScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 84 }]}>
-        <List.Item
-          title={NullOrEmpty(data.item.firstname) ? "" : data.item.firstname.split(",")[0]}
-          titleStyle={{ fontSize: 18 }}
-          description={`Activity Role: ${NullOrEmpty(data.item.group_name) ? "" : data.item.group_name}\nCompany: ${NullOrEmpty(data.item.company_name) ? "" : data.item.company_name}`}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="account" />}
-          onPress={() => {
-            refRBSheet.current.open();
-            setSelectedID(data.item.user_refno);
-            setCompanyDetails(data.item.firstname);
-            setCompanyName(data.item.company_name);
-            setMobileNo(data.item.mobile_no);
-            setGroupName(data.item.group_name);
-          }}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
-        />
+      <View style={[Styles.backgroundColor, Styles.flexJustifyCenter, Styles.marginBottom8,
+      Styles.paddingHorizontal16, Styles.flex1]}>
+        <View style={[Styles.bordergray, Styles.borderRadius4, Styles.flex1, Styles.padding8]}>
+          <Subheading selectable={true}>{data.item.firstname} <Text style={[Styles.primaryColor]} selectable={true}>{data.item.mobile_no}</Text></Subheading>
+          <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Company Name</Subheading>
+          <Text>{data.item.company_name}</Text>
+          <Divider />
+          <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Activity Role</Subheading>
+          <Text>{data.item.group_name}</Text>
+          <Divider />
+
+          <View style={[Styles.width100per, Styles.flexRow, Styles.flexSpaceBetween]}>
+            <View style={[Styles.width50per]}>
+              <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Department</Subheading>
+              <Text>{data.item.departmentname}</Text>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Designation</Subheading>
+              <Text>{data.item.designationname}</Text>
+            </View>
+          </View>
+          <Divider />
+          <View style={[Styles.width100per, Styles.flexRow, Styles.flexSpaceBetween]}>
+            <View style={[Styles.width50per]}>
+              <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Username</Subheading>
+              <Text selectable={true}>{data.item.user_name}</Text>
+            </View>
+            <View style={[Styles.width50per]}>
+              <Subheading style={[Styles.fontSize12, Styles.textSecondaryColor, { height: 20 }]}>Password</Subheading>
+              <Text selectable={true}>{data.item.password}</Text>
+            </View>
+          </View>
+        </View>
+
       </View>
     );
   };
@@ -213,7 +235,7 @@ const ApprovedUserScreen = ({ navigation }) => {
             <Button color={theme.colors.error} mode="contained" onPress={openDeclineModel}>
               Decline
             </Button>
-           
+
           </Card.Content>
         </View>
       </RBSheet>
@@ -224,7 +246,7 @@ const ApprovedUserScreen = ({ navigation }) => {
             <Paragraph>Confirm to Decline ? </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-          <DFButton mode="contained" onPress={declineUserStatus} title="Ok" loader={isButtonLoading} />
+            <DFButton mode="contained" onPress={declineUserStatus} title="Ok" loader={isButtonLoading} />
             {/* <Button onPress={declineUserStatus}>Ok</Button> */}
             <Button onPress={hideDialog}>Cancel</Button>
           </Dialog.Actions>
