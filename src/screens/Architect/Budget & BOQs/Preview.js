@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, BackHandler } from "react-native";
 import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Styles } from "../../../styles/styles";
@@ -54,6 +54,18 @@ const Preview = ({ navigation, route }) => {
       await fetchUnits();
     }
   };
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        console.log(route.params.index);
+        navigation.navigate("Budget&BOQ's", { index: route.params.index });
+        return true;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const cancelBudget = () => {
     Alert.alert("Are you sure?", "Do you want to cancel this budget", [

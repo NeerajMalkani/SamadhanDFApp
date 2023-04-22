@@ -11,6 +11,7 @@ import ApprovePending from "./ApprovePending";
 import Approved from "./Approved";
 import { theme } from "../../../theme/apptheme";
 import { useEffect } from "react";
+import { useIsFocused } from "@react-navigation/native";
 
 const renderTabBar = (props) => (
   <TabBar
@@ -31,6 +32,7 @@ const BudgetBOQ = ({ navigation, route }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(
     theme.colors.success
   );
+  const isFocused = useIsFocused();
   const unload = (msg, color = theme.colors.success) => {
     setSnackbarText(msg);
     setSnackbarColor(color);
@@ -42,15 +44,8 @@ const BudgetBOQ = ({ navigation, route }) => {
     { key: "approved-pending", title: "Budget Approve Pending List" },
     { key: "approved", title: "Budget & BOQ Approved List" },
   ];
-  const [index, setIndex] = React.useState(0);
-  useEffect(() => {
-    if (route?.params?.index) {
-      setIndex(Number(route.params.index));
-    } else {
-      setIndex(0);
-    }
-  }, [setIndex]);
-  console.log(index);
+  const [index, setIndex] = React.useState(route.params.index || 0);
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "add-update":

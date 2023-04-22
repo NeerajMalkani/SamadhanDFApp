@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import Provider from "../../../api/Provider";
 import { SwipeListView } from "react-native-swipe-list-view";
 
-const RenderItems = (data, navigation) => {
+const RenderItems = (data, navigation, index) => {
   return (
     <View
       style={[
@@ -54,7 +54,7 @@ const RenderItems = (data, navigation) => {
         <Button
           mode="outlined"
           onPress={() => {
-            navigation.navigate("Budget Preview", { data: data.item });
+            navigation.navigate("Budget Preview", { data: data.item, index });
           }}
           style={{
             borderColor: theme.colors.primary,
@@ -137,7 +137,7 @@ const Approved = ({ index, navigation }) => {
             useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-160}
-            renderItem={(data) => RenderItems(data, navigation)}
+            renderItem={(data) => RenderItems(data, navigation, index)}
           />
         </View>
       </ScrollView>

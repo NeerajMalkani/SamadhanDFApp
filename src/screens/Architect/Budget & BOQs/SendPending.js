@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import Provider from "../../../api/Provider";
 import { SwipeListView } from "react-native-swipe-list-view";
 
-const RenderItems = (data, navigation) => {
+const RenderItems = (data, navigation, index) => {
   return (
     <View
       style={[
@@ -76,7 +76,7 @@ const RenderItems = (data, navigation) => {
         <Button
           mode="outlined"
           onPress={() => {
-            navigation.navigate("Budget Preview", { data: data.item });
+            navigation.navigate("Budget Preview", { data: data.item, index });
           }}
           style={{
             borderColor: theme.colors.primary,
@@ -111,7 +111,7 @@ const SendPending = ({ index, navigation }) => {
       Provider.API_URLS.architect_budget_send_pendng_list,
       { data: { Sess_UserRefno, Sess_company_refno, Sess_branch_refno } }
     ).then((res) => {
-      console.log('resp:', res.data.data);
+      console.log("resp:", res.data);
       if (res.data.data) {
         setData(res.data.data);
       }
@@ -146,7 +146,7 @@ const SendPending = ({ index, navigation }) => {
             useFlatList={true}
             disableRightSwipe={true}
             rightOpenValue={-160}
-            renderItem={(data) => RenderItems(data, navigation)}
+            renderItem={(data) => RenderItems(data, navigation, index)}
           />
         </View>
       </ScrollView>
