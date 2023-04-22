@@ -20,13 +20,19 @@ const LoginScreen = ({ route, navigation }) => {
   //#endregion
 
   React.useEffect(() => {
+    console.log('return data:', route.params?.mobile);
+    if (route.params?.mobile) {
+      setUsername(route.params?.mobile);
+    }
+
     const unsubscribe = navigation.addListener("blur", (e) => {
       route.params.setUserFunc();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, route.params?.mobile]);
 
   //#region Events
+
   const onUsernameChanged = (text) => {
     setUsername(text);
     setIsSnackbarVisible(false);

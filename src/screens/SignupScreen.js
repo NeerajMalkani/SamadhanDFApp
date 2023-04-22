@@ -1,4 +1,4 @@
-import { Headline, TextInput, HelperText, Button, Snackbar, Subheading } from "react-native-paper";
+import { Headline, TextInput, HelperText, Button, Snackbar, Subheading, Text } from "react-native-paper";
 import { ScrollView, View, Keyboard } from "react-native";
 import { Styles } from "../styles/styles";
 import React from "react";
@@ -153,7 +153,7 @@ const SignupScreen = ({ route, navigation }) => {
     Provider.createDFCommon(Provider.API_URLS.NewUserProfile, params)
       .then((response) => {
         if (response.data && response.data.code === 200) {
-          navigation.goBack();
+          navigation.navigate("Login", { mobile: mobileNumber });
         } else if (response.data.code === 304) {
           setSnackbarText(communication.AlreadyExists);
           setIsSnackbarVisible(true);
@@ -176,7 +176,7 @@ const SignupScreen = ({ route, navigation }) => {
       isValid = false;
       setIsFullNameInvalid(true);
     }
-    if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber)) {
+    if (mobileNumber.length === 0 || !ValidateMobile(mobileNumber) || mobileNumber.length != 10) {
       isValid = false;
       setIsMobileNumberInvalid(true);
     }
@@ -217,7 +217,7 @@ const SignupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={isFullNameInvalid}>
             {communication.InvalidFullname}
           </HelperText>
-          
+
           <View style={[Styles.flexRow, Styles.flexAlignCenter, Styles.paddingTop8]}>
             <TextInput mode="outlined" dense disabled value={otp1} onChangeText={onOTP1Changed} style={[Styles.width48, Styles.height48, Styles.textCenter]} />
             <TextInput mode="outlined" dense disabled value={otp2} onChangeText={onOTP2Changed} style={[Styles.width48, Styles.height48, Styles.textCenter, Styles.marginStart8]} />
@@ -230,7 +230,7 @@ const SignupScreen = ({ route, navigation }) => {
           <HelperText type="error" visible={isOTPInvalid}>
             {communication.InvalidOTP}
           </HelperText>
-          <Subheading style={{fontWeight:"bold"}}>Set Up Password</Subheading>
+          <Subheading style={{ fontWeight: "bold" }}>Set Up Password</Subheading>
           <TextInput mode="flat" dense secureTextEntry={true} label="Create Password" value={password} style={[Styles.marginTop8]} onChangeText={onPasswordChanged} error={isPasswordInvalid} />
           <HelperText type="error" visible={isPasswordInvalid}>
             {communication.InvalidPassowrd}
@@ -242,7 +242,12 @@ const SignupScreen = ({ route, navigation }) => {
           <Button mode="contained" style={[Styles.marginTop24]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateSignup()}>
             Submit
           </Button>
+          <View style={[Styles.marginTop8]}>
+
+            <Text style={[Styles.border1,Styles.padding2, Styles.errorColor]}><Subheading>Note:</Subheading> Your mobile number is your username </Text>
+          </View>
         </View>
+
       </ScrollView>
       <Snackbar visible={isSnackbarVisible} onDismiss={() => setIsSnackbarVisible(false)} style={{ backgroundColor: theme.colors.error }}>
         {snackbarText}
