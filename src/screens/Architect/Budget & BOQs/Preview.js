@@ -9,10 +9,9 @@ import LabelInput from "../../Marketing/EmployeeActivity/common/LabelInput";
 import { Checkbox, TextInput, Button, Snackbar } from "react-native-paper";
 import { theme } from "../../../theme/apptheme";
 import { Table, TableWrapper, Row, Col } from "react-native-table-component";
-// import WebView from "react-native-webview";
 import ApproveModal from "./components/ApproveModal";
 import GenerateBOQ from "./components/GenerateBOQ";
-// import RenderHTML from "react-native-render-html";
+
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
@@ -93,7 +92,8 @@ const Preview = ({ navigation, route }) => {
                 budget_refno: route.params.data.budget_refno,
               },
             }
-          ).then((res) => {
+          ).then(async (res) => {
+            await AsyncStorage.setItem("budget-index", "1");
             navigation.navigate("Budget&BOQ's", { index: 1 });
           });
         },
@@ -116,8 +116,9 @@ const Preview = ({ navigation, route }) => {
               Sess_UserRefno,
               budget_refno: route.params.data.budget_refno,
             },
-          }).then((res) => {
-            navigation.navigate("Budget&BOQ's", { index: 2 });
+          }).then(async (res) => {
+            await AsyncStorage.setItem("budget-index", 2);
+            navigation.navigate("Budget&BOQ's", { index: "2" });
           });
         },
       },
@@ -187,9 +188,9 @@ const Preview = ({ navigation, route }) => {
         },
       }
     )
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.data);
-
+        await AsyncStorage.setItem("budget-index", "2");
         setColor(theme.colors.success);
         setText("Budget Sent to Client");
         setOpen(true);
