@@ -44,7 +44,9 @@ LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 let userID = 0;
-
+let Sess_company_refno = 0;
+let Sess_branch_refno = 0;
+let Sess_group_refno = 0;
 const SendRateCard = ({ navigation }) => {
   //#region Variables
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -57,7 +59,7 @@ const SendRateCard = ({ navigation }) => {
   const [snackbarColor, setSnackbarColor] = React.useState(
     theme.colors.success
   );
-
+  const [current, setCurrent] = React.useState({});
   const [clientName, setClientName] = React.useState("");
   const [clientNumber, setClientNumber] = React.useState("");
   const [unit, setUnit] = React.useState("");
@@ -73,7 +75,10 @@ const SendRateCard = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      FetchData("");
+      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
+      Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
+      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
+      FetchData();
     }
   };
 
@@ -86,25 +91,31 @@ const SendRateCard = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      AddedByUserID: userID,
+      data: {
+        Sess_UserRefno: userID,
+        Sess_company_refno: Sess_company_refno,
+        Sess_branch_refno: Sess_branch_refno,
+        Sess_group_refno: Sess_group_refno,
+        cont_rc_refno: "all",
+      },
     };
 
-    Provider.getAll(
-      `master/getcontractorratecardsentlist?${new URLSearchParams(params)}`
+    Provider.createDFContractor(
+      Provider.API_URLS.contractor_sendratecard_contrcrefnocheck,
+      params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            const lisData = [...response.data.data];
-            lisData.map((k, i) => {
-              k.key = (parseInt(i) + 1).toString();
-            });
-
+            console.log(response.data.data[0]);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
         } else {
           listData[1]([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -169,6 +180,7 @@ const SendRateCard = ({ navigation }) => {
               : data.item.rc_unit_type_name
           } `}
           onPress={() => {
+            console.log(data.item);
             setCurrent(data.item);
             refRBSheet.current.open();
           }}
@@ -199,11 +211,10 @@ const SendRateCard = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        id: data.item.id,
+        ...data.item,
       },
     });
   };
-  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -271,7 +282,7 @@ const SendRateCard = ({ navigation }) => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
-        height={380}
+        height={500}
         animationType="fade"
         customStyles={{
           wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
@@ -279,12 +290,53 @@ const SendRateCard = ({ navigation }) => {
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{clientName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>
+            {current.client_firstname}
+          </Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <List.Item title="Client Number" description={clientNumber} />
-            <List.Item title="Unit" description={unit} />
-            <List.Item title="Material" description={material} />
-            <List.Item title="Status" description={status} />
+            <List.Item
+              title="Client Number"
+              description={current.client_mobile_no}
+            />
+            <List.Item title="Unit" description={current.rc_unit_type_name} />
+            <List.Item title="Material" description={current.material_status} />
+            <List.Item title="Status" description={current.rc_status} />
+            {current?.action_button?.includes("Preview Rate Card") && (
+              <View style={{ alignItems: "center", marginTop: "4%" }}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    borderColor: "pink",
+                    borderWidth: 1.2,
+                    color: "pink",
+                    width: "80%",
+                  }}
+                  // onPress={() => {
+                  //   refRBSheet.current.close();
+                  // }}
+                >
+                  <Text style={{ color: "pink" }}>Preview Rate Card</Text>
+                </Button>
+              </View>
+            )}
+            {current?.action_button?.includes("Send Rate Card") && (
+              <View style={{ alignItems: "center", marginTop: "4%" }}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    borderColor: "green",
+                    borderWidth: 1.2,
+                    color: "green",
+                    width: "80%",
+                  }}
+                  // onPress={() => {
+                  //   refRBSheet.current.close();
+                  // }}
+                >
+                  <Text style={{ color: "green" }}>Send Rate Card</Text>
+                </Button>
+              </View>
+            )}
           </ScrollView>
         </View>
       </RBSheet>
