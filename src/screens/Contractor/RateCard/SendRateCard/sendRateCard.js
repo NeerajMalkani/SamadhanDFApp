@@ -107,7 +107,6 @@ const SendRateCard = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data[0]);
             listData[1](response.data.data);
             listSearchData[1](response.data.data);
           }
@@ -180,7 +179,6 @@ const SendRateCard = ({ navigation }) => {
               : data.item.rc_unit_type_name
           } `}
           onPress={() => {
-            console.log(data.item);
             setCurrent(data.item);
             refRBSheet.current.open();
           }}
