@@ -80,6 +80,9 @@ const SendRateCard = ({ navigation }) => {
             console.log(response.data.data);
             setListData(response.data.data);
             setListSearchData(response.data.data);
+
+            listData[1](response.data.data);
+            listSearchData[1](response.data.data);
           }
         } else {
           setListData([]);
@@ -128,6 +131,8 @@ const SendRateCard = ({ navigation }) => {
             NullOrEmpty(data.item.contactNo) ? "" : data.item.contactNo
           }\nUnit: ${NullOrEmpty(data.item.unit) ? "" : data.item.unit} `}
           onPress={() => {
+            setCurrent(data.item);
+
             refRBSheet.current.open();
             setClientName(data.item.clientName);
             setClientNumber(data.item.contactNo);
