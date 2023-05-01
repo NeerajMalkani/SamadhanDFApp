@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
   Image,
@@ -7,32 +7,16 @@ import {
   RefreshControl,
   LogBox,
   ScrollView,
-  StyleSheet,
 } from "react-native";
-import {
-  FAB,
-  List,
-  Searchbar,
-  Snackbar,
-  Title,
-  Dialog,
-  Portal,
-  Paragraph,
-  Button,
-  Text,
-  TextInput,
-  Card,
-  HelperText,
-} from "react-native-paper";
+import { List, Title, Button, Text } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Styles } from "../../../styles/styles";
-import { NullOrEmpty } from "../../../utils/validations";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -42,16 +26,15 @@ let userID = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
-const DesignRejectedTab = ({ set, type, fetch }) => {
-  const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [current, setCurrent] = React.useState({});
+const DesignRejectedTab = ({ type }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [current, setCurrent] = useState({});
   const refRBSheet = useRef();
+
+  // ! used setStates
+  const [refreshing, setRefreshing] = useState(false);
 
   const FetchData = () => {
     setIsLoading(true);
@@ -69,8 +52,8 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
     )
       .then((response) => {
         if (response.data && response.data.data) {
-          listData[1](response.data.data);
-          listSearchData[1](response.data.data);
+          setListData(response.data.data);
+          setListSearchData(response.data.data);
         }
       })
       .finally(() => setIsLoading(false));
@@ -98,22 +81,6 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
     FetchData();
   }, []);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.contactPerson
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const RenderItems = (data) => {
     return (
       <View
@@ -122,7 +89,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
           Styles.paddingStart16,
           Styles.flexJustifyCenter,
           {
-            height: 250,
+            height: 230,
             borderWidth: 1.3,
             marginBottom: 10,
             borderRadius: 8,
@@ -136,73 +103,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
             style={{ width: 50, height: 50 }}
           />
         </View>
-        <View>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Client Details :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Estimation No :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.cont_estimation_no}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Product :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.product_name}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Design No :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.design_no}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Total Sq.Ft. :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.totalfoot}
-              </Text>
-            </View>
-          </View>
-        </View>
-        {/* <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Client Details :
@@ -237,7 +138,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
               {data.item.totalfoot}
             </Text>
           </View>
-        </View> */}
+        </View>
         <View
           style={{
             justifyContent: "center",
@@ -250,6 +151,7 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
             onPress={() => {
               refRBSheet.current.open();
               setCurrent(data.item);
+              console.log(data.item);
             }}
             style={{
               width: "80%",
@@ -277,36 +179,59 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0]?.length > 0 ? (
+      ) : listData?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              // !how we add search on this?
+              // "customer_data[0]"
+              // "customer_data[1]"
+              "category_name",
+              "client_approve_status",
+              "cont_estimation_no",
+              "cont_estimation_refno",
+              "design_no",
+              "designtype_name",
+              "estimation_approve_status",
+              "product_name",
+              "send_to_clientstatus",
+              "service_name",
+              "total_labours_cost",
+              "total_materials_cost",
+              "totalfoot",
+            ]}
           />
-          <View style={{ padding: 10 }}>
-            <SwipeListView
-              previewDuration={1000}
-              previewOpenValue={-160}
-              previewRowKey="1"
-              previewOpenDelay={1000}
-              refreshControl={
-                <RefreshControl
-                  colors={[theme.colors.primary]}
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    FetchData();
-                  }}
-                />
-              }
-              data={listSearchData[0]}
-              useFlatList={true}
-              disableRightSwipe={true}
-              rightOpenValue={-160}
-              renderItem={(data) => RenderItems(data)}
+          {listSearchData?.length ? (
+            <View style={{ padding: 10 }}>
+              <SwipeListView
+                previewDuration={1000}
+                previewOpenValue={-160}
+                previewRowKey="1"
+                previewOpenDelay={1000}
+                refreshControl={
+                  <RefreshControl
+                    colors={[theme.colors.primary]}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                      FetchData();
+                    }}
+                  />
+                }
+                data={listSearchData}
+                useFlatList={true}
+                disableRightSwipe={true}
+                rightOpenValue={-160}
+                renderItem={(data) => RenderItems(data)}
+              />
+            </View>
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
             />
-          </View>
+          )}
         </View>
       ) : (
         <NoItems
@@ -373,41 +298,4 @@ const DesignRejectedTab = ({ set, type, fetch }) => {
     </View>
   );
 };
-const stylesm = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "green",
-  },
-  button1: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "red",
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
-    color: "white",
-  },
-  modalIndex: {
-    zIndex: 999999999999999999,
-  },
-  input: {
-    margin: 15,
-    height: 40,
-
-    borderColor: "grey",
-    borderWidth: 1,
-  },
-});
 export default DesignRejectedTab;

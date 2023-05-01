@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -8,9 +8,9 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
+import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
 import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
@@ -19,13 +19,14 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
-import { useRadioGroup } from "@material-ui/core";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AWSImagePath } from "../../../utils/paths";
-import { creds, projectVariables } from "../../../utils/credentials";
-import { useIsFocused } from "@react-navigation/native";
+import { projectVariables } from "../../../utils/credentials";
+
 import { TabBar, TabView } from "react-native-tab-view";
 import { SheetElement } from "./SheetElements";
+import Search from "../../../components/Search";
 
 let userID = 0,
   companyID = 0,
@@ -38,41 +39,35 @@ const windowWidth = Dimensions.get("window").width;
 
 const AddExpensesList = ({ navigation }) => {
   //#region Variables
-  const isFocused = useIsFocused();
   const [index, setIndex] = useState(0);
-  const [attachmentImage, setAttachmentImage] = React.useState(
+  const [attachmentImage, setAttachmentImage] = useState(
     AWSImagePath + "placeholder-image.png"
   );
-  const [searchQuery_Self, setSearchQuery_Self] = React.useState("");
-  const [searchQuery_Company, setSearchQuery_Company] = React.useState("");
 
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const listData_Self = React.useState([]);
-  const listSearchData_Self = React.useState([]);
+  const [listData_Self, setListData_Self] = useState([]);
+  const [listSearchData_Self, setListSearchData_Self] = useState([]);
 
-  const listData_Company = React.useState([]);
-  const listSearchData_Company = React.useState([]);
+  const [listData_Company, setListData_Company] = useState([]);
+  const [listSearchData_Company, setListSearchData_Company] = useState([]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
+  const [entryType, setEntryType] = useState("");
+
+  // !state never used
   const [date, setDate] = useState(new Date());
-  const [dateInvalid, setDateInvalid] = useState("");
-  const dateRef = useRef({});
-
-  const [entryType, setEntryType] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
-  const [receiptMode, setReceiptMode] = React.useState("");
-  const [attachment, setAttachment] = React.useState("");
-  const [amount, setAmount] = React.useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState("");
+  const [receiptMode, setReceiptMode] = useState("");
+  const [attachment, setAttachment] = useState("");
+  const [amount, setAmount] = useState("");
   const [current, setCurrent] = useState({});
-  const [display, setDisplay] = React.useState("");
+  const [display, setDisplay] = useState("");
 
   const refRBSheet = useRef();
   //#endregion
@@ -110,11 +105,11 @@ const AddExpensesList = ({ navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData_Self[1](response.data.data);
-            listSearchData_Self[1](response.data.data);
+            setListData_Self(response.data.data);
+            setListSearchData_Self(response.data.data);
           }
         } else {
-          listData_Self[1]([]);
+          setListData_Self([]);
           // setSnackbarText("No Self data found");
           // setSnackbarColor(theme.colors.error);
           // setSnackbarVisible(true);
@@ -152,11 +147,11 @@ const AddExpensesList = ({ navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData_Company[1](response.data.data);
-            listSearchData_Company[1](response.data.data);
+            setListData_Company(response.data.data);
+            setListSearchData_Company(response.data.data);
           }
         } else {
-          listData_Company[1]([]);
+          setListData_Company([]);
           // setSnackbarText("No Company data found");
           // setSnackbarColor(theme.colors.error);
           // setSnackbarVisible(true);
@@ -189,41 +184,8 @@ const AddExpensesList = ({ navigation }) => {
     GetUserID();
   }, []);
 
-  const onChangeSearch_Self = (query) => {
-    setSearchQuery_Self(query);
-    if (query === "") {
-      listSearchData_Self[1](listData_Self[0]);
-    } else {
-      listSearchData_Self[1](
-        listData_Self[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
-  const onChangeSearch_Company = (query) => {
-    setSearchQuery_Company(query);
-    if (query === "") {
-      listSearchData_Company[1](listData_Company[0]);
-    } else {
-      listSearchData_Company[1](
-        listData_Company[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const RenderItems = (data) => {
     return (
-
       <View
         style={[
           Styles.backgroundColor,
@@ -236,10 +198,11 @@ const AddExpensesList = ({ navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name)
-            ? ""
-            : data.item.pck_category_name
-            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Category Name.: ${
+            NullOrEmpty(data.item.pck_category_name)
+              ? ""
+              : data.item.pck_category_name
+          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
             setDate(data.item.pck_trans_date);
@@ -275,7 +238,11 @@ const AddExpensesList = ({ navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddExpenses", { type: "add", fetchData: LoadAll, tabIndex: index });
+    navigation.navigate("AddExpenses", {
+      type: "add",
+      fetchData: LoadAll,
+      tabIndex: index,
+    });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -283,7 +250,45 @@ const AddExpensesList = ({ navigation }) => {
     navigation.navigate("AddExpenses", {
       type: "edit",
       fetchData: LoadAll,
-      data: data.item,
+      data: {
+        pck_trans_refno: data.item.pck_trans_refno,
+        createby_user_refno: data.item.createby_user_refno,
+        pck_trans_date: data.item.pck_trans_date,
+        pck_entrytype_refno: data.item.pck_entrytype_refno,
+        pck_entrytype_name: data.item.pck_entrytype_name,
+        pck_mode_refno: data.item.pck_mode_refno,
+        pck_mode_name: data.item.pck_mode_name,
+        pck_category_refno: data.item.pck_category_refno,
+        pck_category_name: data.item.pck_category_name,
+        pck_sub_category_refno: data.item.pck_sub_category_refno,
+        pck_sub_category_name: data.item.pck_sub_category_name,
+        pck_mycontact_refno: data.item.pck_mycontact_refno,
+        pck_mybank_refno: data.item.pck_mybank_refno,
+        utr_no: data.item.utr_no,
+        deposit_type_refno: data.item.deposit_type_refno,
+        pdc_cheque_status: data.item.pdc_cheque_status,
+        cheque_date: data.item.cheque_date,
+        cheque_no: data.item.cheque_no,
+        amount: data.item.amount,
+        notes: data.item.notes,
+        recurring_status: data.item.recurring_status,
+        reminder_date: data.item.reminder_date,
+        attach_receipt_url: data.item.attach_receipt_url,
+        cardtype_refno: data.item.cardtype_refno,
+        pck_card_mybank_refno: data.item.pck_card_mybank_refno,
+        due_date: data.item.due_date,
+        view_status: data.item.view_status,
+        myclient_refno: data.item.myclient_refno,
+        cont_project_refno: data.item.cont_project_refno,
+        invoice_no: data.item.invoice_no,
+        payment_type_refno: data.item.payment_type_refno,
+        dynamic_expenses_refno: data.item.dynamic_expenses_refno,
+        pck_contacttype_refno: data.item.pck_contacttype_refno,
+        pck_sub_category_notes: data.item.pck_sub_category_notes,
+        exp_branch_refno: data.item.exp_branch_refno,
+        exp_designation_refno: data.item.exp_designation_refno,
+        myemployee_refno: data.item.myemployee_refno,
+      },
     });
   };
 
@@ -299,7 +304,7 @@ const AddExpensesList = ({ navigation }) => {
               keyboardShouldPersistTaps="handled"
             >
               <View>
-                {listData_Self[0].length > 0 ? (
+                {listData_Self.length > 0 ? (
                   <View
                     style={[
                       Styles.flex1,
@@ -307,34 +312,78 @@ const AddExpensesList = ({ navigation }) => {
                       Styles.backgroundColor,
                     ]}
                   >
-                    <Searchbar
-                      style={[Styles.margin16]}
-                      placeholder="Search"
-                      onChangeText={onChangeSearch_Self}
-                      value={searchQuery_Self}
+                    <Search
+                      data={listData_Self}
+                      setData={setListData_Self}
+                      filterFunction={[
+                        "pck_trans_refno",
+                        "createby_user_refno",
+                        "pck_trans_date",
+                        "pck_entrytype_refno",
+                        "pck_entrytype_name",
+                        "pck_mode_refno",
+                        "pck_mode_name",
+                        "pck_category_refno",
+                        "pck_category_name",
+                        "pck_sub_category_refno",
+                        "pck_sub_category_name",
+                        "pck_mycontact_refno",
+                        "pck_mybank_refno",
+                        "utr_no",
+                        "deposit_type_refno",
+                        "pdc_cheque_status",
+                        "cheque_date",
+                        "cheque_no",
+                        "amount",
+                        "notes",
+                        "recurring_status",
+                        "reminder_date",
+                        "attach_receipt_url",
+                        "cardtype_refno",
+                        "pck_card_mybank_refno",
+                        "due_date",
+                        "view_status",
+                        "myclient_refno",
+                        "cont_project_refno",
+                        "invoice_no",
+                        "payment_type_refno",
+                        "dynamic_expenses_refno",
+                        "pck_contacttype_refno",
+                        "pck_sub_category_notes",
+                        "exp_branch_refno",
+                        "exp_designation_refno",
+                        "myemployee_refno",
+                      ]}
                     />
-                    <SwipeListView
-                      previewDuration={1000}
-                      previewOpenValue={-72}
-                      previewRowKey="1"
-                      previewOpenDelay={1000}
-                      refreshControl={
-                        <RefreshControl
-                          colors={[theme.colors.primary]}
-                          refreshing={refreshing}
-                          onRefresh={() => {
-                            FetchData_Self();
-                          }}
-                        />
-                      }
-                      data={listSearchData_Self[0]}
-                      disableRightSwipe={true}
-                      rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback])
-                      }
-                    />
+                    {listSearchData_Self?.length > 0 ? (
+                      <SwipeListView
+                        previewDuration={1000}
+                        previewOpenValue={-72}
+                        previewRowKey="1"
+                        previewOpenDelay={1000}
+                        refreshControl={
+                          <RefreshControl
+                            colors={[theme.colors.primary]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                              FetchData_Self();
+                            }}
+                          />
+                        }
+                        data={listSearchData_Self}
+                        disableRightSwipe={true}
+                        rightOpenValue={-72}
+                        renderItem={(data) => RenderItems(data)}
+                        renderHiddenItem={(data, rowMap) =>
+                          RenderHiddenItems(data, rowMap, [EditCallback])
+                        }
+                      />
+                    ) : (
+                      <NoItems
+                        icon="format-list-bulleted"
+                        text="No records found for your query"
+                      />
+                    )}
                   </View>
                 ) : (
                   <NoItems
@@ -354,7 +403,7 @@ const AddExpensesList = ({ navigation }) => {
               keyboardShouldPersistTaps="handled"
             >
               <View>
-                {listData_Company[0].length > 0 ? (
+                {listData_Company.length > 0 ? (
                   <View
                     style={[
                       Styles.flex1,
@@ -362,45 +411,106 @@ const AddExpensesList = ({ navigation }) => {
                       Styles.backgroundColor,
                     ]}
                   >
-                    <Searchbar
-                      style={[Styles.margin16]}
-                      placeholder="Search"
-                      onChangeText={onChangeSearch_Company}
-                      value={searchQuery_Company}
+                    <Search
+                      data={listData_Company}
+                      setData={setListSearchData_Company}
+                      filterFunction={[
+                        "BalanceUnPaidPayment",
+                        "Collected_ActualAmount",
+                        "TotalPaidAmount",
+                        "amount",
+                        "banktype_refno",
+                        "branch_refno",
+                        "cardtype_refno",
+                        "cheque_date",
+                        "cheque_no",
+                        "company_refno",
+                        "cont_project_refno",
+                        "contact_mobileno",
+                        "contact_name",
+                        "createby_user_refno",
+                        "deposit_date",
+                        "deposit_type_refno",
+                        "due_date",
+                        "dynamic_expenses_refno",
+                        "exp_branch_refno",
+                        "exp_designation_refno",
+                        "invoice_no",
+                        "is_handloan_autoentry",
+                        "is_opening_balance",
+                        "key",
+                        "myclient_refno",
+                        "myemployee_refno",
+                        "notes",
+                        "payment_group_refno",
+                        "payment_type_refno",
+                        "pck_card_mybank_refno",
+                        "pck_category_name",
+                        "pck_category_refno",
+                        "pck_contacttype_refno",
+                        "pck_entrytype_name",
+                        "pck_entrytype_refno",
+                        "pck_master_trans_refno",
+                        "pck_mode_name",
+                        "pck_mode_refno",
+                        "pck_mybank_refno",
+                        "pck_mycontact_refno",
+                        "pck_sub_category_name",
+                        "pck_sub_category_notes",
+                        "pck_sub_category_refno",
+                        "pck_trans_date",
+                        "pck_trans_refno",
+                        "pck_transtype_refno",
+                        "pdc_cheque_status",
+                        "personal_bank_account_no",
+                        "personal_bank_name",
+                        "received_status",
+                        "recurring_received_status",
+                        "recurring_status",
+                        "reminder_date",
+                        "remove_status",
+                        "utr_no",
+                        "verified_datetime",
+                        "verified_status",
+                        "verified_user_refno",
+                        "view_status",
+                      ]}
                     />
-                    <SwipeListView
-                      previewDuration={1000}
-                      previewOpenValue={-72}
-                      previewRowKey="1"
-                      previewOpenDelay={1000}
-                      refreshControl={
-                        <RefreshControl
-                          colors={[theme.colors.primary]}
-                          refreshing={refreshing}
-                          onRefresh={() => {
-                            FetchData_Company();
-                          }}
-                        />
-                      }
-                      data={listSearchData_Company[0]}
-                      disableRightSwipe={true}
-                      rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) => {
-                        if (data.item.verified_status == "1") {
-                          return null
+                    {listSearchData_Company?.length > 0 ? (
+                      <SwipeListView
+                        previewDuration={1000}
+                        previewOpenValue={-72}
+                        previewRowKey="1"
+                        previewOpenDelay={1000}
+                        refreshControl={
+                          <RefreshControl
+                            colors={[theme.colors.primary]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                              FetchData_Company();
+                            }}
+                          />
                         }
-                        else {
-                          return RenderHiddenItems(data, rowMap, [EditCallback])
-                        }
-
-
-                      }
-
-
-
-                      }
-                    />
+                        data={listSearchData_Company}
+                        disableRightSwipe={true}
+                        rightOpenValue={-72}
+                        renderItem={(data) => RenderItems(data)}
+                        renderHiddenItem={(data, rowMap) => {
+                          if (data.item.verified_status == "1") {
+                            return null;
+                          } else {
+                            return RenderHiddenItems(data, rowMap, [
+                              EditCallback,
+                            ]);
+                          }
+                        }}
+                      />
+                    ) : (
+                      <NoItems
+                        icon="format-list-bulleted"
+                        text="No records found for your query"
+                      />
+                    )}
                   </View>
                 ) : (
                   <NoItems
@@ -430,7 +540,7 @@ const AddExpensesList = ({ navigation }) => {
     />
   );
 
-  const [routes] = React.useState([
+  const [routes] = useState([
     { key: "selfDetail", title: "Self Details" },
     { key: "companyDetail", title: "Company Details" },
   ]);

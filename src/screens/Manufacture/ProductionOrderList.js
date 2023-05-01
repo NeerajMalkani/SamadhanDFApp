@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -6,7 +6,7 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -18,30 +18,27 @@ import NoItems from "../../components/NoItems";
 import { Styles } from "../../styles/styles";
 import { theme } from "../../theme/apptheme";
 import { NullOrEmpty } from "../../utils/validations";
+import Search from "../../components/Search";
 
 let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 let Sess_CompanyAdmin_UserRefno = 0;
-let Sess_CompanyAdmin_group_refno = 0;
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 function ProductionOrderList({ navigation }) {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
-  const [reference, setReference] = React.useState({});
-  const [current, setCurrent] = React.useState({});
+  const [reference, setReference] = useState({});
+  const [current, setCurrent] = useState({});
   const refRBSheet = useRef();
   //#endregion
 
@@ -74,8 +71,10 @@ function ProductionOrderList({ navigation }) {
           setSnackbarVisible(true);
         }
       );
-      listData[1](data.order);
-      listSearchData[1](data.order);
+
+      console.log(response.data.data);
+      setListData(response.data.data);
+      setListSearchData(response.data.data);
       setReference(data);
       //console.log(data.order[0]);
       //console.log("Supplier:", data.supplier);
@@ -109,22 +108,6 @@ function ProductionOrderList({ navigation }) {
     GetUserID();
   }, []);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const RenderItems = (data) => {
     return (
       <View
@@ -138,17 +121,24 @@ function ProductionOrderList({ navigation }) {
       >
         <List.Item
           title={
-            data.item.mf_po_no
+            data.item?.supplier_user_refno
+              ? reference?.supplier?.find(
+                  (item) =>
+                    item.client_user_refno === data.item.supplier_user_refno
+                ).company_name
+              : ""
           }
           titleStyle={{ fontSize: 18 }}
-          description={`Vendor Name: ${data.item?.vendor_user_refno
+          description={`Vendor Name: ${
+            data.item?.vendor_user_refno
               ? reference?.vendor?.find(
-                (item) =>
-                  item.client_user_refno === data.item.vendor_user_refno
-              ).company_name
+                  (item) =>
+                    item.client_user_refno === data.item.vendor_user_refno
+                ).client_name
               : ""
-            }\nService Name: ${NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
-            } `}
+          }\nService Name: ${
+            NullOrEmpty(data.item.service_name) ? "" : data.item.service_name
+          } `}
           onPress={() => {
             refRBSheet.current.open();
             //console.log(data.item);
@@ -211,36 +201,59 @@ function ProductionOrderList({ navigation }) {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0] != null && listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "brand_name",
+              "brand_refno",
+              "category_name",
+              "category_refno",
+              "length_mtr_value",
+              "mfpp_refno",
+              "product_name",
+              "product_refno",
+              "service_name",
+              "service_refno",
+              "thick_category_refno",
+              "thick_product_name",
+              "thick_product_refno",
+              "thick_service_refno",
+              "view_status",
+              "width_mm_value",
+            ]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) =>
-              RenderHiddenItems(data, rowMap, [EditCallback])
-            }
-          />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems
@@ -281,9 +294,9 @@ function ProductionOrderList({ navigation }) {
           <Title style={[Styles.paddingHorizontal16]}>
             {current?.supplier_user_refno
               ? reference?.supplier?.find(
-                (item) =>
-                  item.client_user_refno === current.supplier_user_refno
-              )?.company_name
+                  (item) =>
+                    item.client_user_refno === current.supplier_user_refno
+                )?.company_name
               : ""}
           </Title>
           <ScrollView>
@@ -292,9 +305,9 @@ function ProductionOrderList({ navigation }) {
               description={
                 current?.supplier_user_refno
                   ? reference?.supplier?.find(
-                    (item) =>
-                      item.client_user_refno === current.supplier_user_refno
-                  )?.client_name
+                      (item) =>
+                        item.client_user_refno === current.supplier_user_refno
+                    )?.client_name
                   : ""
               }
             />
@@ -303,9 +316,9 @@ function ProductionOrderList({ navigation }) {
               description={
                 current?.vendor_user_refno
                   ? reference?.vendor?.find(
-                    (item) =>
-                      item.client_user_refno === current.vendor_user_refno
-                  )?.client_name
+                      (item) =>
+                        item.client_user_refno === current.vendor_user_refno
+                    )?.client_name
                   : ""
               }
             />
@@ -322,7 +335,7 @@ function ProductionOrderList({ navigation }) {
               description={current.total_weight}
             />
             <List.Item
-              title="Total Length"
+              title="Total Weight"
               description={current.total_length}
             />
             <List.Item

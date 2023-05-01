@@ -217,6 +217,10 @@ import MeetingPerson from "./src/screens/Marketing/EmployeeActivity/MeetingPerso
 import EmployeeCustomerForm from "./src/screens/Marketing/EmployeeActivity/forms/EmployeeCustomerForm";
 import BOQ from "./src/screens/Architect/Budget & BOQs/BOQ";
 import DailyActivityForm from "./src/screens/Marketing/EmployeeActivity/forms/DailyActivityForm";
+import EditCompanyForm from "./src/screens/Marketing/EmployeeActivity/forms/EditCompany";
+import AddMeetingPerson from "./src/screens/Marketing/EmployeeActivity/forms/AddMeetingPerson";
+import ProductPriceList from "./src/screens/Dealer/PriceList/ProductPriceList";
+import AddProductPriceList from "./src/screens/Dealer/PriceList/AddProductPriceList";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -438,20 +442,20 @@ export default function App() {
                   i == 0
                     ? expanded1
                     : i == 1
-                    ? expanded2
-                    : i == 2
-                    ? expanded3
-                    : i == 3
-                    ? expanded4
-                    : i == 4
-                    ? expanded5
-                    : i == 5
-                    ? expanded6
-                    : i == 6
-                    ? expanded7
-                    : i == 7
-                    ? expanded8
-                    : expanded9
+                      ? expanded2
+                      : i == 2
+                        ? expanded3
+                        : i == 3
+                          ? expanded4
+                          : i == 4
+                            ? expanded5
+                            : i == 5
+                              ? expanded6
+                              : i == 6
+                                ? expanded7
+                                : i == 7
+                                  ? expanded8
+                                  : expanded9
                 }
                 left={(props) => <List.Icon {...props} icon={k.icon} />}
                 style={[
@@ -971,6 +975,11 @@ export default function App() {
               />
               <Drawer.Screen
                 options={{ headerShown: false, unmountOnBlur: true }}
+                name="ProductPriceList"
+                component={ProductPriceList}
+              />
+              <Drawer.Screen
+                options={{ headerShown: false, unmountOnBlur: true }}
                 name="CommonDepartmentScreen"
                 component={CommonDepartmentScreen}
               />
@@ -1347,6 +1356,7 @@ export default function App() {
                 name="CustomerList"
                 component={CustomerList}
                 options={{
+                  headerShown: false,
                   headerTitle: "My Customer List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
@@ -1359,6 +1369,7 @@ export default function App() {
                 name="DailyActivityForm"
                 component={DailyActivityForm}
                 options={{
+                  
                   headerTitle: "Daily Activity Form",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
@@ -1371,6 +1382,7 @@ export default function App() {
                 name="DailyActivityList"
                 component={DailyActivityList}
                 options={{
+                  headerShown:false,
                   headerTitle: "Daily Activity List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
@@ -1391,7 +1403,18 @@ export default function App() {
                   unmountOnBlur: true,
                 }}
               />
-
+              <Drawer.Screen
+                name="EditCompanyForm"
+                component={EditCompanyForm}
+                options={{
+                  headerTitle: "Edit Company",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
               <Drawer.Screen
                 name="ActivityReport"
                 component={ActivityReport}
@@ -1409,6 +1432,18 @@ export default function App() {
                 component={MeetingPerson}
                 options={{
                   headerTitle: "Meeting Person",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                  unmountOnBlur: true,
+                }}
+              />
+              <Drawer.Screen
+                name="AddMeetingPerson"
+                component={AddMeetingPerson}
+                options={{
+                  headerTitle: "Add Meeting Person",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },
@@ -1537,7 +1572,7 @@ export default function App() {
 
   const BottomTabs = ({ navigation }) => {
     React.useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {});
+      const unsubscribe = navigation.addListener("focus", () => { });
 
       return unsubscribe;
     }, [navigation]);
@@ -1632,16 +1667,16 @@ export default function App() {
                 parseInt(userDetails[0].RoleID) === 4
                   ? BasicDetailsScreen
                   : parseInt(userDetails[0].RoleID) === 3
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 2
-                  ? UserProfile
-                  : parseInt(userDetails[0].RoleID) === 5
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 9
-                  ? BasicDetailsScreen
-                  : parseInt(userDetails[0].RoleID) === 6
-                  ? UserProfile
-                  : UserProfile
+                    ? UserProfile
+                    : parseInt(userDetails[0].RoleID) === 2
+                      ? UserProfile
+                      : parseInt(userDetails[0].RoleID) === 5
+                        ? BasicDetailsScreen
+                        : parseInt(userDetails[0].RoleID) === 9
+                          ? BasicDetailsScreen
+                          : parseInt(userDetails[0].RoleID) === 6
+                            ? UserProfile
+                            : UserProfile
               }
               options={{
                 unmountOnBlur: true,
@@ -1963,6 +1998,17 @@ export default function App() {
                 component={AddDesignTypeScreen}
                 options={{
                   headerTitle: "Add Design Type",
+                  headerBackTitleVisible: false,
+                  headerStyle: [Styles.primaryBgColor, Styles.height64],
+                  headerTitleStyle: { color: theme.colors.textLight },
+                  headerTintColor: theme.colors.textLight,
+                }}
+              />
+              <Stack.Screen
+                name="AddProductPriceList"
+                component={AddProductPriceList}
+                options={{
+                  headerTitle: "Add Product Price List",
                   headerBackTitleVisible: false,
                   headerStyle: [Styles.primaryBgColor, Styles.height64],
                   headerTitleStyle: { color: theme.colors.textLight },

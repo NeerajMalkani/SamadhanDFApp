@@ -7,8 +7,8 @@ const HDivider = () => {
     <View
       style={[
         Styles.width100per,
-        Styles.marginVertical12,
-        { backgroundColor: "#d3d3d3", height: 2 },
+        Styles.marginVertical8,
+        { backgroundColor: "#d3d3d3", height: 1 },
       ]}
     ></View>
   );

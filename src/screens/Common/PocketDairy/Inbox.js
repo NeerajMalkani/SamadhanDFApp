@@ -1,17 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Dimensions, ScrollView, Image, Keyboard } from "react-native";
-import { FAB, Title, List, ActivityIndicator, Button, Card, HelperText, Snackbar, Subheading, Switch, TextInput, Checkbox, RadioButton, Text } from "react-native-paper";
+import { useEffect, useRef, useState } from "react";
+import { View, Dimensions, ScrollView } from "react-native";
+import {
+  FAB,
+  Title,
+  List,
+  ActivityIndicator,
+  Button,
+  Card,
+  Snackbar,
+} from "react-native-paper";
 import { TabBar, TabView } from "react-native-tab-view";
 import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-import RadioGroup from "react-native-radio-buttons-group";
-import DropDown from "react-native-paper-dropdown";
+
 import moment from "moment";
 import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
@@ -19,12 +25,9 @@ import { creds } from "../../../utils/credentials";
 import { AWSImagePath } from "../../../utils/paths";
 import { NullOrEmpty } from "../../../utils/validations";
 import { BloodGroup } from "../../../utils/validations";
-import { styles } from "react-native-image-slider-banner/src/style";
-import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
-import { color } from "react-native-reanimated";
-import { PaperSelect } from "react-native-paper-select";
 import NoItems from "../../../components/NoItems";
 import RBSheet from "react-native-raw-bottom-sheet";
+import Search from "../../../components/Search";
 
 export const selectValidator = (value) => {
   if (!value || value.length <= 0) {
@@ -101,14 +104,12 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     });
   }
 
-  const [showDropDown, setShowDropDown] = useState(false);
-  const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
-  const [selectedReportingEmployee, setSelectedReportingEmployee] = React.useState("");
-
   const isFocused = useIsFocused();
-  const [index, setIndex] = useState(route.params && route.params.from === "brand" ? 2 : 0);
+  const [index, setIndex] = useState(
+    route.params && route.params.from === "brand" ? 2 : 0
+  );
 
-  const [empType, setEmpType] = React.useState();
+  const [empType, setEmpType] = useState();
 
   const [reporting, setReporting] = useState({
     value: "",
@@ -117,13 +118,10 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     error: "",
   });
 
-  const [wType, setWType] = React.useState();
-
   //#region Input Variables
-
+  // ! there're to many states can cause performance issues.
   const [employeeName, setEmployeeName] = useState("");
   const [employeeNameInvalid, setEemployeeNameInvalid] = useState("");
-  const employeeNameRef = useRef({});
 
   const [employeeCode, setEemployeeCode] = useState("");
   const [employeeCodeInvalid, setEemployeeCodeInvalid] = useState("");
@@ -131,43 +129,39 @@ const EmployeeEditScreen = ({ route, navigation }) => {
 
   const [mobileNo, setMobileNo] = useState("");
   const [mobileNoInvalid, setMobileNoInvalid] = useState("");
-  const mobileNoRef = useRef({});
 
   const [aadharNo, setAadharNo] = useState("");
   const [aadharNoInvalid, setAadharNoInvalid] = useState("");
-  const aadharNoRef = useRef({});
 
   const [fatherName, setFatherName] = useState("");
   const [fatherNameInvalid, setFatherNameInvalid] = useState("");
-  const fatherNameRef = useRef({});
 
   const [address, setAddress] = useState("");
   const [addressInvalid, setAddressInvalid] = useState("");
-  const addressRef = useRef({});
 
-  const [statesFullData, setStatesFullData] = React.useState([]);
-  const [statesData, setStatesData] = React.useState([]);
-  const [statesID, setStatesID] = React.useState([]);
-  const [stateName, setStateName] = React.useState("");
-  const [errorSN, setSNError] = React.useState(false);
+  const [statesFullData, setStatesFullData] = useState([]);
+  const [statesData, setStatesData] = useState([]);
+  const [statesID, setStatesID] = useState([]);
+  const [stateName, setStateName] = useState("");
+  const [errorSN, setSNError] = useState(false);
   const stateRef = useRef({});
 
-  const [cityFullData, setCityFullData] = React.useState([]);
-  const [cityData, setCityData] = React.useState([]);
-  const [cityID, setCityID] = React.useState([]);
-  const [cityName, setCityName] = React.useState("");
-  const [errorCN, setCNError] = React.useState(false);
+  const [cityFullData, setCityFullData] = useState([]);
+  const [cityData, setCityData] = useState([]);
+  const [cityID, setCityID] = useState([]);
+  const [cityName, setCityName] = useState("");
+  const [errorCN, setCNError] = useState(false);
   const cityRef = useRef({});
 
   const [pincode, setPincode] = useState("");
   const [pincodeInvalid, setPincodeInvalid] = useState("");
   const pincodeRef = useRef({});
 
-  const [bloodGroupFullData, setBloodGroupFullData] = React.useState([]);
-  const [bloodGroupData, setBloodGroupData] = React.useState([]);
-  const [bloodGroupID, setBloodGroupID] = React.useState([]);
-  const [bloodGroup, setBloodGroup] = React.useState("");
-  const [errorBloodGroup, setBloodGroupError] = React.useState(false);
+  const [bloodGroupFullData, setBloodGroupFullData] = useState([]);
+  const [bloodGroupData, setBloodGroupData] = useState([]);
+  const [bloodGroupID, setBloodGroupID] = useState([]);
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [errorBloodGroup, setBloodGroupError] = useState(false);
   const bloodGroupRef = useRef({});
 
   const [dob, setDob] = useState(new Date());
@@ -179,11 +173,13 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const dojRef = useRef({});
 
   const [emergencyContactName, setEmergencyContactName] = useState("");
-  const [emergencyContactNameInvalid, setEmergencyContactNameInvalid] = useState("");
+  const [emergencyContactNameInvalid, setEmergencyContactNameInvalid] =
+    useState("");
   const emergencyContactNameRef = useRef({});
 
   const [emergencyContactNo, setEmergencyContactNo] = useState("");
-  const [emergencyContactNoInvalid, setEmergencyContactNoInvalid] = useState("");
+  const [emergencyContactNoInvalid, setEmergencyContactNoInvalid] =
+    useState("");
   const emergencyContactNoRef = useRef({});
 
   const [cardValidity, setCardValidity] = useState(new Date());
@@ -194,32 +190,32 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [loginActiveStatusInvalid, setLoginActiveStatusInvalid] = useState("");
   const loginActiveStatusRef = useRef({});
 
-  const [branchFullData, setBranchFullData] = React.useState([]);
-  const [branchData, setBranchData] = React.useState([]);
-  const [branchID, setBranchID] = React.useState([]);
-  const [branchName, setBranchName] = React.useState("");
-  const [errorBranch, setBranchError] = React.useState(false);
+  const [branchFullData, setBranchFullData] = useState([]);
+  const [branchData, setBranchData] = useState([]);
+  const [branchID, setBranchID] = useState([]);
+  const [branchName, setBranchName] = useState("");
+  const [errorBranch, setBranchError] = useState(false);
   const branchRef = useRef({});
 
-  const [departmentFullData, setDepartmentFullData] = React.useState([]);
-  const [departmentData, setDepartmentData] = React.useState([]);
-  const [departmentID, setDepartmentID] = React.useState([]);
-  const [departmentName, setDepartmentName] = React.useState("");
-  const [errorDepartment, setDepartmentError] = React.useState(false);
+  const [departmentFullData, setDepartmentFullData] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);
+  const [departmentID, setDepartmentID] = useState([]);
+  const [departmentName, setDepartmentName] = useState("");
+  const [errorDepartment, setDepartmentError] = useState(false);
   const departmentRef = useRef({});
 
-  const [designationFullData, setDesignationFullData] = React.useState([]);
-  const [designationData, setDesignationData] = React.useState([]);
-  const [designationID, setDesignationID] = React.useState([]);
-  const [designationName, setDesignationName] = React.useState("");
-  const [errorDesignation, setDesignationError] = React.useState(false);
+  const [designationFullData, setDesignationFullData] = useState([]);
+  const [designationData, setDesignationData] = useState([]);
+  const [designationID, setDesignationID] = useState([]);
+  const [designationName, setDesignationName] = useState("");
+  const [errorDesignation, setDesignationError] = useState(false);
   const designationRef = useRef({});
 
-  const [reportingFullData, setReportingFullData] = React.useState([]);
-  const [reportingData, setReportingData] = React.useState([]);
-  const [reportingID, setReportingID] = React.useState([]);
-  const [reportingName, setReportingName] = React.useState("");
-  const [errorReporting, setReportingError] = React.useState(false);
+  const [reportingFullData, setReportingFullData] = useState([]);
+  const [reportingData, setReportingData] = useState([]);
+  const [reportingID, setReportingID] = useState([]);
+  const [reportingName, setReportingName] = useState("");
+  const [errorReporting, setReportingError] = useState(false);
   const reportingRef = useRef({});
 
   const [employeeType, setEmployeeType] = useState(0);
@@ -266,31 +262,25 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   const [filePath, setFilePath] = useState(null);
   const [errorLogo, setLogoError] = useState(false);
 
-  const [isImageReplaced, setIsImageReplaced] = React.useState(false);
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-
-  // const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  // const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.error);
-  // const [snackbarText, setSnackbarText] = React.useState("");
-  // const [isLoading, setIsLoading] = React.useState(false);
+  const [isImageReplaced, setIsImageReplaced] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   //#endregion
 
   //#region inbox variables
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [isLoading, setIsLoading] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
-  const [date, setDate] = React.useState("");
-  const [paymentMode, setPaymentMode] = React.useState("");
-  const [contactName, setContactName] = React.useState("");
-  const [contactPhoneNo, setContactPhoneNo] = React.useState("");
-  const [display, setDisplay] = React.useState("");
+  const [date, setDate] = useState("");
+  const [paymentMode, setPaymentMode] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactPhoneNo, setContactPhoneNo] = useState("");
+  const [display, setDisplay] = useState("");
 
   const refRBSheet = useRef();
 
@@ -312,21 +302,52 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       ID: route.params.data.id,
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getemployeedetailsbyid?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getemployeedetailsbyid?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             let employee_data = response.data.data[0].employee[0];
-            let reporting_data = response.data.data[0].employeeReportingAuthority[0];
+            let reporting_data =
+              response.data.data[0].employeeReportingAuthority[0];
             let bankDetails_data = response.data.data[0].bankDetails[0];
             if (!NullOrEmpty(employee_data)) {
-              setEmployeeName(!NullOrEmpty(employee_data.employeeName) ? employee_data.employeeName : "");
-              setEemployeeCode(!NullOrEmpty(employee_data.employeeCode) ? employee_data.employeeCode : "");
-              setMobileNo(!NullOrEmpty(employee_data.mobileNo) ? employee_data.mobileNo : "");
-              setAadharNo(!NullOrEmpty(employee_data.aadharNo) ? employee_data.aadharNo : "");
-              setFatherName(!NullOrEmpty(employee_data.fatherName) ? employee_data.fatherName : "");
-              setAddress(!NullOrEmpty(employee_data.address) ? employee_data.address : "");
-              setPincode(NullOrEmpty(employee_data.pincode) ? "" : employee_data.pincode !== 0 ? employee_data.pincode.toString() : "");
+              setEmployeeName(
+                !NullOrEmpty(employee_data.employeeName)
+                  ? employee_data.employeeName
+                  : ""
+              );
+              setEemployeeCode(
+                !NullOrEmpty(employee_data.employeeCode)
+                  ? employee_data.employeeCode
+                  : ""
+              );
+              setMobileNo(
+                !NullOrEmpty(employee_data.mobileNo)
+                  ? employee_data.mobileNo
+                  : ""
+              );
+              setAadharNo(
+                !NullOrEmpty(employee_data.aadharNo)
+                  ? employee_data.aadharNo
+                  : ""
+              );
+              setFatherName(
+                !NullOrEmpty(employee_data.fatherName)
+                  ? employee_data.fatherName
+                  : ""
+              );
+              setAddress(
+                !NullOrEmpty(employee_data.address) ? employee_data.address : ""
+              );
+              setPincode(
+                NullOrEmpty(employee_data.pincode)
+                  ? ""
+                  : employee_data.pincode !== 0
+                  ? employee_data.pincode.toString()
+                  : ""
+              );
 
               if (!NullOrEmpty(employee_data.stateID)) {
                 setStatesID(employee_data.stateID);
@@ -358,10 +379,22 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 setLwd(new Date(employee_data.lastWorkDate));
               }
 
-              setEmergencyContactName(!NullOrEmpty(employee_data.emergencyContactName) ? employee_data.emergencyContactName : "");
-              setEmergencyContactNo(!NullOrEmpty(employee_data.emergencyContactNo) ? employee_data.emergencyContactNo : "");
+              setEmergencyContactName(
+                !NullOrEmpty(employee_data.emergencyContactName)
+                  ? employee_data.emergencyContactName
+                  : ""
+              );
+              setEmergencyContactNo(
+                !NullOrEmpty(employee_data.emergencyContactNo)
+                  ? employee_data.emergencyContactNo
+                  : ""
+              );
 
-              setLoginActiveStatus(!NullOrEmpty(employee_data.loginStatus) ? employee_data.loginStatus : "");
+              setLoginActiveStatus(
+                !NullOrEmpty(employee_data.loginStatus)
+                  ? employee_data.loginStatus
+                  : ""
+              );
 
               if (!NullOrEmpty(employee_data.branchID)) {
                 setBranchID(employee_data.branchID);
@@ -387,7 +420,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 }
 
                 onPressETRadioButton(ETRadioButtons);
-                setEmployeeTypeID(!NullOrEmpty(employee_data.employeeType) ? employee_data.employeeType : 0);
+                setEmployeeTypeID(
+                  !NullOrEmpty(employee_data.employeeType)
+                    ? employee_data.employeeType
+                    : 0
+                );
               }
               if (!NullOrEmpty(employee_data.wagesType)) {
                 {
@@ -400,14 +437,26 @@ const EmployeeEditScreen = ({ route, navigation }) => {
                 }
 
                 onPressWagesRadioButton(wagesRadioButtons);
-                setWagesTypeID(!NullOrEmpty(employee_data.wagesType) ? employee_data.wagesType : "");
+                setWagesTypeID(
+                  !NullOrEmpty(employee_data.wagesType)
+                    ? employee_data.wagesType
+                    : ""
+                );
               }
 
-              setSalary(!NullOrEmpty(employee_data.salary) ? employee_data.salary : 0);
+              setSalary(
+                !NullOrEmpty(employee_data.salary) ? employee_data.salary : 0
+              );
 
               setLogoImage(employee_data.profilePhoto);
-              setImage(employee_data.profilePhoto ? employee_data.profilePhoto : AWSImagePath + "placeholder-image.png");
-              setFilePath(employee_data.profilePhoto ? employee_data.profilePhoto : null);
+              setImage(
+                employee_data.profilePhoto
+                  ? employee_data.profilePhoto
+                  : AWSImagePath + "placeholder-image.png"
+              );
+              setFilePath(
+                employee_data.profilePhoto ? employee_data.profilePhoto : null
+              );
             }
             if (!NullOrEmpty(reporting_data)) {
               setReportingID(reporting_data.reportingAuthorityID);
@@ -415,11 +464,25 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             }
 
             if (!NullOrEmpty(bankDetails_data)) {
-              setAccountHolderName(!NullOrEmpty(bankDetails_data.accountHolderName) ? bankDetails_data.accountHolderName.toString() : "");
-              setAccountNo(bankDetails_data.accountNumber !== 0 ? bankDetails_data.accountNumber.toString() : "");
-              setBankName(bankDetails_data.bankName ? bankDetails_data.bankName : "");
-              setBankBranchName(bankDetails_data.branchName ? bankDetails_data.branchName : "");
-              setIfscCode(bankDetails_data.ifscCode ? bankDetails_data.ifscCode : "");
+              setAccountHolderName(
+                !NullOrEmpty(bankDetails_data.accountHolderName)
+                  ? bankDetails_data.accountHolderName.toString()
+                  : ""
+              );
+              setAccountNo(
+                bankDetails_data.accountNumber !== 0
+                  ? bankDetails_data.accountNumber.toString()
+                  : ""
+              );
+              setBankName(
+                bankDetails_data.bankName ? bankDetails_data.bankName : ""
+              );
+              setBankBranchName(
+                bankDetails_data.branchName ? bankDetails_data.branchName : ""
+              );
+              setIfscCode(
+                bankDetails_data.ifscCode ? bankDetails_data.ifscCode : ""
+              );
             }
           }
 
@@ -526,7 +589,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuserbranchforemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getuserbranchforemployee?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -553,13 +618,17 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getuserdepartmentforbranchemployee?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDepartmentFullData(response.data.data);
 
-            const department = response.data.data.map((data) => data.departmentName);
+            const department = response.data.data.map(
+              (data) => data.departmentName
+            );
             setDepartmentData(department);
 
             if (d_ID > 0) {
@@ -580,12 +649,18 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getuserdesignationforbranchemployee?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getuserdesignationforbranchemployee?${new URLSearchParams(
+        params
+      )}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
             setDesignationFullData(response.data.data);
-            const designation = response.data.data.map((data) => data.designationName);
+            const designation = response.data.data.map(
+              (data) => data.designationName
+            );
             setDesignationData(designation);
 
             if (de_ID > 0) {
@@ -606,7 +681,9 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     let params = {
       AddedByUserID: userID,
     };
-    Provider.getAll(`master/getreportingemployeelist?${new URLSearchParams(params)}`)
+    Provider.getAll(
+      `master/getreportingemployeelist?${new URLSearchParams(params)}`
+    )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
@@ -803,7 +880,11 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         )
           .progress((progress) => {
             setIsButtonLoading(true);
-            setSnackbarText(`Uploading: ${progress.loaded / progress.total} (${progress.percent}%)`);
+            setSnackbarText(
+              `Uploading: ${progress.loaded / progress.total} (${
+                progress.percent
+              }%)`
+            );
           })
           .then((response) => {
             setIsButtonLoading(false);
@@ -837,20 +918,35 @@ const EmployeeEditScreen = ({ route, navigation }) => {
       AadharNo: aadharNo.trim(),
       FatherName: fatherName,
       Address: address,
-      StateID: stateName ? statesFullData.find((el) => el.stateName === stateName).id : 0,
-      CityID: cityName ? cityFullData.find((el) => el.cityName === cityName).id : 0,
+      StateID: stateName
+        ? statesFullData.find((el) => el.stateName === stateName).id
+        : 0,
+      CityID: cityName
+        ? cityFullData.find((el) => el.cityName === cityName).id
+        : 0,
       Pincode: pincode ? pincode : 0,
       ProfilePhoto: logoImage ? logoImage : "",
-      BloodGroup: bloodGroup ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID : 0,
+      BloodGroup: bloodGroup
+        ? bloodGroupFullData.find((el) => el.Name === bloodGroup).ID
+        : 0,
       DOB: moment(dob).format("YYYY-MM-DD"),
       DOJ: moment(doj).format("YYYY-MM-DD"),
       EmergencyContactName: emergencyContactName,
       EmergencyContactNo: emergencyContactNo,
       IDCardValidity: moment(cardValidity).format("YYYY-MM-DD"),
       LoginActiveStatus: true,
-      BranchID: branchName ? branchFullData.find((el) => el.locationName === branchName).id : 0,
-      DepartmentID: departmentName ? departmentFullData.find((el) => el.departmentName === departmentName).departmentID : 0,
-      DesignationID: designationName ? designationFullData.find((el) => el.designationName === designationName).designationID : 0,
+      BranchID: branchName
+        ? branchFullData.find((el) => el.locationName === branchName).id
+        : 0,
+      DepartmentID: departmentName
+        ? departmentFullData.find((el) => el.departmentName === departmentName)
+            .departmentID
+        : 0,
+      DesignationID: designationName
+        ? designationFullData.find(
+            (el) => el.designationName === designationName
+          ).designationID
+        : 0,
       EmployeeType: employeeTypeID,
       LastWorkDate: moment(lwd).format("YYYY-MM-DD"),
       WagesType: NullOrEmpty(wagesTypeID) ? 0 : parseInt(wagesTypeID),
@@ -918,7 +1014,7 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   };
 
   const ValidateData = () => {
-    let isValid = true;
+    const isValid = true;
 
     if (NullOrEmpty(employeeName.trim())) {
       isValid = false;
@@ -949,11 +1045,25 @@ const EmployeeEditScreen = ({ route, navigation }) => {
   //#region datalist
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.borderBottom1,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          { height: 72 },
+        ]}
+      >
         <List.Item
           title={data.item.modeTypeName}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName}\nSub Category Name: ${NullOrEmpty(data.item.subCategoryName) ? "" : data.item.subCategoryName} `}
+          description={`Category Name.: ${
+            NullOrEmpty(data.item.categoryName) ? "" : data.item.categoryName
+          }\nSub Category Name: ${
+            NullOrEmpty(data.item.subCategoryName)
+              ? ""
+              : data.item.subCategoryName
+          } `}
           onPress={() => {
             refRBSheet.current.open();
             setModeTypeName(data.item.modeTypeName);
@@ -961,15 +1071,32 @@ const EmployeeEditScreen = ({ route, navigation }) => {
             setSubCategoryName(data.item.subCategoryName);
             setDisplay(data.item.display ? "Yes" : "No");
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="file-tree" />}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          left={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="file-tree"
+            />
+          )}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+            />
+          )}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddSubCategoryName", { type: "add", fetchData: FetchData });
+    navigation.navigate("AddSubCategoryName", {
+      type: "add",
+      fetchData: FetchData,
+    });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -998,47 +1125,115 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         return (
           <View style={[Styles.flex1]}>
             {isLoading ? (
-              <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+              <View
+                style={[
+                  Styles.flex1,
+                  Styles.flexJustifyCenter,
+                  Styles.flexAlignCenter,
+                ]}
+              >
                 <ActivityIndicator size="large" color={theme.colors.primary} />
               </View>
-            ) : listData[0].length > 0 ? (
-              <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-                <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-                <SwipeListView
-                  previewDuration={1000}
-                  previewOpenValue={-72}
-                  previewRowKey="1"
-                  previewOpenDelay={1000}
-                  refreshControl={
-                    <RefreshControl
-                      colors={[theme.colors.primary]}
-                      refreshing={refreshing}
-                      onRefresh={() => {
-                        FetchData();
-                      }}
-                    />
-                  }
-                  data={listSearchData[0]}
-                  disableRightSwipe={true}
-                  rightOpenValue={-72}
-                  renderItem={(data) => RenderItems(data)}
-                  renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+            ) : listData.length > 0 ? (
+              <View
+                style={[
+                  Styles.flex1,
+                  Styles.flexColumn,
+                  Styles.backgroundColor,
+                ]}
+              >
+                <Search
+                  data={listData}
+                  setData={setListSearchData}
+                  filterFunction={[
+                    "activityRoleName",
+                    "serviceName",
+                    "unitName",
+                    "categoryName",
+                    "hsnsacCode",
+                    "gstRate",
+                    "display",
+                  ]}
                 />
+                {listSearchData?.length > 0 ? (
+                  <SwipeListView
+                    previewDuration={1000}
+                    previewOpenValue={-72}
+                    previewRowKey="1"
+                    previewOpenDelay={1000}
+                    refreshControl={
+                      <RefreshControl
+                        colors={[theme.colors.primary]}
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                          FetchData();
+                        }}
+                      />
+                    }
+                    data={listSearchData}
+                    disableRightSwipe={true}
+                    rightOpenValue={-72}
+                    renderItem={(data) => RenderItems(data)}
+                    renderHiddenItem={(data, rowMap) =>
+                      RenderHiddenItems(data, rowMap, [EditCallback])
+                    }
+                  />
+                ) : (
+                  <NoItems
+                    icon="format-list-bulleted"
+                    text="No records found for your query"
+                  />
+                )}
               </View>
             ) : (
-              <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+              <NoItems
+                icon="format-list-bulleted"
+                text="No records found. Add records by clicking on plus icon."
+              />
             )}
-            <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
-            <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+            <FAB
+              style={[
+                Styles.margin16,
+                Styles.primaryBgColor,
+                { position: "absolute", right: 16, bottom: 16 },
+              ]}
+              icon="plus"
+              onPress={AddCallback}
+            />
+            <Snackbar
+              visible={snackbarVisible}
+              onDismiss={() => setSnackbarVisible(false)}
+              duration={3000}
+              style={{ backgroundColor: snackbarColor }}
+            >
               {snackbarText}
             </Snackbar>
-            <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={420} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+            <RBSheet
+              ref={refRBSheet}
+              closeOnDragDown={true}
+              closeOnPressMask={true}
+              dragFromTopOnly={true}
+              height={420}
+              animationType="fade"
+              customStyles={{
+                wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+                draggableIcon: { backgroundColor: "#000" },
+              }}
+            >
               <View>
-                <Title style={[Styles.paddingHorizontal16]}>{modeTypeName}</Title>
+                <Title style={[Styles.paddingHorizontal16]}>
+                  {modeTypeName}
+                </Title>
                 <ScrollView>
-                  <List.Item title="Mode Type Name" description={modeTypeName} />
+                  <List.Item
+                    title="Mode Type Name"
+                    description={modeTypeName}
+                  />
                   <List.Item title="Category Name" description={categoryName} />
-                  <List.Item title=" Sub Category Name" description={subCategoryName} />
+                  <List.Item
+                    title=" Sub Category Name"
+                    description={subCategoryName}
+                  />
                   <List.Item title="Display" description={display} />
                 </ScrollView>
               </View>
@@ -1144,8 +1339,19 @@ const EmployeeEditScreen = ({ route, navigation }) => {
         return null;
     }
   };
-  const renderTabBar = (props) => <TabBar {...props} indicatorStyle={{ backgroundColor: theme.colors.primary }} style={{ backgroundColor: theme.colors.textLight }} inactiveColor={theme.colors.textSecondary} activeColor={theme.colors.primary} scrollEnabled={true} tabStyle={{ width: windowWidth / 3 }} labelStyle={[Styles.fontSize13, Styles.fontBold]} />;
-  const [routes] = React.useState([
+  const renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.textLight }}
+      inactiveColor={theme.colors.textSecondary}
+      activeColor={theme.colors.primary}
+      scrollEnabled={true}
+      tabStyle={{ width: windowWidth / 3 }}
+      labelStyle={[Styles.fontSize13, Styles.fontBold]}
+    />
+  );
+  const [routes] = useState([
     { key: "settlement", title: "Settlement" },
     { key: "lending", title: "Lending" },
     // { key: "company", title: "Company" },
@@ -1155,20 +1361,49 @@ const EmployeeEditScreen = ({ route, navigation }) => {
     isFocused && (
       <View style={[Styles.flex1]}>
         {isLoading ? (
-          <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+          <View
+            style={[
+              Styles.flex1,
+              Styles.flexJustifyCenter,
+              Styles.flexAlignCenter,
+            ]}
+          >
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : (
-          <TabView style={{ marginBottom: 64 }} renderTabBar={renderTabBar} navigationState={{ index, routes }} renderScene={renderScene} onIndexChange={setIndex} />
+          <TabView
+            style={{ marginBottom: 64 }}
+            renderTabBar={renderTabBar}
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+          />
         )}
-        <View style={[Styles.backgroundColor, Styles.width100per, Styles.marginTop32, Styles.padding16, { position: "absolute", bottom: 0, elevation: 3 }]}>
+        <View
+          style={[
+            Styles.backgroundColor,
+            Styles.width100per,
+            Styles.marginTop32,
+            Styles.padding16,
+            { position: "absolute", bottom: 0, elevation: 3 },
+          ]}
+        >
           <Card.Content>
-            <Button mode="contained" onPress={ValidateData} loading={isButtonLoading}>
+            <Button
+              mode="contained"
+              onPress={ValidateData}
+              loading={isButtonLoading}
+            >
               Update
             </Button>
           </Card.Content>
         </View>
-        <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={3000}
+          style={{ backgroundColor: snackbarColor }}
+        >
           {snackbarText}
         </Snackbar>
       </View>

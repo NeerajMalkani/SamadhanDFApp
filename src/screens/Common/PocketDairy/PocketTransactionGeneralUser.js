@@ -1,98 +1,78 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   View,
   LogBox,
   RefreshControl,
   ScrollView,
-  Image,
-  Dimensions,
   TouchableOpacity,
-} from 'react-native';
+} from "react-native";
 import {
   Button,
-  FAB,
-  List,
   Snackbar,
-  Searchbar,
-  Title,
   HelperText,
   Text,
   Divider,
-} from 'react-native-paper';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import Provider from '../../../api/Provider';
-import Header from '../../../components/Header';
-import { RenderHiddenItems } from '../../../components/ListActions';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import NoItems from '../../../components/NoItems';
-import { Styles } from '../../../styles/styles';
-import { theme } from '../../../theme/apptheme';
-import { NullOrEmpty } from '../../../utils/validations';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AWSImagePath } from '../../../utils/paths';
-import { creds, projectVariables } from '../../../utils/credentials';
-import { useIsFocused } from '@react-navigation/native';
-import { TabBar, TabView } from 'react-native-tab-view';
-import { DateTimePicker } from '@hashiprobr/react-native-paper-datetimepicker';
-import moment from 'moment';
-import { TransactionListItem } from './TransactionListItem';
+} from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { SwipeListView } from "react-native-swipe-list-view";
+import Provider from "../../../api/Provider";
+import Header from "../../../components/Header";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import NoItems from "../../../components/NoItems";
+import { Styles } from "../../../styles/styles";
+import { theme } from "../../../theme/apptheme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { projectVariables } from "../../../utils/credentials";
+import { useIsFocused } from "@react-navigation/native";
+import { DateTimePicker } from "@hashiprobr/react-native-paper-datetimepicker";
+import moment from "moment";
+import { TransactionListItem } from "./TransactionListItem";
 
 let userID = 0,
   companyID = 0,
   branchID = 0;
 LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
+  "Non-serializable values were found in the navigation state",
 ]);
-
-const windowWidth = Dimensions.get('window').width;
 
 const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
   //#region Variables
-  const isFocused = useIsFocused();
-  const [index, setIndex] = useState(0);
 
-  const [searchQuery_Self, setSearchQuery_Self] = React.useState('');
-  const [searchQuery_Company, setSearchQuery_Company] = React.useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [listData_Self, setListData_Self] = useState([]);
+  const [listSearchData_Self, setListSearchData_Self] = useState([]);
 
-  const listData_Self = React.useState([]);
-  const listSearchData_Self = React.useState([]);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState('');
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success,
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
   const [date, setDate] = useState(new Date());
-  const [dateInvalid, setDateInvalid] = useState('');
+  const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
 
   const [fromDate, setFromDate] = useState(new Date());
-  const [fromDateInvalid, setFromDateInvalid] = useState('');
-  const [fromDateError, setFromDateError] = React.useState(false);
+  const [fromDateInvalid, setFromDateInvalid] = useState("");
+  const [fromDateError, setFromDateError] = useState(false);
   const fromDateRef = useRef({});
 
   const [toDate, setToDate] = useState(new Date());
-  const [toDateInvalid, setToDateInvalid] = useState('');
-  const [toDateError, setToDateError] = React.useState(false);
+  const [toDateInvalid, setToDateInvalid] = useState("");
+  const [toDateError, setToDateError] = useState(false);
   const toDateRef = useRef({});
 
-  // const [transactionID, setTransactionID] = React.useState("");
-  // const [entryType, setEntryType] = React.useState("");
-  // const [categoryName, setCategoryName] = React.useState("");
-  // const [subCategoryName, setSubCategoryName] = React.useState("");
-  // const [receiptMode, setReceiptMode] = React.useState("");
-  // const [amount, setAmount] = React.useState("");
-  // const [attachment, setAttachment] = React.useState("");
-  // const [display, setDisplay] = React.useState("");
-  // const [depositType, setDepositType] = React.useState("");
+  // const [transactionID, setTransactionID] = useState("");
+  // const [entryType, setEntryType] = useState("");
+  // const [categoryName, setCategoryName] = useState("");
+  // const [subCategoryName, setSubCategoryName] = useState("");
+  // const [receiptMode, setReceiptMode] = useState("");
+  // const [amount, setAmount] = useState("");
+  // const [attachment, setAttachment] = useState("");
+  // const [display, setDisplay] = useState("");
+  // const [depositType, setDepositType] = useState("");
 
-  const [selfCashBalance, setSelfCashBalance] = React.useState('0');
+  const [selfCashBalance, setSelfCashBalance] = useState("0");
 
   const refRBSheet = useRef();
   //#endregion
@@ -100,15 +80,15 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
   //#region Functions
 
   const GetUserID = async () => {
-    const userData = await AsyncStorage.getItem('user');
+    const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
       FetchPocketCashDetails();
       FetchData_Self(
-        moment(new Date()).format('DD-MM-YYYY'),
-        moment(new Date()).format('DD-MM-YYYY'),
+        moment(new Date()).format("DD-MM-YYYY"),
+        moment(new Date()).format("DD-MM-YYYY")
       );
     }
   };
@@ -123,7 +103,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(
       Provider.API_URLS.pckdashboard_cashinpocket_details,
-      params,
+      params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -154,7 +134,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
     };
     Provider.createDFPocketDairy(
       Provider.API_URLS.pckdashboard_cashinpocket_gridlist,
-      params,
+      params
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
@@ -163,11 +143,11 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData_Self[1](response.data.data);
-            listSearchData_Self[1](response.data.data);
+            setListData_Self(response.data.data);
+            setListSearchData_Self(response.data.data);
           }
         } else {
-          listData_Self[1]([]);
+          setListData_Self([]);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -184,22 +164,6 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
-
-  const onChangeSearch_Self = (query) => {
-    setSearchQuery_Self(query);
-    if (query === '') {
-      listSearchData_Self[1](listData_Self[0]);
-    } else {
-      listSearchData_Self[1](
-        listData_Self[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        }),
-      );
-    }
-  };
 
   const RenderItems = (data) => {
     return (
@@ -223,7 +187,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             { elevation: 4 },
           ]}
         >
-          <TransactionListItem current={data} type='fin-list' />
+          <TransactionListItem current={data} type="fin-list" />
         </TouchableOpacity>
 
         {/* <TouchableOpacity activeOpacity={1}
@@ -266,28 +230,28 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
   };
 
   const AddCallback = () => {
-    navigation.navigate('AddSource', {
-      type: 'add',
+    navigation.navigate("AddSource", {
+      type: "add",
       fetchData: FetchData_Self,
     });
   };
 
   const ValidateSelfData = () => {
     let isValid = true;
-    if (fromDate == '') {
+    if (fromDate == "") {
       isValid = false;
       setFromDateError(true);
     }
 
-    if (toDate == '') {
+    if (toDate == "") {
       isValid = false;
       setToDateError(true);
     }
 
     if (isValid) {
       FetchData_Self(
-        fromDate == '' ? '' : moment(fromDate).format('DD-MM-YYYY'),
-        toDate == '' ? '' : moment(toDate).format('DD-MM-YYYY'),
+        fromDate == "" ? "" : moment(fromDate).format("DD-MM-YYYY"),
+        toDate == "" ? "" : moment(toDate).format("DD-MM-YYYY")
       );
     }
   };
@@ -296,11 +260,11 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
 
   return (
     <View style={[Styles.flex1]}>
-      <Header navigation={navigation} title='Cash In Pocket' />
+      <Header navigation={navigation} title="Cash In Pocket" />
       <View style={[Styles.flex1]}>
         <ScrollView
           style={[Styles.flex1, Styles.backgroundColor]}
-          keyboardShouldPersistTaps='handled'
+          keyboardShouldPersistTaps="handled"
         >
           <View style={[Styles.padding16]}>
             <View>
@@ -309,12 +273,12 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                   Styles.fontSize24,
                   Styles.fontBold,
                   Styles.textCenter,
-                  { color: 'green', width: '100%' },
+                  { color: "green", width: "100%" },
                   Styles.paddingBottom12,
                 ]}
               >
                 Balance:
-                <Icon name='currency-inr' size={24} />
+                <Icon name="currency-inr" size={24} />
                 {selfCashBalance}
               </Text>
               <Divider />
@@ -327,7 +291,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                 <Text
                   style={[
                     Styles.fontSize18,
-                    { color: 'green', width: '100%' },
+                    { color: "green", width: "100%" },
                     Styles.paddingBottom12,
                   ]}
                 >
@@ -339,29 +303,29 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
               <View>
                 <DateTimePicker
                   style={Styles.backgroundColorWhite}
-                  label='From Date'
-                  type='date'
+                  label="From Date"
+                  type="date"
                   value={fromDate}
                   onChangeDate={setFromDate}
                 />
-                <HelperText type='error' visible={fromDateError}>
+                <HelperText type="error" visible={fromDateError}>
                   Please enter a valid date
                 </HelperText>
               </View>
               <View>
                 <DateTimePicker
                   style={Styles.backgroundColorWhite}
-                  label='To Date'
-                  type='date'
+                  label="To Date"
+                  type="date"
                   value={toDate}
                   onChangeDate={setToDate}
                 />
-                <HelperText type='error' visible={toDateError}>
+                <HelperText type="error" visible={toDateError}>
                   Please enter a valid date
                 </HelperText>
               </View>
               <View style={[Styles.backgroundColor, Styles.width100per]}>
-                <Button mode='contained' onPress={ValidateSelfData}>
+                <Button mode="contained" onPress={ValidateSelfData}>
                   Submit
                 </Button>
               </View>
@@ -371,7 +335,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             <Text
               style={[
                 Styles.fontSize18,
-                { color: 'green', width: '100%' },
+                { color: "green", width: "100%" },
                 Styles.paddingBottom12,
               ]}
             >
@@ -380,7 +344,7 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
             <Divider />
           </View>
           <View>
-            {listData_Self[0].length > 0 ? (
+            {listData_Self.length > 0 ? (
               <View
                 style={[
                   Styles.flex1,
@@ -388,34 +352,40 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
                   Styles.backgroundColor,
                 ]}
               >
-                <Searchbar
-                  style={[Styles.margin16]}
-                  placeholder='Search'
-                  onChangeText={onChangeSearch_Self}
-                  value={searchQuery_Self}
+                <Search
+                  data={listData_Self}
+                  setData={setListSearchData_Self}
+                  filterFunction={["categoryName"]}
                 />
-                <SwipeListView
-                  previewDuration={1000}
-                  previewOpenValue={-72}
-                  previewRowKey='1'
-                  previewOpenDelay={1000}
-                  refreshControl={
-                    <RefreshControl
-                      colors={[theme.colors.primary]}
-                      refreshing={refreshing}
-                      onRefresh={() => {
-                        FetchData_Self();
-                      }}
-                    />
-                  }
-                  data={listSearchData_Self[0]}
-                  disableRightSwipe={true}
-                  rightOpenValue={-72}
-                  renderItem={(data) => RenderItems(data)}
-                />
+                {listSearchData_Self?.length > 0 ? (
+                  <SwipeListView
+                    previewDuration={1000}
+                    previewOpenValue={-72}
+                    previewRowKey="1"
+                    previewOpenDelay={1000}
+                    refreshControl={
+                      <RefreshControl
+                        colors={[theme.colors.primary]}
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                          FetchData_Self();
+                        }}
+                      />
+                    }
+                    data={listSearchData_Self}
+                    disableRightSwipe={true}
+                    rightOpenValue={-72}
+                    renderItem={(data) => RenderItems(data)}
+                  />
+                ) : (
+                  <NoItems
+                    icon="format-list-bulleted"
+                    text="No records found for your query"
+                  />
+                )}
               </View>
             ) : (
-              <NoItems icon='format-list-bulleted' text='No records found.' />
+              <NoItems icon="format-list-bulleted" text="No records found." />
             )}
           </View>
         </ScrollView>
@@ -435,10 +405,10 @@ const PocketTransactionGeneralUserScreen = ({ route, navigation }) => {
         closeOnPressMask={true}
         dragFromTopOnly={true}
         height={720}
-        animationType='fade'
+        animationType="fade"
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0,0,0,0.5)' },
-          draggableIcon: { backgroundColor: '#000' },
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
         }}
       >
         <View>

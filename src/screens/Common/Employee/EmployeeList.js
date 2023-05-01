@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import {
   ActivityIndicator,
@@ -10,12 +10,10 @@ import {
 import {
   FAB,
   List,
-  Searchbar,
   Snackbar,
   Title,
   Dialog,
   Portal,
-  Paragraph,
   Text,
   TextInput,
   Card,
@@ -29,16 +27,13 @@ import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  RenderHiddenItemsConditional,
-  RenderHiddenMultipleItems,
-} from "../../../components/ListActions";
+import { RenderHiddenItemsConditional } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import { NullOrEmpty } from "../../../utils/validations";
-import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
 import { communication } from "../../../utils/communication";
-import SearchNAdd from "./AddItems/SearchNAdd";
+
 import DFButton from "../../../components/Button";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -49,32 +44,30 @@ let Sess_branch_refno = 0;
 let Sess_designation_refno = 0;
 const EmployeeListScreen = ({ navigation }) => {
   //#region Variables
-  const [visible, setVisible] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [employeeID, setEmployeeID] = React.useState("");
-  const [otp, setOTP] = React.useState("");
-  const [otpError, setOtpError] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [employeeID, setEmployeeID] = useState("");
+  const [otp, setOTP] = useState("");
+  const [otpError, setOtpError] = useState(false);
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
   const [empcode, setEmpCode] = useState("");
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [employeeName, setEmployeeName] = React.useState("");
+  const [employeeName, setEmployeeName] = useState("");
 
-  const [mobileNo, setMobileNo] = React.useState("");
-  const [branch, setBranch] = React.useState("");
-  const [department, setDepartment] = React.useState("");
-  const [designation, setDesignation] = React.useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const [branch, setBranch] = useState("");
+  const [department, setDepartment] = useState("");
+  const [designation, setDesignation] = useState("");
 
-  const [profileStatus, setProfileStatus] = React.useState("");
-  const [loginStatus, setLoginStatus] = React.useState("");
-  const [verifyStatus, setVerifyStatus] = React.useState("");
+  const [profileStatus, setProfileStatus] = useState("");
+  const [loginStatus, setLoginStatus] = useState("");
+  const [verifyStatus, setVerifyStatus] = useState("");
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const refRBSheet = useRef();
 
@@ -120,11 +113,14 @@ const EmployeeListScreen = ({ navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -179,22 +175,6 @@ const EmployeeListScreen = ({ navigation }) => {
     }
   }, [isFocused]);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.employee_name
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const AddCallback = () => {
     navigation.navigate("SearchNAdd", { type: "add", fetchData: FetchData });
   };
@@ -207,7 +187,7 @@ const EmployeeListScreen = ({ navigation }) => {
   const AddEmployee = () => {
     navigation.navigate("AddEmployee", { type: "add", fetchData: FetchData });
   };
-  const [current, setCurrent] = React.useState();
+  const [current, setCurrent] = useState();
   const EditCallback = (data, rowMap, buttonType) => {
     if (buttonType == "otp") {
       let params = {
@@ -265,15 +245,17 @@ const EmployeeListScreen = ({ navigation }) => {
         <List.Item
           title={data.item.employee_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Mob.: ${NullOrEmpty(data.item.employee_mobile_no)
+          description={`Mob.: ${
+            NullOrEmpty(data.item.employee_mobile_no)
               ? ""
               : data.item.employee_mobile_no
-            }\nProfile Status: ${NullOrEmpty(data.item.profie_update_status)
+          }\nProfile Status: ${
+            NullOrEmpty(data.item.profie_update_status)
               ? ""
               : data.item.profie_update_status == "0"
-                ? "incomplete"
-                : "complete"
-            } `}
+              ? "incomplete"
+              : "complete"
+          } `}
           onPress={() => {
             refRBSheet.current.open();
             setEmpCode(data.item.common_employee_code);
@@ -325,7 +307,7 @@ const EmployeeListScreen = ({ navigation }) => {
     setOtpError(false);
   };
 
-  const [state, setState] = React.useState({ open: false });
+  const [state, setState] = useState({ open: false });
 
   const onStateChange = ({ open }) => setState({ open });
 
@@ -343,37 +325,51 @@ const EmployeeListScreen = ({ navigation }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "branchname",
+              "common_employee_code",
+              "departmentname",
+              "designationname",
+              "employee_mobile_no",
+              "display",
+              "employee_name",
+            ]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-160}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            useFlatList={true}
-            disableRightSwipe={true}
-            rightOpenValue={-160}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) =>
-              RenderHiddenItemsConditional(data, rowMap, [EditCallback])
-            }
-          />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-160}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              useFlatList={true}
+              disableRightSwipe={true}
+              rightOpenValue={-160}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItemsConditional(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems
@@ -398,8 +394,6 @@ const EmployeeListScreen = ({ navigation }) => {
             onPress: AddEmployee,
           },
         ]}
-        style={{ paddingRight: 24, paddingBottom: 24 }}
-        sty
         onStateChange={onStateChange}
         onPress={() => {
           if (open) {
@@ -443,8 +437,8 @@ const EmployeeListScreen = ({ navigation }) => {
                 NullOrEmpty(profileStatus)
                   ? ""
                   : profileStatus
-                    ? "Complete"
-                    : "Incomplete"
+                  ? "Complete"
+                  : "Incomplete"
               }
             />
             <List.Item
@@ -459,8 +453,8 @@ const EmployeeListScreen = ({ navigation }) => {
                 NullOrEmpty(verifyStatus)
                   ? ""
                   : verifyStatus == "1"
-                    ? "Verified"
-                    : "Not Verified"
+                  ? "Verified"
+                  : "Not Verified"
               }
             />
           </ScrollView>
@@ -510,6 +504,9 @@ const EmployeeListScreen = ({ navigation }) => {
               </HelperText>
             </View>
             <Card.Content style={[Styles.marginTop16]}>
+              {/* <Button mode="contained" onPress={OnOTPSend}>
+                Submit & Verify
+              </Button> */}
               <DFButton
                 mode="contained"
                 onPress={OnOTPSend}

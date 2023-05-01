@@ -30,6 +30,7 @@ import DFButton from "../../../../components/Button";
 
 let userID = 0,
   groupID = 0,
+  groupExtra = 0,
   companyID = 0,
   branchID = 0,
   _pktEntryTypeID = 0,
@@ -219,6 +220,7 @@ const AddSource = ({ route, navigation }) => {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       groupID = JSON.parse(userData).Sess_group_refno;
+      groupExtra = JSON.parse(userData).Sess_group_refno_extra_1;
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
       designID = JSON.parse(userData).Sess_designation_refno;
@@ -500,6 +502,7 @@ const AddSource = ({ route, navigation }) => {
         pck_mode_refno: receiptModeID,
         Sess_designation_refno: designID.toString(),
         pck_entrytype_refno: _pktEntryTypeID,
+        Sess_group_refno_extra_1: groupExtra.toString()
       },
     };
     Provider.createDFPocketDairy(
@@ -764,6 +767,8 @@ const AddSource = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
+        Sess_designation_refno: designID.toString(),
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString()
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
@@ -2103,16 +2108,18 @@ const AddSource = ({ route, navigation }) => {
 
           {projectListStatus && (
             <>
-              <Dropdown
-                label="Project List"
-                data={projectListData}
-                onSelected={onProjectListChanged}
-                isError={errorPL}
-                selectedItem={projectList}
-              />
-              <HelperText type="error" visible={errorPL}>
-                Please select a project
-              </HelperText>
+              <View style={[Styles.marginTop16]}>
+                <Dropdown
+                  label="Project List"
+                  data={projectListData}
+                  onSelected={onProjectListChanged}
+                  isError={errorPL}
+                  selectedItem={projectList}
+                />
+                <HelperText type="error" visible={errorPL}>
+                  Please select a project
+                </HelperText>
+              </View>
             </>
           )}
 

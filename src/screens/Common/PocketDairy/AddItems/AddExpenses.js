@@ -26,12 +26,13 @@ import RadioGroup from "react-native-radio-buttons-group";
 import { PaperSelect } from "react-native-paper-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
-import { projectVariables } from "../../../../utils/credentials";
+import { projectVariables, projectLoginTypes } from "../../../../utils/credentials";
 import * as Contacts from "expo-contacts";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
 let userID = 0,
   groupID = 0,
+  groupExtra = 0,
   companyID = 0,
   branchID = 0,
   _pktEntryTypeID = 0,
@@ -339,6 +340,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
       groupID = JSON.parse(userData).Sess_group_refno;
+      groupExtra = JSON.parse(userData).Sess_group_refno_extra_1;
       companyID = JSON.parse(userData).Sess_company_refno;
       branchID = JSON.parse(userData).Sess_branch_refno;
       designID = JSON.parse(userData).Sess_designation_refno;
@@ -369,11 +371,11 @@ const AddExpenses = ({ route, navigation }) => {
           route.params.type === "edit"
             ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
             : route.params.type === "verify"
-            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
-            : route.params.type ===
-              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
-            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
-            : 0,
+              ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
+              : route.params.type ===
+                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+                ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
+                : 0,
         pck_entrytype_refno:
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
@@ -546,7 +548,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (data.myclient_refno != null && data.myclient_refno != "0") {
@@ -577,7 +579,7 @@ const AddExpenses = ({ route, navigation }) => {
       (data.dynamic_expenses_refno != null &&
         data.dynamic_expenses_refno != "0") ||
       route.params.type ===
-        projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+      projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
     ) {
       setProjectExpenseStatus(true);
       FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
@@ -667,7 +669,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentMode = (editID) => {
@@ -708,7 +710,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchClientList = (clientID) => {
@@ -718,6 +720,8 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_company_refno: companyID.toString(),
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
+        Sess_designation_refno: designID.toString(),
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString()
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
@@ -742,7 +746,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchMKTClientList = (clientID) => {
@@ -778,7 +782,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchFollowUpCustomerList = (editID) => {
@@ -825,7 +829,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPurposeList = (editID) => {
@@ -861,7 +865,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseCategory = (receiptModeID, editID) => {
@@ -871,6 +875,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
         pck_entrytype_refno: _pktEntryTypeID,
+        Sess_group_refno_extra_1: groupExtra.toString()
       },
     };
     Provider.createDFPocketDairy(
@@ -897,7 +902,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchContactType = (editID) => {
@@ -927,7 +932,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseSubCategory = (categoryID, editID) => {
@@ -962,7 +967,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectExpense = (categoryID, editID) => {
@@ -984,7 +989,7 @@ const AddExpenses = ({ route, navigation }) => {
             setProjectExpenseFullData(response.data.data);
             if (
               route.params.type !=
-                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
+              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
               route.params.type != "verify"
             ) {
               response.data.data = response.data.data.filter((el) => {
@@ -1044,7 +1049,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankList = (editID, mode) => {
@@ -1088,7 +1093,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchAvailableCashBalance = () => {
@@ -1125,7 +1130,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankCurrentBalance = (bankID) => {
@@ -1165,7 +1170,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepositType = (editID) => {
@@ -1195,7 +1200,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceiverList = (
@@ -1212,8 +1217,8 @@ const AddExpenses = ({ route, navigation }) => {
           contactTypeID == null
             ? 0
             : contactTypeID == ""
-            ? 0
-            : contactTypeID.toString(),
+              ? 0
+              : contactTypeID.toString(),
         AddNew: "NO",
         UserPhoneBookAllContactList: "",
       },
@@ -1249,7 +1254,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardType = (editID) => {
@@ -1281,7 +1286,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
@@ -1314,7 +1319,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -1354,7 +1359,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBranchList = (editID) => {
@@ -1397,7 +1402,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignationList = (editID) => {
@@ -1432,7 +1437,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchEmployeeList = (editID, designationID) => {
@@ -1477,7 +1482,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUsageList = (editID, categoryID) => {
@@ -1512,7 +1517,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const ShowContactList = () => {
@@ -1537,12 +1542,12 @@ const AddExpenses = ({ route, navigation }) => {
                     k.phoneNumbers[0].number == ""
                       ? ""
                       : k.phoneNumbers[0].number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers[0].number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers[0].number
+                        : k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1555,12 +1560,12 @@ const AddExpenses = ({ route, navigation }) => {
                     k.phoneNumbers.number == ""
                       ? ""
                       : k.phoneNumbers.number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers.number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers.number
+                        : k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1639,7 +1644,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseTo = (editID) => {
@@ -1649,6 +1654,10 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_company_refno: companyID,
         Sess_branch_refno: branchID,
         Sess_designation_refno: designID,
+        Sess_group_refno_extra_1: groupExtra.toString(),
+        pck_sub_category_refno: subCategoryNameFullData.filter((el) => {
+          return el.subCategoryName === subCategoryName;
+        })[0].subcategoryID
       },
     };
     Provider.createDFPocketDairy(
@@ -1674,7 +1683,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const InsertNewContact = (name, mobileNo) => {
@@ -1685,9 +1694,9 @@ const AddExpenses = ({ route, navigation }) => {
         contact_phoneno:
           mobileNo.length > 10
             ? mobileNo
-                .replace(/\s+/g, "")
-                .replace(/[^0-9]/g, "")
-                .slice(-10)
+              .replace(/\s+/g, "")
+              .replace(/[^0-9]/g, "")
+              .slice(-10)
             : mobileNo,
         remarks: "",
         view_status: "1",
@@ -2573,7 +2582,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (MKT_clientListStatus) {
@@ -2677,13 +2686,13 @@ const AddExpenses = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
 
@@ -2807,7 +2816,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (MKT_clientListStatus) {
@@ -2907,21 +2916,21 @@ const AddExpenses = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddexpensesupdate
         : mode == "source"
-        ? Provider.API_URLS.pck_companysource_verify_action
-        : Provider.API_URLS.pck_companyexpenses_verify_action,
+          ? Provider.API_URLS.pck_companysource_verify_action
+          : Provider.API_URLS.pck_companyexpenses_verify_action,
       datas
     )
 
@@ -3079,70 +3088,70 @@ const AddExpenses = ({ route, navigation }) => {
           </HelperText>
           {route.params.type ===
             projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText && (
-            <>
-              <View style={[Styles.padding16]}>
-                <DataTable
-                  style={[
-                    Styles.backgroundSecondaryColor,
-                    Styles.borderRadius4,
-                    Styles.flexJustifyCenter,
-                    Styles.bordergray,
-                    Styles.fontBold,
-                  ]}
-                >
-                  <DataTable.Header>
-                    <DataTable.Title
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      Collected
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Paid
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Balance
-                    </DataTable.Title>
-                  </DataTable.Header>
+              <>
+                <View style={[Styles.padding16]}>
+                  <DataTable
+                    style={[
+                      Styles.backgroundSecondaryColor,
+                      Styles.borderRadius4,
+                      Styles.flexJustifyCenter,
+                      Styles.bordergray,
+                      Styles.fontBold,
+                    ]}
+                  >
+                    <DataTable.Header>
+                      <DataTable.Title
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        Collected
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Paid
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Balance
+                      </DataTable.Title>
+                    </DataTable.Header>
 
-                  <DataTable.Row style={[Styles.backgroundColor]}>
-                    <DataTable.Cell
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      {collectedAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {paidAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {balanceAmount}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                </DataTable>
-              </View>
-            </>
-          )}
+                    <DataTable.Row style={[Styles.backgroundColor]}>
+                      <DataTable.Cell
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        {collectedAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {paidAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {balanceAmount}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </DataTable>
+                </View>
+              </>
+            )}
           <Dropdown
             label="Payment Mode"
             data={payModeData}

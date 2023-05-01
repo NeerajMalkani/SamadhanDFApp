@@ -1,6 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, RefreshControl, LogBox, ScrollView } from "react-native";
-import { FAB, List, Searchbar, Snackbar, Title, Dialog, Portal, Paragraph, Button, Text, TextInput, Card, HelperText } from "react-native-paper";
+import { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  View,
+  RefreshControl,
+  LogBox,
+  ScrollView,
+} from "react-native";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
@@ -9,46 +15,40 @@ import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RenderHiddenItems, RenderHiddenItemGeneric } from "../../../components/ListActions";
+import { RenderHiddenItemGeneric } from "../../../components/ListActions";
 import { Styles } from "../../../styles/styles";
 import { NullOrEmpty } from "../../../utils/validations";
-import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-import { communication } from "../../../utils/communication";
 import { APIConverter } from "../../../utils/apiconverter";
+import Search from "../../../components/Search";
 
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 let userID = 0,
   companyID = 0,
   groupID = 0;
 
 const BranchListScreen = ({ navigation }) => {
   //#region Variables
-  const [visible, setVisible] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [employeeID, setEmployeeID] = React.useState("");
-  // const [otp, setOTP] = React.useState("");
-  //const [otpError, setOtpError] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [employeeName, setEmployeeName] = React.useState("");
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [locationType, setLocationType] = React.useState("");
+  const [locationType, setLocationType] = useState("");
 
-  const [locationName, setLocationName] = React.useState("");
-  const [inchargeName, setInchargeName] = React.useState("");
-  const [mobileNo, setMobileNo] = React.useState("");
-  const [address, setAddress] = React.useState("");
-  const [gstNo, setGSTNo] = React.useState("");
+  const [locationName, setLocationName] = useState("");
+  const [inchargeName, setInchargeName] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const [address, setAddress] = useState("");
+  const [gstNo, setGSTNo] = useState("");
 
-  const [panNo, setPANNo] = React.useState("");
-  const [display, setDispaly] = React.useState("");
-  const [action, setAction] = React.useState("");
+  const [panNo, setPANNo] = useState("");
+  const [display, setDispaly] = useState("");
 
   const refRBSheet = useRef();
   //#endregion
@@ -71,7 +71,9 @@ const BranchListScreen = ({ navigation }) => {
 
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -88,16 +90,23 @@ const BranchListScreen = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            response.data.data = APIConverter(response.data.data, false, "addbranch");
+            response.data.data = APIConverter(
+              response.data.data,
+              false,
+              "addbranch"
+            );
             const lisData = [...response.data.data];
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -115,21 +124,11 @@ const BranchListScreen = ({ navigation }) => {
     GetUserID();
   }, []);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.contactPerson.toString().toLowerCase().includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const AddCallback = () => {
-    navigation.navigate("BranchEditScreen", { type: "add", fetchData: FetchData });
+    navigation.navigate("BranchEditScreen", {
+      type: "add",
+      fetchData: FetchData,
+    });
   };
 
   const EditCallback = (data, rowMap, buttonType) => {
@@ -166,11 +165,25 @@ const BranchListScreen = ({ navigation }) => {
 
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 80 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.borderBottom1,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          { height: 80 },
+        ]}
+      >
         <List.Item
           title={data.item.branchInchargeName}
           titleStyle={{ fontSize: 18 }}
-          description={`Mobile: ${NullOrEmpty(data.item.branchInchargeContactNo) ? "" : data.item.branchInchargeContactNo}\nLocation Type: ${NullOrEmpty(data.item.branchType) ? "" : data.item.branchType} `}
+          description={`Mobile: ${
+            NullOrEmpty(data.item.branchInchargeContactNo)
+              ? ""
+              : data.item.branchInchargeContactNo
+          }\nLocation Type: ${
+            NullOrEmpty(data.item.branchType) ? "" : data.item.branchType
+          } `}
           onPress={() => {
             refRBSheet.current.open();
             setInchargeName(data.item.branchInchargeName);
@@ -182,8 +195,22 @@ const BranchListScreen = ({ navigation }) => {
             setPANNo(data.item.panNo);
             setDispaly(data.item.display ? "Yes" : "No");
           }}
-          left={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="office-building" />}
-          right={() => <Icon style={{ marginVertical: 18, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          left={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="office-building"
+            />
+          )}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 18, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+            />
+          )}
         />
       </View>
     );
@@ -195,45 +222,110 @@ const BranchListScreen = ({ navigation }) => {
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="My Branch List" />
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-80}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            useFlatList={true}
-            disableRightSwipe={true}
-            rightOpenValue={-80}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "accountNumber",
+              "addressLine",
+              "bankName",
+              "branchInchargeContactNo",
+              "branchInchargeName",
+              "branchName",
+              "branchType",
+              "cityName",
+              "companyName",
+              "display",
+              "gstNo",
+              "head_office",
+              "ifscCode",
+              "locationName",
+              "panNo",
+              "pincode",
+              "regionalOfficeID",
+              "stateName",
+            ]}
           />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-160}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              useFlatList={true}
+              disableRightSwipe={true}
+              rightOpenValue={-160}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItemGeneric("edit", data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
 
-      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", right: 16, bottom: 16 },
+        ]}
+        icon="plus"
+        onPress={AddCallback}
+      />
 
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
 
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={480} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={480}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View>
           <Title style={[Styles.paddingHorizontal16]}>{inchargeName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>

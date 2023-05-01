@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -26,22 +26,14 @@ let Sess_UserRefno = 0;
 let Sess_company_refno = 0;
 const ABrandConversationValue = ({ navigation }) => {
   //#region Variables
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
-  const [serviceName, setServiceName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [brandName, setBrandName] = React.useState("");
-  const [conversionValue, setConversionValue] = React.useState("");
-  const [display, setDisplay] = React.useState(false);
   const refRBSheet = useRef();
   //#endregion
 
@@ -68,11 +60,14 @@ const ABrandConversationValue = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -104,21 +99,6 @@ const ABrandConversationValue = ({ navigation }) => {
   }, []);
 
   const [item, setItem] = useState({});
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const RenderItems = (data) => {
     return (
@@ -171,6 +151,7 @@ const ABrandConversationValue = ({ navigation }) => {
 
   const EditCallback = (data, rowMap) => {
     rowMap[data.item.key].closeRow();
+    console.log(data.item);
     navigation.navigate("AddBrandConversationValue", {
       type: "edit",
       fetchData: FetchData,
@@ -194,36 +175,53 @@ const ABrandConversationValue = ({ navigation }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "brand_name",
+              "brand_refno",
+              "view_status",
+              "category_name",
+              "category_refno",
+              "conversion_value",
+              "mf_brandvalue_refno",
+              "service_name",
+              "service_refno",
+              "view_status",
+            ]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) =>
-              RenderHiddenItems(data, rowMap, [EditCallback])
-            }
-          />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems

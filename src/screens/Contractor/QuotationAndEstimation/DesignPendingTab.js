@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { BASE_URL_Contractor } from "../../../api/Provider";
 import {
@@ -8,17 +8,13 @@ import {
   RefreshControl,
   LogBox,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import {
-  FAB,
   List,
-  Searchbar,
   Snackbar,
   Title,
   Dialog,
   Portal,
-  Paragraph,
   Button,
   Text,
   TextInput,
@@ -29,18 +25,19 @@ import {
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { creds } from "../../../utils/credentials";
+
 import Provider from "../../../api/Provider";
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
-import { RNS3 } from "react-native-aws3";
+
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Styles } from "../../../styles/styles";
 import { AWSImagePath } from "../../../utils/paths";
 import uuid from "react-native-uuid";
 import { useIsFocused } from "@react-navigation/native";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -51,31 +48,29 @@ let Sess_CompanyAdmin_UserRefno = 0;
 let Sess_company_refno = 0;
 let Sess_branch_refno = 0;
 const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
-  const [popupVisible, setPopupVisible] = React.useState(false);
-  const [remarks, setRemarks] = React.useState("");
-  const [errorR, setErrorR] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [errorCAT, setErrorCAT] = React.useState(false);
-  const [designImage, setDesignImage] = React.useState("");
-  const [image, setImage] = React.useState(
-    AWSImagePath + "placeholder-image.png"
-  );
-  const [filePath, setFilePath] = React.useState(null);
-  const [status, setStatus] = React.useState(false);
-  const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState(() => {});
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [current, setCurrent] = React.useState({});
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [remarks, setRemarks] = useState("");
+  const [errorR, setErrorR] = useState(false);
+  const [value, setValue] = useState("");
+  const [errorCAT, setErrorCAT] = useState(false);
+  const [designImage, setDesignImage] = useState("");
+  const [image, setImage] = useState(AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = useState(null);
+  const [status, setStatus] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [text, setText] = useState(() => {});
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [current, setCurrent] = useState({});
   const refRBSheet = useRef();
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+
+  // ! some unused setStates
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -178,7 +173,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
     }
   };
 
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const showDialog = () => {
     refRBSheet.current.close();
     setVisible(true);
@@ -187,7 +181,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    console.log("start");
     setIsLoading(true);
     let params = {
       data: {
@@ -202,10 +195,11 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
       params
     )
       .then((response) => {
-        console.log("response:", JSON.stringify(response.data));
+        //console.log('response:', JSON.stringify(response.data));
         if (response.data && response.data.data) {
-          listData[1](response.data.data);
-          listSearchData[1](response.data.data);
+          console.log(response.data.data);
+          setListData(response.data.data);
+          setListSearchData(response.data.data);
         }
       })
       .finally(() => setIsLoading(false));
@@ -217,22 +211,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
       GetUserID();
     }
   }, [isFocused]);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.contactPerson
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const sendQuotationToClient = () => {
     set(true);
@@ -293,7 +271,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
           Styles.paddingHorizontal16,
           Styles.flexJustifyCenter,
           {
-            height: 250,
+            height: 230,
             borderWidth: 1.3,
             marginBottom: 10,
             borderRadius: 8,
@@ -307,73 +285,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
             style={{ width: 50, height: 50 }}
           />
         </View>
-        <View>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Client Details :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item?.customer_data[0]} ({data.item?.customer_data[1]})
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Estimation No :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.cont_estimation_no}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Product :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.product_name}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Design No :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.design_no}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                Total Sq.Ft. :
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
-                {data.item.totalfoot}
-              </Text>
-            </View>
-          </View>
-        </View>
-        {/* <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: "700", color: "grey" }}>
               Client Details :
@@ -408,7 +320,7 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
               {data.item.totalfoot}
             </Text>
           </View>
-        </View> */}
+        </View>
         <View
           style={{
             justifyContent: "space-between",
@@ -456,39 +368,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
     );
   };
 
-  const submit = () => {
-    hideDialog();
-    set(true);
-    const params = {
-      data: {
-        Sess_UserRefno: userID,
-        Sess_company_refno: Sess_company_refno,
-        Sess_branch_refno: Sess_branch_refno,
-        Sess_CompanyAdmin_UserRefno: Sess_CompanyAdmin_UserRefno,
-        cont_estimation_refno: current.cont_estimation_refno,
-      },
-    };
-    Provider.createDFContractor(
-      Provider.API_URLS
-        .contractor_scdesign_estimation_finallytakeproject_update,
-      params
-    )
-      .then((response) => {
-        if (response.data && response.data.data) {
-          if (response.data.data.Updated == 1) {
-            fetch(0, text + "Successfully!");
-          } else {
-            unload("Failed");
-          }
-        } else {
-          unload("Failed");
-        }
-      })
-      .catch((e) => {
-        set(false);
-        unload("Failed");
-      });
-  };
   return (
     <View style={[Styles.flex1]}>
       {isLoading ? (
@@ -501,36 +380,57 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0]?.length > 0 ? (
+      ) : listData?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              // !how we add search on this?
+              // "customer_data[0]"
+              // "customer_data[1]"
+              "category_name",
+              "client_approve_status",
+              "cont_estimation_no",
+              "cont_estimation_refno",
+              "design_no",
+              "designtype_name",
+              "estimation_approve_status",
+              "product_name",
+              "send_to_clientstatus",
+              "service_name",
+              "total_labours_cost",
+              "total_materials_cost",
+              "totalfoot",
+            ]}
           />
-          <View style={{ padding: 10 }}>
-            <SwipeListView
-              previewDuration={1000}
-              previewOpenValue={-160}
-              previewRowKey="1"
-              previewOpenDelay={1000}
-              refreshControl={
-                <RefreshControl
-                  colors={[theme.colors.primary]}
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    FetchData();
-                  }}
-                />
-              }
-              data={listSearchData[0]}
-              useFlatList={true}
-              disableRightSwipe={true}
-              rightOpenValue={-160}
-              renderItem={(data) => RenderItems(data)}
+          {listSearchData?.length > 0 ? (
+            <View style={{ padding: 10 }}>
+              <SwipeListView
+                previewDuration={1000}
+                previewOpenValue={-160}
+                previewRowKey="1"
+                previewOpenDelay={1000}
+                refreshControl={
+                  <RefreshControl
+                    colors={[theme.colors.primary]}
+                    refreshing={refreshing}
+                    onRefresh={FetchData}
+                  />
+                }
+                data={listSearchData}
+                useFlatList={true}
+                disableRightSwipe={true}
+                rightOpenValue={-160}
+                renderItem={(data) => RenderItems(data)}
+              />
+            </View>
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
             />
-          </View>
+          )}
         </View>
       ) : (
         <NoItems
@@ -544,7 +444,6 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
-        // onClose={() => setCurrent({})}
         height={620}
         animationType="fade"
         customStyles={{
@@ -590,91 +489,93 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
             )}
             <>
               <Card.Content style={[Styles.marginTop16]}>
-                {/* <Text>{current.action_status_name}</Text> */}
-                {current?.message_button?.includes(
+                {current?.action_status_name?.includes(
                   "Waiting for Client Approval"
-                ) && (
+                ) ? (
                   <Text
                     style={{ textAlign: "center", color: "red", fontSize: 20 }}
                   >
                     Waiting for Client Approval
                   </Text>
-                )}
-                <>
-                  {current.action_status_name?.includes("Reject") && (
-                    <Button
-                      mode="outlined"
-                      style={{
-                        borderColor: "red",
-                        borderWidth: 1.2,
-                        color: "red",
-                      }}
-                      onPress={() => {
-                        refRBSheet.current.close();
-                        setText("Reject");
-                        setPopupVisible(true);
-                      }}
-                    >
-                      <Text style={{ color: "red" }}> Reject</Text>
-                    </Button>
-                  )}
-                  {current.action_status_name?.includes("Send to Client") && (
-                    <Button
-                      mode="outlined"
-                      style={{
-                        borderColor: "green",
-                        borderWidth: 1.2,
-                        color: "green",
-                      }}
-                      onPress={() => {
-                        setText(`sendQuotationToClient`);
-                        showDialog();
-                      }}
-                    >
-                      <Text style={{ color: "green" }}>Send to Client</Text>
-                    </Button>
-                  )}
-                  {current.action_status_name?.includes("Cancel Quotation") && (
-                    <Button
-                      onPress={() => {
-                        setText(`cancelQuotation`);
-                        showDialog();
-                      }}
-                      mode="outlined"
-                      style={[
-                        Styles.marginTop16,
-                        {
+                ) : (
+                  <>
+                    {current.action_status_name?.includes("Reject") && (
+                      <Button
+                        mode="outlined"
+                        style={{
                           borderColor: "red",
                           borderWidth: 1.2,
                           color: "red",
-                        },
-                      ]}
-                    >
-                      <Text style={{ color: "red" }}>Cancel Quotation</Text>
-                    </Button>
-                  )}
-                  {current.action_status_name?.includes(
-                    "Self & Final Approve"
-                  ) && (
-                    <Button
-                      mode="outlined"
-                      style={{
-                        borderColor: "green",
-                        borderWidth: 1.2,
-                        color: "green",
-                      }}
-                      onPress={() => {
-                        refRBSheet.current.close();
-                        setText("Self & Final Approve");
-                        setPopupVisible(true);
-                      }}
-                    >
-                      <Text style={{ color: "green" }}>
-                        Self & Final Approve
-                      </Text>
-                    </Button>
-                  )}
-                </>
+                        }}
+                        onPress={() => {
+                          refRBSheet.current.close();
+                          setText("Reject");
+                          setPopupVisible(true);
+                        }}
+                      >
+                        <Text style={{ color: "red" }}> Reject</Text>
+                      </Button>
+                    )}
+                    {current.action_status_name?.includes("Send to Client") && (
+                      <Button
+                        mode="outlined"
+                        style={{
+                          borderColor: "green",
+                          borderWidth: 1.2,
+                          color: "green",
+                        }}
+                        onPress={() => {
+                          setText(`sendQuotationToClient`);
+                          showDialog();
+                        }}
+                      >
+                        <Text style={{ color: "green" }}>Send to Client</Text>
+                      </Button>
+                    )}
+                    {current.action_status_name?.includes(
+                      "Cancel Quotation"
+                    ) && (
+                      <Button
+                        onPress={() => {
+                          setText(`cancelQuotation`);
+                          showDialog();
+                        }}
+                        mode="outlined"
+                        style={[
+                          Styles.marginTop16,
+                          {
+                            borderColor: "red",
+                            borderWidth: 1.2,
+                            color: "red",
+                          },
+                        ]}
+                      >
+                        <Text style={{ color: "red" }}>Cancel Quotation</Text>
+                      </Button>
+                    )}
+                    {current.action_status_name?.includes(
+                      "Self & Final Approve"
+                    ) && (
+                      <Button
+                        mode="outlined"
+                        style={{
+                          borderColor: "green",
+                          borderWidth: 1.2,
+                          color: "green",
+                        }}
+                        onPress={() => {
+                          refRBSheet.current.close();
+                          setText("Self & Final Approve");
+                          setPopupVisible(true);
+                        }}
+                      >
+                        <Text style={{ color: "green" }}>
+                          Self & Final Approve
+                        </Text>
+                      </Button>
+                    )}
+                  </>
+                )}
               </Card.Content>
             </>
             <View style={{ height: 20 }}></View>
@@ -835,41 +736,4 @@ const DesignPendingTab = ({ response, navigation, fetch, set, unload }) => {
     </View>
   );
 };
-const stylesm = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "green",
-  },
-  button1: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "red",
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
-    color: "white",
-  },
-  modalIndex: {
-    zIndex: 999999,
-  },
-  input: {
-    margin: 15,
-    height: 40,
-
-    borderColor: "grey",
-    borderWidth: 1,
-  },
-});
 export default DesignPendingTab;

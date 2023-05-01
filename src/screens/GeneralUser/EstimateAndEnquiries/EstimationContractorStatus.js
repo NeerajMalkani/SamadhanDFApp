@@ -1,33 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  View,
-  LogBox,
-  RefreshControl,
-  ScrollView,
-  Image,
-} from "react-native";
-import {
-  FAB,
-  List,
-  Snackbar,
-  Searchbar,
-  Title,
-  Button,
-} from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, View, LogBox, RefreshControl } from "react-native";
+import { List, Snackbar } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
 import { RenderHiddenItems } from "../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
-import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { creds, projectVariables } from "../../../utils/credentials";
-import { AWSImagePath } from "../../../utils/paths";
+import Search from "../../../components/Search";
 
 let userID = 0,
   groupID = 0;
@@ -38,16 +20,13 @@ LogBox.ignoreLogs([
 const EstimationContractorStatusScreen = ({ route, navigation }) => {
   //#region Variables
 
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
   //#endregion
 
@@ -88,11 +67,12 @@ const EstimationContractorStatusScreen = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            console.log(response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -109,22 +89,6 @@ const EstimationContractorStatusScreen = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const EditCallback = (data, rowMap) => {
     // AddressList
@@ -184,43 +148,49 @@ const EstimationContractorStatusScreen = ({ route, navigation }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[""]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => {
-              if (
-                data.item.project_allot_status == "0" &&
-                data.item.accept_status == "1"
-              ) {
-                return RenderHiddenItems(data, rowMap, [EditCallback]);
-              } else {
-                return null;
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
               }
-            }}
-          />
+              data={listSearchData}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) => {
+                if (
+                  data.item.project_allot_status == "0" &&
+                  data.item.accept_status == "1"
+                ) {
+                  return RenderHiddenItems(data, rowMap, [EditCallback]);
+                } else {
+                  return null;
+                }
+              }}
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems icon="format-list-bulleted" text="No records found" />

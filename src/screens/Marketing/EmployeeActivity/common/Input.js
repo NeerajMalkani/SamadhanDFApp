@@ -35,6 +35,18 @@ const FormInput = ({
           style={{ ...style }}
           isError={error}
           onSelected={onChangeText}
+          selectedItem={value}
+        />
+      ) : type === "textarea" ? (
+        <TextInput
+          onChangeText={onChangeText}
+          style={{ ...style }}
+          mode="outlined"
+          value={value}
+          error={error}
+          keyboardType={keyboardType}
+          multiline={true}
+          numberOfLines={5}
         />
       ) : type === "check-box" ? (
         <Checkbox.Item
@@ -42,7 +54,7 @@ const FormInput = ({
           color={theme.colors.primary}
           position="leading"
           labelStyle={{ textAlign: "left", paddingLeft: 8 }}
-          status={value === "1" ? "checked" : "unchecked"}
+          status={value == "1" ? "checked" : "unchecked"}
           onPress={() => {
             onChangeText();
           }}

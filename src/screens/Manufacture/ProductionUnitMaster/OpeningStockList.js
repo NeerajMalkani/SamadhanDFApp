@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -18,6 +18,7 @@ import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { NullOrEmpty } from "../../../utils/validations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -28,23 +29,21 @@ let Sess_branch_refno = 0;
 
 const OpeningStockList = ({ navigation }) => {
   //#region Variables
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
 
-  const [addedDate, setAddedDate] = React.useState("");
-  const [serviceName, setServiceName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [productName, setproductName] = React.useState("");
-  const [totalProducts, setTotalProducts] = React.useState("");
-  const [weightPerPiece, setWeightPerPiece] = React.useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
+
+  const [addedDate, setAddedDate] = useState("");
+  const [serviceName, setServiceName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [productName, setproductName] = useState("");
+  const [totalProducts, setTotalProducts] = useState("");
+  const [weightPerPiece, setWeightPerPiece] = useState("");
 
   const refRBSheet = useRef();
   //#endregion
@@ -69,11 +68,15 @@ const OpeningStockList = ({ navigation }) => {
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            console.log(response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -86,7 +89,7 @@ const OpeningStockList = ({ navigation }) => {
         setRefreshing(false);
       });
   };
-  const [current, setCurrent] = React.useState({});
+  const [current, setCurrent] = useState({});
   const GetUserID = async () => {
     try {
       const userData = await AsyncStorage.getItem("user");
@@ -104,22 +107,6 @@ const OpeningStockList = ({ navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const RenderItems = (data) => {
     return (
@@ -200,36 +187,48 @@ const OpeningStockList = ({ navigation }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "brand_name",
+              "category_name",
+              "conversion_value",
+              "service_name",
+              "category_refno_brand_refno",
+            ]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) =>
-              RenderHiddenItems(data, rowMap, [EditCallback])
-            }
-          />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems

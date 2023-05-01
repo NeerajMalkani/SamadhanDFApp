@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -8,14 +8,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import {
-  Button,
-  FAB,
-  List,
-  Snackbar,
-  Searchbar,
-  Title,
-} from "react-native-paper";
+import { Button, FAB, List, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -32,6 +25,7 @@ import { creds, projectVariables } from "../../../utils/credentials";
 import { useIsFocused } from "@react-navigation/native";
 import { TabBar, TabView } from "react-native-tab-view";
 import { SheetElement } from "./SheetElements";
+import Search from "../../../components/Search";
 
 let userID = 0,
   companyID = 0,
@@ -44,46 +38,40 @@ const windowWidth = Dimensions.get("window").width;
 
 const AddSourceList = ({ route, navigation }) => {
   //#region Variables
-  const isFocused = useIsFocused();
   const [index, setIndex] = useState(0);
-  const [attachmentImage, setAttachmentImage] = React.useState(
+  const [attachmentImage, setAttachmentImage] = useState(
     AWSImagePath + "placeholder-image.png"
   );
-  const [PDCattachmentImage, setPDCAttachmentImage] = React.useState(
+  const [PDCattachmentImage, setPDCAttachmentImage] = useState(
     AWSImagePath + "placeholder-image.png"
   );
-  const [searchQuery_Self, setSearchQuery_Self] = React.useState("");
-  const [searchQuery_Company, setSearchQuery_Company] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const listData_Self = React.useState([]);
-  const listSearchData_Self = React.useState([]);
+  const [listData_Self, setListData_Self] = useState([]);
+  const [listSearchData_Self, setListSearchData_Self] = useState([]);
+  const [listData_Company, setlistData_Company] = useState([]);
+  const [listSearchData_Company, setListSearchData_Company] = useState([]);
 
-  const listData_Company = React.useState([]);
-  const listSearchData_Company = React.useState([]);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
   const [date, setDate] = useState(new Date());
   const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
   const [current, setCurrent] = useState({});
-  const [transactionID, setTransactionID] = React.useState("");
-  const [entryType, setEntryType] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [subCategoryName, setSubCategoryName] = React.useState("");
-  const [receiptMode, setReceiptMode] = React.useState("");
-  const [amount, setAmount] = React.useState("");
-  const [attachment, setAttachment] = React.useState("");
-  const [display, setDisplay] = React.useState("");
-  const [depositType, setDepositType] = React.useState("");
-  const [PDCStatus, setPDCStatus] = React.useState("");
-  const [PayToCompanyStatus, setPayToCompanyStatus] = React.useState(false);
+  const [transactionID, setTransactionID] = useState("");
+  const [entryType, setEntryType] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState("");
+  const [receiptMode, setReceiptMode] = useState("");
+  const [amount, setAmount] = useState("");
+  const [attachment, setAttachment] = useState("");
+  const [display, setDisplay] = useState("");
+  const [depositType, setDepositType] = useState("");
+  const [PDCStatus, setPDCStatus] = useState("");
+  const [PayToCompanyStatus, setPayToCompanyStatus] = useState(false);
   //
 
   const refRBSheet = useRef();
@@ -105,11 +93,9 @@ const AddSourceList = ({ route, navigation }) => {
   const ResetFields = () => {
     setPDCStatus(false);
     setPayToCompanyStatus(false);
-
   };
 
   const FetchData_Self = () => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -129,11 +115,11 @@ const AddSourceList = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData_Self[1](response.data.data);
-            listSearchData_Self[1](response.data.data);
+            setListData_Self(response.data.data);
+            setListSearchData_Self(response.data.data);
           }
         } else {
-          listData_Self[1]([]);
+          setListData_Self([]);
           //setSnackbarText("No Self data found");
           // setSnackbarColor(theme.colors.error);
           // setSnackbarVisible(true);
@@ -150,7 +136,6 @@ const AddSourceList = ({ route, navigation }) => {
       });
   };
   const FetchData_Company = () => {
-
     let params = {
       data: {
         Sess_UserRefno: userID,
@@ -171,11 +156,11 @@ const AddSourceList = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData_Company[1](response.data.data);
-            listSearchData_Company[1](response.data.data);
+            setlistData_Company(response.data.data);
+            setListSearchData_Company(response.data.data);
           }
         } else {
-          listData_Company[1]([]);
+          setlistData_Company([]);
           //setSnackbarText("No Company data found");
           // setSnackbarColor(theme.colors.error);
           // setSnackbarVisible(true);
@@ -209,38 +194,6 @@ const AddSourceList = ({ route, navigation }) => {
     GetUserID();
   }, []);
 
-  const onChangeSearch_Self = (query) => {
-    setSearchQuery_Self(query);
-    if (query === "") {
-      listSearchData_Self[1](listData_Self[0]);
-    } else {
-      listSearchData_Self[1](
-        listData_Self[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
-  const onChangeSearch_Company = (query) => {
-    setSearchQuery_Company(query);
-    if (query === "") {
-      listSearchData_Company[1](listData_Company[0]);
-    } else {
-      listSearchData_Company[1](
-        listData_Company[0].filter((el) => {
-          return el.categoryName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const RenderItems = (data) => {
     return (
       <View
@@ -255,10 +208,11 @@ const AddSourceList = ({ route, navigation }) => {
         <List.Item
           title={data.item.pck_mode_name}
           titleStyle={{ fontSize: 18 }}
-          description={`Category Name.: ${NullOrEmpty(data.item.pck_category_name)
-            ? ""
-            : data.item.pck_category_name
-            }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
+          description={`Category Name.: ${
+            NullOrEmpty(data.item.pck_category_name)
+              ? ""
+              : data.item.pck_category_name
+          }\nAmount: ${NullOrEmpty(data.item.amount) ? "" : data.item.amount} `}
           onPress={() => {
             refRBSheet.current.open();
             setCurrent(data.item);
@@ -278,8 +232,9 @@ const AddSourceList = ({ route, navigation }) => {
             if (
               data.item.BalanceUnPaidPayment != null &&
               parseFloat(data.item.BalanceUnPaidPayment.replace(/,/g, "")) >
-              0 &&
-              data.item.pck_category_refno == projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
+                0 &&
+              data.item.pck_category_refno ==
+                projectVariables.DEF_PCKDIARY_CATEGORY_Clients_REFNO
             ) {
               setPayToCompanyStatus(true);
             }
@@ -309,7 +264,7 @@ const AddSourceList = ({ route, navigation }) => {
     navigation.navigate("AddSource", {
       type: "add",
       fetchData: LoadAll,
-      tabIndex: index
+      tabIndex: index,
     });
   };
 
@@ -365,7 +320,7 @@ const AddSourceList = ({ route, navigation }) => {
               keyboardShouldPersistTaps="handled"
             >
               <View>
-                {listData_Self[0].length > 0 ? (
+                {listData_Self.length > 0 ? (
                   <View
                     style={[
                       Styles.flex1,
@@ -373,34 +328,71 @@ const AddSourceList = ({ route, navigation }) => {
                       Styles.backgroundColor,
                     ]}
                   >
-                    <Searchbar
-                      style={[Styles.margin16]}
-                      placeholder="Search"
-                      onChangeText={onChangeSearch_Self}
-                      value={searchQuery_Self}
+                    <Search
+                      data={listData_Self}
+                      setData={setListSearchData_Self}
+                      filterFunction={[
+                        "amount",
+                        "attach_receipt_url",
+                        "bankchallan_slip_url",
+                        "cheque_date",
+                        "cheque_no",
+                        "createby_user_refno",
+                        "deposit_type_refno",
+                        "notes",
+                        "pck_category_name",
+                        "pck_category_refno",
+                        "pck_entrytype_name",
+                        "pck_entrytype_refno",
+                        "pck_mode_name",
+                        "pck_mode_refno",
+                        "pck_mybank_refno",
+                        "pck_mycontact_refno",
+                        "pck_sub_category_name",
+                        "pck_sub_category_refno",
+                        "pck_trans_date",
+                        "pck_trans_refno",
+                        "pdc_cheque_status",
+                        "reminder_date",
+                        "utr_no",
+                        "view_status",
+                        "myclient_refno",
+                        "cont_project_refno",
+                        "invoice_no",
+                        "payment_type_refno",
+                        "pck_contacttype_refno",
+                        "pck_sub_category_notes",
+                      ]}
                     />
-                    <SwipeListView
-                      previewDuration={1000}
-                      previewOpenValue={-72}
-                      previewRowKey="1"
-                      previewOpenDelay={1000}
-                      refreshControl={
-                        <RefreshControl
-                          colors={[theme.colors.primary]}
-                          refreshing={refreshing}
-                          onRefresh={() => {
-                            FetchData_Self();
-                          }}
-                        />
-                      }
-                      data={listSearchData_Self[0]}
-                      disableRightSwipe={true}
-                      rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) =>
-                        RenderHiddenItems(data, rowMap, [EditCallback])
-                      }
-                    />
+                    {listSearchData_Self?.length > 0 ? (
+                      <SwipeListView
+                        previewDuration={1000}
+                        previewOpenValue={-72}
+                        previewRowKey="1"
+                        previewOpenDelay={1000}
+                        refreshControl={
+                          <RefreshControl
+                            colors={[theme.colors.primary]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                              FetchData_Self();
+                            }}
+                          />
+                        }
+                        data={listSearchData_Self}
+                        disableRightSwipe={true}
+                        rightOpenValue={-72}
+                        renderItem={(data) => RenderItems(data)}
+                        renderHiddenItem={(data, rowMap) =>
+                          RenderHiddenItems(data, rowMap, [EditCallback])
+                        }
+                      />
+                    ) : (
+                      <NoItems
+                        icon="format-list-bulleted"
+                        text="No records found for your query"
+                      />
+                    )}
                   </View>
                 ) : (
                   <NoItems
@@ -420,7 +412,7 @@ const AddSourceList = ({ route, navigation }) => {
               keyboardShouldPersistTaps="handled"
             >
               <View>
-                {listData_Company[0].length > 0 ? (
+                {listData_Company.length > 0 ? (
                   <View
                     style={[
                       Styles.flex1,
@@ -428,42 +420,71 @@ const AddSourceList = ({ route, navigation }) => {
                       Styles.backgroundColor,
                     ]}
                   >
-                    <Searchbar
-                      style={[Styles.margin16]}
-                      placeholder="Search"
-                      onChangeText={onChangeSearch_Company}
-                      value={searchQuery_Company}
+                    <Search
+                      data={listData_Company}
+                      setData={setListSearchData_Company}
+                      filterFunction={[
+                        "amount",
+                        "attach_receipt_url",
+                        "bankchallan_slip_url",
+                        "cheque_date",
+                        "cheque_no",
+                        "createby_user_refno",
+                        "deposit_type_refno",
+                        "notes",
+                        "pck_category_name",
+                        "pck_category_refno",
+                        "pck_entrytype_name",
+                        "pck_entrytype_refno",
+                        "pck_mode_name",
+                        "pck_mode_refno",
+                        "pck_mybank_refno",
+                        "pck_mycontact_refno",
+                        "pck_sub_category_name",
+                        "pck_sub_category_refno",
+                        "pck_trans_date",
+                        "pck_trans_refno",
+                        "pdc_cheque_status",
+                        "reminder_date",
+                        "utr_no",
+                        "view_status",
+                        "myclient_refno",
+                        "cont_project_refno",
+                        "invoice_no",
+                        "payment_type_refno",
+                        "pck_contacttype_refno",
+                        "pck_sub_category_notes",
+                      ]}
                     />
-                    <SwipeListView
-                      previewDuration={1000}
-                      previewOpenValue={-72}
-                      previewRowKey="1"
-                      previewOpenDelay={1000}
-                      refreshControl={
-                        <RefreshControl
-                          colors={[theme.colors.primary]}
-                          refreshing={refreshing}
-                          onRefresh={() => {
-                            FetchData_Company();
-                          }}
-                        />
-                      }
-                      data={listSearchData_Company[0]}
-                      disableRightSwipe={true}
-                      rightOpenValue={-72}
-                      renderItem={(data) => RenderItems(data)}
-                      renderHiddenItem={(data, rowMap) => {
-                        if (data.item.verified_status == "1") {
-                          return null
+                    {listSearchData_Company?.length > 0 ? (
+                      <SwipeListView
+                        previewDuration={1000}
+                        previewOpenValue={-72}
+                        previewRowKey="1"
+                        previewOpenDelay={1000}
+                        refreshControl={
+                          <RefreshControl
+                            colors={[theme.colors.primary]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                              FetchData_Self();
+                            }}
+                          />
                         }
-                        else {
-                          return RenderHiddenItems(data, rowMap, [EditCallback])
+                        data={listSearchData_Company}
+                        disableRightSwipe={true}
+                        rightOpenValue={-72}
+                        renderItem={(data) => RenderItems(data)}
+                        renderHiddenItem={(data, rowMap) =>
+                          RenderHiddenItems(data, rowMap, [EditCallback])
                         }
-
-                      }
-
-                      }
-                    />
+                      />
+                    ) : (
+                      <NoItems
+                        icon="format-list-bulleted"
+                        text="No records found for your query"
+                      />
+                    )}
                   </View>
                 ) : (
                   <NoItems
@@ -493,7 +514,7 @@ const AddSourceList = ({ route, navigation }) => {
     />
   );
 
-  const [routes] = React.useState([
+  const [routes] = useState([
     { key: "selfDetail", title: "Self Details" },
     { key: "companyDetail", title: "Company Details" },
   ]);

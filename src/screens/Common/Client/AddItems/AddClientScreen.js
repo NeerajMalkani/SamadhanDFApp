@@ -117,7 +117,7 @@ const AddClientScreen = ({ route, navigation }) => {
           route.params.data.serviceType &&
           route.params.data.serviceType.indexOf('8') !== -1
           ? true
-          : route.params.type == "client" ? true : false,
+          : route.params.type == "client" || route.params.type == "source_client" ? true : false,
     },
   ]);
 
@@ -179,6 +179,9 @@ const AddClientScreen = ({ route, navigation }) => {
       if (JSON.parse(userData).Sess_group_refno == projectLoginTypes.DEF_DEALER_GROUP_REFNO) {
         setIsDealer(true);
         FetchBuyerCategory();
+        if (route.params != null && ( route.params.type == "client" || route.params.type == "source_client")) {
+          setIsServiceProvideOnlyClient(true);
+        }
         FetchReferences();
       }
       else {

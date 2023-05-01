@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -6,22 +6,7 @@ import {
   LogBox,
   ScrollView,
 } from "react-native";
-import {
-  FAB,
-  List,
-  Searchbar,
-  Snackbar,
-  Title,
-  Dialog,
-  Portal,
-  Paragraph,
-  Button,
-  Text,
-  TextInput,
-  Card,
-  HelperText,
-  DataTable,
-} from "react-native-paper";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../../api/Provider";
@@ -30,41 +15,32 @@ import NoItems from "../../../../components/NoItems";
 import { theme } from "../../../../theme/apptheme";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  RenderHiddenItems,
-  RenderHiddenMultipleItems,
-} from "../../../../components/ListActions";
+import { RenderHiddenItems } from "../../../../components/ListActions";
 import { Styles } from "../../../../styles/styles";
 import { NullOrEmpty } from "../../../../utils/validations";
-import { width } from "@fortawesome/free-solid-svg-icons/faBarsStaggered";
-import { communication } from "../../../../utils/communication";
+import Search from "../../../../components/Search";
 // import SearchNAdd from "../../../AddItems/SearchNAdd";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 let userID = 0;
-let Sess_company_refno = 0;
-let Sess_branch_refno = 0;
-let Sess_group_refno = 0;
+
 const SendRateCard = ({ navigation }) => {
   //#region Variables
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
-  const [current, setCurrent] = React.useState({});
-  const [clientName, setClientName] = React.useState("");
-  const [clientNumber, setClientNumber] = React.useState("");
-  const [unit, setUnit] = React.useState("");
-  const [material, setMaterial] = React.useState("");
-  const [status, setStatus] = React.useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
+
+  const [clientName, setClientName] = useState("");
+  const [clientNumber, setClientNumber] = useState("");
+  const [unit, setUnit] = useState("");
+  const [material, setMaterial] = useState("");
+  const [status, setStatus] = useState("");
   const refRBSheet = useRef();
 
   //#endregion
@@ -75,10 +51,7 @@ const SendRateCard = ({ navigation }) => {
     const userData = await AsyncStorage.getItem("user");
     if (userData !== null) {
       userID = JSON.parse(userData).UserID;
-      Sess_group_refno = JSON.parse(userData).Sess_group_refno;
-      Sess_branch_refno = JSON.parse(userData).Sess_branch_refno;
-      Sess_company_refno = JSON.parse(userData).Sess_company_refno;
-      FetchData();
+      FetchData("");
     }
   };
 
@@ -91,28 +64,25 @@ const SendRateCard = ({ navigation }) => {
       setSnackbarVisible(true);
     }
     let params = {
-      data: {
-        Sess_UserRefno: userID,
-        Sess_company_refno: Sess_company_refno,
-        Sess_branch_refno: Sess_branch_refno,
-        Sess_group_refno: Sess_group_refno,
-        cont_rc_refno: "all",
-      },
+      AddedByUserID: userID,
     };
 
-    Provider.createDFContractor(
-      Provider.API_URLS.contractor_sendratecard_contrcrefnocheck,
-      params
+    Provider.getAll(
+      `master/getcontractorratecardsentlist?${new URLSearchParams(params)}`
     )
       .then((response) => {
         if (response.data && response.data.code === 200) {
           if (response.data.data) {
-            console.log(response.data.data[0]);
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            const lisData = [...response.data.data];
+            lisData.map((k, i) => {
+              k.key = (parseInt(i) + 1).toString();
+            });
+            console.log(response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -133,22 +103,6 @@ const SendRateCard = ({ navigation }) => {
     GetUserID();
   }, []);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.activityRoleName
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const AddCallback = () => {
     navigation.navigate("AddSendRateCard", {
       type: "add",
@@ -168,21 +122,18 @@ const SendRateCard = ({ navigation }) => {
         ]}
       >
         <List.Item
-          title={data.item.client_firstname}
+          title={data.item.clientName}
           titleStyle={{ fontSize: 18 }}
           description={`Client Number: ${
-            NullOrEmpty(data.item.client_mobile_no)
-              ? ""
-              : data.item.client_mobile_no
-          }\nUnit: ${
-            NullOrEmpty(data.item.rc_unit_type_name)
-              ? ""
-              : data.item.rc_unit_type_name
-          } `}
+            NullOrEmpty(data.item.contactNo) ? "" : data.item.contactNo
+          }\nUnit: ${NullOrEmpty(data.item.unit) ? "" : data.item.unit} `}
           onPress={() => {
-            console.log(data.item);
-            setCurrent(data.item);
             refRBSheet.current.open();
+            setClientName(data.item.clientName);
+            setClientNumber(data.item.contactNo);
+            setUnit(data.item.unit);
+            setMaterial(data.item.inclusiveMaterials ? "Yes" : "No");
+            setStatus(data.item.sendStatus ? "Yes" : "No");
           }}
           left={() => (
             <Icon
@@ -211,10 +162,11 @@ const SendRateCard = ({ navigation }) => {
       type: "edit",
       fetchData: FetchData,
       data: {
-        ...data.item,
+        id: data.item.id,
       },
     });
   };
+  //#endregion
 
   return (
     <View style={[Styles.flex1]}>
@@ -229,37 +181,43 @@ const SendRateCard = ({ navigation }) => {
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={["accountHolderName"]}
           />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData("");
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            useFlatList={true}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) =>
-              RenderHiddenItems(data, rowMap, [EditCallback])
-            }
-          />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData("");
+                  }}
+                />
+              }
+              data={listSearchData}
+              useFlatList={true}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
         <NoItems
@@ -267,7 +225,15 @@ const SendRateCard = ({ navigation }) => {
           text="No records found. Add records by clicking on plus icon."
         />
       )}
-      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", right: 16, bottom: 16 },
+        ]}
+        icon="plus"
+        onPress={AddCallback}
+      />
       <Snackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
@@ -282,7 +248,7 @@ const SendRateCard = ({ navigation }) => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         dragFromTopOnly={true}
-        height={500}
+        height={380}
         animationType="fade"
         customStyles={{
           wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
@@ -290,53 +256,12 @@ const SendRateCard = ({ navigation }) => {
         }}
       >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>
-            {current.client_firstname}
-          </Title>
+          <Title style={[Styles.paddingHorizontal16]}>{clientName}</Title>
           <ScrollView style={{ marginBottom: 64 }}>
-            <List.Item
-              title="Client Number"
-              description={current.client_mobile_no}
-            />
-            <List.Item title="Unit" description={current.rc_unit_type_name} />
-            <List.Item title="Material" description={current.material_status} />
-            <List.Item title="Status" description={current.rc_status} />
-            {current?.action_button?.includes("Preview Rate Card") && (
-              <View style={{ alignItems: "center", marginTop: "4%" }}>
-                <Button
-                  mode="outlined"
-                  style={{
-                    borderColor: "pink",
-                    borderWidth: 1.2,
-                    color: "pink",
-                    width: "80%",
-                  }}
-                  // onPress={() => {
-                  //   refRBSheet.current.close();
-                  // }}
-                >
-                  <Text style={{ color: "pink" }}>Preview Rate Card</Text>
-                </Button>
-              </View>
-            )}
-            {current?.action_button?.includes("Send Rate Card") && (
-              <View style={{ alignItems: "center", marginTop: "4%" }}>
-                <Button
-                  mode="outlined"
-                  style={{
-                    borderColor: "green",
-                    borderWidth: 1.2,
-                    color: "green",
-                    width: "80%",
-                  }}
-                  // onPress={() => {
-                  //   refRBSheet.current.close();
-                  // }}
-                >
-                  <Text style={{ color: "green" }}>Send Rate Card</Text>
-                </Button>
-              </View>
-            )}
+            <List.Item title="Client Number" description={clientNumber} />
+            <List.Item title="Unit" description={unit} />
+            <List.Item title="Material" description={material} />
+            <List.Item title="Status" description={status} />
           </ScrollView>
         </View>
       </RBSheet>

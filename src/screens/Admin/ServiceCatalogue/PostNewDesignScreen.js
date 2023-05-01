@@ -1,6 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, View, LogBox, RefreshControl, ScrollView, Image } from "react-native";
-import { FAB, List, Snackbar, Searchbar, Title } from "react-native-paper";
+import { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  View,
+  LogBox,
+  RefreshControl,
+  ScrollView,
+  Image,
+} from "react-native";
+import { FAB, List, Snackbar, Title } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Provider from "../../../api/Provider";
@@ -11,28 +18,30 @@ import NoItems from "../../../components/NoItems";
 import { Styles } from "../../../styles/styles";
 import { theme } from "../../../theme/apptheme";
 import { APIConverter } from "../../../utils/apiconverter";
+import Search from "../../../components/Search";
 
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 
 const PostNewDesignScreen = ({ navigation }) => {
   //#region Variables
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(theme.colors.success);
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
-  const [selectedDesignTypeName, setSelectedDesignTypeName] = React.useState("");
-  const [serviceName, setServiceName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [productName, setProductName] = React.useState("");
-  const [designNumber, setDesignNumber] = React.useState("");
-  const [designImage, setDesignImage] = React.useState("");
-  const [workLocationName, setWorkLocationName] = React.useState("");
-  const [labourCost, setLabourCost] = React.useState("");
+  const [selectedDesignTypeName, setSelectedDesignTypeName] = useState("");
+  const [serviceName, setServiceName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [productName, setProductName] = useState("");
+  const [designNumber, setDesignNumber] = useState("");
+  const [designImage, setDesignImage] = useState("");
+  const [workLocationName, setWorkLocationName] = useState("");
+  const [labourCost, setLabourCost] = useState("");
 
   const refRBSheet = useRef();
   //#endregion
@@ -40,7 +49,9 @@ const PostNewDesignScreen = ({ navigation }) => {
   //#region Functions
   const FetchData = (from) => {
     if (from === "add" || from === "update") {
-      setSnackbarText("Item " + (from === "add" ? "added" : "updated") + " successfully");
+      setSnackbarText(
+        "Item " + (from === "add" ? "added" : "updated") + " successfully"
+      );
       setSnackbarColor(theme.colors.success);
       setSnackbarVisible(true);
     }
@@ -59,11 +70,14 @@ const PostNewDesignScreen = ({ navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
+          setSnackbarText("No data found");
+          setSnackbarColor(theme.colors.error);
+          setSnackbarVisible(true);
         }
         setIsLoading(false);
         setRefreshing(false);
@@ -81,27 +95,27 @@ const PostNewDesignScreen = ({ navigation }) => {
     FetchData();
   }, []);
 
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.designTypeName.toString().toLowerCase().includes(query.toLowerCase());
-        })
-      );
-    }
-  };
-
   const RenderItems = (data) => {
     return (
-      <View style={[Styles.backgroundColor, Styles.borderBottom1, Styles.paddingStart16, Styles.flexJustifyCenter, { height: 72 }]}>
+      <View
+        style={[
+          Styles.backgroundColor,
+          Styles.borderBottom1,
+          Styles.paddingStart16,
+          Styles.flexJustifyCenter,
+          { height: 72 },
+        ]}
+      >
         <List.Item
           title={data.item.designTypeName}
           titleStyle={{ fontSize: 18 }}
           description={"Display: " + (data.item.display ? "Yes" : "No")}
-          left={() => <Image source={{ uri: data.item.designImage }} style={[Styles.width56, Styles.height56]} />}
+          left={() => (
+            <Image
+              source={{ uri: data.item.designImage }}
+              style={[Styles.width56, Styles.height56]}
+            />
+          )}
           onPress={() => {
             refRBSheet.current.open();
             setSelectedDesignTypeName(data.item.designTypeName);
@@ -113,14 +127,25 @@ const PostNewDesignScreen = ({ navigation }) => {
             setWorkLocationName(data.item.workLocationName);
             setLabourCost(data.item.labourCost);
           }}
-          right={() => <Icon style={{ marginVertical: 12, marginRight: 12 }} size={30} color={theme.colors.textSecondary} name="eye" />}
+          right={() => (
+            <Icon
+              style={{ marginVertical: 12, marginRight: 12 }}
+              size={30}
+              color={theme.colors.textSecondary}
+              name="eye"
+            />
+          )}
         />
       </View>
     );
   };
 
   const AddCallback = () => {
-    navigation.navigate("AddPostNewDesignScreen", { type: "add", fetchData: FetchData, data: { count: listData[0].length } });
+    navigation.navigate("AddPostNewDesignScreen", {
+      type: "add",
+      fetchData: FetchData,
+      data: { count: listData[0].length },
+    });
   };
 
   const EditCallback = (data, rowMap) => {
@@ -148,52 +173,121 @@ const PostNewDesignScreen = ({ navigation }) => {
     <View style={[Styles.flex1]}>
       <Header navigation={navigation} title="Post New Design" />
       {isLoading ? (
-        <View style={[Styles.flex1, Styles.flexJustifyCenter, Styles.flexAlignCenter]}>
+        <View
+          style={[
+            Styles.flex1,
+            Styles.flexJustifyCenter,
+            Styles.flexAlignCenter,
+          ]}
+        >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar style={[Styles.margin16]} placeholder="Search" onChangeText={onChangeSearch} value={searchQuery} />
-          <SwipeListView
-            previewDuration={1000}
-            previewOpenValue={-72}
-            previewRowKey="1"
-            previewOpenDelay={1000}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={refreshing}
-                onRefresh={() => {
-                  FetchData();
-                }}
-              />
-            }
-            data={listSearchData[0]}
-            disableRightSwipe={true}
-            rightOpenValue={-72}
-            renderItem={(data) => RenderItems(data)}
-            renderHiddenItem={(data, rowMap) => RenderHiddenItems(data, rowMap, [EditCallback])}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "serviceName",
+              "categoryName",
+              "productName",
+              "designTypeName",
+              "workLocationName",
+              "designNumber",
+              "designImage",
+              "labourCost",
+              "display",
+            ]}
           />
+          {listSearchData?.length > 0 ? (
+            <SwipeListView
+              previewDuration={1000}
+              previewOpenValue={-72}
+              previewRowKey="1"
+              previewOpenDelay={1000}
+              refreshControl={
+                <RefreshControl
+                  colors={[theme.colors.primary]}
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    FetchData();
+                  }}
+                />
+              }
+              data={listSearchData}
+              disableRightSwipe={true}
+              rightOpenValue={-72}
+              renderItem={(data) => RenderItems(data)}
+              renderHiddenItem={(data, rowMap) =>
+                RenderHiddenItems(data, rowMap, [EditCallback])
+              }
+            />
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
+            />
+          )}
         </View>
       ) : (
-        <NoItems icon="format-list-bulleted" text="No records found. Add records by clicking on plus icon." />
+        <NoItems
+          icon="format-list-bulleted"
+          text="No records found. Add records by clicking on plus icon."
+        />
       )}
-      <FAB style={[Styles.fabStyle]} icon="plus" onPress={AddCallback} />
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000} style={{ backgroundColor: snackbarColor }}>
+      <FAB
+        style={[
+          Styles.margin16,
+          Styles.primaryBgColor,
+          { position: "absolute", right: 16, bottom: 16 },
+        ]}
+        icon="plus"
+        onPress={AddCallback}
+      />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: snackbarColor }}
+      >
         {snackbarText}
       </Snackbar>
-      <RBSheet ref={refRBSheet} closeOnDragDown={true} closeOnPressMask={true} dragFromTopOnly={true} height={520} animationType="fade" customStyles={{ wrapper: { backgroundColor: "rgba(0,0,0,0.5)" }, draggableIcon: { backgroundColor: "#000" } }}>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        dragFromTopOnly={true}
+        height={520}
+        animationType="fade"
+        customStyles={{
+          wrapper: { backgroundColor: "rgba(0,0,0,0.5)" },
+          draggableIcon: { backgroundColor: "#000" },
+        }}
+      >
         <View>
-          <Title style={[Styles.paddingHorizontal16]}>{selectedDesignTypeName}</Title>
+          <Title style={[Styles.paddingHorizontal16]}>
+            {selectedDesignTypeName}
+          </Title>
           <ScrollView>
             <List.Item title="Labour Cost" description={labourCost} />
             <List.Item title="Service Name" description={serviceName} />
             <List.Item title="Category Name" description={categoryName} />
             <List.Item title="Product Name" description={productName} />
-            <List.Item title="Work Location Name" description={workLocationName} />
+            <List.Item
+              title="Work Location Name"
+              description={workLocationName}
+            />
             <List.Item title="Design Number" description={designNumber} />
             <List.Item title="Design Image" />
-            <Image source={{ uri: designImage }} style={[Styles.height104, Styles.width104, Styles.marginStart16, { marginBottom: 88 }]} />
+            <Image
+              source={{ uri: designImage }}
+              style={[
+                Styles.height104,
+                Styles.width104,
+                Styles.marginStart16,
+                { marginBottom: 88 },
+              ]}
+            />
           </ScrollView>
         </View>
       </RBSheet>

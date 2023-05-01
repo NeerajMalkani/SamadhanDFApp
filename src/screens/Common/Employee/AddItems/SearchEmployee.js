@@ -1,58 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   View,
   RefreshControl,
-  LogBox,
   ScrollView,
   Text,
-  Touchable,
 } from "react-native";
 import {
-  FAB,
   List,
   Searchbar,
   Snackbar,
-  TextInput,
   Title,
   HelperText,
-  Button,
   Card,
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { theme } from "../../../../theme/apptheme";
 import { Styles } from "../../../../styles/styles";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import { NullOrEmpty } from "../../../../utils/validations";
 import { communication } from "../../../../utils/communication";
 import Provider from "../../../../api/Provider";
-import {
-  RenderHiddenItems,
-  RenderHiddenItemGeneric,
-} from "../../../../components/ListActions";
+import { RenderHiddenItemGeneric } from "../../../../components/ListActions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoItems from "../../../../components/NoItems";
 import Autocomplete from "./Autocomplete";
 import DFButton from "../../../../components/Button";
+import Search from "../../../../components/Search";
 
 let userID = 0;
 let companyID = 0;
 let Sess_branch_refno = 0;
 const SearchEmployee = ({ route, navigation }) => {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const [displayLoader, setDisplayLoader] = React.useState(false);
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [displayLoader, setDisplayLoader] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
   const [aadharNo, setAadharNo] = useState("");
   const [aadharNoInvalid, setAadharNoInvalid] = useState("");
   const aadharNoRef = useRef({});
@@ -60,7 +50,7 @@ const SearchEmployee = ({ route, navigation }) => {
   const [mobileNo, setMobileNo] = useState("");
   const [mobileNoInvalid, setMobileNoInvalid] = useState("");
   const mobileNoRef = useRef({});
-  const [companyName, setCompanyName] = React.useState("");
+  const [companyName, setCompanyName] = useState("");
   const [RBEmployeeName, setRBEmployeeName] = useState("");
   const [RBMobileNo, setRBMobileNo] = useState("");
   const [RBAadharNo, setRBAadharNo] = useState("");
@@ -95,11 +85,12 @@ const SearchEmployee = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            console.log(response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
+          setListData([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -119,21 +110,6 @@ const SearchEmployee = ({ route, navigation }) => {
   useEffect(() => {
     GetUserID();
   }, []);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.Search_employee_name.toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const onAadharNoChanged = (text) => {
     setAadharNo(text);
@@ -220,12 +196,12 @@ const SearchEmployee = ({ route, navigation }) => {
             lisData.map((k, i) => {
               k.key = (parseInt(i) + 1).toString();
             });
-            listData[1](response.data.data);
-            listSearchData[1](response.data.data);
+            setListData(response.data.data);
+            setListSearchData(response.data.data);
           }
         } else {
-          listData[1]([]);
-          listSearchData[1]([]);
+          setListData([]);
+          setListSearchData([]);
           setSnackbarText("No data found");
           setSnackbarColor(theme.colors.error);
           setSnackbarVisible(true);
@@ -369,7 +345,6 @@ const SearchEmployee = ({ route, navigation }) => {
           <Autocomplete
             value={aadharNo}
             label="Employee Aadhar No"
-            keyboardType={"number-pad"}
             data={aadhar}
             menuStyle={{ backgroundColor: "white" }}
             onChange={onAadharNoChanged}
@@ -409,7 +384,6 @@ const SearchEmployee = ({ route, navigation }) => {
           <Autocomplete
             value={mobileNo}
             label="Mobile No"
-            keyboardType={"number-pad"}
             data={numbers}
             menuStyle={{ backgroundColor: "white" }}
             onChange={onMobileNoChanged}
@@ -436,8 +410,20 @@ const SearchEmployee = ({ route, navigation }) => {
             </Text>
           </TouchableOpacity> */}
           <Card.Content>
-           
-             <DFButton mode="contained" onPress={OnSearchEmployee} title="SEARCH EMPLOYEE" loader={isButtonLoading} />
+            {/* <Button
+              mode="contained"
+              onPress={OnSearchEmployee}
+              loading={isButtonLoading}
+              disabled={isButtonLoading}
+            >
+              SEARCH EMPLOYEE
+            </Button> */}
+            <DFButton
+              mode="contained"
+              onPress={OnSearchEmployee}
+              title="SEARCH EMPLOYEE"
+              loader={isButtonLoading}
+            />
           </Card.Content>
         </View>
         <View style={[Styles.padding16]}>
@@ -475,45 +461,48 @@ const SearchEmployee = ({ route, navigation }) => {
                 />
               ) : null}
             </View>
-          ) : listData[0].length > 0 ? (
+          ) : listData.length > 0 ? (
             <View
               style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}
             >
-              <Searchbar
-                style={[Styles.margin16]}
-                placeholder="Search"
-                onChangeText={onChangeSearch}
-                value={searchQuery}
+              <Search
+                data={listData}
+                setData={setListSearchData}
+                filterFunction={["mobile_no"]}
               />
-              <SwipeListView
-                previewDuration={1000}
-                previewOpenValue={-72}
-                previewRowKey="1"
-                previewOpenDelay={1000}
-                refreshControl={
-                  <RefreshControl
-                    colors={[theme.colors.primary]}
-                    refreshing={refreshing}
-                    onRefresh={() => {
-                      FetchData();
-                    }}
-                  />
-                }
-                data={listSearchData[0]}
-                useFlatList={true}
-                disableRightSwipe={true}
-                rightOpenValue={-72}
-                renderItem={(data) => RenderItems(data)}
-                renderHiddenItem={(data, rowMap) =>
-                  RenderHiddenItemGeneric("eye", data, rowMap, [EditCallback])
-                }
-              />
+              {listSearchData?.length > 0 ? (
+                <SwipeListView
+                  previewDuration={1000}
+                  previewOpenValue={-72}
+                  previewRowKey="1"
+                  previewOpenDelay={1000}
+                  refreshControl={
+                    <RefreshControl
+                      colors={[theme.colors.primary]}
+                      refreshing={refreshing}
+                      onRefresh={() => {
+                        FetchData();
+                      }}
+                    />
+                  }
+                  data={listSearchData}
+                  useFlatList={true}
+                  disableRightSwipe={true}
+                  rightOpenValue={-72}
+                  renderItem={(data) => RenderItems(data)}
+                  renderHiddenItem={(data, rowMap) =>
+                    RenderHiddenItemGeneric("eye", data, rowMap, [EditCallback])
+                  }
+                />
+              ) : (
+                <NoItems
+                  icon="format-list-bulleted"
+                  text="No records found for your query"
+                />
+              )}
             </View>
           ) : (
-            <NoItems
-              icon="format-list-bulleted"
-              text="No records found"
-            />
+            <NoItems icon="format-list-bulleted" text="No records found" />
           )}
         </View>
       </ScrollView>

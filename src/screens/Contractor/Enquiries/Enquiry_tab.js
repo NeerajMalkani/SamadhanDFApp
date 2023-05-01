@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Image,
   ActivityIndicator,
@@ -9,30 +9,25 @@ import {
   StyleSheet,
 } from "react-native";
 import {
-  FAB,
   List,
-  Searchbar,
-  Snackbar,
   Title,
   Dialog,
   Portal,
-  Paragraph,
   Button,
   Text,
   TextInput,
   Card,
-  HelperText,
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Provider from "../../../api/Provider";
-import Header from "../../../components/Header";
+
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Styles } from "../../../styles/styles";
-import { NullOrEmpty } from "../../../utils/validations";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -50,14 +45,14 @@ const Enquiry_tab = ({
   fetch,
   unload,
 }) => {
-  const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [current, setCurrent] = React.useState({});
+  const [visible, setVisible] = useState(false);
+  const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [current, setCurrent] = useState({});
   const refRBSheet = useRef();
   //#endregion
 
@@ -83,30 +78,14 @@ const Enquiry_tab = ({
   const hideDialog = () => setVisible(false);
 
   const FetchData = () => {
-    listData[1](listData2);
-    listSearchData[1](listSearchData2);
+    setListData(listData2);
+    setListSearchData(listSearchData2);
     setIsLoading(false);
   };
 
   useEffect(() => {
     GetUserID();
   }, []);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.contactPerson
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const RenderItems = (data) => {
     return (
@@ -183,6 +162,7 @@ const Enquiry_tab = ({
             onPress={() => {
               refRBSheet.current.open();
               setCurrent(data.item);
+              console.log(data.item);
             }}
             style={{
               width: "80%",
@@ -200,6 +180,7 @@ const Enquiry_tab = ({
   const submit = () => {
     hideDialog();
     set(true);
+    console.log(current);
     if (text == "Accept" || text == "Reject") {
       const params = {
         data: {
@@ -215,6 +196,7 @@ const Enquiry_tab = ({
         params
       )
         .then((response) => {
+          console.log(response.data.data);
           if (response.data && response.data.data) {
             if (response.data.data.Updated == 1) {
               fetch(
@@ -235,6 +217,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Finally Take Project") {
+      console.log(3);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -249,6 +232,7 @@ const Enquiry_tab = ({
         params
       )
         .then((response) => {
+          console.log(response.data.data);
           if (response.data && response.data.data) {
             if (response.data.data.Updated == 1) {
               fetch(1, `${text} Successfully!`);
@@ -264,6 +248,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel My Quotation") {
+      console.log(4);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -291,6 +276,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel & Re-Quotation" && type == "approved") {
+      console.log(5);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -318,6 +304,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Remove My List" && type == "approved") {
+      console.log(6);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -345,6 +332,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Remove My List" && type == "rejected") {
+      console.log(7);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -372,6 +360,7 @@ const Enquiry_tab = ({
           unload("Failed");
         });
     } else if (text == "Cancel & Re-Quotation" && type == "rejected") {
+      console.log(8);
       const params = {
         data: {
           Sess_UserRefno: userID,
@@ -413,36 +402,43 @@ const Enquiry_tab = ({
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0].length > 0 ? (
+      ) : listData.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={(text) => (item) =>
+              item?.api_name?.toLowerCase()?.includes(text?.toLowerCase())}
           />
-          <View style={{ padding: 10 }}>
-            <SwipeListView
-              previewDuration={1000}
-              previewOpenValue={-160}
-              previewRowKey="1"
-              previewOpenDelay={1000}
-              refreshControl={
-                <RefreshControl
-                  colors={[theme.colors.primary]}
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    FetchData();
-                  }}
-                />
-              }
-              data={listSearchData[0]}
-              useFlatList={true}
-              disableRightSwipe={true}
-              rightOpenValue={-160}
-              renderItem={(data) => RenderItems(data)}
+          {listSearchData?.length > 0 ? (
+            <View style={{ padding: 10 }}>
+              <SwipeListView
+                previewDuration={1000}
+                previewOpenValue={-160}
+                previewRowKey="1"
+                previewOpenDelay={1000}
+                refreshControl={
+                  <RefreshControl
+                    colors={[theme.colors.primary]}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                      FetchData();
+                    }}
+                  />
+                }
+                data={listSearchData}
+                useFlatList={true}
+                disableRightSwipe={true}
+                rightOpenValue={-160}
+                renderItem={(data) => RenderItems(data)}
+              />
+            </View>
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
             />
-          </View>
+          )}
         </View>
       ) : (
         <NoItems
@@ -506,7 +502,7 @@ const Enquiry_tab = ({
               <>
                 <List.Item title="Labour Cost" />
                 <TextInput
-                 mode="outlined"
+                  mode="outlined"
                   disabled={type === "new" ? false : true}
                   value={current.alter_labours_cost}
                   onChangeText={(text) => {

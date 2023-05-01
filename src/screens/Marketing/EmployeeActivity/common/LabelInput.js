@@ -3,15 +3,15 @@ import React from "react";
 import { Styles } from "../../../../styles/styles";
 
 const LabelInput = ({ label, lg, value }) => {
-  const isLg = lg ? Styles.fontSize24 : Styles.fontSize16;
+  const isLg = lg ? Styles.fontSize16 : Styles.fontSize14;
   return (
-    <View style={[Styles.marginTop8]}>
+    <View>
       <Text
         style={[
           Styles.marginBottom4,
-          Styles.fontSize12,
-          Styles.fontBold,
-          { color: "darkgray" },
+          Styles.fontSize10,
+          Styles.textSecondaryColor,
+          { height:14 },
         ]}
       >
         {label}

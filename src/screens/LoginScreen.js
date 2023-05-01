@@ -20,7 +20,6 @@ const LoginScreen = ({ route, navigation }) => {
   //#endregion
 
   React.useEffect(() => {
-    console.log('return data:', route.params?.mobile);
     if (route.params?.mobile) {
       setUsername(route.params?.mobile);
     }
@@ -176,7 +175,8 @@ const LoginScreen = ({ route, navigation }) => {
           <Button mode="text" uppercase={false} style={[Styles.flexAlignEnd, { marginTop: -12 }]} onPress={() => ForgotPassword()}>
             Forgot Password?
           </Button>
-          <Button mode="contained" style={[Styles.marginTop16]} loading={isButtonLoading} disabled={isButtonLoading} onPress={() => ValidateLogin()}>
+          <Button mode="contained" style={[Styles.marginTop16]} loading={isButtonLoading} 
+          disabled={isButtonLoading} onPress={() => ValidateLogin()}>
             Login
           </Button>
           <View>

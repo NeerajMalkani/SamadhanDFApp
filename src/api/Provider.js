@@ -2,8 +2,8 @@ import axios from "axios";
 import { onePixelImage, timeoutLimit } from "../utils/paths";
 
 const BASE_OLD = "https://dfsolutions.in/api";
-const BASE_ = "https://samadhanerp.com/api";
-const BASE_4 = "https://samadhanerp.com/testkit/api";
+const BASE_4 = "https://samadhanerp.com/api";
+const BASE_ = "https://samadhanerp.com/testkit/api";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
@@ -15,6 +15,7 @@ const BASE_URL_PocketDiary = `${BASE_}/apipocketdiary/spawu7S4urax/tYjD`;
 export const BASE_URL_Contractor = `${BASE_}/apicontractor/spawu7S4urax/tYjD/`;
 const BASE_URL_Manufacturer = `${BASE_}/apimanufacturer/spawu7S4urax/tYjD`;
 const BASE_URL_CLIENT = `${BASE_}/apiclient/spawu7S4urax/tYjD`;
+export const BASE_URL_Dealer = `${BASE_}/apidealer/spawu7S4urax/tYjD/`;
 
 class Provider {
   //#region Old API's
@@ -723,8 +724,11 @@ class Provider {
     get_referencerefno_employeeactivityform:
       "get_referencerefno_employeeactivityform/",
     employeeactivity_addnew_contact: "employeeactivity_addnew_contact/",
-    employeeactivity_myemployeeactivityrefnocheck:
-      "employeeactivity_myemployeeactivityrefnocheck/",
+      employee_update_customer_companydata: "employee_update_customer_companydata/",
+      employee_update_customer_contactdata: "employee_update_customer_contactdata/",
+      sendpricelistrefnocheck: "sendpricelistrefnocheck/",
+      get_brandname_sendproductpriceform: "get_brandname_sendproductpriceform/",
+      sendproductprice_create: "sendproductprice_create/",
   };
 
   createDFPocketDairy(resource, params) {
@@ -1190,6 +1194,11 @@ class Provider {
       return axios.post(`${BASE_URL_API}/${resource}`);
     }
   }
+
+  createDFDealer(resource, params) {
+    return axios.post(`${BASE_URL_Dealer}/${resource}`, params);
+  }
+
   //#endregion
 }
 export default new Provider();

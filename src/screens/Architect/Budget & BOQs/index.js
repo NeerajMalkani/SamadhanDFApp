@@ -47,8 +47,13 @@ const BudgetBOQ = ({ navigation, route }) => {
   ];
   const [index, setIndex] = React.useState(Number(route.params.index || 0));
   useEffect(() => {
-    if (isFocused)
-      AsyncStorage.getItem("budget-index").then((res) => setIndex(Number(res)));
+    const rendertab = async () => {
+      if (isFocused)
+        await AsyncStorage.getItem("budget-index").then((res) =>
+          setIndex(Number(res) || 0)
+        );
+      await AsyncStorage.removeItem("budget-index");
+    };
   }, [isFocused, setIndex]);
   const renderScene = ({ route }) => {
     switch (route.key) {

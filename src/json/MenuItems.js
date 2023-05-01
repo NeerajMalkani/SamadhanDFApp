@@ -415,6 +415,21 @@ export const MenuItemsDealer = [
     ],
   },
   {
+    title: "Product Price List",
+    icon: "palette-swatch",
+    type: "accordian",
+    index: 3,
+    roleID: 4,
+    items: [
+      {
+        title: "Product Price List",
+        type: "accordian",
+        index: 31,
+        navigation: "ProductPriceList",
+      },
+    ],
+  },
+  {
     title: "Employee",
     icon: "account-tie",
     type: "accordian",

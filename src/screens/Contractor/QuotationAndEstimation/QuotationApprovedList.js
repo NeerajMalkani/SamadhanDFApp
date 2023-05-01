@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { BASE_URL_Contractor } from "../../../api/Provider";
 import { useIsFocused } from "@react-navigation/native";
@@ -12,14 +12,11 @@ import {
   StyleSheet,
 } from "react-native";
 import {
-  FAB,
   List,
-  Searchbar,
   Snackbar,
   Title,
   Dialog,
   Portal,
-  Paragraph,
   Button,
   Text,
   TextInput,
@@ -30,17 +27,17 @@ import {
 } from "react-native-paper";
 import { SwipeListView } from "react-native-swipe-list-view";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { creds } from "../../../utils/credentials";
+
 import Provider from "../../../api/Provider";
 import NoItems from "../../../components/NoItems";
 import { theme } from "../../../theme/apptheme";
 import { communication } from "../../../utils/communication";
-import { RNS3 } from "react-native-aws3";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Styles } from "../../../styles/styles";
 import { AWSImagePath } from "../../../utils/paths";
 import uuid from "react-native-uuid";
+import Search from "../../../components/Search";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -57,31 +54,26 @@ const QuotationApprovedList = ({
   unload,
   navigation,
 }) => {
-  const [popupVisible, setPopupVisible] = React.useState(false);
-  const [remarks, setRemarks] = React.useState("");
-  const [errorR, setErrorR] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [errorCAT, setErrorCAT] = React.useState(false);
-  const [designImage, setDesignImage] = React.useState("");
-  const [image, setImage] = React.useState(
-    AWSImagePath + "placeholder-image.png"
-  );
-  const [filePath, setFilePath] = React.useState(null);
-  const [status, setStatus] = React.useState(false);
-  const [visible, setVisible] = React.useState(false);
-  const [text, setText] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const listData = React.useState([]);
-  const listSearchData = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [current, setCurrent] = React.useState({});
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [remarks, setRemarks] = useState("");
+  const [errorR, setErrorR] = useState(false);
+  const [value, setValue] = useState("");
+  const [errorCAT, setErrorCAT] = useState(false);
+  const [designImage, setDesignImage] = useState("");
+  const [image, setImage] = useState(AWSImagePath + "placeholder-image.png");
+  const [filePath, setFilePath] = useState(null);
+  const [status, setStatus] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [listData, setListData] = useState([]);
+  const [listSearchData, setListSearchData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [current, setCurrent] = useState({});
   const refRBSheet = useRef();
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarText, setSnackbarText] = React.useState("");
-  const [snackbarColor, setSnackbarColor] = React.useState(
-    theme.colors.success
-  );
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarText, setSnackbarText] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState(theme.colors.success);
 
   const GetUserID = async () => {
     const userData = await AsyncStorage.getItem("user");
@@ -176,7 +168,7 @@ const QuotationApprovedList = ({
     }
   };
 
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const showDialog = () => {
     refRBSheet.current.close();
     setVisible(true);
@@ -199,9 +191,10 @@ const QuotationApprovedList = ({
       params
     )
       .then((response) => {
+        // console.log("response:", JSON.stringify(response.data));
         if (response.data && response.data.data) {
-          listData[1](response.data.data);
-          listSearchData[1](response.data.data);
+          setListData(response.data.data);
+          setListSearchData(response.data.data);
         }
       })
       .finally(() => setIsLoading(false));
@@ -213,22 +206,6 @@ const QuotationApprovedList = ({
       GetUserID();
     }
   }, [isFocused]);
-
-  const onChangeSearch = (query) => {
-    setSearchQuery(query);
-    if (query === "") {
-      listSearchData[1](listData[0]);
-    } else {
-      listSearchData[1](
-        listData[0].filter((el) => {
-          return el.contactPerson
-            .toString()
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        })
-      );
-    }
-  };
 
   const RenderItems = (data) => {
     return (
@@ -305,6 +282,7 @@ const QuotationApprovedList = ({
             mode="outlined"
             onPress={() => {
               refRBSheet.current.open();
+              console.log(data.item);
               setCurrent(data.item);
             }}
             style={{
@@ -363,36 +341,51 @@ const QuotationApprovedList = ({
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      ) : listData[0]?.length > 0 ? (
+      ) : listData?.length > 0 ? (
         <View style={[Styles.flex1, Styles.flexColumn, Styles.backgroundColor]}>
-          <Searchbar
-            style={[Styles.margin16]}
-            placeholder="Search"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
+          <Search
+            data={listData}
+            setData={setListSearchData}
+            filterFunction={[
+              "cont_quot_no",
+              "cont_quot_refno",
+              "contact_mobile_no",
+              "contact_person",
+              "material_status",
+              "project_name",
+              "quot_status_name",
+              "quot_unit_type_name",
+            ]}
           />
-          <View style={{ padding: 10 }}>
-            <SwipeListView
-              previewDuration={1000}
-              previewOpenValue={-160}
-              previewRowKey="1"
-              previewOpenDelay={1000}
-              refreshControl={
-                <RefreshControl
-                  colors={[theme.colors.primary]}
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    FetchData();
-                  }}
-                />
-              }
-              data={listSearchData[0]}
-              useFlatList={true}
-              disableRightSwipe={true}
-              rightOpenValue={-160}
-              renderItem={(data) => RenderItems(data)}
+          {listSearchData?.length > 0 ? (
+            <View style={{ padding: 10 }}>
+              <SwipeListView
+                previewDuration={1000}
+                previewOpenValue={-160}
+                previewRowKey="1"
+                previewOpenDelay={1000}
+                refreshControl={
+                  <RefreshControl
+                    colors={[theme.colors.primary]}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                      FetchData();
+                    }}
+                  />
+                }
+                data={listSearchData}
+                useFlatList={true}
+                disableRightSwipe={true}
+                rightOpenValue={-160}
+                renderItem={(data) => RenderItems(data)}
+              />
+            </View>
+          ) : (
+            <NoItems
+              icon="format-list-bulleted"
+              text="No records found for your query"
             />
-          </View>
+          )}
         </View>
       ) : (
         <NoItems
