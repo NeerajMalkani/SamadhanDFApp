@@ -3,7 +3,7 @@ import { onePixelImage, timeoutLimit } from "../utils/paths";
 
 const BASE_OLD = "https://dfsolutions.in/api";
 const BASE_4 = "https://samadhanerp.com/api";
-const BASE_ = "https://samadhanerp.com/testkit/api";
+const BASE_ = "https://samadhanerp.com/api";
 const BASE_URL_OLD = "https://api.starselector.com/api";
 const BASE_URL_API = `${BASE_}/apiurl/spawu7S4urax/tYjD`;
 const BASE_URL = `${BASE_}/apicommon/spawu7S4urax/tYjD`;
@@ -688,6 +688,15 @@ class Provider {
     contractor_sendratecard_create: "contractor_sendratecard_create/",
     contractor_sendratecard_update: "contractor_sendratecard_update/",
     getexpensesto_pckaddexpensesform: "getexpensesto_pckaddexpensesform/",
+    getclienttype_pckaddexpensesform: "getclienttype_pckaddexpensesform/",
+    get_myclient_companyname_employeeactivityform:
+      "get_myclient_companyname_employeeactivityform/",
+    get_contactpersonname_employeeactivityform:
+      "get_contactpersonname_employeeactivityform/",
+    get_marketingexecutivename_employeeactivityform:
+      "get_marketingexecutivename_employeeactivityform/",
+    get_otherclient_companyname_employeeactivityform:
+      "get_otherclient_companyname_employeeactivityform/",
     getfollowupcustomerlist_pckaddexpensesform:
       "getfollowupcustomerlist_pckaddexpensesform/",
     employee_mycustomerlist: "employee_mycustomerlist/",
@@ -714,6 +723,8 @@ class Provider {
       "get_activitystatus_employeeactivityform/",
     get_nextvisitno_employeeactivityform:
       "get_nextvisitno_employeeactivityform/",
+    getactivityexpenses_pckaddexpensesform:
+      "getactivityexpenses_pckaddexpensesform/",
     get_daysmonthsrefno_employeeactivityform:
       "get_daysmonthsrefno_employeeactivityform/",
     get_helpperson_employeeactivityform: "get_helpperson_employeeactivityform/",
@@ -724,11 +735,13 @@ class Provider {
     get_referencerefno_employeeactivityform:
       "get_referencerefno_employeeactivityform/",
     employeeactivity_addnew_contact: "employeeactivity_addnew_contact/",
-      employee_update_customer_companydata: "employee_update_customer_companydata/",
-      employee_update_customer_contactdata: "employee_update_customer_contactdata/",
-      sendpricelistrefnocheck: "sendpricelistrefnocheck/",
-      get_brandname_sendproductpriceform: "get_brandname_sendproductpriceform/",
-      sendproductprice_create: "sendproductprice_create/",
+    employee_update_customer_companydata:
+      "employee_update_customer_companydata/",
+    employee_update_customer_contactdata:
+      "employee_update_customer_contactdata/",
+    sendpricelistrefnocheck: "sendpricelistrefnocheck/",
+    get_brandname_sendproductpriceform: "get_brandname_sendproductpriceform/",
+    sendproductprice_create: "sendproductprice_create/",
   };
 
   createDFPocketDairy(resource, params) {

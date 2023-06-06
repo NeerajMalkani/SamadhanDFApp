@@ -26,13 +26,9 @@ import RadioGroup from "react-native-radio-buttons-group";
 import { PaperSelect } from "react-native-paper-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APIConverter } from "../../../../utils/apiconverter";
-import {
-  projectVariables,
-  projectLoginTypes,
-} from "../../../../utils/credentials";
+import { projectVariables, projectLoginTypes } from "../../../../utils/credentials";
 import * as Contacts from "expo-contacts";
 import { faL } from "@fortawesome/free-solid-svg-icons";
-import { NullOrEmpty } from "../../../../utils/validations";
 
 let userID = 0,
   groupID = 0,
@@ -88,70 +84,6 @@ const AddExpenses = ({ route, navigation }) => {
   const [date, setDate] = useState(new Date());
   const [dateInvalid, setDateInvalid] = useState("");
   const dateRef = useRef({});
-
-  const [visitLocation, setVisitLocation] = React.useState("");
-  const [visitLocationError, setVisitLocationError] = React.useState(false);
-
-  const [activityRemarks, setActivityRemarks] = React.useState("");
-
-  const [referenceData, setReferenceData] = React.useState([]);
-  const [referenceFullData, setReferenceFullData] = React.useState([]);
-  const [reference, setReference] = React.useState("");
-
-  const [supportPersonData, setSupportPersonData] = React.useState([]);
-  const [supportPersonFullData, setSupportPersonFullData] = React.useState([]);
-  const [supportPerson, setSupportPerson] = React.useState("");
-
-  const [nextVisitDayData, setNextVisitDayData] = React.useState([]);
-  const [nextVisitDayFullData, setNextVisitDayFullData] = React.useState([]);
-  const [nextVisitDay, setNextVisitDay] = React.useState("");
-
-  const [nextVisitMonthData, setNextVisitMonthData] = React.useState([]);
-  const [nextVisitMonthFullData, setNextVisitMonthFullData] = React.useState(
-    []
-  );
-  const [nextVisitMonth, setNextVisitMonth] = React.useState("");
-
-  const [activityTypeData, setActivityTypeData] = React.useState([]);
-  const [activityTypeFullData, setActivityTypeFullData] = React.useState([]);
-  const [activityTypeError, setActivityTypeError] = React.useState(false);
-  const [activityType, setActivityType] = React.useState("");
-
-  const [valueData, setvalueData] = React.useState([]);
-  const [valueFullData, setvalueFullData] = React.useState([]);
-  const [valueError, setvalueError] = React.useState(false);
-
-  const [clientTypeData, setClientTypeData] = React.useState([]);
-  const [clientTypeFullData, setClientTypeFullData] = React.useState([]);
-  const [clientTypeError, setClientTypeError] = React.useState(false);
-  const [clientType, setClientType] = React.useState("");
-
-  const [activityStatusData, setActivityStatusData] = React.useState([]);
-  const [activityStatusFullData, setActivityStatusFullData] = React.useState(
-    []
-  );
-  const [activityStatusError, setActivityStatusError] = React.useState(false);
-  const [activityStatus, setActivityStatus] = React.useState("");
-
-  const [marketingData, setMarketingData] = React.useState([]);
-  const [marketingFullData, setMarketingFullData] = React.useState([]);
-  const [marketingError, setMarketingError] = React.useState(false);
-  const [marketing, setMarketing] = React.useState("");
-
-  const [clientListtData, setClientListtData] = React.useState([]);
-  const [clientListtFullData, setClientListtFullData] = React.useState([]);
-  const [clienttError, setClienttError] = React.useState(false);
-  const [clientt, setClientt] = React.useState("");
-
-  const [contactPersonData, setContactPersonData] = React.useState([]);
-  const [contactPersonFullData, setContactPersonFullData] = React.useState([]);
-  const [contactPersonError, setContactPersonError] = React.useState(false);
-  const [contactPerson, setContactPerson] = React.useState("");
-
-  const [epaData, setEpaData] = React.useState([]);
-  const [epaFullData, setEpaFullData] = React.useState([]);
-  const [epaError, setEpaError] = React.useState(false);
-  const [epa, setEpa] = React.useState("");
 
   const [entryTypeData, setEntryTypeData] = React.useState([]);
   const [entryTypeFullData, setEntryTypeFullData] = React.useState([]);
@@ -439,11 +371,11 @@ const AddExpenses = ({ route, navigation }) => {
           route.params.type === "edit"
             ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
             : route.params.type === "verify"
-            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
-            : route.params.type ===
-              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
-            ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
-            : 0,
+              ? projectVariables.DEF_PCKDIARY_TRANSTYPE_EXPENSES_REFNO
+              : route.params.type ===
+                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+                ? projectVariables.DEF_PCKDIARY_TRANSTYPE_SOURCE_REFNO
+                : 0,
         pck_entrytype_refno:
           projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO,
       },
@@ -616,7 +548,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (data.myclient_refno != null && data.myclient_refno != "0") {
@@ -647,7 +579,7 @@ const AddExpenses = ({ route, navigation }) => {
       (data.dynamic_expenses_refno != null &&
         data.dynamic_expenses_refno != "0") ||
       route.params.type ===
-        projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
+      projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText
     ) {
       setProjectExpenseStatus(true);
       FetchProjectExpense(data.pck_category_refno, data.dynamic_expenses_refno);
@@ -697,12 +629,6 @@ const AddExpenses = ({ route, navigation }) => {
       data: {
         Sess_UserRefno: userID,
         Sess_group_refno: groupID,
-        Sess_company_refno: companyID,
-        Sess_branch_refno: branchID,
-        Sess_designation_refno: designID,
-        Sess_group_refno_extra_1: groupExtra.toString(),
-        pck_sub_category_refno: "0",
-        activity_entry_type: "2",
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckentrytype, params)
@@ -736,157 +662,6 @@ const AddExpenses = ({ route, navigation }) => {
                   response.data.data[route.params.tabIndex].pck_entrytype_refno;
               }
             }
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_activitytype_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setActivityTypeFullData(response.data.data);
-                  const activityTypeData = response.data.data.map(
-                    (data) => data.activity_name
-                  );
-                  setActivityTypeData(activityTypeData);
-                }
-              }
-            });
-
-            Provider.createDFPocketDairy(
-              Provider.API_URLS.getactivityexpenses_pckaddexpensesform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setvalueFullData(response.data.data);
-                  const category = response.data.data.map(
-                    (data) => data.pck_activity_expenses_name
-                  );
-                  setvalueData(category);
-                }
-              }
-            });
-
-            Provider.createDFPocketDairy(
-              Provider.API_URLS.getexpensesto_pckaddexpensesform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setEpaFullData(response.data.data);
-                  const category = response.data.data.map(
-                    (data) => data.category_name
-                  );
-                  setEpaData(category);
-                }
-              }
-            });
-            Provider.createDFPocketDairy(
-              Provider.API_URLS.getclienttype_pckaddexpensesform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setClientTypeFullData(response.data.data);
-                  const types = response.data.data.map(
-                    (data) => data.activity_entry_type_name
-                  );
-                  setClientTypeData(types);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_marketingexecutivename_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  // console.log(response.data.data);
-                  setMarketingFullData(response.data.data);
-                  const marketing = response.data.data.map(
-                    (data) => data.employee_name
-                  );
-                  setMarketingData(marketing);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_activitystatus_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  // console.log(response.data.data);
-                  setActivityStatusFullData(response.data.data);
-                  const status = response.data.data.map(
-                    (data) => data.activity_status_name
-                  );
-                  setActivityStatusData(status);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_nextvisitno_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setNextVisitDayFullData(response.data.data);
-                  const data = response.data.data.map(
-                    (data) => data.next_visit_no_name
-                  );
-                  setNextVisitDayData(data);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_daysmonthsrefno_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setNextVisitMonthFullData(response.data.data);
-                  const data = response.data.data.map(
-                    (data) => data.daysmonths_name
-                  );
-                  setNextVisitMonthData(data);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_referencerefno_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  // console.log(response.data);
-                  setReferenceFullData(response.data.data);
-                  const data = response.data.data.map(
-                    (data) => data.reference_name
-                  );
-                  setReferenceData(data);
-                }
-              }
-            });
-
-            Provider.createDFEmployee(
-              Provider.API_URLS.get_helpperson_employeeactivityform,
-              params
-            ).then((response) => {
-              if (response.data && response.data.code === 200) {
-                if (response.data.data) {
-                  setSupportPersonFullData(response.data.data);
-                  const data = response.data.data.map(
-                    (data) => data.employee_user_name
-                  );
-                  setSupportPersonData(data);
-                }
-              }
-            });
 
             if (route.params.type != "edit" || route.params.type != "verify") {
               FetchPaymentMode();
@@ -894,7 +669,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPaymentMode = (editID) => {
@@ -935,7 +710,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchClientList = (clientID) => {
@@ -946,7 +721,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_branch_refno: branchID.toString(),
         Sess_group_refno: groupID.toString(),
         Sess_designation_refno: designID.toString(),
-        Sess_CompanyAdmin_UserRefno: companyAdminID.toString(),
+        Sess_CompanyAdmin_UserRefno: companyAdminID.toString()
       },
     };
     Provider.createDFPocketDairy(Provider.API_URLS.get_pckmyclientname, params)
@@ -971,7 +746,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchMKTClientList = (clientID) => {
@@ -1007,7 +782,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchFollowUpCustomerList = (editID) => {
@@ -1054,7 +829,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchPurposeList = (editID) => {
@@ -1090,7 +865,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseCategory = (receiptModeID, editID) => {
@@ -1100,7 +875,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_group_refno: groupID,
         pck_mode_refno: receiptModeID,
         pck_entrytype_refno: _pktEntryTypeID,
-        Sess_group_refno_extra_1: groupExtra.toString(),
+        Sess_group_refno_extra_1: groupExtra.toString()
       },
     };
     Provider.createDFPocketDairy(
@@ -1127,7 +902,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchContactType = (editID) => {
@@ -1157,7 +932,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseSubCategory = (categoryID, editID) => {
@@ -1192,7 +967,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectExpense = (categoryID, editID) => {
@@ -1214,7 +989,7 @@ const AddExpenses = ({ route, navigation }) => {
             setProjectExpenseFullData(response.data.data);
             if (
               route.params.type !=
-                projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
+              projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText &&
               route.params.type != "verify"
             ) {
               response.data.data = response.data.data.filter((el) => {
@@ -1274,7 +1049,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankList = (editID, mode) => {
@@ -1318,7 +1093,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchAvailableCashBalance = () => {
@@ -1355,7 +1130,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBankCurrentBalance = (bankID) => {
@@ -1395,7 +1170,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDepositType = (editID) => {
@@ -1425,7 +1200,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchReceiverList = (
@@ -1437,13 +1212,13 @@ const AddExpenses = ({ route, navigation }) => {
     let params = {
       data: {
         Sess_UserRefno: userID,
-        pck_sub_category_refno: subCategoryID?.toString(),
+        pck_sub_category_refno: subCategoryID.toString(),
         pck_contacttype_refno:
           contactTypeID == null
             ? 0
             : contactTypeID == ""
-            ? 0
-            : contactTypeID.toString(),
+              ? 0
+              : contactTypeID.toString(),
         AddNew: "NO",
         UserPhoneBookAllContactList: "",
       },
@@ -1479,7 +1254,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardType = (editID) => {
@@ -1511,7 +1286,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchCardBankList = (cardtypeID, editID) => {
@@ -1544,7 +1319,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchProjectList = (clientID, editID) => {
@@ -1584,7 +1359,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchBranchList = (editID) => {
@@ -1627,7 +1402,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchDesignationList = (editID) => {
@@ -1662,7 +1437,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchEmployeeList = (editID, designationID) => {
@@ -1707,7 +1482,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchUsageList = (editID, categoryID) => {
@@ -1742,7 +1517,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const ShowContactList = () => {
@@ -1767,12 +1542,12 @@ const AddExpenses = ({ route, navigation }) => {
                     k.phoneNumbers[0].number == ""
                       ? ""
                       : k.phoneNumbers[0].number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers[0].number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers[0].number
+                        : k.phoneNumbers[0].number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1785,12 +1560,12 @@ const AddExpenses = ({ route, navigation }) => {
                     k.phoneNumbers.number == ""
                       ? ""
                       : k.phoneNumbers.number
-                          .replace(/\s+/g, "")
-                          .replace(/[^0-9]/g, "").length <= 10
-                      ? k.phoneNumbers.number
+                        .replace(/\s+/g, "")
+                        .replace(/[^0-9]/g, "").length <= 10
+                        ? k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
-                      : k.phoneNumbers.number
+                        : k.phoneNumbers.number
                           .replace(/\s+/g, "")
                           .replace(/[^0-9]/g, "")
                           .slice(-10)
@@ -1869,7 +1644,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const FetchExpenseTo = (editID) => {
@@ -1882,7 +1657,7 @@ const AddExpenses = ({ route, navigation }) => {
         Sess_group_refno_extra_1: groupExtra.toString(),
         pck_sub_category_refno: subCategoryNameFullData.filter((el) => {
           return el.subCategoryName === subCategoryName;
-        })[0].subcategoryID,
+        })[0].subcategoryID
       },
     };
     Provider.createDFPocketDairy(
@@ -1908,7 +1683,7 @@ const AddExpenses = ({ route, navigation }) => {
           }
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const InsertNewContact = (name, mobileNo) => {
@@ -1919,9 +1694,9 @@ const AddExpenses = ({ route, navigation }) => {
         contact_phoneno:
           mobileNo.length > 10
             ? mobileNo
-                .replace(/\s+/g, "")
-                .replace(/[^0-9]/g, "")
-                .slice(-10)
+              .replace(/\s+/g, "")
+              .replace(/[^0-9]/g, "")
+              .slice(-10)
             : mobileNo,
         remarks: "",
         view_status: "1",
@@ -1967,7 +1742,7 @@ const AddExpenses = ({ route, navigation }) => {
   const onPayModeChanged = (text) => {
     setPayMode(text);
     setPMError(false);
-    resetFields("mode");
+    resetFields();
 
     setExpensesData([]);
     setExpenses("");
@@ -2050,12 +1825,12 @@ const AddExpenses = ({ route, navigation }) => {
       setRecurringStatus(false);
     }
 
-    if (mode[0]?.pckModeID == "2" || mode[0]?.pckModeID == "4") {
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setBankStatus(true);
       FetchBankList();
       setUtrNoStatus(true);
     }
-    if (mode[0]?.pckModeID == "3") {
+    if (mode[0].pckModeID == "3") {
       setDepositTypeStatus(true);
       FetchDepositType();
     }
@@ -2090,14 +1865,14 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO ||
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO ||
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO
     ) {
       FetchBankList();
       setBankStatus(true);
       setUtrNoStatus(true);
     } else if (
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO
     ) {
       setDepositTypeStatus(true);
       FetchDepositType();
@@ -2172,14 +1947,14 @@ const AddExpenses = ({ route, navigation }) => {
     }
 
     if (
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO ||
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Upi_REFNO ||
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_RtgsNeft_REFNO
     ) {
       FetchBankList();
       setBankStatus(true);
       setUtrNoStatus(true);
     } else if (
-      mode[0]?.pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO
+      mode[0].pckModeID == projectVariables.DEF_PCKDIARY_MODE_Cheque_REFNO
     ) {
       setDepositTypeStatus(true);
       FetchDepositType();
@@ -2268,7 +2043,7 @@ const AddExpenses = ({ route, navigation }) => {
       return el.deposit_type_name === depositeType;
     });
 
-    if (mode[0]?.pckModeID == "1") {
+    if (mode[0].pckModeID == "1") {
       if (subcat[0].subcategoryID == "8") {
         setPaidToStatus(true);
         //FetchReceiverList();
@@ -2282,7 +2057,7 @@ const AddExpenses = ({ route, navigation }) => {
         setRecurringStatus(false);
         setRecurringReminderDateStatus(false);
       }
-    } else if (mode[0]?.pckModeID == "2" || mode[0]?.pckModeID == "4") {
+    } else if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       FetchBankList();
       setUtrNoStatus(true);
       setBankStatus(true);
@@ -2304,7 +2079,7 @@ const AddExpenses = ({ route, navigation }) => {
         setRecurringStatus(false);
         setRecurringReminderDateStatus(false);
       }
-    } else if (mode[0]?.pckModeID == "3") {
+    } else if (mode[0].pckModeID == "3") {
       setDepositTypeStatus(true);
       FetchDepositType();
 
@@ -2357,12 +2132,12 @@ const AddExpenses = ({ route, navigation }) => {
       setRecurringStatus(false);
     }
 
-    if (mode[0]?.pckModeID == "2" || mode[0]?.pckModeID == "4") {
+    if (mode[0].pckModeID == "2" || mode[0].pckModeID == "4") {
       setBankStatus(true);
       FetchBankList();
       setUtrNoStatus(true);
     }
-    if (mode[0]?.pckModeID == "3") {
+    if (mode[0].pckModeID == "3") {
       setDepositTypeStatus(true);
       FetchDepositType();
     }
@@ -2418,7 +2193,7 @@ const AddExpenses = ({ route, navigation }) => {
     setChequeNoStatus(true);
     setChequeDateStatus(true);
 
-    if (mode[0]?.pckModeID == "3" && subCatStatus) {
+    if (mode[0].pckModeID == "3" && subCatStatus) {
       if (subcat[0].subcategoryID == "8") {
         //setUtrNoStatus(true);
 
@@ -2495,11 +2270,7 @@ const AddExpenses = ({ route, navigation }) => {
     setProjectExpense("");
   };
 
-  const refill = () => {
-    setPayModeData(payModeFullData.map((data) => data.pckModeName));
-    // setExpensesData(expensesFullData.map((data) => data.categoryName));
-  };
-  const resetFields = (temp) => {
+  const resetFields = () => {
     setCardTypeStatus(false);
     setCardBankNameStatus(false);
     setCardRepaymentDateStatus(false);
@@ -2585,54 +2356,6 @@ const AddExpenses = ({ route, navigation }) => {
     setPurpose("");
     setPurposeError(false);
     setPurposeStatus(false);
-
-    setActivityType("");
-    setActivityTypeError("");
-    setCommonDisplayStatus(false);
-
-    setVisitLocation("");
-    setVisitLocationError(false);
-    setActivityRemarks("");
-
-    setEpa("");
-    setEpaError(false);
-
-    setClientType("");
-    setClientTypeError(false);
-
-    setClienttError(false);
-    setClientListtData([]);
-    setClientListFullData([]);
-    setClientt("");
-
-    setContactPerson("");
-    setContactPersonData([]);
-    setContactPersonFullData([]);
-    setContactPersonError(false);
-
-    setMarketing("");
-    setMarketingError(false);
-
-    setActivityStatusError(false);
-    setActivityStatus("");
-
-    setNextVisitDay("");
-    setNextVisitMonth("");
-    setReference("");
-    setSupportPerson("");
-
-    if (temp !== "mode") {
-      settAmount("");
-      setAmountInvalidBalance(false);
-      setAmountError(false);
-      setPayModeData([]);
-      setPayMode("");
-      setExpensesData([]);
-      setExpenses("");
-      setSubCategoryNameData([]);
-      setSubCategoryName("");
-      setTimeout(refill, 20);
-    }
   };
 
   const onEntryTypeChanged = (selectedItem) => {
@@ -2644,8 +2367,6 @@ const AddExpenses = ({ route, navigation }) => {
 
     setSubCategoryNameData([]);
     setSubCategoryName("");
-
-    setValue("");
 
     let a = entryTypeFullData.filter((el) => {
       return el.pck_entrytype_name === selectedItem;
@@ -2660,7 +2381,7 @@ const AddExpenses = ({ route, navigation }) => {
       return el.pckModeName === payMode;
     });
 
-    if (mode.length > 0 && mode[0]?.pckModeID == 1 && cashBalanceStatus) {
+    if (mode.length > 0 && mode[0].pckModeID == 1 && cashBalanceStatus) {
       if (parseFloat(text) > parseFloat(cashBalance.replace(/,/g, ""))) {
         settAmount("");
         setAmountError(true);
@@ -2671,9 +2392,9 @@ const AddExpenses = ({ route, navigation }) => {
       }
     } else if (
       mode.length > 0 &&
-      (mode[0]?.pckModeID == 2 ||
-        mode[0]?.pckModeID == 3 ||
-        mode[0]?.pckModeID == 4) &&
+      (mode[0].pckModeID == 2 ||
+        mode[0].pckModeID == 3 ||
+        mode[0].pckModeID == 4) &&
       bankBalanceStatus
     ) {
       if (parseFloat(text) > parseFloat(bankBalance.replace(/,/g, ""))) {
@@ -2719,9 +2440,9 @@ const AddExpenses = ({ route, navigation }) => {
     });
 
     if (
-      mode[0]?.pckModeID == 2 ||
-      mode[0]?.pckModeID == 3 ||
-      mode[0]?.pckModeID == 4
+      mode[0].pckModeID == 2 ||
+      mode[0].pckModeID == 3 ||
+      mode[0].pckModeID == 4
     ) {
       setBankBalanceStatus(true);
 
@@ -2776,62 +2497,6 @@ const AddExpenses = ({ route, navigation }) => {
     }
   };
 
-  const getClientList = (id) => {
-    let params = {
-      data: {
-        Sess_UserRefno: userID,
-        Sess_company_refno: companyID,
-        activity_entry_type: "1",
-        refer_user_refno: id,
-      },
-    };
-    if (id == undefined || id == null) {
-      Provider.createDFEmployee(
-        Provider.API_URLS.get_myclient_companyname_employeeactivityform,
-        params
-      ).then((response) => {
-        if (response.data.data) {
-          setClientListtFullData(response.data.data);
-          const list = response.data.data.map((data) => data.company_name);
-          setClientListtData(list);
-        }
-      });
-    } else {
-      Provider.createDFEmployee(
-        Provider.API_URLS.get_otherclient_companyname_employeeactivityform,
-        params
-      ).then((response) => {
-        if (response.data.data) {
-          setClientListtFullData(response.data.data);
-          const list = response.data.data.map((data) => data.company_name);
-          setClientListtData(list);
-        }
-      });
-    }
-  };
-
-  const getContactPersonList = (id) => {
-    let params = {
-      data: {
-        Sess_UserRefno: userID,
-        Sess_company_refno: companyID,
-        myclient_refno: id.toString(),
-      },
-    };
-    Provider.createDFEmployee(
-      Provider.API_URLS.get_contactpersonname_employeeactivityform,
-      params
-    ).then((response) => {
-      if (response.data.data) {
-        console.log(response.data.data);
-        setContactPersonFullData(response.data.data);
-        const list = response.data.data.map((data) => {
-          return `${data.contact_person} (${data.designation} >> ${data.mobile_no})`;
-        });
-        setContactPersonData(list);
-      }
-    });
-  };
   const InsertData = () => {
     const datas = new FormData();
     let params = {
@@ -2917,7 +2582,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (MKT_clientListStatus) {
@@ -3021,13 +2686,13 @@ const AddExpenses = ({ route, navigation }) => {
         filePath.type != undefined &&
         filePath.type != null
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
 
@@ -3151,7 +2816,7 @@ const AddExpenses = ({ route, navigation }) => {
     if (
       groupID == projectLoginTypes.DEF_EMPLOYEE_GROUP_REFNO &&
       designID ==
-        projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
+      projectFixedDesignations.DEF_MARKETINGEXECUTIVE_DESIGNATION_REFNO &&
       _pktEntryTypeID == projectVariables.DEF_PCKDIARY_ENTRYTYPE_COMPANY_REFNO
     ) {
       if (MKT_clientListStatus) {
@@ -3251,21 +2916,21 @@ const AddExpenses = ({ route, navigation }) => {
       "attach_receipt",
       isImageReplaced
         ? {
-            name: "appimage1212.jpg",
-            type: filePath.type + "/*",
-            uri:
-              Platform.OS === "android"
-                ? filePath.uri
-                : filePath.uri.replace("file://", ""),
-          }
+          name: "appimage1212.jpg",
+          type: filePath.type + "/*",
+          uri:
+            Platform.OS === "android"
+              ? filePath.uri
+              : filePath.uri.replace("file://", ""),
+        }
         : ""
     );
     Provider.createDFPocketDairyWithHeader(
       type == "edit"
         ? Provider.API_URLS.pckaddexpensesupdate
         : mode == "source"
-        ? Provider.API_URLS.pck_companysource_verify_action
-        : Provider.API_URLS.pck_companyexpenses_verify_action,
+          ? Provider.API_URLS.pck_companysource_verify_action
+          : Provider.API_URLS.pck_companyexpenses_verify_action,
       datas
     )
 
@@ -3383,7 +3048,6 @@ const AddExpenses = ({ route, navigation }) => {
     }
   };
 
-  const [value, setValue] = React.useState("");
   //#endregion
 
   return (
@@ -3408,153 +3072,96 @@ const AddExpenses = ({ route, navigation }) => {
               </HelperText>
             </>
           )}
-          {entryType !== "Self" && (
-            <RadioButton.Group
-              onValueChange={(newValue) => {
-                setValue(newValue);
-                resetFields();
-                setNotes("");
-                setNotesError("");
-                setFilePath(null);
-                setImage(null);
-                setChecked(true);
-              }}
-              value={value}
-            >
-              <View style={{ flexDirection: "row" }}>
-                {valueData.map((item) => (
-                  <View
-                    key={item}
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text>{item}</Text>
-                    <RadioButton value={item} />
-                  </View>
-                ))}
-              </View>
-            </RadioButton.Group>
-          )}
-          {!(entryType === "Self" || value !== "Activity") && (
-            <>
-              <Dropdown
-                label="Activity Type"
-                data={activityTypeData}
-                onSelected={(type) => {
-                  setActivityType(type);
-                  setActivityTypeError(false);
-                  setCommonDisplayStatus(true);
-                  setVisitLocation("");
-                  setVisitLocationError(false);
-                }}
-                isError={activityTypeError}
-                selectedItem={activityType}
-              />
-              <HelperText type="error" visible={activityTypeError}>
-                Please select a Type
-              </HelperText>
-            </>
-          )}
-          {(entryType === "Self" || value !== "Activity") && (
-            <TextInput
-              mode="outlined"
-              label="Amount"
-              value={amount}
-              returnKeyType="next"
-              keyboardType="number-pad"
-              onSubmitEditing={() => ref_input2.current.focus()}
-              onChangeText={onAmount}
-              style={{ backgroundColor: "white", marginTop: 10 }}
-              error={amountError}
-            />
-          )}
+          <TextInput
+            mode="outlined"
+            label="Amount"
+            value={amount}
+            returnKeyType="next"
+            keyboardType="number-pad"
+            onSubmitEditing={() => ref_input2.current.focus()}
+            onChangeText={onAmount}
+            style={{ backgroundColor: "white" }}
+            error={amountError}
+          />
           <HelperText type="error" visible={amountError}>
             {amountInvalidBalance}
           </HelperText>
           {route.params.type ===
             projectVariables.DEF_PCKDIARY_Dynamic_Expense_ClientAmountGivenToCompany_FlagText && (
-            <>
-              <View style={[Styles.padding16]}>
-                <DataTable
-                  style={[
-                    Styles.backgroundSecondaryColor,
-                    Styles.borderRadius4,
-                    Styles.flexJustifyCenter,
-                    Styles.bordergray,
-                    Styles.fontBold,
-                  ]}
-                >
-                  <DataTable.Header>
-                    <DataTable.Title
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      Collected
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Paid
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                      numeric
-                    >
-                      Balance
-                    </DataTable.Title>
-                  </DataTable.Header>
+              <>
+                <View style={[Styles.padding16]}>
+                  <DataTable
+                    style={[
+                      Styles.backgroundSecondaryColor,
+                      Styles.borderRadius4,
+                      Styles.flexJustifyCenter,
+                      Styles.bordergray,
+                      Styles.fontBold,
+                    ]}
+                  >
+                    <DataTable.Header>
+                      <DataTable.Title
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        Collected
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Paid
+                      </DataTable.Title>
+                      <DataTable.Title
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                        numeric
+                      >
+                        Balance
+                      </DataTable.Title>
+                    </DataTable.Header>
 
-                  <DataTable.Row style={[Styles.backgroundColor]}>
-                    <DataTable.Cell
-                      style={[{ flex: 1, justifyContent: "center" }]}
-                    >
-                      {collectedAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {paidAmount}
-                    </DataTable.Cell>
-                    <DataTable.Cell
-                      style={[
-                        Styles.borderLeft1,
-                        { flex: 1, justifyContent: "center" },
-                      ]}
-                    >
-                      {balanceAmount}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                </DataTable>
-              </View>
-            </>
-          )}
-          {(entryType === "Self" || value !== "Activity") && (
-            <>
-              <Dropdown
-                label="Payment Mode"
-                data={payModeData}
-                onSelected={onPayModeChanged}
-                isError={errorPM}
-                selectedItem={payMode}
-              />
-              <HelperText type="error" visible={errorPM}>
-                Please select a valid payment mode
-              </HelperText>
-            </>
-          )}
+                    <DataTable.Row style={[Styles.backgroundColor]}>
+                      <DataTable.Cell
+                        style={[{ flex: 1, justifyContent: "center" }]}
+                      >
+                        {collectedAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {paidAmount}
+                      </DataTable.Cell>
+                      <DataTable.Cell
+                        style={[
+                          Styles.borderLeft1,
+                          { flex: 1, justifyContent: "center" },
+                        ]}
+                      >
+                        {balanceAmount}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </DataTable>
+                </View>
+              </>
+            )}
+          <Dropdown
+            label="Payment Mode"
+            data={payModeData}
+            onSelected={onPayModeChanged}
+            isError={errorPM}
+            selectedItem={payMode}
+          />
+          <HelperText type="error" visible={errorPM}>
+            Please select a valid payment mode
+          </HelperText>
           {cashBalanceStatus && (
             <>
               <TextInput
@@ -3619,21 +3226,16 @@ const AddExpenses = ({ route, navigation }) => {
               </View>
             </>
           )}
-          {(entryType === "Self" || value !== "Activity") && (
-            <>
-              <Dropdown
-                label="Expenses / Payment"
-                data={expensesData}
-                onSelected={onExpensesChanged}
-                isError={errorEX}
-                selectedItem={expenses}
-              />
-              <HelperText type="error" visible={errorEX}>
-                Please select a valid Expenses / Payment
-              </HelperText>
-            </>
-          )}
-
+          <Dropdown
+            label="Expenses / Payment"
+            data={expensesData}
+            onSelected={onExpensesChanged}
+            isError={errorEX}
+            selectedItem={expenses}
+          />
+          <HelperText type="error" visible={errorEX}>
+            Please select a valid Expenses / Payment
+          </HelperText>
           {branchListStatus && (
             <>
               <Dropdown
@@ -3766,7 +3368,7 @@ const AddExpenses = ({ route, navigation }) => {
               </HelperText>
             </>
           )}
-          {(entryType === "Self" || value !== "Activity") && subCatStatus && (
+          {subCatStatus && (
             <>
               <Dropdown
                 label="Sub Category Name"
@@ -3778,314 +3380,6 @@ const AddExpenses = ({ route, navigation }) => {
               <HelperText type="error" visible={errorSCN}>
                 Please select a valid sub category
               </HelperText>
-            </>
-          )}
-          {((entryType !== "Self" &&
-            value === "Expenses" &&
-            subCategoryName !== "" &&
-            subCategoryName !== null &&
-            subCategoryName !== undefined) ||
-            (entryType !== "Self" &&
-              value === "Activity" &&
-              activityType !== "Office Work" &&
-              activityType !== "")) && (
-            <>
-              <Dropdown
-                label="Expenses / Payment / Activity"
-                data={epaData}
-                onSelected={(text) => {
-                  setEpa(text);
-                }}
-                isError={epaError}
-                selectedItem={epa}
-              />
-              <HelperText type="error" visible={epaError}>
-                Please select a category
-              </HelperText>
-            </>
-          )}
-          {entryType !== "Self" && epa && (
-            <RadioButton.Group
-              onValueChange={(newValue) => {
-                if (newValue !== clientType) {
-                  setClientType(newValue);
-                  setClientTypeError(false);
-                  setClientListtData([]);
-                  setClientListtFullData([]);
-                  setClientt("");
-                  setClienttError(false);
-                  setContactPerson("");
-                  setContactPersonData([]);
-                  setContactPersonFullData([]);
-                  setContactPersonError(false);
-                  setMarketing("");
-                  setMarketingError(false);
-                  setActivityStatus("");
-                  setActivityStatusError(false);
-                  setVisitLocation("");
-                  setVisitLocationError(false);
-                  setNextVisitDay("");
-                  setNextVisitMonth("");
-                  setReference("");
-                  setSupportPerson("");
-                  if (newValue === "Own client") {
-                    getClientList();
-                  }
-                }
-              }}
-              value={clientType}
-            >
-              <Text>Client Type</Text>
-              <View style={{ flexDirection: "row" }}>
-                {clientTypeData.map((item, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <RadioButton value={item} />
-                    <Text>{item}</Text>
-                  </View>
-                ))}
-              </View>
-            </RadioButton.Group>
-          )}
-          {entryType !== "Self" &&
-            clientType === "Behalf to other employee client" && (
-              <>
-                <Dropdown
-                  label="Marketing Executive Name"
-                  data={marketingData}
-                  onSelected={(val) => {
-                    if (marketing !== val) {
-                      setMarketing(val);
-                      getClientList(
-                        marketingFullData.find(
-                          (item) => item.employee_name === val
-                        ).refer_user_refno
-                      );
-                    }
-                  }}
-                  isError={marketingError}
-                  selectedItem={marketing}
-                />
-                <HelperText type="error" visible={marketingError}>
-                  Please select a marketing executive.
-                </HelperText>
-              </>
-            )}
-
-          {((entryType !== "Self" && clientType === "Own client") ||
-            (entryType !== "Self" &&
-              clientType === "Behalf to other employee client" &&
-              marketing !== null &&
-              marketing !== "")) && (
-            <>
-              <Dropdown
-                label="Client List"
-                data={clientListtData}
-                onSelected={(client) => {
-                  if (client !== clientt) {
-                    setClientt(client);
-                    getContactPersonList(
-                      clientListtFullData.find(
-                        (item) => item.company_name === client
-                      ).myclient_refno
-                    );
-                  }
-                }}
-                isError={clienttError}
-                selectedItem={branch}
-              />
-              <HelperText type="error" visible={clienttError}>
-                Please select a client
-              </HelperText>
-
-              <Dropdown
-                label="Contact Person"
-                data={contactPersonData}
-                onSelected={(selected) => {
-                  setContactPerson(selected);
-                  setContactPersonError(false);
-                }}
-                isError={contactPersonError}
-                selectedItem={contactPerson}
-              />
-              <HelperText type="error" visible={contactPersonError}>
-                Please select a contact person.
-              </HelperText>
-            </>
-          )}
-          {((entryType !== "Self" &&
-            activityType !== "Office Work" &&
-            activityType !== "" &&
-            clientListtData.length !== 0) ||
-            (entryType !== "Self" && activityType === "Office Work") ||
-            (entryType !== "Self" &&
-              activityType !== "Office Work" &&
-              activityType !== "" &&
-              marketing !== "")) && (
-            <>
-              <TextInput
-                mode="outlined"
-                label="Visit Location Name"
-                value={visitLocation}
-                returnKeyType="next"
-                keyboardType="default"
-                onChangeText={(text) => {
-                  setVisitLocation(text);
-                  setVisitLocationError(false);
-                }}
-                error={visitLocationError}
-                style={{ backgroundColor: "white", marginBottom: 20 }}
-              />
-              <HelperText type="error" visible={visitLocationError}>
-                Please enter visit locaion.
-              </HelperText>
-            </>
-          )}
-          {((entryType !== "Self" &&
-            activityType !== "Office Work" &&
-            activityType !== "" &&
-            clientListtData.length !== 0) ||
-            (entryType !== "Self" &&
-              activityType !== "Office Work" &&
-              activityType !== "" &&
-              marketing !== "") ||
-            (entryType !== "Self" &&
-              subCategoryName !== "" &&
-              subCategoryName !== null &&
-              clientListtData.length !== 0) ||
-            (entryType !== "Self" &&
-              subCategoryName !== "" &&
-              subCategoryName !== null &&
-              marketing !== "")) && (
-            <>
-              <RadioButton.Group
-                onValueChange={(newValue) => {
-                  if (newValue !== activityStatus) {
-                    setActivityStatus(newValue);
-                    setActivityStatusError(false);
-                  }
-                }}
-                value={activityStatus}
-              >
-                <Text>Activity Status</Text>
-                <View style={{ flexDirection: "row" }}>
-                  {activityStatusData.map((item, idx) => (
-                    <View
-                      key={idx}
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <RadioButton value={item} />
-                      <Text>{item}</Text>
-                    </View>
-                  ))}
-                </View>
-              </RadioButton.Group>
-              <View>
-                <Text> Next Visit</Text>
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ flex: 1, padding: 15 }}>
-                  <Dropdown
-                    data={nextVisitDayData}
-                    onSelected={(selected) => {
-                      setNextVisitDay(selected);
-                    }}
-                    selectedItem={nextVisitDay}
-                  />
-                </View>
-                <View style={{ flex: 1, padding: 15 }}>
-                  <Dropdown
-                    data={nextVisitMonthData}
-                    onSelected={(selected) => {
-                      setNextVisitMonth(selected);
-                    }}
-                    selectedItem={nextVisitMonth}
-                  />
-                </View>
-              </View>
-              <Dropdown
-                label="Refernce"
-                data={referenceData}
-                onSelected={(selected) => {
-                  setReference(selected);
-                }}
-                selectedItem={reference}
-              />
-            </>
-          )}
-          {((entryType !== "Self" &&
-            activityType !== "Office Work" &&
-            activityType !== "" &&
-            clientListtData.length !== 0 &&
-            clientType === "Own client") ||
-            (entryType !== "Self" &&
-              activityType !== "Office Work" &&
-              activityType !== "" &&
-              marketing !== "" &&
-              clientType === "Own client") ||
-            (entryType !== "Self" &&
-              subCategoryName !== "" &&
-              subCategoryName !== null &&
-              clientListtData.length !== 0 &&
-              clientType === "Own client") ||
-            (entryType !== "Self" &&
-              subCategoryName !== "" &&
-              subCategoryName !== null &&
-              marketing !== "" &&
-              clientType === "Own client")) && (
-            <>
-              <Dropdown
-                label="Help / Support Person"
-                data={supportPersonData}
-                onSelected={(selected) => {
-                  setSupportPerson(selected);
-                }}
-                style={{ marginTop: 10 }}
-                selectedItem={supportPerson}
-              />
-            </>
-          )}
-
-          {((entryType !== "Self" &&
-            activityType !== "Office Work" &&
-            activityType !== "" &&
-            clientListtData.length !== 0) ||
-            (entryType !== "Self" &&
-              activityType !== "Office Work" &&
-              activityType !== "" &&
-              marketing !== "") ||
-            (entryType !== "Self" && activityType === "Office Work") ||
-            (entryType !== "Self" &&
-              value === "Expenses" &&
-              clientListtData.length > 0) ||
-            (entryType !== "Self" &&
-              value === "Expenses" &&
-              marketing !== "" &&
-              marketing !== null)) && (
-            <>
-              <TextInput
-                mode="outlined"
-                label="Activity Remarks"
-                value={activityRemarks}
-                returnKeyType="next"
-                keyboardType="default"
-                onChangeText={(text) => {
-                  setActivityRemarks(text);
-                }}
-                style={{ backgroundColor: "white", marginBottom: 20 }}
-              />
             </>
           )}
           {expenseToStatus && (
@@ -4268,7 +3562,7 @@ const AddExpenses = ({ route, navigation }) => {
               </View>
             </>
           )}
-          {depositTypeStatus && entryType === "Self" && (
+          {depositTypeStatus && (
             <>
               <Dropdown
                 label="Deposit Type"
@@ -4282,7 +3576,7 @@ const AddExpenses = ({ route, navigation }) => {
               </HelperText>
             </>
           )}
-          {bankStatus && entryType === "Self" && (
+          {bankStatus && (
             <>
               <View
                 style={[
@@ -4345,7 +3639,7 @@ const AddExpenses = ({ route, navigation }) => {
               />
             </>
           )}
-          {utrNoStatus && entryType === "Self" && (
+          {utrNoStatus && (
             <>
               <TextInput
                 mode="flat"
@@ -4358,7 +3652,7 @@ const AddExpenses = ({ route, navigation }) => {
               />
             </>
           )}
-          {chequeNoStatus && entryType === "Self" && (
+          {chequeNoStatus && (
             <>
               <TextInput
                 mode="outlined"
@@ -4372,7 +3666,7 @@ const AddExpenses = ({ route, navigation }) => {
               />
             </>
           )}
-          {chequeDateStatus && entryType === "Self" && (
+          {chequeDateStatus && (
             <>
               <View>
                 <DateTimePicker
